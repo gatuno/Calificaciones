@@ -1,0 +1,12 @@
+{extends 'calif/base.html'}
+{block body}
+{if $carreras}
+<ol>
+{foreach $carreras as $carrera}
+<li>
+<a href="{url 'Calif_Views_Carrera::verCarrera', array($carrera.id)}">{$carrera.clave} {$carrera.descripcion}</a>
+</li>
+{/foreach}
+</ol>
+{/if}
+{/block}

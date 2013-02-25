@@ -1,5 +1,7 @@
 <?php
-$cfg = array ();
+$cfg = array();
+
+$cfg['debug'] = true;
 
 $cfg['admins'] = array(
 	array('Admin', 'gatuno_123@esdebian.org'),
@@ -87,11 +89,13 @@ $cfg['installed_apps'] = array('Pluf', 'Calif');
 
 $cfg['pluf_use_rowpermission'] = false;
 
-$cfg['middleware_classes'] = array(
-         'Pluf_Middleware_Csrf',
-         'Pluf_Middleware_Session',
-         'Pluf_Middleware_Translation',
-         );
+#$cfg['middleware_classes'] = array(
+#         'Pluf_Middleware_Csrf',
+#         'Pluf_Middleware_Session',
+#         'Pluf_Middleware_Translation',
+#         );
+
+$cfg['calif_views'] = dirname(__FILE__).'/urls.php';
 
 # Ruta de los templates
 $cfg['template_folders'] = array(
