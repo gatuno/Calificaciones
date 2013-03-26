@@ -1,5 +1,5 @@
 <?php
-$base = Pluf::f('calif_base');
+$base = Gatuf::config('calif_base');
 $ctl = array ();
 
 $ctl[] = array(

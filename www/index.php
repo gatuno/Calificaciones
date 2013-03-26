@@ -2,12 +2,13 @@
 
 require dirname(__FILE__).'/../src/Calif/conf/path.php';
 
-# Cargar Pluf
-require 'Pluf.php';
+# Cargar Gatuf
+require 'Gatuf.php';
 
 # Inicializar las configuraciones
-Pluf::start(dirname(__FILE__).'/../src/Calif/conf/calif.php');
+Gatuf::start(dirname(__FILE__).'/../src/Calif/conf/calif.php');
 
-Pluf_Dispatcher::loadControllers(Pluf::f('calif_views'));
-Pluf_Dispatcher::dispatch(Pluf_HTTP_URL::getAction());
+Gatuf_Despachador::loadControllers(Gatuf::config('calif_views'));
+
+Gatuf_Despachador::dispatch(Gatuf_HTTP_URL::getAction());
 
