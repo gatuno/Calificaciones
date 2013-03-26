@@ -94,6 +94,12 @@ class Gatuf {
 		}
 		return new $model();
 	}
+	
+	public static function &db($extra=null) {
+		Gatuf::loadFunction('Gatuf_DB_getConnection');
+		$a = Gatuf_DB_getConnection($extra);
+		return $a;
+    }
 }
 
 function __autoload($class_name) {

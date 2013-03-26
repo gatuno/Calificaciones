@@ -11,24 +11,36 @@ class Calif_Carrera {
 	
 	/* La tabla de donde recoger los datos */
 	public $tabla;
-	public $conid;
+	
+	/* La conexión mysql con la base de datos */
+	public $_con = null;
 	
 	function __construct () {
+		$this->_getConnection();
 		$prefix = Gatuf::config ('db_table_prefix', '');
 		
-		if ($prefix !== '') {
-			$this->tabla = $prefix.'_Carreras';
-		} else {
-			$this->tabla = 'Carreras';
-		}
-		$this->conid = Gatuf_DB_getConnection ();
+		$this->tabla = $prefix.'Carreras';
 	}
 	
+	function _getConnection() {
+		static $con = null;
+		if ($this->_con !== null) {
+			return $this->_con;
+		}
+		if ($con !== null) {
+			$this->_con = $con;
+			return $this->_con;
+		}
+		$this->_con = &Gatuf::db($this);
+		$con = $this->_con;
+		return $this->_con;
+    }
+    
 	function getCarrera ($clave) {
 		/* Recuperar una carrera */
 		$sql = sprintf ("SELECT * FROM %s WHERE Clave = '%s'", $this->tabla, $clave);
 		
-		$result = mysql_query ($sql, $this->conid);
+		$result = mysql_query ($sql, $this->_con);
 		
 		if (mysql_num_rows ($result) == 0) {
 			return null;
@@ -46,7 +58,7 @@ class Calif_Carrera {
 		
 		$sql = sprintf ("SELECT * FROM %s", $this->tabla);
 		
-		$result = mysql_query ($sql, $this->conid);
+		$result = mysql_query ($sql, $this->_con);
 		
 		while (($object = mysql_fetch_object ($result))) {
 			$car_temp = new Calif_Carrera ();
