@@ -17,4 +17,11 @@ $ctl[] = array(
 	'method' => 'verCarrera',
 );
 
+$ctl[] = array(
+	'regex' => '#^/carrera/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Carrera',
+	'method' => 'agregarCarrera',
+);
+
 return $ctl;

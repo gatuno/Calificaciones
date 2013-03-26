@@ -21,6 +21,7 @@ class Calif_Carrera extends Pluf_Model {
 				'blank' => false,
 				'size' => 5,
 				'verbose' => 'Clave de la carrera',
+				'unique' => true,
 			),
 			# La descripción de la carrera
 			'descripcion' =>
@@ -29,6 +30,13 @@ class Calif_Carrera extends Pluf_Model {
 				'blank' => false,
 				'size' => 100,
 				'verbose' => 'Nombre de la carrera',
+			),
+		);
+		$this->_a['idx'] = array (
+			'clave_idx' =>
+			array (
+				'col' => 'clave',
+				'type' => 'unique',
 			),
 		);
 	}
