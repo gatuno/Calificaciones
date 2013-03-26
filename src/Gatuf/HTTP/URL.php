@@ -102,6 +102,7 @@ function Gatuf_HTTP_URL_reverse($view, $params=array()) {
     foreach ($regbase[1] as $regex) {
         $url .= Gatuf_HTTP_URL_buildReverseUrl($regex, $params);
     }
+    $url = $regbase[0].$url;
     return $url;
 }
 

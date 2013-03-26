@@ -1,40 +1,96 @@
 <?php
 class Gatuf_Despachador {
 	
-	public static function match ($req, $firstpass = true) {
-		$views = $GLOBALS['_GATUF_vistas'];
-		$to_match = $req->query;
-		$n = count ($views);
-		$i = 0;
-		while ($i < $n) {
-			$ctl = $views [$i];
-			if (preg_match ($ctl['regex'], $to_match, $match)) {
-				if (!isset ($ctl['sub'])) {
-					return self::send ($req, $ctl, $match);
-				} else {
-					$views = $ctl['sub'];
-					$i = 0;
-					$n = count ($views);
-					$to_match = substr ($to_match, strlen ($match[0]));
-					continue;
+	public static function despachar ($query = '') {
+		try {
+			$query = preg_replace('#^(/)+#', '/', '/'.$query);
+			$req = new Gatuf_HTTP_Request($query);
+			/* Justo aquí cargar las middleware_clases */
+			$middleware = array();
+			/*foreach (Gatuf::config('middleware_classes', array()) as $mw) {
+				$middleware[] = new $mw();
+			}*/
+			$skip = false;
+			/*foreach ($middleware as $mw) {
+				if (method_exists($mw, 'process_request')) {
+					$response = $mw->process_request($req);
+					if ($response !== false) {
+						// $response is a response
+						if (Gatuf::config('pluf_runtime_header', false)) {
+							$response->headers['X-Perf-Runtime'] = sprintf('%.5f', (microtime(true) - $GLOBALS['_PX_starttime']));
+						}
+						$response->render($req->method != 'HEAD' and !defined('IN_UNIT_TESTS'));
+						$skip = true;
+						break;
+					}
 				}
+			}*/
+			if ($skip === false) {
+				$response = self::match($req);
+				if (!empty($req->response_vary_on)) {
+					$response->headers['Vary'] = $req->response_vary_on;
+				}
+				/* Procesar la respuesta con las middleware_clases
+				$middleware = array_reverse($middleware);
+				foreach ($middleware as $mw) {
+					if (method_exists($mw, 'process_response')) {
+						$response = $mw->process_response($req, $response);
+					}
+				}*/
+				/* No sé para qué es esto ... */
+				if (Gatuf::config('pluf_runtime_header', false)) {
+					$response->headers['X-Perf-Runtime'] = sprintf('%.5f', (microtime(true) - $GLOBALS['_PX_starttime']));
+				}
+				$response->render($req->method != 'HEAD');
 			}
-			$i++;
+		} catch (Exception $e) {
+			if (Gatuf::f('debug', false) == true) {
+				$response = new Gatuf_HTTP_Response_ServerErrorDebug($e);
+			} else {
+				$response = new Gatuf_HTTP_Response_ServerError($e);
+			}
+			$response->render($req->method != 'HEAD');
+		}
+	}
+	
+	public static function match ($req, $firstpass = true) {
+		try {
+			$views = $GLOBALS['_GATUF_vistas'];
+			$to_match = $req->query;
+			$n = count ($views);
+			$i = 0;
+			while ($i < $n) {
+				$ctl = $views [$i];
+				if (preg_match ($ctl['regex'], $to_match, $match)) {
+					if (!isset ($ctl['sub'])) {
+						return self::send ($req, $ctl, $match);
+					} else {
+						$views = $ctl['sub'];
+						$i = 0;
+						$n = count ($views);
+						$to_match = substr ($to_match, strlen ($match[0]));
+						continue;
+					}
+				}
+				$i++;
+			}
+		} catch (Gatuf_HTTP_Error404 $e) {
+			
 		}
 		
 		if ($firstpass and substr ($req->query, -1) != '/') {
 			$req->query .= '/';
 			$res = self::match ($req, false);
-			
+
 			if ($res->status_code != 404) {
-                Gatuf::loadFunction('Pluf_HTTP_URL_urlForView');
-                $name = (isset($req->view[0]['name'])) ? 
-                    $req->view[0]['name'] : 
-                    $req->view[0]['model'].'::'.$req->view[0]['method'];
-                $url = Gatuf_HTTP_URL_urlForView($name, array_slice($req->view[1], 1));
-                return new Gatuf_HTTP_Response_Redirect($url, 301);
-            }
-        }
+				Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
+				$name = (isset($req->view[0]['name'])) ?
+					$req->view[0]['name'] :
+					$req->view[0]['model'].'::'.$req->view[0]['method'];
+				$url = Gatuf_HTTP_URL_urlForView($name, array_slice($req->view[1], 1));
+				return new Gatuf_HTTP_Response_Redirect($url, 301);
+			}
+		}
         return new Gatuf_HTTP_Response_NotFound($req);
 	}
 	

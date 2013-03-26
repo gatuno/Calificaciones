@@ -3,6 +3,8 @@
 class Gatuf {
 	
 	static function start($config) {
+		$GLOBALS['_GATUF_starttime'] = microtime(true);
+		$GLOBALS['_GATUF_uniqid'] = uniqid($GLOBALS['_GATUF_starttime'], true);
 		Gatuf::loadConfig($config);
 		date_default_timezone_set(Gatuf::config('time_zone', 'America/Mexico_City'));
 		mb_internal_encoding('UTF-8');

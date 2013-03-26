@@ -58,7 +58,7 @@ class Gatuf_HTTP_Request
         $this->remote_addr = $_SERVER['REMOTE_ADDR'];
         $this->http_host = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : '';
         $this->SERVER =& $_SERVER;
-        $this->uid = $GLOBALS['_PX_uniqid']; 
+        $this->uid = $GLOBALS['_GATUF_uniqid'];
         $this->time = (isset($_SERVER['REQUEST_TIME'])) ? $_SERVER['REQUEST_TIME'] : time();
     }
 }

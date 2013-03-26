@@ -10,5 +10,5 @@ Gatuf::start(dirname(__FILE__).'/../src/Calif/conf/calif.php');
 
 Gatuf_Despachador::loadControllers(Gatuf::config('calif_views'));
 
-Gatuf_Despachador::dispatch(Gatuf_HTTP_URL::getAction());
+Gatuf_Despachador::despachar(Gatuf_HTTP_URL::getAction());
 

@@ -11,7 +11,7 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
-	'regex' => '#^/carrera/(\d+)/$#',
+	'regex' => '#^/carrera/(\w+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Carrera',
 	'method' => 'verCarrera',

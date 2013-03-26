@@ -1,4 +1,7 @@
 <?php
+
+Gatuf::loadFunction ('Gatuf_DB_getConnection');
+
 class Calif_Carrera {
 	/* Manejador de la tabla de carreras */
 	
@@ -16,42 +19,39 @@ class Calif_Carrera {
 		if ($prefix !== '') {
 			$this->tabla = $prefix.'_Carreras';
 		} else {
-			$this->tabla;
+			$this->tabla = 'Carreras';
 		}
 		$this->conid = Gatuf_DB_getConnection ();
 	}
 	
-	static function getCarrera ($clave) {
+	function getCarrera ($clave) {
 		/* Recuperar una carrera */
-		$carrera = new Calif_Carrera ();
+		$sql = sprintf ("SELECT * FROM %s WHERE Clave = '%s'", $this->tabla, $clave);
 		
-		$sql = sprintf ("SELECT * FROM %s WHERE Clave = '%s'", $carrera->tabla, $clave);
-		
-		$result = mysql_query ($sql, $carrera->conid);
+		$result = mysql_query ($sql, $this->conid);
 		
 		if (mysql_num_rows ($result) == 0) {
 			return null;
 		} else {
 			$object = mysql_fetch_object ($result);
-			$carrera->clave = $object->Clave;
-			$carrera->descripcion = $object->Descripcion;
+			$this->clave = $object->Clave;
+			$this->descripcion = $object->Descripcion;
 			
 			mysql_free_result ($result);
 		}
 	}
 	
-	static function getList () {
-		$carrera_vacia = new Calif_Carrera ();
+	function getList () {
 		$todas_las_carreras = array ();
 		
-		$sql = sprintf ("SELECT * FROM %s", $carrera_vacia->tabla);
+		$sql = sprintf ("SELECT * FROM %s", $this->tabla);
 		
-		$result = mysql_fetch_result ($sql, $carrera_vacia->conid);
+		$result = mysql_query ($sql, $this->conid);
 		
 		while (($object = mysql_fetch_object ($result))) {
 			$car_temp = new Calif_Carrera ();
-			$car_temp->Clave = $object->Clave;
-			$car_temp->Descripcion = $object->Descripcion;
+			$car_temp->clave = $object->Clave;
+			$car_temp->descripcion = $object->Descripcion;
 			$todas_las_carreras[] = $car_temp;
 		}
 		

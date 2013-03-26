@@ -1,9 +1,9 @@
 <?php
 
-function Gatuf_DB_get ($usuario, $password, $server, $dbname) {
-	$con_id = mysql_connect($server, $user, $pwd);
+function Gatuf_DB_get ($user, $password, $server, $dbname) {
+	$con_id = mysql_connect($server, $user, $password);
 	if (!$con_id) {
-        throw new Exception($this->getError());
+        throw new Exception(Gatuf_DB_getError());
     }
     $db = mysql_select_db ($dbname);
     if (!$db) {
@@ -20,13 +20,13 @@ function Gatuf_DB_getError () {
 
 function Gatuf_DB_getConnection() {
     if (isset($GLOBALS['_GATUF_db']) && 
-        (is_resource($GLOBALS['_GATUF_db']->con_id) or is_object($GLOBALS['_GATUF_db']->con_id))) {
+        (is_resource($GLOBALS['_GATUF_db']) or is_object($GLOBALS['_GATUF_db']))) {
         return $GLOBALS['_GATUF_db'];
     }
     $GLOBALS['_GATUF_db'] = Gatuf_DB_get(Gatuf::config('db_login'), 
                                       Gatuf::config('db_password'),
                                       Gatuf::config('db_server'),    
-                                      Gatuf::config('db_database'),
+                                      Gatuf::config('db_database')
                                       );
     return $GLOBALS['_GATUF_db'];
 }

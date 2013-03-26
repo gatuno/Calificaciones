@@ -127,15 +127,14 @@ class Gatuf_Template_Compiler {
      * These default tags are merged with the 'template_tags' defined
      * in the configuration of the application.
      */
-    protected $_allowedTags = array ();
-    							/*array(
-                                    'url' => 'Pluf_Template_Tag_Url',
-                                    'aurl' => 'Pluf_Template_Tag_Rurl',
+    protected $_allowedTags = array(
+                                    'url' => 'Gatuf_Template_Tag_Url',
+                                    /*'aurl' => 'Pluf_Template_Tag_Rurl',
                                     'media' => 'Pluf_Template_Tag_MediaUrl',
                                     'amedia' => 'Pluf_Template_Tag_RmediaUrl',
                                     'aperm' => 'Pluf_Template_Tag_APerm',
-                                    'getmsgs' => 'Pluf_Template_Tag_Messages',
-                                    );*/
+                                    'getmsgs' => 'Pluf_Template_Tag_Messages',*/
+                                    );
     /**
      * During compilation, all the tags are created once so to query
      * their interface easily.
@@ -261,7 +260,7 @@ class Gatuf_Template_Compiler {
                                         array($this, '_callback'), 
                                         $tplcontent);
         if (count($this->_blockStack)) {
-            trigger_error(sprintf(__('End tag of a block missing: %s'), end($this->_blockStack)), E_USER_ERROR);
+            trigger_error(sprintf('End tag of a block missing: %s', end($this->_blockStack)), E_USER_ERROR);
         }
         return $result;
     }
@@ -342,7 +341,7 @@ class Gatuf_Template_Compiler {
     {
         // FIXME: Very small security check, could be better.
         if (strpos($file, '..') !== false) {
-            throw new Exception(sprintf(__('Template file contains invalid characters: %s'), $file));
+            throw new Exception(sprintf('Template file contains invalid characters: %s', $file));
         }
         foreach ($this->templateFolders as $folder) {
             if (file_exists($folder.'/'.$file)) {
@@ -351,13 +350,13 @@ class Gatuf_Template_Compiler {
             }
         }
         // File not found in all the folders.
-        throw new Exception(sprintf(__('Template file not found: %s'), $file));
+        throw new Exception(sprintf('Template file not found: %s', $file));
     }
 
     function _callback($matches) {
         list(,$tag, $firstcar) = $matches;
         if (!preg_match('/^\$|[\'"]|[a-zA-Z\/]$/', $firstcar)) {
-            trigger_error(sprintf(__('Invalid tag syntax: %s'), $tag), E_USER_ERROR);
+            trigger_error(sprintf('Invalid tag syntax: %s', $tag), E_USER_ERROR);
             return '';
         }
         $this->_currentTag = $tag;
@@ -371,7 +370,7 @@ class Gatuf_Template_Compiler {
             }
         } else {
             if (!preg_match('/^(\/?[a-zA-Z0-9_]+)(?:(?:\s+(.*))|(?:\((.*)\)))?$/', $tag, $m)) {
-                trigger_error(sprintf(__('Invalid function syntax: %s'), $tag), E_USER_ERROR);
+                trigger_error(sprintf('Invalid function syntax: %s', $tag), E_USER_ERROR);
                 return '';
             }
             if (count($m) == 4){
@@ -393,7 +392,7 @@ class Gatuf_Template_Compiler {
         $res = $this->_parseFinal(array_shift($tok), $this->_allowedInVar);
         foreach ($tok as $modifier) {
             if (!preg_match('/^(\w+)(?:\:(.*))?$/', $modifier, $m)) {
-                trigger_error(sprintf(__('Invalid modifier syntax: (%s) %s'), $this->_currentTag, $modifier), E_USER_ERROR);
+                trigger_error(sprintf('Invalid modifier syntax: (%s) %s', $this->_currentTag, $modifier), E_USER_ERROR);
                 return '';
             }
             $targs = array($res);
@@ -403,7 +402,7 @@ class Gatuf_Template_Compiler {
             else if (isset($this->_modifier[$m[1]])) {
                 $res = $this->_modifier[$m[1]].'('.$res.')';
             } else {
-                trigger_error(sprintf(__('Unknown modifier: (%s) %s'), $this->_currentTag, $m[1]), E_USER_ERROR);
+                trigger_error(sprintf('Unknown modifier: (%s) %s', $this->_currentTag, $m[1]), E_USER_ERROR);
                 return '';
             }
             if (!in_array($this->_modifier[$m[1]], $this->_usedModifiers)) {
@@ -421,13 +420,13 @@ class Gatuf_Template_Compiler {
             break;
         case 'else':
             if (end($this->_blockStack) != 'if') {
-                trigger_error(sprintf(__('End tag of a block missing: %s'), end($this->_blockStack)), E_USER_ERROR);
+                trigger_error(sprintf('End tag of a block missing: %s', end($this->_blockStack)), E_USER_ERROR);
             }
             $res = 'else: ';
             break;
         case 'elseif':
             if (end($this->_blockStack) != 'if') {
-                trigger_error(sprintf(__('End tag of a block missing: %s'), end($this->_blockStack)), E_USER_ERROR);
+                trigger_error(sprintf('End tag of a block missing: %s', end($this->_blockStack)), E_USER_ERROR);
             }
             $res = 'elseif('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
             break;
@@ -444,7 +443,7 @@ class Gatuf_Template_Compiler {
         case '/while':
             $short = substr($name,1);
             if(end($this->_blockStack) != $short){
-                trigger_error(sprintf(__('End tag of a block missing: %s'), end($this->_blockStack)), E_USER_ERROR);
+                trigger_error(sprintf('End tag of a block missing: %s', end($this->_blockStack)), E_USER_ERROR);
             }
             array_pop($this->_blockStack);
             $res = 'end'.$short.'; ';
@@ -456,11 +455,11 @@ class Gatuf_Template_Compiler {
             if(count($this->_literals)){
                 $res = '?>'.array_shift($this->_literals).'<?php ';
             }else{
-                trigger_error(__('End tag of a block missing: literal'), E_USER_ERROR);
+                trigger_error('End tag of a block missing: literal', E_USER_ERROR);
             }
             break;
         case '/literal':
-            trigger_error(__('Start tag of a block missing: literal'), E_USER_ERROR);
+            trigger_error('Start tag of a block missing: literal', E_USER_ERROR);
             break;
         case 'block':
             $res = '?>'.$this->_extendBlocks[$args].'<?php ';
@@ -470,7 +469,7 @@ class Gatuf_Template_Compiler {
             break;
         case 'trans':
             $argfct = $this->_parseFinal($args, $this->_allowedAssign); 
-            $res = 'echo(__('.$argfct.'));';
+            $res = 'echo('.$argfct.');';
             break;
         case 'blocktrans':
             array_push($this->_blockStack, 'blocktrans');
@@ -487,7 +486,7 @@ class Gatuf_Template_Compiler {
         case '/blocktrans':
             $short = substr($name,1);
             if(end($this->_blockStack) != $short){
-                trigger_error(sprintf(__('End tag of a block missing: %s'), end($this->_blockStack)), E_USER_ERROR);
+                trigger_error(sprintf('End tag of a block missing: %s', end($this->_blockStack)), E_USER_ERROR);
             }
             $res = '';
             if ($this->_transPlural) {
@@ -504,9 +503,9 @@ class Gatuf_Template_Compiler {
             } else {
                 $res .= '$_b_t_s=ob_get_contents(); ob_end_clean(); ';
                 if (count($this->_transStack) == 0) {
-                    $res .= 'echo(__($_b_t_s)); ';
+                    $res .= 'echo($_b_t_s); ';
                 } else {
-                    $res .= 'echo(Gatuf_Translation::sprintf(__($_b_t_s), array(';
+                    $res .= 'echo(Gatuf_Translation::sprintf($_b_t_s, array(';
                     $_tmp = array();
                     foreach ($this->_transStack as $key=>$_trans) {
                         $_tmp[] = '\''.addslashes($key).'\' => Gatuf_Template_safeEcho('.$_trans.', false)';
@@ -542,7 +541,7 @@ class Gatuf_Template_Compiler {
             // Here we start the template tag calls at the template tag
             // {tag ...} is not a block, so it must be a function.
             if (!isset($this->_allowedTags[$name])) {
-                trigger_error(sprintf(__('The function tag "%s" is not allowed.'), $name), E_USER_ERROR);
+                trigger_error(sprintf('The function tag "%s" is not allowed.', $name), E_USER_ERROR);
             }
             $argfct = $this->_parseFinal($args, $this->_allowedAssign);
             // $argfct is a string that can be copy/pasted in the PHP code
@@ -566,7 +565,7 @@ class Gatuf_Template_Compiler {
                 }
             }
             if ($res == '') {
-                trigger_error(sprintf(__('The function tag "{%s ...}" is not supported.'), $oname), E_USER_ERROR);
+                trigger_error(sprintf('The function tag "{%s ...}" is not supported.', $oname), E_USER_ERROR);
             }
         }
         return $res;
@@ -624,12 +623,12 @@ class Gatuf_Template_Compiler {
                 } elseif ($type == T_WHITESPACE || in_array($type, $allowed)) {
                     $result .= $str;
                 } else {
-                    trigger_error(sprintf(__('Invalid syntax: (%s) %s.'), $this->_currentTag, $str.' tokens'.var_export($tokens, true)), E_USER_ERROR);
+                    trigger_error(sprintf('Invalid syntax: (%s) %s.', $this->_currentTag, $str.' tokens'.var_export($tokens, true)), E_USER_ERROR);
                     return '';
                 }
             } else {
                 if (in_array($tok, $exceptchar)) {
-                    trigger_error(sprintf(__('Invalid character: (%s) %s.'), $this->_currentTag, $tok), E_USER_ERROR);
+                    trigger_error(sprintf('Invalid character: (%s) %s.', $this->_currentTag, $tok), E_USER_ERROR);
                 } elseif ($tok == '.') {
                     $inDot = true;
                     $result .= '->';

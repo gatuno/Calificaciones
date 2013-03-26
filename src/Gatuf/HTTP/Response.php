@@ -161,7 +161,7 @@ class Gatuf_HTTP_Response
                 setcookie($cookie, $data, $expire,
                           '/',
                           null, 
-                          false
+                          false,
                           true); 
             }
         } else {
