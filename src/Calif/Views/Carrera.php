@@ -22,29 +22,26 @@ class Calif_Views_Carrera {
 		return new Gatuf_HTTP_Response('Hola');
 	}
 	
-	/*public function agregarCarrera ($request, $match) {
+	public function agregarCarrera ($request, $match) {
 		$title = 'Crear carrera';
 		$extra = array ();
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Carrera_Agregar($request->POST, $extra);
 			if ($form->isValid()) {
 				$carrera = $form->save();
-				$url = Pluf_HTTP_URL_urlForView('Calif_Views_Carrera::index');
-				return new Pluf_HTTP_Response_Redirect($url);
+				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Carrera::index');
+				return new Gatuf_HTTP_Response_Redirect($url);
 			}
 		} else {
 			$form = new Calif_Form_Carrera_Agregar(null, $extra);
 		}
 		//$base = Pluf::f('url_base').Pluf::f('idf_base').'/p/';
-		return Pluf_Shortcuts_RenderToResponse('calif/carrera/add-carrera.html',
-			array(
-				'page_title' => $title,
-				'form' => $form,
-			),
-			$request);
+		$tmpl = new Gatuf_Template ('calif/carrera/add-carrera.html');
+		$context = new Gatuf_Template_Context(array('page_title' => $title, 'form' => $form));
+		return new Gatuf_HTTP_Response ($tmpl->render ($context));
 	}
 	
-	public function actualizarCarrera ($request, $match) {
+	/*public function actualizarCarrera ($request, $match) {
 		$title = 'Actualizar carrera';
 		$extra = array ();
 		

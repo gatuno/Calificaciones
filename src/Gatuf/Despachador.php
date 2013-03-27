@@ -44,7 +44,7 @@ class Gatuf_Despachador {
 				$response->render($req->method != 'HEAD');
 			}
 		} catch (Exception $e) {
-			if (Gatuf::f('debug', false) == true) {
+			if (Gatuf::config('debug', false) == true) {
 				$response = new Gatuf_HTTP_Response_ServerErrorDebug($e);
 			} else {
 				$response = new Gatuf_HTTP_Response_ServerError($e);

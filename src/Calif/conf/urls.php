@@ -11,17 +11,17 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
-	'regex' => '#^/carrera/(\w+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Carrera',
-	'method' => 'verCarrera',
-);
-
-$ctl[] = array(
 	'regex' => '#^/carrera/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Carrera',
 	'method' => 'agregarCarrera',
+);
+
+$ctl[] = array(
+	'regex' => '#^/carrera/(\w+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Carrera',
+	'method' => 'verCarrera',
 );
 
 return $ctl;

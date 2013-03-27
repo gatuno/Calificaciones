@@ -1,0 +1,19 @@
+{extends 'calif/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+<p>The form contains some errors. Please correct them and resubmit it.</p>
+{if $form.get_top_errors}
+{$form.render_top_errors}
+{/if}
+</div>
+{/if}
+<form method="post" action=".">
+<table>
+{$form.render_table}
+<tr>
+<td>&nbsp;</td>
+<td><input type="submit" name="submit" value="Submit Form" /></td>
+</tr>
+</table>
+{/block}
