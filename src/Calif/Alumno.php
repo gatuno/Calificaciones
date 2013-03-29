@@ -207,4 +207,12 @@ class Calif_Alumno {
 	public function displayVal ($field) {
 		return $this->$field;
 	}
+	
+	public function displaycarrera ($extra) {
+		if (!isset ($extra[$this->carrera])) {
+			throw new Exception ("Oops: Un alumno tiene registrada una carrera inexistente");
+		}
+		
+		return '<abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr>';
+	}
 }

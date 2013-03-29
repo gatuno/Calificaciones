@@ -3,32 +3,25 @@
 class Calif_Views_Alumno {
 	public function index ($request, $match) {
 		/* Utilizar un paginador aquí, por favor */
-		/* $garticle = new YourApp_Article();
-$pag = new Pluf_Paginator($garticle);
-$pag->action = array('YourApp_Views::listArticles');
-$pag->summary = __('This table shows a list of the articles.');
-$list_display = array(
-       array('id', 'Pluf_Paginator_ToString', __('title')),
-       array('modif_dtime', 'Pluf_Paginator_DateYMD', __('modified')),
-       array('status', 'Pluf_Paginator_DisplayVal', __('status')), 
-                     );
-$pag->items_per_page = 50;
-$pag->no_results_text = __('No articles were found.');
-$pag->configure($list_display, 
-                array('content'), 
-                array('status', 'modif_dtime')
-               );
-$pag->setFromRequest($request);*/
+		
+		/* Recuperar todas las carreras para la paginación */
+		$carreras = Gatuf::factory('Calif_Carrera')->getList ();
+		$extra = array ();
+		foreach ($carreras as $car) {
+			$extra [$car->clave] = $car->descripcion;
+		}
+		
 		$alumno =  new Calif_Alumno ();
 		
 		$pag = new Gatuf_Paginator ($alumno);
+		$pag->extra = $extra;
 		$pag->action = array ('Calif_Views_Alumno::index');
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
 			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
-			array ('carrera', 'Gatuf_Paginator_DisplayVal', 'Carrera'), /* FIXME: Foreign Key */
+			array ('carrera', 'Gatuf_Paginator_FKExtra', 'Carrera'),
 		);
 		
 		$pag->items_per_page = 50;

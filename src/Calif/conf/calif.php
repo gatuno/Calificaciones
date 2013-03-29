@@ -42,7 +42,7 @@ $cfg['pear_path'] = '/usr/share/php';
 #   $cfg['calif_base'] = '';
 #   $cfg['url_base'] = 'http://www.mydomain.com';
 #
-$cfg['calif_base'] = '/gatuno/index.php';
+$cfg['calif_base'] = '/gatuno';
 $cfg['url_base'] = 'http://alanturing.cucei.udg.mx';
 
 # ---------------------------------------------------------------------------- #

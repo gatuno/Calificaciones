@@ -676,7 +676,7 @@ class Gatuf_Paginator {
             $params['fv'] = $this->active_list_filter[1];
         }
         $params['sk'] = $field;
-        $out = '<span class="px-sort"> Ordenar %s/%s</span>';
+        $out = '<span class="px-sort"> %s/%s</span>';
         $params['so'] = 'a';
         $aurl = $this->getUrl($params);
         $asc = '<a href="'.$aurl.'" >asc</a>';
@@ -769,6 +769,10 @@ function Gatuf_Paginator_FkToString($field, $item) {
     return Gatuf_esc($fk);
 }
 
+function Gatuf_Paginator_FKExtra ($field, $item, $extra) {
+    $method = 'display'.$field;
+    return $item->$method($extra);
+}
 function Gatuf_Paginator_DateYMDHMS($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
     return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');
@@ -792,5 +796,5 @@ function Gatuf_Paginator_DateAgo($field, $item) {
     Gatuf::loadFunction('Gatuf_Date_Easy');
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
     $date = Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');
-    return Gatuf_Date_Easy($date, null, 2, __('now'));
+    return Gatuf_Date_Easy($date, null, 2, 'ahora');
 }
