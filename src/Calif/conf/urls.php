@@ -31,4 +31,34 @@ $ctl[] = array(
 	'method' => 'actualizarCarrera',
 );
 
+/* Los alumnos */
+$ctl[] = array(
+	'regex' => '#^/alumnos/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'index',
+);
+
+$ctl[] = array(
+	'regex' => '#^/alumnos/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'agregarAlumno',
+);
+
+$ctl[] = array(
+	'regex' => '#^/alumno/(\w\d{8})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'verAlumno',
+);
+
+$ctl[] = array(
+	'regex' => '#^/alumno/(\w\d{8})/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'actualizarAlumno',
+);
+
+
 return $ctl;
