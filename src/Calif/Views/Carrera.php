@@ -19,7 +19,56 @@ class Calif_Views_Carrera {
 	}
 	
 	public function verCarrera ($request, $match) {
-		return new Gatuf_HTTP_Response('Hola');
+		/* Ver si esta carrera es válida */
+		$carrera = new Calif_Carrera ();
+		if (false === ($carrera->getCarrera ($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		/* Verificar que la carrera esté en mayúsculas */
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Carrera::verCarrera', array ($nueva_clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		$page_title = 'Carrera "'.$carrera->descripcion.'"';
+		
+		/* No se necesitan recuperar todas las carreras, solo la que estamos viendo */
+		$extra = array ($carrera->clave => $carrera->descripcion);
+		
+		$alumno =  new Calif_Alumno ();
+		
+		$pag = new Gatuf_Paginator ($alumno);
+		$pag->extra = $extra;
+		/* Forzar a solo ver los de esta carrera */
+		$sql = new Gatuf_SQL ('Carrera=%s', array ($carrera->clave));
+		$pag->forced_where = $sql;
+		
+		$pag->action = array ('Calif_Views_Carrera::verCarrera', $match[1]);
+		$pag->summary = 'Lista de los alumnos';
+		$list_display = array (
+			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
+			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
+			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
+			array ('carrera', 'Gatuf_Paginator_FKExtra', 'Carrera'),
+		);
+		
+		$pag->items_per_page = 50;
+		$pag->no_results_text = 'No se encontraron alumnos';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('codigo', 'nombre', 'apellido'),
+			array ('codigo', 'nombre', 'apellido')
+		);
+		
+		$pag->setFromRequest ($request);
+		
+		$context = new Gatuf_Template_Context(array('page_title' => $page_title,
+                                                   'paginador' => $pag)
+                                            );
+		$tmpl = new Gatuf_Template('calif/carrera/carrera.html');
+		return new Gatuf_HTTP_Response($tmpl->render($context));
 	}
 	
 	public function agregarCarrera ($request, $match) {
@@ -47,14 +96,13 @@ class Calif_Views_Carrera {
 		
 		$carrera = new Calif_Carrera ();
 		if (false === ($carrera->getCarrera ($match[1]))) {
-			/* Reintentar con la clave de la carrera en mayúsculas */
-			$nueva_clave = mb_strtoupper ($match[1]);
-			if (false === ($carrera->getCarrera ($nueva_clave))) {
-				throw new Pluf_HTTP_Error404();
-			} else {
-				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Carrera::actualizarCarrera', array ($nueva_clave));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
+			throw new Pluf_HTTP_Error404();
+		}
+		/* Verificar que la carrera esté en mayúsculas */
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Carrera::actualizarCarrera', array ($nueva_clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		$extra['carrera'] = $carrera;

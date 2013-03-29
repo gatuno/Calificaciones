@@ -619,7 +619,7 @@ class Gatuf_Paginator {
             $this->where_clause = $lastsql->gen();
             if (strlen($this->where_clause) == 0) 
                 $this->where_clause = null;
-        }            
+        }
         return $this->where_clause;
     }
 

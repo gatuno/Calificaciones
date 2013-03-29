@@ -57,6 +57,7 @@ class Calif_Alumno {
 			
 			mysql_free_result ($result);
 		}
+		return true;
     }
     
     function getList ($p=array()) {
