@@ -38,12 +38,12 @@ class Calif_Carrera {
     
 	function getCarrera ($clave) {
 		/* Recuperar una carrera */
-		$sql = sprintf ("SELECT * FROM %s WHERE Clave = '%s'", $this->tabla, $clave);
+		$sql = sprintf ('SELECT * FROM %s WHERE Clave = %s', $this->tabla, Gatuf_DB_esc ($clave));
 		
 		$result = mysql_query ($sql, $this->_con);
 		
 		if (mysql_num_rows ($result) == 0) {
-			return null;
+			return false;
 		} else {
 			$object = mysql_fetch_object ($result);
 			$this->clave = $object->Clave;
@@ -168,8 +168,25 @@ class Calif_Carrera {
 		return $res;
 	}
 	
+	function getCount($p=array()) {
+		$p['count'] = true;
+		$count = $this->getList($p);
+		return (int) $count;
+	}
+    
 	function create () {
-		$req = sprintf ('INSERT INTO %s (Clave, Descripcion) VALUES (\'%s\', \'%s\');', $this->tabla, $this->clave, $this->descripcion);
+		$req = sprintf ('INSERT INTO %s (Clave, Descripcion) VALUES (%s, %s);', $this->tabla, Gatuf_DB_esc ($this->clave), Gatuf_DB_esc ($this->descripcion));
+		$res = mysql_query ($req);
+		
+		if ($res === false) {
+			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
+		}
+		return true;
+	}
+	
+	function update () {
+		$req = sprintf ('UPDATE %s SET Descripcion = %s WHERE Clave = %s', $this->tabla, Gatuf_DB_esc ($this->descripcion), Gatuf_DB_esc ($this->clave));
+		
 		$res = mysql_query ($req);
 		
 		if ($res === false) {

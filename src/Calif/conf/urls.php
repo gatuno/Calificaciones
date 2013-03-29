@@ -2,26 +2,33 @@
 $base = Gatuf::config('calif_base');
 $ctl = array ();
 
+/* Las carreras */
 $ctl[] = array(
-	'regex' => '#^/carrera/$#',
+	'regex' => '#^/carreras/$#',
 	'base' => $base,
-	'priority' => 4,
 	'model' => 'Calif_Views_Carrera',
 	'method' => 'index',
 );
 
 $ctl[] = array(
-	'regex' => '#^/carrera/add/$#',
+	'regex' => '#^/carreras/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Carrera',
 	'method' => 'agregarCarrera',
 );
 
 $ctl[] = array(
-	'regex' => '#^/carrera/(\w+)/$#',
+	'regex' => '#^/carrera/([A-Za-z]{3,5})/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Carrera',
 	'method' => 'verCarrera',
+);
+
+$ctl[] = array(
+	'regex' => '#^/carrera/([A-Za-z]{3,5})/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Carrera',
+	'method' => 'actualizarCarrera',
 );
 
 return $ctl;

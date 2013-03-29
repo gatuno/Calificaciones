@@ -8,9 +8,10 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 				'label' => 'Clave',
 				'initial' => '',
 				'help_text' => 'Debe ser una clave de carrera única',
+				'max_length' => 5,
+				'min_length' => 3,
 				'widget_attrs' => array(
-					'max_length' => 5,
-					'min_length' => 3,
+					'maxlength' => 5,
 				),
 		));
 		
@@ -20,8 +21,9 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 				'label' => 'Descripción',
 				'initial' => '',
 				'help_text' => 'Una descripción como Ingeniería en Computación',
+				'max_length' => 100,
 				'widget_attrs' => array(
-					'max_length' => 100,
+					'maxlength' => 100,
 					'size' => 30,
 				),
 		));

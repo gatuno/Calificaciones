@@ -64,7 +64,7 @@ class Gatuf_SQL {
             $args = array($args);
         }
         foreach ($args as $arg) {
-            $escaped[] = '\''.mysql_real_escape_string($arg).'\'';
+            $escaped[] = Gatuf_DB_esc ($arg);
         }
         $this->ands[] = vsprintf($base, $escaped);
         return $this;

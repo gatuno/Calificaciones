@@ -103,12 +103,12 @@ class Gatuf {
 }
 
 function __autoload($class_name) {
-	try {
+	/*try {*/
 		Gatuf::loadClass($class_name);
-	} catch (Exception $e) {
+	/*} catch (Exception $e) {
 		print $e->getMessage();
 		die ();
-	}
+	}*/
 }
 
 function Gatuf_esc($string) {

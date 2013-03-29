@@ -28,3 +28,11 @@ function Gatuf_DB_getConnection() {
                                       );
     return $GLOBALS['_GATUF_db'];
 }
+
+function Gatuf_DB_esc ($str) {
+	if (is_null ($str)) {
+		return 'NULL';
+	} else {
+		return '\''.mysql_real_escape_string($str).'\'';
+	}
+}
