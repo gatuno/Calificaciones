@@ -60,5 +60,33 @@ $ctl[] = array(
 	'method' => 'actualizarAlumno',
 );
 
+/* Algunas materias */
+$ctl[] = array (
+	'regex' => '#^/materias/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/materias/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'agregarMateria',
+);
+
+$ctl[] = array (
+	'regex' => '#^/materia/([a-zA-Z]+\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'verMateria',
+);
+
+$ctl[] = array (
+	'regex' => '#^/materia/([a-zA-Z]+\d+)/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'actualizarMateria',
+);
 
 return $ctl;

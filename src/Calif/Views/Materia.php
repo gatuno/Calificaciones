@@ -1,0 +1,103 @@
+<?php
+
+/*Pluf::loadFunction('Pluf_HTTP_URL_urlForView');
+Pluf::loadFunction('Pluf_Shortcuts_RenderToResponse');
+Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
+Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');*/
+
+class Calif_Views_Materia {
+	
+	public function index ($request, $match) {
+		/* Listar las materias aquí */
+		
+		/* TODO: Posiblemente se ocupe la lista de academias */
+		$materia = new Calif_Materia ();
+		
+		$pag = new Gatuf_Paginator ($materia);
+		$pag->action = array ('Calif_Views_Materia::index');
+		$pag->summary = 'Lista de las materias';
+		
+		$list_display = array (
+			array ('clave', 'Gatuf_Paginator_DisplayVal', 'Clave'),
+			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
+		);
+		
+		$pag->items_per_page = 40;
+		$pag->no_results_text = 'No hay materias';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('clave', 'descripcion'),
+			array ('clave', 'descripcion')
+		);
+		
+		$pag->setFromRequest ($request);
+		
+		$context = new Gatuf_Template_Context(array('page_title' => 'Materias',
+                                                   'paginador' => $pag)
+                                            );
+		$tmpl = new Gatuf_Template('calif/materia/index.html');
+		return new Gatuf_HTTP_Response($tmpl->render($context));
+	}
+	
+	public function verMateria ($request, $match) {
+		return new Gatuf_HTTP_Response ('Hola');
+	}
+	
+	public function agregarMateria ($request, $match) {
+		$title = 'Nueva materia';
+		
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Materia_Agregar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$materia = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($materia->clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Materia_Agregar (null, $extra);
+		}
+		
+		$tmpl = new Gatuf_Template ('calif/materia/edit-materia.html');
+		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
+		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+	}
+	
+	public function actualizarMateria ($request, $match) {
+		$title = 'Actualizar materia';
+		
+		$extra = array ();
+		
+		$materia = new Calif_Materia ();
+		if (false === ($materia->getMateria ($match[1]))) {
+			throw new Pluf_HTTP_Error404 ();
+		}
+		/* Verificar que la materia esté en mayúsculas */
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::actualizarMateria', array ($nueva_clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		$extra['materia'] = $materia;
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Materia_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$materia = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($materia->clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Materia_Actualizar (null, $extra);
+		}
+		
+		$tmpl = new Gatuf_Template ('calif/materia/edit-materia.html');
+		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
+		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+	}
+}

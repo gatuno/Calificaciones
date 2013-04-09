@@ -1,18 +1,18 @@
 <?php
 
-class Calif_Form_Carrera_Actualizar extends Gatuf_Form {
-	public $carrera;
+class Calif_Form_Materia_Actualizar extends Gatuf_Form {
+	public $materia;
 	
 	public function initFields($extra=array()) {
-		$this->carrera = $extra['carrera'];
+		$this->materia = $extra['materia'];
 		$this->fields['clave'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => false,
 				'label' => 'Clave',
-				'initial' => $this->carrera->clave,
-				'help_text' => 'Debe ser una clave de carrera única',
+				'initial' => $this->materia->clave,
+				'help_text' => 'La clave de la materia',
 				'max_length' => 5,
-				'min_length' => 3,
+				'min_length' => 5,
 				'widget_attrs' => array(
 					'maxlength' => 5,
 					'readonly' => 'readonly',
@@ -22,9 +22,9 @@ class Calif_Form_Carrera_Actualizar extends Gatuf_Form {
 		$this->fields['descripcion'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,
-				'label' => 'Descripción',
-				'initial' => $this->carrera->descripcion,
-				'help_text' => 'Una descripción como Ingeniería en Computación',
+				'label' => 'Materia',
+				'initial' => $this->materia->descripcion,
+				'help_text' => 'El nombre completo de la materia',
 				'max_length' => 100,
 				'widget_attrs' => array(
 					'maxlength' => 100,
@@ -38,10 +38,10 @@ class Calif_Form_Carrera_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$this->carrera->descripcion = $this->cleaned_data['descripcion'];
+		$this->materia->descripcion = $this->cleaned_data['descripcion'];
 		
-		$this->carrera->update();
+		$this->materia->update();
 		
-		return $this->carrera;
+		return $this->materia;
 	}
 }
