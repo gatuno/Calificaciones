@@ -1,11 +1,11 @@
 {extends 'calif/base.html'}
 {block body}
 {if $evals}
-La materia tiene las siguientes formas de evaluación:
+<p>La materia tiene las siguientes formas de evaluación:</p>
 <ul>{foreach $evals as $eval}
 <li>{$eval.nombre}</li>
 {/foreach}</ul>
 {else}
-Su materia no contiene formas de evaluación, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave)}">agregar una forma de evaluació</a>
+<p>Su materia no contiene formas de evaluación, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave)}">agregar una forma de evaluació</a></p>
 {/if}
 {/block}

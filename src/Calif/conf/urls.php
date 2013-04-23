@@ -2,6 +2,15 @@
 $base = Gatuf::config('calif_base');
 $ctl = array ();
 
+/* Bloque base:
+$ctl[] = array (
+	'regex' => '#^/ /$#',
+	'base' => $base,
+	'model' => 'Calif_',
+	'method' => '',
+);
+*/
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',
@@ -87,6 +96,28 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
 	'method' => 'actualizarMateria',
+);
+
+/* Las evaluaciones */
+$ctl[] = array (
+	'regex' => '#^/evaluaciones/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Evaluacion',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/evaluaciones/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Evaluacion',
+	'method' => 'agregarEval',
+);
+
+$ctl[] = array (
+	'regex' => '#^/evaluacione/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Evaluacion',
+	'method' => 'verEval',
 );
 
 return $ctl;

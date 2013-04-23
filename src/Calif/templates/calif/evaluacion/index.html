@@ -1,0 +1,11 @@
+{extends 'calif/base.html'}
+{block body}
+{if $evals}
+<p>Existen las siguientes formas de evaluación para las materias. <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">Agregar una forma de evaluación</a></p>
+<ul>{foreach $evals as $eval}
+<li>{$eval.descripcion}, del grupo {$eval.grupodescripcion}</li>
+{/foreach}</ul>
+{else}
+<p>Su sistema no contiene formas de evaluación, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación</a></p>
+{/if}
+{/block}
