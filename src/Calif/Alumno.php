@@ -216,4 +216,12 @@ class Calif_Alumno {
 		
 		return '<abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr>';
 	}
+	
+	public function displaycarrerawithlink ($extra) {
+		if (!isset ($extra[$this->carrera])) {
+			throw new Exception ("Oops: Un alumno tiene registrada una carrera inexistente");
+		}
+		
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Carrera::verCarrera', array ($this->carrera)).'"><abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr></a>';
+	}
 }

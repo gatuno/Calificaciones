@@ -773,6 +773,12 @@ function Gatuf_Paginator_FKExtra ($field, $item, $extra) {
     $method = 'display'.$field;
     return $item->$method($extra);
 }
+
+function Gatuf_Paginator_FKLink ($field, $item, $extra) {
+    $method = 'display'.$field.'withlink';
+    return $item->$method($extra);
+}
+
 function Gatuf_Paginator_DateYMDHMS($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
     return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');

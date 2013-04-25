@@ -114,7 +114,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/evaluacione/(\d+)/$#',
+	'regex' => '#^/evaluacion/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Evaluacion',
 	'method' => 'verEval',

@@ -21,7 +21,7 @@ class Calif_Views_Alumno {
 			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
-			array ('carrera', 'Gatuf_Paginator_FKExtra', 'Carrera'),
+			array ('carrera', 'Gatuf_Paginator_FKLink', 'Carrera'),
 		);
 		
 		$pag->items_per_page = 50;
