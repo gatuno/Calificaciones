@@ -3,7 +3,7 @@
 Gatuf::loadFunction ('Gatuf_DB_getConnection');
 
 class Calif_Evaluacion {
-	/* Manejador de la tabla de carreras */
+	/* Manejador de la tabla de evaluaciones */
 	
 	/* Campos */
 	public $id;
@@ -42,7 +42,7 @@ class Calif_Evaluacion {
     }
     
 	function getEval ($id) {
-		/* Recuperar una carrera */
+		/* Recuperar una evaluacion */
 		$sql = sprintf ('SELECT * FROM %s WHERE Id = %s', $this->tabla, Gatuf_DB_esc ($clave));
 		
 		$result = mysql_query ($sql, $this->_con);

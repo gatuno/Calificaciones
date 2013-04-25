@@ -769,12 +769,12 @@ function Gatuf_Paginator_FkToString($field, $item) {
     return Gatuf_esc($fk);
 }
 
-function Gatuf_Paginator_FKExtra ($field, $item, $extra) {
+function Gatuf_Paginator_FKExtra ($field, $item, $extra = null) {
     $method = 'display'.$field;
     return $item->$method($extra);
 }
 
-function Gatuf_Paginator_FKLink ($field, $item, $extra) {
+function Gatuf_Paginator_FKLink ($field, $item, $extra = null) {
     $method = 'display'.$field.'withlink';
     return $item->$method($extra);
 }

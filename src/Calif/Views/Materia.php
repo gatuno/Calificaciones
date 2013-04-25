@@ -18,7 +18,7 @@ class Calif_Views_Materia {
 		$pag->summary = 'Lista de las materias';
 		
 		$list_display = array (
-			array ('clave', 'Gatuf_Paginator_DisplayVal', 'Clave'),
+			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
 			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
 		);
 		
@@ -40,7 +40,19 @@ class Calif_Views_Materia {
 	}
 	
 	public function verMateria ($request, $match) {
-		return new Gatuf_HTTP_Response ('Hola');
+		$materia =  new Calif_Materia ();
+		
+		if (false === ($materia->getMateria($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::verMateria', array ($nueva_clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		
 	}
 	
 	public function agregarMateria ($request, $match) {

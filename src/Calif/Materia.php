@@ -9,8 +9,11 @@ class Calif_Materia {
 	public $clave;
 	public $descripcion;
 	
+	public $misevals;
+	
 	/* La tabla de donde recoger los datos */
 	public $tabla;
+	public $tabla_porcentajes;
 	
 	/* La conexión mysql con la base de datos */
 	public $_con = null;
@@ -20,6 +23,8 @@ class Calif_Materia {
 		$prefix = Gatuf::config ('db_table_prefix', '');
 		
 		$this->tabla = $prefix.'Materias';
+		$this->tabla_porcentajes = $prefix.'Porcentajes';
+		$this->misevals = array ();
 	}
 	
 	function _getConnection() {
@@ -196,7 +201,37 @@ class Calif_Materia {
 		return true;
 	}
 	
+	function getEvals ($grupo_eval = null) {
+		$eval = new Calif_Evaluacion ();
+		
+		if (is_null ($grupo_eval)) {
+			$req = sprintf ('SELECT * FROM %s WHERE Materia = %s', $this->tabla_porcentajes, Gatuf_DB_esc ($this->clave));
+		} else {
+			$req = sprintf ('SELECT * FROM %s AS P INNER JOIN %s AS E ON P.Evaluacion = E.Id WHERE P.Materia = %s AND E.Grupo = %s', $this->tabla_porcentajes, $eval->tabla_grupos, Gatuf_DB_esc ($this->clave), $id);
+		}
+		
+		$result = mysql_query ($req, $this->_con);
+		
+		if (mysql_num_rows ($result) == 0) {
+			return array ();
+		}
+		
+		$res = array ();
+		while (($object = mysql_fetch_object ($result))) {
+			$res[$object->Evaluacion] = array ('
+		}
+		
+		mysql_free_result ($result);
+		
+		return $res;
+		
+	}
+	
 	public function displayVal ($field) {
 		return $this->$field;
+	}
+	
+	public function displayclavewithlink ($extra) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
 	}
 }
