@@ -98,6 +98,13 @@ $ctl[] = array (
 	'method' => 'actualizarMateria',
 );
 
+$ctl[] = array (
+	'regex' => '#^/materia/([a-zA-Z]+\d+)/addeval/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'agregarEval',
+);
+
 /* Las evaluaciones */
 $ctl[] = array (
 	'regex' => '#^/evaluaciones/$#',

@@ -201,14 +201,15 @@ class Calif_Materia {
 		return true;
 	}
 	
-	function getEvals ($grupo_eval = null) {
+	function getEvals ($grupo = null) {
 		$eval = new Calif_Evaluacion ();
 		
-		if (is_null ($grupo_eval)) {
-			$req = sprintf ('SELECT * FROM %s WHERE Materia = %s', $this->tabla_porcentajes, Gatuf_DB_esc ($this->clave));
-		} else {
-			$req = sprintf ('SELECT * FROM %s AS P INNER JOIN %s AS E ON P.Evaluacion = E.Id WHERE P.Materia = %s AND E.Grupo = %s', $this->tabla_porcentajes, $eval->tabla_grupos, Gatuf_DB_esc ($this->clave), $id);
+		$sql_filter = new Gatuf_SQL ('Materia=%s', $this->clave);
+		if (!is_null ($grupo)) {
+			$sql_filter->SAnd ($grupo);
 		}
+		
+		$req = sprintf ('SELECT P.Evaluacion, P.Porcentaje, P.Abierto, P.Apertura, P.Cierre, E.Descripcion FROM %s AS P INNER JOIN %s AS E ON P.Evaluacion = E.Id WHERE %s', $this->tabla_porcentajes, $eval->tabla, $sql_filter->gen());
 		
 		$result = mysql_query ($req, $this->_con);
 		
@@ -218,13 +219,17 @@ class Calif_Materia {
 		
 		$res = array ();
 		while (($object = mysql_fetch_object ($result))) {
-			$res[$object->Evaluacion] = array ('
+			$res[$object->Evaluacion] = array ('Porcentaje' => $object->Porcentaje,
+			                                   'Abierto' => ($object->Abierto ? true : false),
+			                                   'Apertura' => $object->Apertura,
+			                                   'Cierre' => $object->Cierre,
+			                                   'Descripcion' => $object->Descripcion
+			                                   );
 		}
 		
 		mysql_free_result ($result);
 		
 		return $res;
-		
 	}
 	
 	public function displayVal ($field) {

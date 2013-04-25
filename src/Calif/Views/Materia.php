@@ -52,7 +52,22 @@ class Calif_Views_Materia {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
+		$e = new Calif_Evaluacion ();
+		$grupos = $e->getGruposEvals ();
+		$evals = array ();
 		
+		foreach ($grupos as $id_grupo => $grupo) {
+			$sql = new Gatuf_SQL ('Grupo=%s', $id_grupo);
+			$evals[$id_grupo] = $materia->getEvals ($sql);
+		}
+		
+		$context = new Gatuf_Template_Context (array('page_title' => 'Ver materia',
+		                                             'evals' => $evals,
+		                                             'grupos' => $grupos,
+		                                             'materia' => $materia)
+		                                      );
+		$tmpl = new Gatuf_Template('calif/materia/ver-materia.html');
+		return new Gatuf_HTTP_Response($tmpl->render($context));
 	}
 	
 	public function agregarMateria ($request, $match) {
