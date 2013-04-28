@@ -127,4 +127,53 @@ class Calif_Views_Materia {
 		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
 		return new Gatuf_HTTP_Response ($tmpl->render ($context));
 	}
+	
+	public function agregarEval ($request, $match) {
+		$extra = array ();
+		
+		$materia = new Calif_Materia ();
+		if (false === ($materia->getMateria ($match[1]))) {
+			throw new Pluf_HTTP_Error404 ();
+		}
+		/* Verificar que la materia esté en mayúsculas */
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::agregarEval', array ($nueva_clave, $match[2]));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Verificar que el grupo de evaluación exista */
+		$descr_grupo = Gatuf::factory ('Calif_Evaluacion')->getGrupoEval ($match[2]);
+		if ($descr_grupo === false) {
+			throw new Pluf_HTTP_Error404 ();
+		}
+		
+		$filtro = new Gatuf_SQL ('Grupo=%s', $match[2]);
+		$disponibles = $materia->getNotEvals ($filtro);
+		
+		if (count ($disponibles) == 0) {
+			/* TODO: Lanzar un lindo mensaje de error */
+			throw new Exception ('La materia no tiene formas de evaluacion disponibles para este grupo');
+		}
+		
+		$title = 'Agregar evaluación a la materia "' . $materia->descripcion .'", para '.$descr_grupo;
+		
+		$extra = array ('evals' => $disponibles, 'materia' => $materia);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Materia_AgregarEval ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($materia->clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Materia_AgregarEval (null, $extra);
+		}
+		
+		$tmpl = new Gatuf_Template ('calif/materia/add-eval.html');
+		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
+		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+	}
 }

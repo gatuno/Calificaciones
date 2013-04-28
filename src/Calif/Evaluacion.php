@@ -73,6 +73,21 @@ class Calif_Evaluacion {
 		return $grupos_evals;
 	}
 	
+	function getGrupoEval ($id) {
+		$where = new Gatuf_SQL ('Id=%s', $id);
+		$sql = sprintf ('SELECT * FROM %s WHERE %s', $this->tabla_grupos, $where->gen());
+		
+		$result = mysql_query ($sql, $this->_con);
+		
+		if (mysql_num_rows ($result) == 0) {
+			return false;
+		} else {
+			$object = mysql_fetch_object ($result);
+			mysql_free_result ($result);
+			return $object->Descripcion;
+		}
+	}
+	
 	function getList ($p=array()) {
 		$default = array('filter' => null,
                          'order' => null,

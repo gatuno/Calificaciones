@@ -201,7 +201,7 @@ class Calif_Materia {
 		return true;
 	}
 	
-	function getEvals ($grupo = null) {
+	public function getEvals ($grupo = null) {
 		$eval = new Calif_Evaluacion ();
 		
 		$sql_filter = new Gatuf_SQL ('Materia=%s', $this->clave);
@@ -230,6 +230,48 @@ class Calif_Materia {
 		mysql_free_result ($result);
 		
 		return $res;
+	}
+	
+	public function getNotEvals ($grupo = null) {
+		/* Super SQL:
+		 SELECT * FROM Evaluaciones AS E WHERE NOT EXISTS (SELECT * FROM Porcentajes AS P WHERE P.Materia = 'CC100' AND E.Id = P.Evaluacion) AND Grupo = 2 */
+		$eval = new Calif_Evaluacion ();
+		$filtro = new Gatuf_SQL ('NOT EXISTS (SELECT * FROM '.$this->tabla_porcentajes.' WHERE '.$this->tabla_porcentajes.'.Materia=%s AND '.$this->tabla_porcentajes.'.Evaluacion='.$eval->tabla.'.Id)', $this->clave);
+		
+		if (!is_null ($grupo)) {
+			$filtro->SAnd ($grupo);
+		}
+		
+		$req = sprintf ('SELECT * FROM %s WHERE %s', $eval->tabla, $filtro->gen());
+		
+		$result = mysql_query ($req, $this->_con);
+		
+		if (mysql_num_rows ($result) == 0) {
+			return array ();
+		}
+		 
+		$res = array ();
+		while (($object = mysql_fetch_object ($result))) {
+			$eval->id = $object->Id;
+			$eval->descripcion = $object->Descripcion;
+			$eval->grupo = $object->Grupo;
+			$res[] = clone ($eval);
+		}
+		
+		mysql_free_result ($result);
+		
+		return $res;
+	}
+	
+	public function addEval ($eval, $porcentaje) {
+		/* Agregar una forma de evaluación a esta materia */
+		$req = sprintf ('INSERT INTO %s (Materia, Evaluacion, Porcentaje) VALUES (%s, %s, %s)', $this->tabla_porcentajes, Gatuf_DB_esc ($this->clave), Gatuf_DB_esc ($eval), Gatuf_DB_esc ($porcentaje));
+		$res = mysql_query ($req);
+		
+		if ($res === false) {
+			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
+		}
+		return true;
 	}
 	
 	public function displayVal ($field) {

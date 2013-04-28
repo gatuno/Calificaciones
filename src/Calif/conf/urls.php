@@ -99,7 +99,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/materia/([a-zA-Z]+\d+)/addeval/$#',
+	'regex' => '#^/materia/([a-zA-Z]+\d+)/addeval/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
 	'method' => 'agregarEval',

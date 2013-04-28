@@ -34,7 +34,7 @@ class Gatuf_Form_Field_Integer extends Gatuf_Form_Field {
         } else {
             if ($value == '') return $value;
             if (!preg_match('/^[\+\-]?[0-9]+$/', $value)) {
-                throw new Gatuf_Form_Invalid('The value must be an integer.');
+                throw new Gatuf_Form_Invalid('El valor debe ser un número.');
             }
             $this->checkMinMax($value);
         }
@@ -43,10 +43,10 @@ class Gatuf_Form_Field_Integer extends Gatuf_Form_Field {
 
     protected function checkMinMax($value) {
         if ($this->max !== null and $value > $this->max) {
-            throw new Gatuf_Form_Invalid(sprintf('Ensure that this value is not greater than %1$d.', $this->max));
+            throw new Gatuf_Form_Invalid(sprintf('Asegure que el valor no es más grande que %1$d.', $this->max));
         }
         if ($this->min !== null and $value < $this->min) {
-            throw new Gatuf_Form_Invalid(sprintf('Ensure that this value is not lower than %1$d.', $this->min));
+            throw new Gatuf_Form_Invalid(sprintf('Asegure que el valor no es menor que %1$d.', $this->min));
         }
     }
 }
