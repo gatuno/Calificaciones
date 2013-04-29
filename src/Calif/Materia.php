@@ -232,7 +232,7 @@ class Calif_Materia {
 		return $res;
 	}
 	
-	public function getNotEvals ($grupo = null) {
+	public function getNotEvals ($grupo = null, $count = false) {
 		/* Super SQL:
 		 SELECT * FROM Evaluaciones AS E WHERE NOT EXISTS (SELECT * FROM Porcentajes AS P WHERE P.Materia = 'CC100' AND E.Id = P.Evaluacion) AND Grupo = 2 */
 		$eval = new Calif_Evaluacion ();
@@ -247,9 +247,11 @@ class Calif_Materia {
 		$result = mysql_query ($req, $this->_con);
 		
 		if (mysql_num_rows ($result) == 0) {
+			if ($count == true) return false;
 			return array ();
 		}
-		 
+		
+		if ($count == true) return true;
 		$res = array ();
 		while (($object = mysql_fetch_object ($result))) {
 			$eval->id = $object->Id;

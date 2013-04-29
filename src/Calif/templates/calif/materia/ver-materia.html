@@ -2,13 +2,14 @@
 {block body}
 <h1>{$materia.clave} - {$materia.descripcion}</h1>
 {foreach $grupos as $id_grupo => $grupo}
-<p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:
+<p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:</p>
 {if $evals[$id_grupo]}
 <ul>{foreach $evals[$id_grupo] as $eval}
 <li>{$eval['Descripcion']}</li>
 {/foreach}</ul>
+{if $disponibles[$id_grupo]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $id_grupo)}">agregar una nueva forma de evaluación</a> a {$grupo}</p>{/if}
 {else}
-<p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave)}">agregar una forma de evaluación</a></p>
+<p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
 {/if}
 {/foreach}
 {/block}

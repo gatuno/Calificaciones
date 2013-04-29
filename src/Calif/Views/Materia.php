@@ -55,16 +55,19 @@ class Calif_Views_Materia {
 		$e = new Calif_Evaluacion ();
 		$grupos = $e->getGruposEvals ();
 		$evals = array ();
+		$disponibles = array ();
 		
 		foreach ($grupos as $id_grupo => $grupo) {
 			$sql = new Gatuf_SQL ('Grupo=%s', $id_grupo);
 			$evals[$id_grupo] = $materia->getEvals ($sql);
+			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
 		}
 		
 		$context = new Gatuf_Template_Context (array('page_title' => 'Ver materia',
 		                                             'evals' => $evals,
 		                                             'grupos' => $grupos,
-		                                             'materia' => $materia)
+		                                             'materia' => $materia,
+		                                             'disponibles' => $disponibles)
 		                                      );
 		$tmpl = new Gatuf_Template('calif/materia/ver-materia.html');
 		return new Gatuf_HTTP_Response($tmpl->render($context));
