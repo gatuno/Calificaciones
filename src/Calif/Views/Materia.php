@@ -1,9 +1,10 @@
 <?php
 
 /*Pluf::loadFunction('Pluf_HTTP_URL_urlForView');
-Pluf::loadFunction('Pluf_Shortcuts_RenderToResponse');
 Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
 Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');*/
+
+Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Materia {
 	
@@ -32,11 +33,10 @@ class Calif_Views_Materia {
 		
 		$pag->setFromRequest ($request);
 		
-		$context = new Gatuf_Template_Context(array('page_title' => 'Materias',
-                                                   'paginador' => $pag)
-                                            );
-		$tmpl = new Gatuf_Template('calif/materia/index.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/index.html',
+		                                         array('page_title' => 'Materias',
+                                                       'paginador' => $pag),
+                                                 $request);
 	}
 	
 	public function verMateria ($request, $match) {
@@ -63,14 +63,13 @@ class Calif_Views_Materia {
 			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
 		}
 		
-		$context = new Gatuf_Template_Context (array('page_title' => 'Ver materia',
-		                                             'evals' => $evals,
-		                                             'grupos' => $grupos,
-		                                             'materia' => $materia,
-		                                             'disponibles' => $disponibles)
-		                                      );
-		$tmpl = new Gatuf_Template('calif/materia/ver-materia.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
+		                                         array('page_title' => 'Ver materia',
+		                                               'evals' => $evals,
+		                                               'grupos' => $grupos,
+		                                               'materia' => $materia,
+		                                               'disponibles' => $disponibles),
+		                                         $request);
 	}
 	
 	public function agregarMateria ($request, $match) {
@@ -91,9 +90,10 @@ class Calif_Views_Materia {
 			$form = new Calif_Form_Materia_Agregar (null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/materia/edit-materia.html');
-		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/edit-materia.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function actualizarMateria ($request, $match) {
@@ -126,9 +126,10 @@ class Calif_Views_Materia {
 			$form = new Calif_Form_Materia_Actualizar (null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/materia/edit-materia.html');
-		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/edit-materia.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function agregarEval ($request, $match) {
@@ -175,8 +176,9 @@ class Calif_Views_Materia {
 			$form = new Calif_Form_Materia_AgregarEval (null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/materia/add-eval.html');
-		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/add-eval.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 }
