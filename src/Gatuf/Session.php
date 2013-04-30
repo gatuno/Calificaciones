@@ -28,7 +28,7 @@
 class Gatuf_Session {
 	public $tabla = 'sessions';
 	public $data = array();
-	public $cookie_name = 'sessionid';
+	public $cookie_name = 'sessionid'; /*FIXME: Concatenar el año para evitar conflictos */
 	public $touched = false;
 	public $test_cookie_name = 'testcookie';
 	public $test_cookie_value = 'worked';

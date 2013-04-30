@@ -30,7 +30,7 @@
 class Gatuf_Template_Context_Request extends Gatuf_Template_Context {
     function __construct($request, $vars=array()) {
         $vars = array_merge(array('request' => $request), $vars);
-        foreach (Gatuf::f('template_context_processors', array()) as $proc) {
+        foreach (Gatuf::config('template_context_processors', array()) as $proc) {
             Gatuf::loadFunction($proc);
             $vars = array_merge($proc($request), $vars); 
         }
