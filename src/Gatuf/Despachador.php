@@ -7,11 +7,11 @@ class Gatuf_Despachador {
 			$req = new Gatuf_HTTP_Request($query);
 			/* Justo aquí cargar las middleware_clases */
 			$middleware = array();
-			/*foreach (Gatuf::config('middleware_classes', array()) as $mw) {
+			foreach (Gatuf::config('middleware_classes', array()) as $mw) {
 				$middleware[] = new $mw();
-			}*/
+			}
 			$skip = false;
-			/*foreach ($middleware as $mw) {
+			foreach ($middleware as $mw) {
 				if (method_exists($mw, 'process_request')) {
 					$response = $mw->process_request($req);
 					if ($response !== false) {
@@ -24,19 +24,19 @@ class Gatuf_Despachador {
 						break;
 					}
 				}
-			}*/
+			}
 			if ($skip === false) {
 				$response = self::match($req);
 				if (!empty($req->response_vary_on)) {
 					$response->headers['Vary'] = $req->response_vary_on;
 				}
-				/* Procesar la respuesta con las middleware_clases
+				/* Procesar la respuesta con las middleware_clases */
 				$middleware = array_reverse($middleware);
 				foreach ($middleware as $mw) {
 					if (method_exists($mw, 'process_response')) {
 						$response = $mw->process_response($req, $response);
 					}
-				}*/
+				}
 				/* No sé para qué es esto ... */
 				if (Gatuf::config('pluf_runtime_header', false)) {
 					$response->headers['X-Perf-Runtime'] = sprintf('%.5f', (microtime(true) - $GLOBALS['_PX_starttime']));
