@@ -2,18 +2,17 @@
 
 Gatuf::loadFunction ('Gatuf_DB_getConnection');
 
-class Calif_Materia {
-	/* Manejador de la tabla de carreras */
+class Calif_Seccion {
+	/* Manejador de la tabla de secciones */
 	
 	/* Campos */
-	public $clave;
-	public $descripcion;
-	
-	public $misevals;
+	public $nrc;
+	public $materia;
+	public $seccion;
+	public $maestro;
 	
 	/* La tabla de donde recoger los datos */
 	public $tabla;
-	public $tabla_porcentajes;
 	
 	/* La conexión mysql con la base de datos */
 	public $_con = null;
@@ -22,9 +21,7 @@ class Calif_Materia {
 		$this->_getConnection();
 		$prefix = Gatuf::config ('db_table_prefix', '');
 		
-		$this->tabla = $prefix.'Materias';
-		$this->tabla_porcentajes = $prefix.'Porcentajes';
-		$this->misevals = array ();
+		$this->tabla = $prefix.'Secciones';
 	}
 	
 	function _getConnection() {
@@ -41,9 +38,9 @@ class Calif_Materia {
 		return $this->_con;
     }
     
-	function getMateria ($clave) {
-		/* Recuperar una carrera */
-		$sql = sprintf ('SELECT * FROM %s WHERE Clave = %s', $this->tabla, Gatuf_DB_esc ($clave));
+	function getNrc ($nrc) {
+		/* Recuperar una seccion */
+		$sql = sprintf ('SELECT * FROM %s WHERE Nrc=%s', $this->tabla, Gatuf_DB_esc ($nrc));
 		
 		$result = mysql_query ($sql, $this->_con);
 		
@@ -51,8 +48,10 @@ class Calif_Materia {
 			return false;
 		} else {
 			$object = mysql_fetch_object ($result);
-			$this->clave = $object->Clave;
-			$this->descripcion = $object->Descripcion;
+			$this->nrc = $object->Nrc;
+			$this->materia = $object->Materia;
+			$this->seccion = $object->Seccion;
+			$this->maestro = $object->Maestro;
 			
 			mysql_free_result ($result);
 		}
@@ -164,8 +163,10 @@ class Calif_Materia {
 		
 		$res = array ();
 		while (($object = mysql_fetch_object ($result))) {
-			$this->clave = $object->Clave;
-			$this->descripcion = $object->Descripcion;
+			$this->nrc = $object->Nrc;
+			$this->materia = $object->Materia;
+			$this->seccion = $object->Seccion;
+			$this->maestro = $object->Maestro;
 			$res[] = clone ($this);
 		}
 		
@@ -181,7 +182,7 @@ class Calif_Materia {
 	}
     
 	function create () {
-		$req = sprintf ('INSERT INTO %s (Clave, Descripcion) VALUES (%s, %s);', $this->tabla, Gatuf_DB_esc ($this->clave), Gatuf_DB_esc ($this->descripcion));
+		$req = sprintf ('INSERT INTO %s (Nrc, Seccion, Materia, Maestro) VALUES (%s, %s, %s, %s);', $this->tabla, Gatuf_DB_esc ($this->nrc), Gatuf_DB_esc ($this->seccion), Gatuf_DB_esc ($this->materia), Gatuf_DB_esc ($this->maestro));
 		$res = mysql_query ($req);
 		
 		if ($res === false) {
@@ -191,83 +192,8 @@ class Calif_Materia {
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET Descripcion = %s WHERE Clave = %s', $this->tabla, Gatuf_DB_esc ($this->descripcion), Gatuf_DB_esc ($this->clave));
+		$req = sprintf ('UPDATE %s SET Maestro=%s WHERE Nrc=%s', $this->tabla, Gatuf_DB_esc ($this->maestro), Gatuf_DB_esc ($this->nrc));
 		
-		$res = mysql_query ($req);
-		
-		if ($res === false) {
-			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
-		}
-		return true;
-	}
-	
-	public function getEvals ($grupo = null) {
-		$eval = new Calif_Evaluacion ();
-		
-		$sql_filter = new Gatuf_SQL ('Materia=%s', $this->clave);
-		if (!is_null ($grupo)) {
-			$sql_filter->SAnd ($grupo);
-		}
-		
-		$req = sprintf ('SELECT P.Evaluacion, P.Porcentaje, P.Abierto, P.Apertura, P.Cierre, E.Descripcion FROM %s AS P INNER JOIN %s AS E ON P.Evaluacion = E.Id WHERE %s', $this->tabla_porcentajes, $eval->tabla, $sql_filter->gen());
-		
-		$result = mysql_query ($req, $this->_con);
-		
-		if (mysql_num_rows ($result) == 0) {
-			return array ();
-		}
-		
-		$res = array ();
-		while (($object = mysql_fetch_object ($result))) {
-			$res[$object->Evaluacion] = array ('Porcentaje' => $object->Porcentaje,
-			                                   'Abierto' => ($object->Abierto ? true : false),
-			                                   'Apertura' => $object->Apertura,
-			                                   'Cierre' => $object->Cierre,
-			                                   'Descripcion' => $object->Descripcion
-			                                   );
-		}
-		
-		mysql_free_result ($result);
-		
-		return $res;
-	}
-	
-	public function getNotEvals ($grupo = null, $count = false) {
-		/* Super SQL:
-		 SELECT * FROM Evaluaciones AS E WHERE NOT EXISTS (SELECT * FROM Porcentajes AS P WHERE P.Materia = 'CC100' AND E.Id = P.Evaluacion) AND Grupo = 2 */
-		$eval = new Calif_Evaluacion ();
-		$filtro = new Gatuf_SQL ('NOT EXISTS (SELECT * FROM '.$this->tabla_porcentajes.' WHERE '.$this->tabla_porcentajes.'.Materia=%s AND '.$this->tabla_porcentajes.'.Evaluacion='.$eval->tabla.'.Id)', $this->clave);
-		
-		if (!is_null ($grupo)) {
-			$filtro->SAnd ($grupo);
-		}
-		
-		$req = sprintf ('SELECT * FROM %s WHERE %s', $eval->tabla, $filtro->gen());
-		
-		$result = mysql_query ($req, $this->_con);
-		
-		if (mysql_num_rows ($result) == 0) {
-			if ($count == true) return false;
-			return array ();
-		}
-		
-		if ($count == true) return true;
-		$res = array ();
-		while (($object = mysql_fetch_object ($result))) {
-			$eval->id = $object->Id;
-			$eval->descripcion = $object->Descripcion;
-			$eval->grupo = $object->Grupo;
-			$res[] = clone ($eval);
-		}
-		
-		mysql_free_result ($result);
-		
-		return $res;
-	}
-	
-	public function addEval ($eval, $porcentaje) {
-		/* Agregar una forma de evaluación a esta materia */
-		$req = sprintf ('INSERT INTO %s (Materia, Evaluacion, Porcentaje) VALUES (%s, %s, %s)', $this->tabla_porcentajes, Gatuf_DB_esc ($this->clave), Gatuf_DB_esc ($eval), Gatuf_DB_esc ($porcentaje));
 		$res = mysql_query ($req);
 		
 		if ($res === false) {
@@ -280,7 +206,7 @@ class Calif_Materia {
 		return $this->$field;
 	}
 	
-	public function displaylinkedclave ($extra) {
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
+	public function displaylinkednrc ($extra) {
+		throw new Exception ("Metodo no implementado");
 	}
 }

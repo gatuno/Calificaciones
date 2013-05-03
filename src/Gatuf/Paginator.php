@@ -775,7 +775,7 @@ function Gatuf_Paginator_FKExtra ($field, $item, $extra = null) {
 }
 
 function Gatuf_Paginator_FKLink ($field, $item, $extra = null) {
-    $method = 'display'.$field.'withlink';
+    $method = 'displaylinked'.$field;
     return $item->$method($extra);
 }
 

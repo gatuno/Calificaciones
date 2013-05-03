@@ -127,4 +127,26 @@ $ctl[] = array (
 	'method' => 'verEval',
 );
 
+/* Las secciones */
+$ctl[] = array (
+	'regex' => '#^/secciones/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'verNrc',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'agregarNrc',
+);
+
 return $ctl;
