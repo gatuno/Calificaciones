@@ -40,7 +40,7 @@ class Gatuf_Session {
 	/* Campos de la tabla */
 	public $session_key, $session_data, $expire;
 	
-	public function __construct {
+	public function __construct () {
 	    $this->_getConnection();
 		$this->session_key = '';
 	}
