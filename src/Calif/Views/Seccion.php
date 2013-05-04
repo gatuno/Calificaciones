@@ -18,7 +18,7 @@ class Calif_Views_Seccion {
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
 			array ('nrc', 'Gatuf_Paginator_DisplayVal', 'NRC'),
-			array ('materia', 'Gatuf_Paginator_DisplayVal', 'Clave de la materia'),
+			array ('materia', 'Gatuf_Paginator_FKLink', 'Clave de la materia'),
 			array ('seccion', 'Gatuf_Paginator_DisplayVal', 'Sección'),
 			array ('maestro', 'Gatuf_Paginator_DisplayVal', 'Maestro'),
 		);
@@ -35,7 +35,7 @@ class Calif_Views_Seccion {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
 		                                          array ('paginador' => $pag,
-		                                                 'title' => 'Secciones'),
+		                                                 'page_title' => 'Secciones'),
 		                                          $request);
 	}
 	

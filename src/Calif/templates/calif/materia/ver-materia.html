@@ -12,4 +12,6 @@
 <p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
 {/if}
 {/foreach}
+<h2>Lista de secciones de {$materia.clave}</h2>
+{$paginador.render}
 {/block}

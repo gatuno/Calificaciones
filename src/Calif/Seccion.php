@@ -209,4 +209,8 @@ class Calif_Seccion {
 	public function displaylinkednrc ($extra) {
 		throw new Exception ("Metodo no implementado");
 	}
+	
+	public function displaylinkedmateria ($extra) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$this->materia.'</a>';
+	}
 }

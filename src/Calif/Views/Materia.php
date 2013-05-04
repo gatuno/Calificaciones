@@ -63,11 +63,39 @@ class Calif_Views_Materia {
 			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
 		}
 		
+		/* Listar las secciones de esta materia */
+		$seccion = new Calif_Seccion ();
+		
+		/* Enlaces extras */
+		$pag = new Gatuf_Paginator ($seccion);
+		
+		$pag->action = array ('Calif_Views_Materia::verMateria', $materia->clave);
+		$pag->summary = 'Lista de secciones';
+		$list_display = array (
+			array ('nrc', 'Gatuf_Paginator_DisplayVal', 'NRC'),
+			array ('materia', 'Gatuf_Paginator_DisplayVal', 'Materia'),
+			array ('seccion', 'Gatuf_Paginator_DisplayVal', 'Sección'),
+			array ('maestro', 'Gatuf_Paginator_DisplayVal', 'Maestro'),
+		);
+		
+		$pag->items_per_page = 30;
+		$pag->no_results_text = 'No se encontraron secciones';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('nrc', 'materia', 'seccion', 'maestro'),
+			array ('nrc', 'materia', 'seccion', 'maestro')
+		);
+		
+		$sql_filter = new Gatuf_SQL ('Materia=%s', $materia->clave);
+		$pag->forced_where = $sql_filter;
+		$pag->setFromRequest ($request);
+		
 		$context = new Gatuf_Template_Context (array('page_title' => 'Ver materia',
 		                                             'evals' => $evals,
 		                                             'grupos' => $grupos,
 		                                             'materia' => $materia,
-		                                             'disponibles' => $disponibles)
+		                                             'disponibles' => $disponibles,
+		                                             'paginador' => $pag)
 		                                      );
 		$tmpl = new Gatuf_Template('calif/materia/ver-materia.html');
 		return new Gatuf_HTTP_Response($tmpl->render($context));
