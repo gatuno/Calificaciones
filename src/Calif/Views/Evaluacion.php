@@ -1,17 +1,18 @@
 <?php
 
+Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+
 class Calif_Views_Evaluacion {
 	public function index ($request, $match) {
 		$eval = new Calif_Evaluacion ();
 		$evals = $eval->getList();
 		$grupos_evals = $eval->getGruposEvals ();
 		
-		$context = new Gatuf_Template_Context(array('page_title' => 'Evaluaciones',
-                                                   'evals' => $evals,
-                                                   'grupos_evals' => $grupos_evals)
-                                            );
-		$tmpl = new Gatuf_Template('calif/evaluacion/index.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/index.html',
+		                                         array('page_title' => 'Evaluaciones',
+                                                       'evals' => $evals,
+                                                       'grupos_evals' => $grupos_evals),
+                                                 $request);
 	}
 	
 	public function agregarEval ($request, $match) {
@@ -32,9 +33,10 @@ class Calif_Views_Evaluacion {
 			$form = new Calif_Form_Evaluacion_Agregar (null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/evaluacion/edit-eval.html');
-		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/edit-eval.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function verEval ($request, $match) {

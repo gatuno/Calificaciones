@@ -1,5 +1,7 @@
 <?php
 
+Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+
 class Calif_Views_Alumno {
 	public function index ($request, $match) {
 		/* Utilizar un paginador aquí, por favor */
@@ -34,11 +36,10 @@ class Calif_Views_Alumno {
 		
 		$pag->setFromRequest ($request);
 		
-		$context = new Gatuf_Template_Context(array('page_title' => 'Alumnos',
-                                                   'paginador' => $pag)
-                                            );
-		$tmpl = new Gatuf_Template('calif/alumno/index.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/index.html',
+		                                         array('page_title' => 'Alumnos',
+                                                       'paginador' => $pag),
+                                                 $request);
 	}
 	
 	public function agregarAlumno ($request, $match) {
@@ -59,8 +60,9 @@ class Calif_Views_Alumno {
 			$form = new Calif_Form_Alumno_Agregar (null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/alumno/edit-alumno.html');
-		$context = new Gatuf_Template_Context (array ('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/edit-alumno.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 }

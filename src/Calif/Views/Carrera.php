@@ -1,9 +1,10 @@
 <?php
 
 /*Pluf::loadFunction('Pluf_HTTP_URL_urlForView');
-Pluf::loadFunction('Pluf_Shortcuts_RenderToResponse');
 Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
 Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');*/
+
+Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Carrera {
 	
@@ -11,11 +12,10 @@ class Calif_Views_Carrera {
 		# Listar las carreras aquí
 		$carreras = Gatuf::factory('Calif_Carrera')->getList();
 		
-		$context = new Gatuf_Template_Context(array('page_title' => 'Carreras',
-                                                   'carreras' => $carreras)
-                                            );
-		$tmpl = new Gatuf_Template('calif/carrera/index.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/index.html',
+		                                         array('page_title' => 'Carreras',
+		                                               'carreras' => $carreras),
+		                                         $request);
 	}
 	
 	public function verCarrera ($request, $match) {
@@ -64,11 +64,10 @@ class Calif_Views_Carrera {
 		
 		$pag->setFromRequest ($request);
 		
-		$context = new Gatuf_Template_Context(array('page_title' => $page_title,
-                                                   'paginador' => $pag)
-                                            );
-		$tmpl = new Gatuf_Template('calif/carrera/carrera.html');
-		return new Gatuf_HTTP_Response($tmpl->render($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/carrera.html',
+		                                         array('page_title' => $page_title,
+                                                       'paginador' => $pag),
+                                                 $request);
 	}
 	
 	public function agregarCarrera ($request, $match) {
@@ -84,10 +83,11 @@ class Calif_Views_Carrera {
 		} else {
 			$form = new Calif_Form_Carrera_Agregar(null, $extra);
 		}
-		//$base = Pluf::f('url_base').Pluf::f('idf_base').'/p/';
-		$tmpl = new Gatuf_Template ('calif/carrera/edit-carrera.html');
-		$context = new Gatuf_Template_Context(array('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/edit-carrera.html',
+		                                         array('page_title' => $title,
+		                                               'form' => $form),
+		                                         $request);
 	}
 	
 	public function actualizarCarrera ($request, $match) {
@@ -118,8 +118,9 @@ class Calif_Views_Carrera {
 			$form = new Calif_Form_Carrera_Actualizar(null, $extra);
 		}
 		
-		$tmpl = new Gatuf_Template ('calif/carrera/edit-carrera.html');
-		$context = new Gatuf_Template_Context(array('page_title' => $title, 'form' => $form));
-		return new Gatuf_HTTP_Response ($tmpl->render ($context));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/edit-carrera.html',
+		                                         array('page_title' => $title,
+		                                               'form' => $form),
+		                                         $request);
 	}
 }

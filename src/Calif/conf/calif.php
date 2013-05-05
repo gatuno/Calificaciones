@@ -25,6 +25,11 @@ $cfg['tmp_folder'] = '/tmp';
 # Ruta a la carpeta PEAR
 $cfg['pear_path'] = '/usr/share/php';
 
+# Ruta de los templates
+$cfg['template_folders'] = array(
+   dirname(__FILE__).'/../templates',
+);
+
 # ---------------------------------------------------------------------------- #
 #                                URL section                                   #
 # ---------------------------------------------------------------------------- #
@@ -44,6 +49,8 @@ $cfg['pear_path'] = '/usr/share/php';
 #
 $cfg['calif_base'] = '/gatuno';
 $cfg['url_base'] = 'http://alanturing.cucei.udg.mx';
+
+$cfg['calif_views'] = dirname(__FILE__).'/urls.php';
 
 # ---------------------------------------------------------------------------- #
 #                      Sección de internacionalización                         #
@@ -75,12 +82,12 @@ $cfg['db_password'] = 'WzScQqqf3AjtLPdL';
 # multiples instalaciones en la misma base de datos.
 $cfg['db_table_prefix'] = '';
 
-$cfg['calif_views'] = dirname(__FILE__).'/urls.php';
+# -----------------------
+# Configuraciones varias
+# -----------------------
 
-# Ruta de los templates
-$cfg['template_folders'] = array(
-   dirname(__FILE__).'/../templates',
+$cfg['middleware_classes'] = array(
+	'Gatuf_Session',
 );
-
 
 return $cfg;
