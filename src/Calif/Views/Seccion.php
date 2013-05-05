@@ -40,10 +40,50 @@ class Calif_Views_Seccion {
 	}
 	
 	public function verNrc ($request, $match) {
-		return new Gatuf_HTTP_Response ('Implementar ver Nrc');
+		$title = 'Ver NRC';
+		
+		$seccion =  new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		$materia = new Calif_Materia ();
+		$materia->getMateria ($seccion->materia);
+		
+		$maestro = new Calif_Maestro ();
+		$maestro->getMaestro ($seccion->maestro);
+		
+		/* TODO: Listar aquí los alumnos de este grupo */
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
+		                                          array ('seccion' => $seccion,
+		                                                 'page_title' => $title,
+		                                                 'materia' => $materia,
+		                                                 'maestro' => $maestro),
+		                                          $request);
 	}
 	
 	public function agregarNrc ($request, $match) {
-		return new Gatuf_HTTP_Response ('Implementar agregar Nrc');
+		$title = 'Crear NRC';
+		
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$seccion = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Agregar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/edit-seccion.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 }
