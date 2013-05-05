@@ -53,7 +53,7 @@ class Calif_Alumno {
 			$this->carrera = $object->Carrera;
 			$this->nombre = $object->Nombre;
 			$this->apellido = $object->Apellido;
-			$this->correo = $object->Corre;
+			$this->correo = $object->Correo;
 			
 			mysql_free_result ($result);
 		}
@@ -217,7 +217,7 @@ class Calif_Alumno {
 		return '<abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr>';
 	}
 	
-	public function displaycarrerawithlink ($extra) {
+	public function displaylinkedcarrera ($extra) {
 		if (!isset ($extra[$this->carrera])) {
 			throw new Exception ("Oops: Un alumno tiene registrada una carrera inexistente");
 		}

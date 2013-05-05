@@ -18,7 +18,7 @@ class Calif_Views_Seccion {
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
 			array ('nrc', 'Gatuf_Paginator_DisplayVal', 'NRC'),
-			array ('materia', 'Gatuf_Paginator_FKLink', 'Clave de la materia'),
+			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
 			array ('seccion', 'Gatuf_Paginator_DisplayVal', 'Sección'),
 			array ('maestro', 'Gatuf_Paginator_DisplayVal', 'Maestro'),
 		);
@@ -40,10 +40,10 @@ class Calif_Views_Seccion {
 	}
 	
 	public function verNrc ($request, $match) {
-		return Gatuf_HTTP_Response ('Implementar ver Nrc');
+		return new Gatuf_HTTP_Response ('Implementar ver Nrc');
 	}
 	
 	public function agregarNrc ($request, $match) {
-		return Gatuf_HTTP_Response ('Implementar agregar Nrc');
+		return new Gatuf_HTTP_Response ('Implementar agregar Nrc');
 	}
 }
