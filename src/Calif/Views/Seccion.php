@@ -86,4 +86,34 @@ class Calif_Views_Seccion {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public function actualizarNrc ($request, $match) {
+		$title = 'Actualizar NRC';
+		
+		$seccion =  new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		$extra = array ('seccion' => $seccion);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$seccion = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Actualizar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/edit-seccion.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
 }

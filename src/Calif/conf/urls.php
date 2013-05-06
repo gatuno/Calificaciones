@@ -143,6 +143,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'actualizarNrc',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

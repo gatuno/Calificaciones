@@ -2,7 +2,6 @@
 {block body}
 <h1>NRC {$seccion.nrc}</h1>
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a></p>
-<p>Grupo del profesor {$maestro.apellido} {$maestro.nombre} (FIXME: Convertir esto en un enlace hacia el profesor)</p>
-<p>Puede (enlace)cambiar de profesor (/enlace)</p>
+<p>Grupo del profesor {$maestro.apellido} {$maestro.nombre}. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
 <p>FIXME: Listar los alumnos de esta sección</p>
 {/block}
