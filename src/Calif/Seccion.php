@@ -13,6 +13,7 @@ class Calif_Seccion {
 	
 	/* La tabla de donde recoger los datos */
 	public $tabla;
+	public $tabla_grupos;
 	
 	/* La conexión mysql con la base de datos */
 	public $_con = null;
@@ -22,6 +23,7 @@ class Calif_Seccion {
 		$prefix = Gatuf::config ('db_table_prefix', '');
 		
 		$this->tabla = $prefix.'Secciones';
+		$this->tabla_grupos = $prefix.'Grupos';
 	}
 	
 	function _getConnection() {
@@ -180,6 +182,27 @@ class Calif_Seccion {
 		$count = $this->getList($p);
 		return (int) $count;
 	}
+    
+    function getAlumnos () {
+    	$sql = new Gatuf_SQL ('Nrc=%s', $this->nrc);
+    	
+    	$consulta = sprintf ('SELECT * FROM %s WHERE %s', $tabla_grupos, $sql->gen());
+    	
+    	$result = mysql_query ($consulta, $this->_con);
+    	
+    	if (mysql_num_rows ($result) == 0) {
+			return array ();
+		}
+		
+		$res = array ();
+		while (($object = mysql_fetch_object ($result))) {
+			$res[] = $object->Alumno;
+		}
+		
+		mysql_free_result ($result);
+		
+		retrun $res;
+    }
     
 	function create () {
 		$req = sprintf ('INSERT INTO %s (Nrc, Seccion, Materia, Maestro) VALUES (%s, %s, %s, %s);', $this->tabla, Gatuf_DB_esc ($this->nrc), Gatuf_DB_esc ($this->seccion), Gatuf_DB_esc ($this->materia), Gatuf_DB_esc ($this->maestro));
