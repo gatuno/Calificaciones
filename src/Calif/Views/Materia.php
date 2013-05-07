@@ -131,7 +131,7 @@ class Calif_Views_Materia {
 		
 		$materia = new Calif_Materia ();
 		if (false === ($materia->getMateria ($match[1]))) {
-			throw new Pluf_HTTP_Error404 ();
+			throw new Gatuf_HTTP_Error404 ();
 		}
 		/* Verificar que la materia esté en mayúsculas */
 		$nueva_clave = mb_strtoupper ($match[1]);
@@ -165,7 +165,7 @@ class Calif_Views_Materia {
 		
 		$materia = new Calif_Materia ();
 		if (false === ($materia->getMateria ($match[1]))) {
-			throw new Pluf_HTTP_Error404 ();
+			throw new Gatuf_HTTP_Error404 ();
 		}
 		/* Verificar que la materia esté en mayúsculas */
 		$nueva_clave = mb_strtoupper ($match[1]);
@@ -177,7 +177,7 @@ class Calif_Views_Materia {
 		/* Verificar que el grupo de evaluación exista */
 		$descr_grupo = Gatuf::factory ('Calif_Evaluacion')->getGrupoEval ($match[2]);
 		if ($descr_grupo === false) {
-			throw new Pluf_HTTP_Error404 ();
+			throw new Gatuf_HTTP_Error404 ();
 		}
 		
 		$filtro = new Gatuf_SQL ('Grupo=%s', $match[2]);

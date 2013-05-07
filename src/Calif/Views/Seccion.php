@@ -45,7 +45,7 @@ class Calif_Views_Seccion {
 		$seccion =  new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$materia = new Calif_Materia ();
@@ -68,6 +68,20 @@ class Calif_Views_Seccion {
 		
 		$extra = array ();
 		
+		if (isset ($match[1])) {
+			$materia =  new Calif_Materia ();
+			if (false === ($materia->getMateria($match[1]))) {
+				throw new Gatuf_HTTP_Error404();
+			}
+		
+			$nueva_clave = mb_strtoupper ($match[1]);
+			if ($match[1] != $nueva_clave) {
+				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::agregarNrcConMateria', array ($nueva_clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+			$extra['materia'] = $materia->clave;
+		}
+		
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
 			
@@ -87,13 +101,17 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
+	public function agregarNrcConMateria ($request, $match) {
+		return $this->agregarNrc ($request, $match);
+	}
+	
 	public function actualizarNrc ($request, $match) {
 		$title = 'Actualizar NRC';
 		
 		$seccion =  new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$extra = array ('seccion' => $seccion);
