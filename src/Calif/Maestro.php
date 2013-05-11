@@ -2,7 +2,7 @@
 
 Gatuf::loadFunction ('Gatuf_DB_getConnection');
 
-class Calif_Maestro {
+class Calif_Maestro extends Calif_User {
 	/* Manejador de la tabla Alumnos */
 	
 	/* Campos */
@@ -22,6 +22,7 @@ class Calif_Maestro {
 		$prefix = Gatuf::config ('db_table_prefix', '');
 		
 		$this->tabla = $prefix.'Maestros';
+		$this->login_tabla = $prefix.'Maestros_Login';
 	}
 	
 	function _getConnection() {
@@ -40,7 +41,7 @@ class Calif_Maestro {
     
     function getMaestro ($codigo) {
     	/* Recuperar un maestro */
-		$sql = sprintf ('SELECT * FROM %s WHERE Codigo = %s', $this->tabla, Gatuf_DB_esc ($codigo));
+		$sql = sprintf ('SELECT * FROM %s AS M INNER JOIN %s AS LM ON M.Codigo = LM.Login WHERE M.Codigo = %s', $this->tabla, $this->login_tabla, Gatuf_DB_esc ($codigo));
 		
 		$result = mysql_query ($sql, $this->_con);
 		
@@ -53,6 +54,10 @@ class Calif_Maestro {
 			$this->apellido = $object->Apellido;
 			$this->correo = $object->Correo;
 			
+			/* Objetos de la sesión */
+			$this->active = $object->Active;
+			$this->last_login = $object->Last_Login;
+			$this->admin = $object->Admin;
 			mysql_free_result ($result);
 		}
 		return true;
@@ -69,7 +74,7 @@ class Calif_Maestro {
         $query = array(
                        'select' => '*',
                        'from' => $this->tabla,
-                       'join' => '',
+                       'join' => sprintf ('INNER JOIN %s ON Codigo = Login', $this->login_tabla),
                        'where' => '',
                        'group' => '',
                        'having' => '',
@@ -167,6 +172,11 @@ class Calif_Maestro {
 			$this->nombre = $object->Nombre;
 			$this->apellido = $object->Apellido;
 			$this->correo = $object->Correo;
+			
+			/* Objetos de la sesión */
+			$this->active = $object->Active;
+			$this->last_login = $object->Last_Login;
+			$this->admin = $object->Admin;
 			$res[] = clone ($this);
 		}
 		
@@ -183,6 +193,13 @@ class Calif_Maestro {
 	
 	function create () {
 		$req = sprintf ('INSERT INTO %s (Codigo, Nombre, Apellido, Correo) VALUES (%s, %s, %s, %s);', $this->tabla, Gatuf_DB_esc ($this->codigo), Gatuf_DB_esc ($this->nombre), Gatuf_DB_esc ($this->apellido), Gatuf_DB_esc ($this->correo));
+		$res = mysql_query ($req);
+		
+		if ($res === false) {
+			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
+		}
+		
+		$req = sprintf ('INSERT INTO %s (Login, Password, Active, Last_Login, Admin) VALUES (%s, %s, %s, %s, %s);', $this->login_tabla, Gatuf_DB_esc ($this->codigo), Gatuf_DB_esc ($this->password), Gatuf_DB_esc ($this->active), Gatuf_DB_esc ($this->last_login), Gatuf_DB_esc ($this->admin));
 		$res = mysql_query ($req);
 		
 		if ($res === false) {
