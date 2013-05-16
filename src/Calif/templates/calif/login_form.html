@@ -1,0 +1,17 @@
+{extends 'calif/base.html'}
+{block body}
+<form method="post" action="{url 'Calif_Views::login'}">
+<input type="hidden" name="_redirect_after" value="{$_redirect_after}" />
+{if $error}
+<p>{$error}</p>
+{/if}
+<h3>Tu nombre de usuario:</h3>
+<p><label for="id_login">Mi usuario es:</label><input type="text" name="login" id="id_login" value="{$login}" /></p>
+<h3>Su contraseña:</h3>
+<p><label for="id_password">Mi contraseña es:</label><input type="password" name="password" id="id_password" /></p>
+<p><input type="submit" value="Ingresar" /></p>
+</form>
+<script type="text/javascript">
+document.getElementById('id_login').focus()
+</script>
+{/block}

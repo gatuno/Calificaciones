@@ -11,6 +11,13 @@ $ctl[] = array (
 );
 */
 
+$ctl[] = array (
+	'regex' => '#^/login/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'login',
+);
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',

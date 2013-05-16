@@ -44,14 +44,14 @@ class Gatuf_Middleware_Session {
      */
     function process_request(&$request) {
         $session = new Gatuf_Session();
-        /* FIXME: Modelo del usuario pendiente
-        $user_model = Pluf::f('pluf_custom_user','Pluf_User');
+        /* FIXME: Modelo del usuario pendiente */
+        $user_model = 'Calif_User'; /* FIXME: Debería ser leido desde la configuración */
         $user = new $user_model();
-        */
+        
         if (!isset($request->COOKIE[$session->cookie_name])) {
             // No session is defined. We set an empty user and empty
             // session.
-            /*$request->user = $user;*/
+            $request->user = $user;
             $request->session = $session;
             if (isset($request->COOKIE[$request->session->test_cookie_name])) {
                 $request->session->test_cookie = $request->COOKIE[$request->session->test_cookie_name];
@@ -61,7 +61,7 @@ class Gatuf_Middleware_Session {
         try {
             $data = self::_decodeData($request->COOKIE[$session->cookie_name]);
         } catch (Exception $e) {
-            /*$request->user = $user;*/
+            $request->user = $user;
             $request->session = $session;
             if (isset($request->COOKIE[$request->session->test_cookie_name])) {
                 $request->session->test_cookie = $request->COOKIE[$request->session->test_cookie_name];
@@ -69,27 +69,28 @@ class Gatuf_Middleware_Session {
             return false;
         }
         
-        /* FIXME: Cargar el modelo de los usuarios
+        /* FIXME: Cargar el modelo de los usuarios */
         if (isset($data[$user->session_key])) {
             // We can get the corresponding user
-            $found_user = new $user_model($data[$user->session_key]);
-            if ($found_user->id == $data[$user->session_key]) {
+            $found_user = new $user_model();
+            $found_user = $user_model->getUser ($data[$user->session_key]);
+            if ($found_user->codigo == $data[$user->session_key]) {
                 // User found!
                 $request->user = $found_user;
                 // If the last login is from 12h or more, set it to
                 // now.
-                Pluf::loadFunction('Pluf_Date_Compare');
-                if (43200 < Pluf_Date_Compare($request->user->last_login)) {
+                Gatuf::loadFunction('Gatuf_Date_Compare');
+                if (43200 < Gatuf_Date_Compare($request->user->last_login)) {
                     $request->user->last_login = gmdate('Y-m-d H:i:s');
                     $request->user->update();
                 }
-                $set_lang = $found_user->language;
+                /*$set_lang = $found_user->language;*/
             } else {
                 $request->user = $user;
             }
         } else {
             $request->user = $user;
-        }*/
+        }
         if (isset($data['Gatuf_Session_key'])) {
             $sql = new Gatuf_SQL('session_key=%s' ,$data['Gatuf_Session_key']);
             $found_session = Gatuf::factory('Gatuf_Session')->getList(array('filter' => $sql->gen()));
@@ -186,8 +187,8 @@ class Gatuf_Middleware_Session {
  */
 function Gatuf_Middleware_Session_ContextPreProcessor($request)
 {
-    /*return array('user' => $request->user);*/
+    return array('user' => $request->user);
 }
 
-Pluf_Signal::connect('Gatuf_Template_Context_Request::construct',
+Gatuf_Signal::connect('Gatuf_Template_Context_Request::construct',
                      array('Gatuf_Middleware_Session', 'processContext'));

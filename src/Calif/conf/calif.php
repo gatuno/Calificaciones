@@ -87,7 +87,7 @@ $cfg['db_table_prefix'] = '';
 # -----------------------
 
 $cfg['middleware_classes'] = array(
-	'Gatuf_Session',
+	'Gatuf_Middleware_Session',
 );
 
 return $cfg;

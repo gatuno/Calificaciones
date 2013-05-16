@@ -192,6 +192,7 @@ class Calif_Maestro extends Calif_User {
 	}
 	
 	function create () {
+		$this->preSave ();
 		$req = sprintf ('INSERT INTO %s (Codigo, Nombre, Apellido, Correo) VALUES (%s, %s, %s, %s);', $this->tabla, Gatuf_DB_esc ($this->codigo), Gatuf_DB_esc ($this->nombre), Gatuf_DB_esc ($this->apellido), Gatuf_DB_esc ($this->correo));
 		$res = mysql_query ($req);
 		
@@ -208,7 +209,9 @@ class Calif_Maestro extends Calif_User {
 		return true;
 	}
 	
-	/*function update () {
+	function update () {
+		$this->preSave ();
+		/* TODO: Actualizar los datos propios del Maestro
 		$req = sprintf ('UPDATE %s SET Descripcion = %s WHERE Clave = %s', $this->tabla, Gatuf_DB_esc ($this->descripcion), Gatuf_DB_esc ($this->clave));
 		
 		$res = mysql_query ($req);
@@ -216,8 +219,9 @@ class Calif_Maestro extends Calif_User {
 		if ($res === false) {
 			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
 		}
-		return true;
-	}*/
+		return true; */
+		return $this->updateSession ();
+	}
 	
 	public function displayVal ($field) {
 		return $this->$field;
