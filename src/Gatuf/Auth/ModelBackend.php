@@ -32,16 +32,8 @@ class Gatuf_Auth_ModelBackend {
      */
     public static function getUser($user_id) {
         /* Recuperar el alumno o maestro */
-        if (strlen ($user_id) == 7) { 
-            /* Probemos si es maestro */
-            $user_model = new Calif_Maestro ();
-            if ($user_model->getMaestro ($user_id) === false) return false;
-        } else {
-            /* En caso contrario, creemos es Alumno */
-            $user_model = new Calif_Alumno ();
-            if ($user_model->getAlumno ($user_id) === false) return false;
-        }
-        return $user_model;
+        $user_model = Gatuf::config('gatuf_custom_user','Gatuf_User');
+        return Gatuf::factory ($user_model)->getUser ($user_id);
     }
 
     /**

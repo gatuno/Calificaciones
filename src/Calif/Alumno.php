@@ -42,7 +42,7 @@ class Calif_Alumno extends Calif_User {
     
     function getAlumno ($codigo) {
     	/* Recuperar un alumno */
-		$sql = sprintf ('SELECT * FROM %s AS A INNER JOIN %s AS LA ON A.Codigo = LA.Login WHERE Codigo = %s', $this->tabla, $this->login_tabla, Gatuf_DB_esc ($clave));
+		$sql = sprintf ('SELECT * FROM %s AS A INNER JOIN %s AS LA ON A.Codigo = LA.Login WHERE Codigo = %s', $this->tabla, $this->login_tabla, Gatuf_DB_esc ($codigo));
 		
 		$result = mysql_query ($sql, $this->_con);
 		
@@ -60,6 +60,7 @@ class Calif_Alumno extends Calif_User {
 			$this->active = $object->Active;
 			$this->last_login = $object->Last_Login;
 			$this->admin = $object->Admin;
+			$this->password = $object->Password;
 			
 			mysql_free_result ($result);
 		}
@@ -77,7 +78,7 @@ class Calif_Alumno extends Calif_User {
         $query = array(
                        'select' => '*',
                        'from' => $this->tabla,
-                       'join' => sprintf ('INNER JOIN %s ON Codigo = Login', $this->login_tabla,
+                       'join' => sprintf ('INNER JOIN %s ON Codigo = Login', $this->login_tabla),
                        'where' => '',
                        'group' => '',
                        'having' => '',

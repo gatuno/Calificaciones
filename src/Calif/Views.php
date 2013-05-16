@@ -27,7 +27,7 @@ class Calif_Views {
 					$error = 'Necesitas habilitar las cookies para acceder a este sitio';
 				} else {
 					$request->user = $user;
-					$resquest->session->clear ();
+					$request->session->clear ();
 					$request->session->setData('login_time', gmdate('Y-m-d H:i:s'));
 					$user->last_login = gmdate('Y-m-d H:i:s');
 					$user->update ();

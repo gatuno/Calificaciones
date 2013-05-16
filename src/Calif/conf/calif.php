@@ -90,4 +90,6 @@ $cfg['middleware_classes'] = array(
 	'Gatuf_Middleware_Session',
 );
 
+$cfg['gatuf_custom_user'] = 'Calif_User';
+
 return $cfg;

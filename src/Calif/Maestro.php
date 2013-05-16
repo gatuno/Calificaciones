@@ -58,6 +58,7 @@ class Calif_Maestro extends Calif_User {
 			$this->active = $object->Active;
 			$this->last_login = $object->Last_Login;
 			$this->admin = $object->Admin;
+			$this->password = $object->Password;
 			mysql_free_result ($result);
 		}
 		return true;

@@ -45,7 +45,7 @@ class Gatuf_Middleware_Session {
     function process_request(&$request) {
         $session = new Gatuf_Session();
         /* FIXME: Modelo del usuario pendiente */
-        $user_model = 'Calif_User'; /* FIXME: Debería ser leido desde la configuración */
+        $user_model = Gatuf::config('gatuf_custom_user','Gatuf_User');
         $user = new $user_model();
         
         if (!isset($request->COOKIE[$session->cookie_name])) {
@@ -69,11 +69,9 @@ class Gatuf_Middleware_Session {
             return false;
         }
         
-        /* FIXME: Cargar el modelo de los usuarios */
         if (isset($data[$user->session_key])) {
             // We can get the corresponding user
-            $found_user = new $user_model();
-            $found_user = $user_model->getUser ($data[$user->session_key]);
+            $found_user = Gatuf::factory($user_model)->getUser ($data[$user->session_key]);
             if ($found_user->codigo == $data[$user->session_key]) {
                 // User found!
                 $request->user = $found_user;
@@ -121,16 +119,16 @@ class Gatuf_Middleware_Session {
      */
     function process_response($request, $response) {
         if ($request->session->touched) {
-            if ($request->session->id > 0) {
+            if ($request->session->session_key !== '') {
                 $request->session->update();
             } else {
                 $request->session->create();
             }
             $data = array();
-            /* FIXME: El usuario...
-            if ($request->user->id > 0) {
-                $data[$request->user->session_key] = $request->user->id;
-            }*/
+            
+            if ($request->user->codigo > 0) {
+                $data[$request->user->session_key] = $request->user->codigo;
+            }
             $data['Gatuf_Session_key'] = $request->session->session_key;
             $response->cookies[$request->session->cookie_name] = self::_encodeData($data);
         }

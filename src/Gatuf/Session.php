@@ -38,7 +38,7 @@ class Gatuf_Session {
 	public $_con = null;
 	
 	/* Campos de la tabla */
-	public $session_key, $session_data, $expire;
+	public $session_key = '', $session_data, $expire;
 	
 	public function __construct () {
 	    $this->_getConnection();
@@ -209,7 +209,7 @@ class Gatuf_Session {
 	
 	function update () {
 		$this->preSave();
-		$req = sprintf ('UPDATE %s SET session_data=%s, expire=%s WHERE session_keys=%s', $this->tabla, Gatuf_DB_esc ($this->session_data), Gatuf_DB_esc ($this->expire), Gatuf_DB_esc ($this->session_key));
+		$req = sprintf ('UPDATE %s SET session_data=%s, expire=%s WHERE session_key=%s', $this->tabla, Gatuf_DB_esc ($this->session_data), Gatuf_DB_esc ($this->expire), Gatuf_DB_esc ($this->session_key));
 		
 		$res = mysql_query ($req);
 		

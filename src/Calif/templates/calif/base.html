@@ -6,6 +6,14 @@
 	<title>Calificaciones - {$page_title}</title>
 </head>
 <body>
+	<!-- Esta es la información del usuario -->
+	<div float="right">
+		{if !$user.isAnonymous()}
+			<p>Bienvenido, <img src="http://www.gravatar.com/avatar/{$user.correo|md5}.jpg?s=30" alt=" " /> <strong>{$user.apellido}, {$user.nombre}</strong>. <a href=".">FIXME, falta enlace. Cerrar sesión</a></p>
+		{else}
+			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>
+		{/if}
+	</div>
 	<h1>{$page_title}</h1>
 	{block body}{/block}
 </body>

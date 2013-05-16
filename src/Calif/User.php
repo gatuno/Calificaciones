@@ -5,6 +5,8 @@ class Calif_User {
 	public $password;
 	public $codigo = 0;
 	
+	public $session_key = '_GATUF_Gatuf_User_auth';
+	
 	public $active = true, $last_login = null, $admin = false;
 	
 	function setPassword ($password) {
@@ -46,7 +48,7 @@ class Calif_User {
 	}
 	
 	function updateSession () {
-		$req = sprintf ('UPDATE %s SET Last_Login = %s, Password = %s, Active = %s, Admin = %s WHERE Login = %s', $this->login_tabla, Gatuf_DB_esc ($this->last_login), Gatuf_DB_esc ($this->password), Gatuf_DB_esc ($this->active), Gatuf_DB_esc ($this->admin));
+		$req = sprintf ('UPDATE %s SET Last_Login = %s, Password = %s, Active = %s, Admin = %s WHERE Login = %s', $this->login_tabla, Gatuf_DB_esc ($this->last_login), Gatuf_DB_esc ($this->password), Gatuf_DB_esc ($this->active), Gatuf_DB_esc ($this->admin), Gatuf_DB_esc ($this->codigo));
 		$res = mysql_query ($req);
 		
 		if ($res === false) {
@@ -57,16 +59,16 @@ class Calif_User {
 	
 	function getUser ($codigo) {
 		/* Recuperar el alumno o maestro */
-        if (strlen ($user_id) == 7) { 
-            /* Probemos si es maestro */
-            $user_model = new Calif_Maestro ();
-            $user_model->getMaestro ($user_id);
-        } else {
-            /* En caso contrario, creemos es Alumno */
-            $user_model = new Calif_Alumno ();
-            $user_model->getAlumno ($user_id);
-        }
-        return $user_model;
+		if (strlen ($codigo) == 7) { 
+			/* Probemos si es maestro */
+			$user_model = new Calif_Maestro ();
+			if ($user_model->getMaestro ($codigo) === false) return false;
+		} else {
+			/* En caso contrario, creemos es Alumno */
+			$user_model = new Calif_Alumno ();
+			if ($user_model->getAlumno ($codigo) === false) return false;
+		}
+		return $user_model;
 	}
 	
 	function isAnonymous () {
