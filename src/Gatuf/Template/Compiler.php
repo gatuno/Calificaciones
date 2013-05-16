@@ -129,8 +129,8 @@ class Gatuf_Template_Compiler {
      */
     protected $_allowedTags = array(
                                     'url' => 'Gatuf_Template_Tag_Url',
-                                    /*'aurl' => 'Pluf_Template_Tag_Rurl',
-                                    'media' => 'Pluf_Template_Tag_MediaUrl',
+                                    'aurl' => 'Pluf_Template_Tag_Rurl',
+                                    /*'media' => 'Pluf_Template_Tag_MediaUrl',
                                     'amedia' => 'Pluf_Template_Tag_RmediaUrl',
                                     'aperm' => 'Pluf_Template_Tag_APerm',
                                     'getmsgs' => 'Pluf_Template_Tag_Messages',*/
