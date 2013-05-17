@@ -67,7 +67,7 @@ class Calif_Alumno extends Calif_User {
 		return true;
     }
     
-    function getList ($p=array()) {
+	function getList ($p=array()) {
 		$default = array('filter' => null,
                          'order' => null,
                          'start' => null,
