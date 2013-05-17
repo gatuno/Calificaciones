@@ -1,6 +1,8 @@
 <?php
 /* Gatuf's Creepy Version of the model */
 
+Gatuf::loadFunction ('Gatuf_DB_getConnection');
+
 class Gatuf_Model {
 	/** Database connection. */
 	public $_con = null;
@@ -8,7 +10,7 @@ class Gatuf_Model {
     public $tabla;
     public $primary_key;
     
-	function _getConnection() {
+	function _getConnection () {
 		static $con = null;
 		if ($this->_con !== null) {
 			return $this->_con;
@@ -22,7 +24,7 @@ class Gatuf_Model {
 		return $this->_con;
     }
     
-	function getSqlTable() {
+	function getSqlTable () {
 		return $this->_con->pfx.$this->tabla;
 	}
 	
@@ -33,7 +35,7 @@ class Gatuf_Model {
                          'select' => null,
                          'nb' => null,
                          'count' => false);
-        $p = array_merge($default, $p);
+        $p = array_merge ($default, $p);
         $query = array(
                        'select' => '*',
                        'from' => $this->getSelect(),
