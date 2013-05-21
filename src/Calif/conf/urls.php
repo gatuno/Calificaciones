@@ -16,6 +16,14 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views',
 	'method' => 'login',
+	'name' => 'login_view'
+);
+
+$ctl[] = array (
+	'regex' => '#^/logout/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'logout',
 );
 
 /* Las carreras */
