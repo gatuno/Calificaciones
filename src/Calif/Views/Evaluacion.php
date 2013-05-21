@@ -4,9 +4,13 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Evaluacion {
 	public function index ($request, $match) {
-		$eval = new Calif_Evaluacion ();
-		$evals = $eval->getList();
-		$grupos_evals = $eval->getGruposEvals ();
+		$evals = array ();
+		$grupos_evals = Gatuf::factory('Calif_Evaluacion')->getGruposEvals ();
+		
+		foreach ($grupos_evals as $grupo => $desc) {
+			$sql_filter = new Gatuf_SQL ('Grupo=%s', $grupo);
+			$evals [$grupo] = Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $sql_filter->gen()));
+		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/index.html',
 		                                         array('page_title' => 'Evaluaciones',

@@ -5,7 +5,7 @@
 <p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:</p>
 {if $evals[$id_grupo]}
 <ul>{foreach $evals[$id_grupo] as $eval}
-<li>{$eval['Descripcion']}</li>
+<li>{$eval['descripcion']}</li>
 {/foreach}</ul>
 {if $disponibles[$id_grupo]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $id_grupo)}">agregar una nueva forma de evaluación</a> a {$grupo}</p>{/if}
 {else}

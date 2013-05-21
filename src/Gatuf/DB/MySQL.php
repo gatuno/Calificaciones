@@ -24,7 +24,7 @@
 /**
  * MySQL connection class
  */
-class Pluf_DB_MySQL {
+class Gatuf_DB_MySQL {
     public $con_id;
     public $pfx = '';
     private $debug = false;
@@ -176,7 +176,7 @@ class Pluf_DB_MySQL {
     }
 
     function __toString() {
-        return '<Pluf_DB_MySQL('.$this->con_id.')>';
+        return '<Gatuf_DB_MySQL('.$this->con_id.')>';
     }
 }
 

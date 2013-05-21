@@ -38,7 +38,7 @@ class Gatuf_Model {
         $p = array_merge ($default, $p);
         $query = array(
                        'select' => '*',
-                       'from' => $this->getSelect(),
+                       'from' => $this->getSqlTable(),
                        'join' => '',
                        'where' => '',
                        'group' => '',
@@ -121,13 +121,15 @@ class Gatuf_Model {
 		}
 		
 		if (count($rs) == 0) {
-			return new array ();
+			return array ();
 		}
 		
 		if ($p['count'] == true) {
-			$number = mysql_fetch_object ($result);
-			mysql_free_result ($result);
-			return $number->nb_items;
+			if (empty($rs) or count($rs) == 0) { 
+				return 0; 
+			} else {
+				return (int) $rs[0]['nb_items'];
+			}
 		}
 		
 		$res = array ();

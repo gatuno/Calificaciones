@@ -67,6 +67,8 @@ $cfg['time_zone'] = 'America/Mexico_City';
 #
 #
 
+$cfg['db_engine'] = 'MySQL';
+
 # El nombre de la base de datos para MySQL y PostgreSQL, y la ruta absoluta
 # al archivo de la base de datos si estás usando SQLite.
 $cfg['db_database'] = 'calificaciones';

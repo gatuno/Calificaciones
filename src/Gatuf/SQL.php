@@ -64,7 +64,7 @@ class Gatuf_SQL {
             $args = array($args);
         }
         foreach ($args as $arg) {
-            $escaped[] = Gatuf_DB_esc ($arg);
+            $escaped[] = $this->db->esc ($arg);
         }
         $this->ands[] = vsprintf($base, $escaped);
         return $this;

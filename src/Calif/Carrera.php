@@ -1,8 +1,6 @@
 <?php
 
-Gatuf::loadFunction ('Gatuf_DB_getConnection');
-
-class Calif_Carrera {
+class Calif_Carrera extends Gatuf_Model {
 	/* Manejador de la tabla de carreras */
 	
 	/* Campos */
@@ -17,7 +15,7 @@ class Calif_Carrera {
 	
 	function getCarrera ($clave) {
 		/* Recuperar una carrera */
-		$sql = sprintf ('SELECT * FROM %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($clave, $this->_con));
+		$req = sprintf ('SELECT * FROM %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($clave, $this->_con));
 		
 		if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());

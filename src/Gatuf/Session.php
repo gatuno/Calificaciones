@@ -25,8 +25,7 @@
  * Crappy version of the Pluf_Session model
  * Yes, very crappy
  */
-class Gatuf_Session {
-	public $tabla = 'sessions';
+class Gatuf_Session extends Gatuf_Model {
 	public $data = array();
 	public $cookie_name = 'sessionid'; /*FIXME: Concatenar el año para evitar conflictos */
 	public $touched = false;
@@ -42,154 +41,24 @@ class Gatuf_Session {
 	
 	public function __construct () {
 	    $this->_getConnection();
+	    $this->tabla = 'sessions';
 		$this->session_key = '';
 	}
 	
-	function _getConnection() {
-		static $con = null;
-		if ($this->_con !== null) {
-			return $this->_con;
-		}
-		if ($con !== null) {
-			$this->_con = $con;
-			return $this->_con;
-		}
-		$this->_con = &Gatuf::db($this);
-		$con = $this->_con;
-		return $this->_con;
-	}
-	
-	function getList ($p=array()) {
-		$default = array('filter' => null,
-                         'order' => null,
-                         'start' => null,
-                         'select' => null,
-                         'nb' => null,
-                         'count' => false);
-		$p = array_merge($default, $p);
-		$query = array(
-                       'select' => '*',
-                       'from' => $this->tabla,
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
-		
-		if (!is_null($p['select'])) {
-			$query['select'] = $p['select'];
-		}
-		/* Activar los filtros where */
-		if (!is_null($p['filter'])) {
-			if (is_array($p['filter'])) {
-				$p['filter'] = implode(' AND ', $p['filter']);
-			}
-			if (strlen($query['where']) > 0) {
-				$query['where'] .= ' AND ';
-			}
-			$query['where'] .= ' ('.$p['filter'].') ';
-		}
-		
-		/* Elegir el orden */
-		if (!is_null($p['order'])) {
-			if (is_array($p['order'])) {
-				$p['order'] = implode(', ', $p['order']);
-			}
-			if (strlen($query['order']) > 0 and strlen($p['order']) > 0) {
-				$query['order'] .= ', ';
-			}
-			$query['order'] .= $p['order'];
-		}
-		/* El número de objetos a elegir */
-		if (!is_null($p['start']) && is_null($p['nb'])) {
-			$p['nb'] = 10000000;
-		}
-		/* El inicio */
-		if (!is_null($p['start'])) {
-			if ($p['start'] != 0) {
-				$p['start'] = (int) $p['start'];
-			}
-			$p['nb'] = (int) $p['nb'];
-			$query['limit'] = 'LIMIT '.$p['nb'].' OFFSET '.$p['start'];
-		}
-		if (!is_null($p['nb']) && is_null($p['start'])) {
-			$p['nb'] = (int) $p['nb'];
-			$query['limit'] = 'LIMIT '.$p['nb'];
-		}
-		/* Si la query es de conteo, cambiar el select */
-		if ($p['count'] == true) {
-			if (isset($query['select_count'])) {
-				$query['select'] = $query['select_count'];
-			} else {
-				$query['select'] = 'COUNT(*) as nb_items';
-			}
-			$query['order'] = '';
-			$query['limit'] = '';
-		}
-		
-		/* Construir la query */
-		$req = 'SELECT '.$query['select'].' FROM '.$query['from'].' '.$query['join'];
-		if (strlen($query['where'])) {
-			$req .= "\n".'WHERE '.$query['where'];
-		}
-		if (strlen($query['group'])) {
-			$req .= "\n".'GROUP BY '.$query['group'];
-		}
-		if (strlen($query['having'])) {
-			$req .= "\n".'HAVING '.$query['having'];
-		}
-		if (strlen($query['order'])) {
-			$req .= "\n".'ORDER BY '.$query['order'];
-		}
-		if (strlen($query['limit'])) {
-			$req .= "\n".$query['limit'];
-		}
-		
-		$result = mysql_query ($req, $this->_con);
-		
-		if ($result === false) {
-			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
-		}
-		if (mysql_num_rows ($result) == 0) {
-			return array ();
-		}
-		
-		if ($p['count'] == true) {
-			$number = mysql_fetch_object ($result);
-			mysql_free_result ($result);
-			return $number->nb_items;
-		}
-		
-		$res = array ();
-		while (($object = mysql_fetch_object ($result))) {
-			$this->session_key = $object->session_key;
-			$this->session_data = $object->session_data;
-			$this->expire = $object->expire;
-			$res[] = clone ($this);
-		}
-		
-		mysql_free_result ($result);
-		
-		return $res;
-	}
-	
 	function get ($session_key) {
-		$req = sprintf ('SELECT * FROM %s WHERE session_key=%s', Gatuf_DB_esc ($clave));
+		$req = sprintf ('SELECT * FROM %s WHERE session_key=%s', Gatuf_DB_IdentityToDb ($session_key, $this->_con));
 		
-		$result = mysql_query ($req, $this->_con);
-		
-		if (mysql_num_rows ($result) == 0) {
-			return false;
-		} else {
-			$object = mysql_fetch_object ($result);
-			$this->session_key = $object->session_key;
-			$this->session_data = $object->session_data;
-			$this->expire = $object->expire;
-			
-			mysql_free_result ($result);
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
 		}
+		
+		if (count ($rs) == 0) {
+			return false;
+		}
+		foreach ($rs[0] as $col => $val) {
+			$this->$col = $val;
+		}
+		
 		self::restore ();
 		return true;
 	}
@@ -197,25 +66,19 @@ class Gatuf_Session {
 	function create () {
 		$this->preSave();
         
-		$req = sprintf ('INSERT INTO %s (session_key, session_data, expire) VALUES (%s, %s, %s)', $this->tabla, Gatuf_DB_esc ($this->session_key), Gatuf_DB_esc ($this->session_data), Gatuf_DB_esc ($this->expire));
+		$req = sprintf ('INSERT INTO %s (session_key, session_data, expire) VALUES (%s, %s, %s)', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con), Gatuf_DB_IdentityToDb ($this->session_data, $this->_con), Gatuf_DB_IdentityToDb ($this->expire, $this->_con));
 		
-		$res = mysql_query ($req);
+		$this->_con->execute($req);
 		
-		if ($res === false) {
-			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
-		}
 		return true;
 	}
 	
 	function update () {
 		$this->preSave();
-		$req = sprintf ('UPDATE %s SET session_data=%s, expire=%s WHERE session_key=%s', $this->tabla, Gatuf_DB_esc ($this->session_data), Gatuf_DB_esc ($this->expire), Gatuf_DB_esc ($this->session_key));
+		$req = sprintf ('UPDATE %s SET session_data=%s, expire=%s WHERE session_key=%s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->session_data, $this->_con), Gatuf_DB_IdentityToDb ($this->expire, $this->_con), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con));
 		
-		$res = mysql_query ($req);
+		$this->_con->execute($req);
 		
-		if ($res === false) {
-			throw new Exception ('Error en la query: '.$req.', el error devuelto por mysql es: '.mysql_errno ($this->_con).' - '.mysql_error ($this->_con));
-		}
 		return true;
 	}
 	
