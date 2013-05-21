@@ -3,6 +3,7 @@
 Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Alumno {
+	public $index_precond = array ('Gatuf_Precondition::loginRequired');
 	public function index ($request, $match) {
 		/* Utilizar un paginador aquí, por favor */
 		

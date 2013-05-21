@@ -101,6 +101,29 @@ class Gatuf_Despachador {
 		/* Cargar la clase vista controladora */
 		$m = new $ctl['model']();
 		/* Aquí verificar por precondiciones antes de la llamada */
+		if (isset($m->{$ctl['method'].'_precond'})) {
+			$preconds = $m->{$ctl['method'].'_precond'};
+            if (!is_array($preconds)) {
+                $preconds = array($preconds);
+            }
+            foreach ($preconds as $precond) {
+                if (!is_array($precond)) {
+                    $res = call_user_func_array(
+                                                explode('::', $precond), 
+                                                array(&$req)
+                                                );
+                } else {
+                    $res = call_user_func_array(
+                                                explode('::', $precond[0]), 
+                                                array_merge(array(&$req), 
+                                                            array_slice($precond, 1))
+                                                );
+                }
+                if ($res !== true) {
+                    return $res;
+                }
+            } 
+        }
 		
 		if (!isset ($ctl['params'])) {
 			return $m->$ctl['method']($req, $match);
