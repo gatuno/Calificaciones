@@ -45,7 +45,7 @@ class Calif_Seccion extends Gatuf_Model {
     function getAlumnos () {
     	$sql = new Gatuf_SQL ('nrc=%s', $this->nrc);
     	
-    	$consulta = sprintf ('SELECT * FROM %s WHERE %s', $this->getGruposSqlTable(), $sql->gen());
+    	$req = sprintf ('SELECT * FROM %s WHERE %s', $this->getGruposSqlTable(), $sql->gen());
     	
     	if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());
@@ -74,11 +74,23 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
+	public function displaylinkedseccion ($extra) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->seccion.'</a>';
+	}
+	
 	public function displaylinkednrc ($extra) {
-		throw new Exception ("Metodo no implementado");
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->nrc.'</a>';
 	}
 	
 	public function displaylinkedmateria ($extra) {
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$this->materia.'</a>';
+		$m = new Calif_Materia ();
+		$m->getMateria ($this->materia);
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$m->clave.' - '.$m->descripcion.'</a>';
+	}
+	
+	public function displaylinkedmaestro ($extra) {
+		$m = new Calif_Maestro ();
+		$m->getMaestro ($this->maestro);
+		return '<a href=".">'.$m->apellido.' '.$m->nombre.' ('.$m->codigo.')</a>';
 	}
 }

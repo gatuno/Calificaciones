@@ -3,5 +3,17 @@
 <h1>NRC {$seccion.nrc}</h1>
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a></p>
 <p>Grupo del profesor {$maestro.apellido} {$maestro.nombre}. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
-<p>FIXME: Listar los alumnos de esta sección</p>
+<p>FIXME: Mostrar las calificaciones</p>
+{if $alumnos}
+	<table>
+		<thead><tr><th>Alumno</th></tr></thead>
+		<tbody>
+		{foreach $alumnos as $alumno}
+			<tr><td>{$alumno.nombre} {$alumno.apellido}</td></tr>
+		{/foreach}
+		</tbody>
+	</table>
+{else}
+<p>La sección no tiene alumnos</p>
+{/if}
 {/block}

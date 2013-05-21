@@ -72,10 +72,10 @@ class Calif_Views_Materia {
 		$pag->action = array ('Calif_Views_Materia::verMateria', $materia->clave);
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
-			array ('nrc', 'Gatuf_Paginator_DisplayVal', 'NRC'),
+			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
 			array ('materia', 'Gatuf_Paginator_DisplayVal', 'Materia'),
-			array ('seccion', 'Gatuf_Paginator_DisplayVal', 'Sección'),
-			array ('maestro', 'Gatuf_Paginator_DisplayVal', 'Maestro'),
+			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
+			array ('maestro', 'Gatuf_Paginator_FKLink', 'Maestro'),
 		);
 		
 		$pag->items_per_page = 30;

@@ -17,10 +17,10 @@ class Calif_Views_Seccion {
 		$pag->action = array ('Calif_Views_Seccion::index');
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
-			array ('nrc', 'Gatuf_Paginator_DisplayVal', 'NRC'),
+			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
 			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
-			array ('seccion', 'Gatuf_Paginator_DisplayVal', 'Sección'),
-			array ('maestro', 'Gatuf_Paginator_DisplayVal', 'Maestro'),
+			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
+			array ('maestro', 'Gatuf_Paginator_FKLink', 'Maestro'),
 		);
 		
 		$pag->items_per_page = 30;
@@ -54,12 +54,21 @@ class Calif_Views_Seccion {
 		$maestro = new Calif_Maestro ();
 		$maestro->getMaestro ($seccion->maestro);
 		
-		/* TODO: Listar aquí los alumnos de este grupo */
+		$lista = $seccion->getAlumnos ();
+		
+		$alumnos = array ();
+		$alumno = new Calif_Alumno ();
+		foreach ($lista as $al) {
+			$alumno->getAlumno ($al['alumno']);
+			$alumnos[] = clone ($alumno);
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
 		                                                 'page_title' => $title,
 		                                                 'materia' => $materia,
-		                                                 'maestro' => $maestro),
+		                                                 'maestro' => $maestro,
+		                                                 'alumnos' => $alumnos),
 		                                          $request);
 	}
 	
