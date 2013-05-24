@@ -75,6 +75,15 @@ class Calif_User extends Gatuf_Model {
 		return true;
 	}
 	
+	function createSession () {
+		$this->setPassword ('12345'); /* FIXME: Generar aleatoria y enviar por correo */
+		$req = sprintf ('INSERT INTO %s (login, password, active, last_login, admin) VALUES (%s, %s, %s, %s, %s)', $this->getLoginSqlTable(), Gatuf_DB_IdentityToDb ($this->codigo, $this->_con), Gatuf_DB_PasswordToDb ($this->password, $this->_con), Gatuf_DB_BooleanToDb ($this->active, $this->_con), Gatuf_DB_IdentityToDb ($this->last_login, $this->_con), Gatuf_DB_BooleanToDB ($this->admin, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		return true;
+	}
+	
 	function getUser ($codigo) {
 		/* Recuperar el alumno o maestro */
 		if (strlen ($codigo) == 7) { 

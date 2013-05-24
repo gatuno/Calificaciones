@@ -57,7 +57,23 @@ class Calif_Seccion extends Gatuf_Model {
 		
 		return $rs;
     }
-    
+	
+	function addAlumno ($alumno) {
+		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $this->getGruposSqlTable (), Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		return true;
+	}
+	
+	function addAlumnoToRam ($tabla, $alumno) {
+		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $tabla, Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		return true;
+	}
+	
 	function create () {
 		$req = sprintf ('INSERT INTO %s (nrc, seccion, materia, maestro) VALUES (%s, %s, %s, %s);', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($this->seccion, $this->_con), Gatuf_DB_IdentityToDb ($this->materia,$this->_con), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con));
 		

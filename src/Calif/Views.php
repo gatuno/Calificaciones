@@ -60,4 +60,23 @@ class Calif_Views {
 		
 		return new Gatuf_HTTP_Response_Redirect ($success_url);
 	}
+	
+	function import_siiau ($request, $match) {
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Views_importsiiau (array_merge ($request->POST, $request->FILES), $extra);
+			if ($form->isValid ()) {
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::index');
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Views_importsiiau ($request->POST, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/import_siiau.html',
+		                                         array ('page_title' => 'Importar desde Siiau',
+		                                         'form' => $form),
+		                                         $request);
+	}
 }

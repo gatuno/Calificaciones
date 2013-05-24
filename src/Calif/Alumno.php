@@ -39,6 +39,8 @@ class Calif_Alumno extends Calif_User {
 		
 		$this->_con->execute($req);
 		
+		$this->createSession ();
+		
 		return true;
 	}
 	

@@ -26,6 +26,13 @@ $ctl[] = array (
 	'method' => 'logout',
 );
 
+$ctl[] = array (
+	'regex' => '#^/importsiiau/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'import_siiau',
+);
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',

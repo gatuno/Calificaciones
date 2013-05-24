@@ -95,11 +95,11 @@ class Gatuf_Utils {
     		break;
     	}
         if ($size > (1000*1000*1000)) {
-            $mysize = sprintf('%01.2f', $size/(1000*1000*1000)).' '. __('GB');
+            $mysize = sprintf('%01.2f', $size/(1000*1000*1000)).' '. 'GB';
         } elseif ($size > (1000*1000)) {
-            $mysize = sprintf('%01.2f', $size/(1000*1000)).' '. __('MB');
+            $mysize = sprintf('%01.2f', $size/(1000*1000)).' '. 'MB';
         } elseif ($size >= 1000) {
-            $mysize = sprintf('%01.2f', $size/1000).' '.__('kB');
+            $mysize = sprintf('%01.2f', $size/1000).' '.'kB';
         } else {
             $mysize = sprintf(_n('%d byte', '%d bytes', $size), $size);
         }

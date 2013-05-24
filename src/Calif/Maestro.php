@@ -38,6 +38,8 @@ class Calif_Maestro extends Calif_User {
 		
 		$this->_con->execute($req);
 		
+		$this->createSession ();
+		
 		return true;
 	}
 	
