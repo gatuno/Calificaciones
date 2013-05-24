@@ -111,6 +111,27 @@ function __autoload($class_name) {
 	}*/
 }
 
+class GatufErrorHandlerException extends Exception {
+	public function setLine ($line) {
+		$this->line = $line;
+	}
+	
+	public function setFile ($file) {
+		$this->file = $file;
+	}
+}
+
+function GatufErrorHandler($code, $string, $file, $line) {
+	/*#if (0 == error_reporting ()) return false;*/
+	
+	$exception = new GatufErrorHandlerException ($string, $code);
+	$exception->setLine ($line);
+	$exception->setFile ($file);
+	throw $exception;
+}
+
+set_error_handler('GatufErrorHandler', error_reporting ());
+
 function Gatuf_esc($string) {
 	return str_replace(array('&', '"', '<', '>'),
 	                   array('&amp;', '&quot;', '&lt;', '&gt;'),
