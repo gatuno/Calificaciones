@@ -71,7 +71,7 @@ class Calif_Views {
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Views_importsiiau ($request->POST, $extra);
+			$form = new Calif_Form_Views_importsiiau (null, $extra);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/import_siiau.html',

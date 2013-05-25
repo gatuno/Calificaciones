@@ -98,6 +98,16 @@ function Calif_Utils_agregar_seccion (&$secciones, $nrc, $materia, $seccion, $ma
 	$secciones [$nrc] = array (0 => $materia, 1 => $seccion, 2 => $maestro);
 }
 
+function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
+	if (isset ($salones[$edificio]) && isset ($salones[$edificio][$aula])) return;
+	
+	if (!isset ($salones[$edificio])) {
+		$salones[$edificio] = array ();
+	}
+	
+	$salones [$edificio][$aula] = $cupo;
+}
+
 function Calif_Utils_importsiiau ($form_field) {
 	$ruta = $form_field['tmp_name'];
 	
