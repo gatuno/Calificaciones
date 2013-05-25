@@ -232,3 +232,123 @@ function Calif_Utils_importsiiau ($form_field) {
 	fclose ($archivo);
 }
 
+function Calif_Utils_fix_hora ($cadena) {
+	settype ($cadena, 'integer');
+	
+	$parte_minutos = $cadena % 100;
+	$parte_horas = ($cadena - $parte_minutos) / 100;
+	
+	return $parte_horas.':'.$parte_minutos;
+}
+
+function Calif_Utils_importoferta ($form_field) {
+	$ruta = $form_field['tmp_name'];
+	
+	if (($archivo = fopen ($ruta, "r")) === false) {
+		throw new Exception ('Falló al abrir el archivo '.$ruta);
+	}
+	
+	$con = &Gatuf::db();
+	
+	$seccion_model = new Calif_Seccion ();
+	$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
+	$con->execute ($req);
+	
+	$req = sprintf ('TRUNCATE TABLE Horarios'); /* FIXME: prefijo de la tabla */
+	$con->execute ($req);
+	
+	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getGruposSqlTable());
+	$con->execute ($req);
+	
+	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getSqlTable ());
+	$con->execute ($req);
+	
+	$maestro = new Calif_Maestro ();
+	
+	if (false === $maestro->getMaestro ('1111111')) {
+		$maestro->codigo = '1111111';
+		$maestro->nombre = 'Staff';
+		$maestro->apellido = 'Staff Staff';
+		$maestro->correo = '';
+		
+		$maestro->create ();
+	}
+	
+	$materias = array ();
+	$secciones = array ();
+	$salones = array ();
+	
+	$nrc_vacio = 40000;
+	/* Primera pasada, llenar los arreglos */
+	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
+		$no_campos = count ($linea);
+		
+		if ($no_campos < 17) {
+			continue;
+		}
+		
+		if ($linea[0] === '') $linea[0] = $nrc_vacio++;
+		
+		Calif_Utils_agregar_materia ($materias, $linea[2], $linea[3]);
+		Calif_Utils_agregar_seccion ($secciones, $linea[0], $linea[2], $linea[4], '1111111');
+		Calif_Utils_agregar_salon ($salones, $linea [14], $linea [15], $linea[5]);
+	}
+	
+	$materia_model = new Calif_Materia ();
+	foreach ($materias as $clave => $descripcion) {
+		if ($materia_model->getMateria ($clave) === false) {
+			$materia_model->clave = $clave;
+			$materia_model->descripcion = $descripcion;
+			
+			$materia_model->create ();
+		}
+	}
+	
+	$seccion_model = new Calif_Seccion ();
+	foreach ($secciones as $nrc => $value) {
+		if ($seccion_model->getNrc ($nrc) === false) {
+			$seccion_model->nrc = $nrc;
+			$seccion_model->materia = $value[0];
+			$seccion_model->seccion = $value[1];
+			$seccion_model->maestro = $value[2];
+			
+			$seccion_model->create ();
+		}
+	}
+	
+	$salon_model = new Calif_Salon ();
+	foreach ($salones as $edificio => $aulas) {
+		foreach ($aulas as $aula => &$cupo) {
+			if ($salon_model->getSalon ($edificio, $aula) === false) {
+				$salon_model->edificio = $edificio;
+				$salon_model->aula = $aula;
+				$salon_model->cupo = $cupo;
+				
+				$salon_model->create ();
+			}
+			
+			$cupo = $salon_model->id;
+		}
+	}
+	
+	rewind ($archivo);
+	
+	$nrc_vacio = 40000;
+	/* Segunda pasada, crear los horarios */
+	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
+		$no_campos = count ($linea);
+		
+		if ($no_campos < 17) {
+			continue;
+		}
+		
+		if ($linea[0] === '') $linea[0] = $nrc_vacio++;
+		
+		$req = sprintf ('INSERT INTO Horarios (nrc, hora_inicio, hora_fin, salon, lunes, martes, miercoles, jueves, viernes, sabado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', $linea[0], Gatuf_DB_IdentityToDb (Calif_Utils_fix_hora ($linea[6]), $con), Gatuf_DB_IdentityToDb (Calif_Utils_fix_hora ($linea[7]), $con), Gatuf_DB_IntegerToDb ($salones[$linea[14]][$linea[15]], $con), Gatuf_DB_BooleanToDB ($linea[8], $con), Gatuf_DB_BooleanToDB ($linea[9], $con), Gatuf_DB_BooleanToDB ($linea[10], $con), Gatuf_DB_BooleanToDB ($linea[11], $con), Gatuf_DB_BooleanToDB ($linea[12], $con), Gatuf_DB_BooleanToDB ($linea[13], $con));
+		
+		$con->execute ($req);	
+	}
+	
+	fclose ($archivo);
+}
+

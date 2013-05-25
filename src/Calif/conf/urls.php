@@ -33,6 +33,13 @@ $ctl[] = array (
 	'method' => 'import_siiau',
 );
 
+$ctl[] = array (
+	'regex' => '#^/importoferta/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'import_oferta',
+);
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',

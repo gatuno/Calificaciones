@@ -79,4 +79,23 @@ class Calif_Views {
 		                                         'form' => $form),
 		                                         $request);
 	}
+	
+	function import_oferta ($request, $match) {
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Views_importoferta (array_merge ($request->POST, $request->FILES), $extra);
+			if ($form->isValid ()) {
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::index');
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Views_importoferta (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/import_oferta.html',
+		                                         array ('page_title' => 'Importar Oferta (estilo Monica Durón)',
+		                                         'form' => $form),
+		                                         $request);
+	}
 }

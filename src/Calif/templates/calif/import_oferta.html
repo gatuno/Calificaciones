@@ -1,0 +1,14 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Puede importar toda la oferta académica desde su archivo separado por comas</p>
+<p>Esta acción destruirá todos los nrc existentes, salones y horarios existentes. Todo esto para evitar conflictos. Tambien desmatriculará cualquier alumno y sus respectivas calificaciones.</p>
+{if $form.errors}
+	<p>Ha ocurrido un error subiendo el archivo, por favor intente de nuevo</p>
+	{if $form.get_top_errors}{$form.render_top_errors}{/if}
+{/if}
+<form method="post" enctype="multipart/form-data" action=".">
+{$form.render_p}
+<p>
+<input type="submit" id="submit" name="submit" value="Importar" />
+</form>
+{/block}
