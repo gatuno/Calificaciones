@@ -137,6 +137,7 @@ class Gatuf_Model {
 			foreach ($row as $col => $val) {
 				$this->$col = $val;
 			}
+			$this->restore ();
 			$res[] = clone ($this);
 		}
 		
@@ -152,4 +153,6 @@ class Gatuf_Model {
 	public function displayVal ($field) {
 		return $this->$field;
 	}
+	
+	public function restore () {}
 }

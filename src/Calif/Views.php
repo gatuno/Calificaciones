@@ -86,7 +86,7 @@ class Calif_Views {
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Views_importoferta (array_merge ($request->POST, $request->FILES), $extra);
 			if ($form->isValid ()) {
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::index');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::index');
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {

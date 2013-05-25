@@ -108,6 +108,15 @@ function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
 	$salones [$edificio][$aula] = $cupo;
 }
 
+function Calif_Utils_displayHoraSiiau ($val) {
+	settype ($val, 'integer');
+	
+	$parte_minutos = $val % 100;
+	$parte_horas = ($val - $parte_minutos) / 100;
+	
+	return sprintf ('%02s:%02s', $parte_horas, $parte_minutos);
+}
+
 function Calif_Utils_importsiiau ($form_field) {
 	$ruta = $form_field['tmp_name'];
 	
@@ -232,15 +241,6 @@ function Calif_Utils_importsiiau ($form_field) {
 	fclose ($archivo);
 }
 
-function Calif_Utils_fix_hora ($cadena) {
-	settype ($cadena, 'integer');
-	
-	$parte_minutos = $cadena % 100;
-	$parte_horas = ($cadena - $parte_minutos) / 100;
-	
-	return $parte_horas.':'.$parte_minutos;
-}
-
 function Calif_Utils_importoferta ($form_field) {
 	$ruta = $form_field['tmp_name'];
 	
@@ -317,7 +317,7 @@ function Calif_Utils_importoferta ($form_field) {
 	}
 	
 	$salon_model = new Calif_Salon ();
-	foreach ($salones as $edificio => $aulas) {
+	foreach ($salones as $edificio => &$aulas) {
 		foreach ($aulas as $aula => &$cupo) {
 			if ($salon_model->getSalon ($edificio, $aula) === false) {
 				$salon_model->edificio = $edificio;
@@ -333,6 +333,8 @@ function Calif_Utils_importoferta ($form_field) {
 	
 	rewind ($archivo);
 	
+	$horario_model = new Calif_Horario ();
+	
 	$nrc_vacio = 40000;
 	/* Segunda pasada, crear los horarios */
 	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
@@ -344,9 +346,18 @@ function Calif_Utils_importoferta ($form_field) {
 		
 		if ($linea[0] === '') $linea[0] = $nrc_vacio++;
 		
-		$req = sprintf ('INSERT INTO Horarios (nrc, hora_inicio, hora_fin, salon, lunes, martes, miercoles, jueves, viernes, sabado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', $linea[0], Gatuf_DB_IdentityToDb (Calif_Utils_fix_hora ($linea[6]), $con), Gatuf_DB_IdentityToDb (Calif_Utils_fix_hora ($linea[7]), $con), Gatuf_DB_IntegerToDb ($salones[$linea[14]][$linea[15]], $con), Gatuf_DB_BooleanToDB ($linea[8], $con), Gatuf_DB_BooleanToDB ($linea[9], $con), Gatuf_DB_BooleanToDB ($linea[10], $con), Gatuf_DB_BooleanToDB ($linea[11], $con), Gatuf_DB_BooleanToDB ($linea[12], $con), Gatuf_DB_BooleanToDB ($linea[13], $con));
+		$horario_model->nrc = $linea[0];
+		$horario_model->hora_inicio = $linea[6];
+		$horario_model->hora_fin = $linea[7];
+		$horario_model->salon = $salones[$linea[14]][$linea[15]];
+		$horario_model->lunes = $linea[8];
+		$horario_model->martes = $linea[9];
+		$horario_model->miercoles = $linea[10];
+		$horario_model->jueves = $linea[11];
+		$horario_model->viernes = $linea[12];
+		$horario_model->sabado = $linea[13];
 		
-		$con->execute ($req);	
+		$horario_model->create ();
 	}
 	
 	fclose ($archivo);

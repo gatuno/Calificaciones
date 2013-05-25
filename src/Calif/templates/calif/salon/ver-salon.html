@@ -1,0 +1,6 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Este es el salón {$salon.aula}, del edificio {$salon.edificio}. Tiene una capacidad de {$salon.cupo}</p>
+<p>A continuación se muestra su horario</p>
+{$calendar.render}
+{/block}

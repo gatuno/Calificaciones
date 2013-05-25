@@ -192,4 +192,18 @@ $ctl[] = array (
 	'method' => 'agregarNrcConMateria',
 );
 
+$ctl[] = array (
+	'regex' => '#^/salones/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/salon/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'verSalon',
+);
+
 return $ctl;

@@ -63,4 +63,8 @@ class Calif_Salon extends Gatuf_Model {
 		
 		return true;
 	}
+	
+	public function displaylinkedaula ($extra) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', array ($this->id)).'">'.$this->aula.'</a>';
+	}
 }

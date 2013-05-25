@@ -97,3 +97,19 @@ function Gatuf_DB_PasswordToDb($val, $db) {
     $salt = Gatuf_Utils::getRandomString(5);
     return $db->esc('sha1:'.$salt.':'.sha1($salt.$val));
 }
+
+function Gatuf_DB_HoraSiiauToDb ($val, $db) {
+	settype ($val, 'integer');
+	
+	$parte_minutos = $val % 100;
+	$parte_horas = ($val - $parte_minutos) / 100;
+	
+	return $db->esc ($parte_horas.':'.$parte_minutos);
+}
+
+function Gatuf_DB_HoraSiiauFromDb ($val) {
+	$exp = explode(':', $val);
+	
+	return (int)($exp[0] * 100) + $exp[1];
+}
+
