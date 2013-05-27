@@ -14,7 +14,7 @@ class Calif_Views_Salon {
 		$pag->summary = 'Lista de los salones';
 		
 		$list_display = array (
-			array ('edificio', 'Gatuf_Paginator_DisplayVal', 'Edificio'),
+			array ('edificio', 'Gatuf_Paginator_FKLink', 'Edificio'),
 			array ('aula', 'Gatuf_Paginator_FKLink', 'Aula'),
 			array ('cupo', 'Gatuf_Paginator_DisplayVal', 'Cupo')
 		);
@@ -54,51 +54,19 @@ class Calif_Views_Salon {
 			$nrc->getNrc ($horario->nrc);
 			$cadena_desc = $nrc->materia . ' ' . $nrc->seccion.'<br />';
 			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $nrc->nrc);
-			if ($horario->lunes) {
-				$calendar->events[] = array ('start' => '2013-05-27 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-05-27 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
+			$dia_semana = strtotime ('next Monday');
+			$calendar->opts['start-day'] = date('Y-m-d', $dia_semana);
+			foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+				if ($horario->$dia) {
+					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
+							                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_fin),
+							                     'title' => $horario->nrc,
+							                     'content' => $cadena_desc,
+							                     'url' => $url, 'color' => '');
+				}
+				$dia_semana = $dia_semana + 86400;
 			}
-			
-			/* FIXME: Hacer un for o algo para todos los dias */
-			if ($horario->martes) {
-				$calendar->events[] = array ('start' => '2013-05-28 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-05-28 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
-			}
-			if ($horario->miercoles) {
-				$calendar->events[] = array ('start' => '2013-05-29 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-05-29 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
-			}
-			
-			if ($horario->jueves) {
-				$calendar->events[] = array ('start' => '2013-05-30 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-05-30 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
-			}
-			if ($horario->viernes) {
-				$calendar->events[] = array ('start' => '2013-05-31 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-05-31 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
-			}
-			if ($horario->sabado) {
-				$calendar->events[] = array ('start' => '2013-06-01 '.Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-				                             'end' => '2013-06-01 '.Calif_Utils_displayHoraSiiau ($horario->hora_fin),
-				                             'title' => $horario->nrc,
-				                             'content' => $cadena_desc,
-				                             'url' => $url, 'color' => '');
-			}
+			$calendar->opts['end-day'] = date('Y-m-d', $dia_semana);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/ver-salon.html',

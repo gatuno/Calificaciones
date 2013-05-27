@@ -206,6 +206,19 @@ class Gatuf_Calendar {
                 $extra .= ' colspan="'.$colspan.'"';
                 $fullspanevent = true;
             }
+            if ($max[$group] > 1) {
+                /* Buscar por eventos simultaneos para ponerlos en color rojo */
+                $sim = null;
+                foreach ($this->_simultaneous[$group] as $_sim) {
+                    if ($_sim['time'] == $inter) {
+                        $sim = $_sim;
+                        break;
+                    }
+                }
+                if ($sim['start'] + $sim['continued'] > 1) {
+                    $event['color'] = 'red';
+                }
+            }
             if (strlen($event['color']) > 0) {
                 $extra .= ' style="background-color: '.$event['color'].';"';
             }

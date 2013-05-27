@@ -65,6 +65,7 @@ class Calif_Views_Edificio {
 				$cadena_desc = $nrc->materia . ' ' . $nrc->seccion.'<br />';
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $nrc->nrc);
 				$dia_semana = strtotime ('next Monday');
+				$calendar->opts['start-day'] = date('Y-m-d', $dia_semana);
 				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 					if ($horario->$dia) {
 						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
@@ -75,6 +76,7 @@ class Calif_Views_Edificio {
 					}
 					$dia_semana = $dia_semana + 86400;
 				}
+				$calendar->opts['end-day'] = date('Y-m-d', $dia_semana);
 			}
 			
 			$super_calendarios[$salon->id] = $calendar;
