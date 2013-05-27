@@ -22,7 +22,7 @@ class Calif_Views_Carrera {
 		/* Ver si esta carrera es válida */
 		$carrera = new Calif_Carrera ();
 		if (false === ($carrera->getCarrera ($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		/* Verificar que la carrera esté en mayúsculas */

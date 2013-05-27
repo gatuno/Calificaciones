@@ -7,14 +7,17 @@
 </head>
 <body>
 	<!-- Esta es la información del usuario -->
-	<div float="right">
+	<div style="float: right">
 		{if !$user.isAnonymous()}
 			<p>Bienvenido, <img src="http://www.gravatar.com/avatar/{$user.correo|md5}.jpg?s=30" alt=" " /> <strong>{$user.apellido}, {$user.nombre}</strong>. <a href="{url 'Calif_Views::logout'}">Cerrar sesión</a></p>
 		{else}
 			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>
 		{/if}
 	</div>
+	<div style="clear: both">
 	<h1>{$page_title}</h1>
 	{block body}{/block}
+	</div>
+{block javascript}{/block}
 </body>
 </html>

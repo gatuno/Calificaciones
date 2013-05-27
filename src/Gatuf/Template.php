@@ -142,7 +142,7 @@ public static function render($c) {$t = $c; ?>'.$this->template_content.'<?php }
             @chmod($this->compiled_template, 0777);
             return true;
         } else {
-            throw new Exception(sprintf(__('Cannot write the compiled template: %s'), $this->compiled_template));
+            throw new Exception(sprintf('No puedo escribir la plantilla compilada: %s', $this->compiled_template));
         }
         return false;
     }
@@ -266,9 +266,9 @@ function Gatuf_Template_dateAgo($date, $f='withal')
     Gatuf::loadFunction('Gatuf_Date_Easy');
     $date = Gatuf_Template_dateFormat($date, '%Y-%m-%d %H:%M:%S');
     if ($f == 'withal') {
-        return Gatuf_Date_Easy($date, null, 2, __('now'));
+        return Gatuf_Date_Easy($date, null, 2, 'ahora');
     } else {
-        return Gatuf_Date_Easy($date, null, 2, __('now'), false);
+        return Gatuf_Date_Easy($date, null, 2, 'ahora', false);
     }
 }
 
@@ -280,9 +280,9 @@ function Gatuf_Template_timeAgo($date, $f="withal")
     Gatuf::loadFunction('Gatuf_Date_Easy');
     $date = Gatuf_Template_timeFormat($date);
     if ($f == 'withal') {
-        return Gatuf_Date_Easy($date, null, 2, __('now'));
+        return Gatuf_Date_Easy($date, null, 2, 'ahora');
     } else {
-        return Gatuf_Date_Easy($date, null, 2, __('now'), false);
+        return Gatuf_Date_Easy($date, null, 2, 'ahora', false);
     }
 }
 
