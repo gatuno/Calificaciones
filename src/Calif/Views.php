@@ -30,7 +30,7 @@ class Calif_Views {
 					$request->session->clear ();
 					$request->session->setData('login_time', gmdate('Y-m-d H:i:s'));
 					$user->last_login = gmdate('Y-m-d H:i:s');
-					$user->update ();
+					$user->updateSession ();
 					$request->session->deleteTestCookie ();
 					return new Gatuf_HTTP_Response_Redirect ($success_url);
 				}
