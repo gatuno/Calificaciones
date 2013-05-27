@@ -130,9 +130,9 @@ class Gatuf_Template_Compiler {
     protected $_allowedTags = array(
                                     'url' => 'Gatuf_Template_Tag_Url',
                                     'aurl' => 'Gatuf_Template_Tag_Rurl',
-                                    /*'media' => 'Pluf_Template_Tag_MediaUrl',
-                                    'amedia' => 'Pluf_Template_Tag_RmediaUrl',
-                                    'aperm' => 'Pluf_Template_Tag_APerm',
+                                    'media' => 'Gatuf_Template_Tag_MediaUrl',
+                                    'amedia' => 'Gatuf_Template_Tag_RmediaUrl',
+                                    /*'aperm' => 'Pluf_Template_Tag_APerm',
                                     'getmsgs' => 'Pluf_Template_Tag_Messages',*/
                                     );
     /**
