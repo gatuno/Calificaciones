@@ -227,4 +227,18 @@ $ctl[] = array (
 	'method' => 'verMaestro',
 );
 
+$ctl[] = array (
+	'regex' => '#^/edificios/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Edificio',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/edificio/(.+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Edificio',
+	'method' => 'verEdificio',
+);
+
 return $ctl;
