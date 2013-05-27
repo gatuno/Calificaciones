@@ -90,21 +90,21 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
-	public function displaylinkedseccion ($extra) {
+	public function displaylinkedseccion ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->seccion.'</a>';
 	}
 	
-	public function displaylinkednrc ($extra) {
+	public function displaylinkednrc ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->nrc.'</a>';
 	}
 	
-	public function displaylinkedmateria ($extra) {
+	public function displaylinkedmateria ($extra=null) {
 		$m = new Calif_Materia ();
 		$m->getMateria ($this->materia);
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$m->clave.' - '.$m->descripcion.'</a>';
 	}
 	
-	public function displaylinkedmaestro ($extra) {
+	public function displaylinkedmaestro ($extra=null) {
 		$m = new Calif_Maestro ();
 		$m->getMaestro ($this->maestro);
 		return '<a href=".">'.$m->apellido.' '.$m->nombre.' ('.$m->codigo.')</a>';

@@ -20,6 +20,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/dashboard/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_User',
+	'method' => 'dashboard',
+);
+
+$ctl[] = array (
 	'regex' => '#^/logout/$#',
 	'base' => $base,
 	'model' => 'Calif_Views',
@@ -204,6 +211,20 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Salon',
 	'method' => 'verSalon',
+);
+
+$ctl[] = array (
+	'regex' => '#^/maestros/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/maestro/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'verMaestro',
 );
 
 return $ctl;

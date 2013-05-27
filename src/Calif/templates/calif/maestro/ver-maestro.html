@@ -1,0 +1,27 @@
+{extends 'calif/base.html'}
+{block body}
+<table class="form" summary="">
+<tr>
+<th style="text-align: right">
+    <img src="http://www.gravatar.com/avatar/{$maestro.correo|md5}.jpg?s=60" alt=" " />
+</th>
+<td>{$maestro.apellido} {$maestro.nombre}</td>
+</tr>
+<tr>
+<th>Última vez visto:</th>
+<td>{$maestro.last_login|dateago}</td>
+</tr>
+</table>
+{if $grupos}
+<h2>Grupos del profesor</h2>
+<table>
+<thead><tr><th>NRC</th><th>Materia</th><th>Sección</th></tr></thead>
+<tbody>
+{foreach $grupos as $g}
+	<tr><td>{$g.displaylinkednrc()|safe}</td><td>{$g.displaylinkedmateria()|safe}</td><td>{$g.displaylinkedseccion()|safe}</td></tr>
+{/foreach}
+</tbody></table>
+{else}
+<p>Este profesor no tiene grupos activos</p>
+{/if}
+{/block}
