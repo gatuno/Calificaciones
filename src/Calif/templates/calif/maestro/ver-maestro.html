@@ -24,4 +24,10 @@
 {else}
 <p>Este profesor no tiene grupos activos</p>
 {/if}
+{if $calendario}
+<h2>Horario del profesor</h2>
+{$calendario.render()}
+{else}
+<p>Este profesor no tiene grupos activos</p>
+{/if}
 {/block}
