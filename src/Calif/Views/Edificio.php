@@ -58,6 +58,8 @@ class Calif_Views_Edificio {
 			
 			$calendar = new Gatuf_Calendar ();
 			$calendar->events = array ();
+			$calendar->opts['conflicts'] = true;
+			$calendar->opts['conflict-color'] = '#FF2828';
 			
 			$nrc = new Calif_Seccion ();
 			foreach ($horas_salon as $horario) {

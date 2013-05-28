@@ -89,6 +89,7 @@ class Gatuf_Calendar {
         if (count($this->events) == 0) {
             return '';
         }
+        if (!isset ($this->opts['conflicts'])) $this->opts['conflicts'] = false;
         $this->cleanEventList();
         $this->getTimeIntervals();
         $this->getSimultaneous();
@@ -206,17 +207,19 @@ class Gatuf_Calendar {
                 $extra .= ' colspan="'.$colspan.'"';
                 $fullspanevent = true;
             }
-            if ($max[$group] > 1) {
-                /* Buscar por eventos simultaneos para ponerlos en color rojo */
-                $sim = null;
-                foreach ($this->_simultaneous[$group] as $_sim) {
-                    if ($_sim['time'] == $inter) {
-                        $sim = $_sim;
-                        break;
+            if ($this->opts['conflicts']) {
+                if ($max[$group] > 1) {
+                    /* Buscar por eventos simultaneos para ponerlos en color rojo */
+                    $sim = null;
+                    foreach ($this->_simultaneous[$group] as $_sim) {
+                        if ($_sim['time'] == $inter) {
+                            $sim = $_sim;
+                            break;
+                        }
                     }
-                }
-                if ($sim['start'] + $sim['continued'] > 1) {
-                    $event['color'] = 'red';
+                    if ($sim['start'] + $sim['continued'] > 1) {
+                        $event['color'] = $this->opts['conflict-color'];
+                    }
                 }
             }
             if (strlen($event['color']) > 0) {
