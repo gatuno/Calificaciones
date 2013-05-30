@@ -208,6 +208,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/delete/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'eliminarNrc',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

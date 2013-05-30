@@ -90,6 +90,14 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
+	function delete () {
+		$req = sprintf ('DELETE FROM %s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		
+		$this->_con->execute ($req);
+		
+		return true;
+	}
+	
 	public function displaylinkedseccion ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->seccion.'</a>';
 	}

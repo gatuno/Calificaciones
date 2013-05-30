@@ -146,4 +146,31 @@ class Calif_Views_Seccion {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public $eliminarNrc_precond = array ('Gatuf_Precondition::loginRequired');
+	public function eliminarNrc ($request, $match) {
+		$title = 'Eliminar NRC';
+		
+		$seccion =  new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$materia = new Calif_Materia ();
+		$materia->getMateria ($seccion->materia);
+		
+		if ($request->method == 'POST') {
+			$seccion->delete ();
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::index');
+			
+			return Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/eliminar-seccion.html',
+		                                         array ('page_title' => $title,
+		                                                'materia' => $materia,
+		                                                'seccion' => $seccion),
+		                                         $request);
+	}
 }

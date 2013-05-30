@@ -1,0 +1,9 @@
+{extends 'calif/base.html'}
+{block body}
+<form method="POST" action="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}">
+<h2>¿Esta seguro de que desea eliminar el NRC {$seccion.nrc}?</h2>
+<p>El NRC pertenece a la materia {$materia.descripcion} sección {$seccion.seccion}</p>
+<p>Esto desmatriculará todos los alumnos y eliminará sus respectivas calificaciones</p>
+<p>Esta acción no se puede deshacer</p>
+<input type="submit" value="Sí, borrarlo" /> | <a href="{url 'Calif_Views_Seccion::verNrc', array ($seccion.nrc)}">No</a>
+{/block}
