@@ -61,6 +61,7 @@ class Calif_Views {
 		return new Gatuf_HTTP_Response_Redirect ($success_url);
 	}
 	
+	public $import_siiau_precond = array ('Gatuf_Precondition::loginRequired');
 	function import_siiau ($request, $match) {
 		$extra = array ();
 		
@@ -80,6 +81,7 @@ class Calif_Views {
 		                                         $request);
 	}
 	
+	public $import_oferta_precond = array ('Gatuf_Precondition::loginRequired');
 	function import_oferta ($request, $match) {
 		$extra = array ();
 		

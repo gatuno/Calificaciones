@@ -43,6 +43,7 @@ class Calif_Views_Alumno {
                                                  $request);
 	}
 	
+	public $agregarAlumno_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarAlumno ($request, $match) {
 		$title = 'Nuevo alumno';
 		

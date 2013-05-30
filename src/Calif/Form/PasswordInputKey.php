@@ -27,8 +27,8 @@ class Calif_Form_PasswordInputKey extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ($error);
 		}
 		
-		if ((time() - $cres[2]) > 86400) {
-			throw new Gatuf_Form_Invalid ('Lo sentimos, el código de verificación ha expirado, por favor intentalo de nuevo. Por razones de seguridad, los códigos de verificación son sólo válidas por 24 horas');
+		if ((time() - $cres[2]) > 10800) {
+			throw new Gatuf_Form_Invalid ('Lo sentimos, el código de verificación ha expirado, por favor intentalo de nuevo. Por razones de seguridad, los códigos de verificación son sólo válidas por 3 horas');
 		}
 		return $this->cleaned_data['key'];
 	}

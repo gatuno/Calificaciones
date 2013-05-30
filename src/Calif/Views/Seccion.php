@@ -72,6 +72,7 @@ class Calif_Views_Seccion {
 		                                          $request);
 	}
 	
+	public $agregarNrc_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarNrc ($request, $match) {
 		$title = 'Crear NRC';
 		
@@ -110,10 +111,12 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
+	public $agregarNrcConMateria_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarNrcConMateria ($request, $match) {
 		return $this->agregarNrc ($request, $match);
 	}
 	
+	public $actualizarNrc_precond = array ('Gatuf_Precondition::loginRequired');
 	public function actualizarNrc ($request, $match) {
 		$title = 'Actualizar NRC';
 		
