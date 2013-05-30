@@ -47,6 +47,28 @@ $ctl[] = array (
 	'method' => 'import_oferta',
 );
 
+/* Recuperación de contraseñas */
+$ctl[] = array (
+	'regex' => '#^/password/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'passwordRecoveryAsk',
+);
+
+$ctl[] = array (
+	'regex' => '#^/password/ik/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'passwordRecoveryInputCode',
+);
+
+$ctl[] = array (
+	'regex' => '#^/password/k/(.*)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'passwordRecovery',
+);
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',

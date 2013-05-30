@@ -87,6 +87,21 @@ $cfg['db_password'] = 'WzScQqqf3AjtLPdL';
 $cfg['db_table_prefix'] = '';
 
 # -----------------------
+#        Correo
+# -----------------------
+
+$cfg['send_emails'] = true;
+$cfg['mail_backend'] = 'smtp';
+$cfg['mail_host'] = 'localhost';
+$cfg['mail_port'] = 25;
+
+# the sender of all the emails.
+$cfg['from_email'] = 'calificaciones@cucei.udg.mx';
+
+# Email address for the bounced messages.
+$cfg['bounce_email'] = 'calificaciones@cucei.udg.mx';
+
+# -----------------------
 # Configuraciones varias
 # -----------------------
 

@@ -1,0 +1,23 @@
+Hola {$user.nombre} {$user.apellido},
+
+Has perdido tu contraseña y tu pediste recuperarla.
+Para darte una nueva contraseña, tienes que seguir
+el enlace mostrado a continuación. Se te pedirá 
+ingresar una nueva contraseña.
+
+{$url}
+
+Alternativamente, puedes ir a la siguiente página:
+
+{$urlik}
+
+e ingresar la siguiente llave de verificación:
+
+{$key}
+
+Si tu no eres el que solicitó reestablecer tu
+contraseña, simplemente ignora este correo, tu
+contraseña no será cambiada.
+
+Atentamente,
+El sistema de calificaciones

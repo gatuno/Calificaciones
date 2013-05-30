@@ -98,4 +98,77 @@ class Calif_Views {
 		                                         'form' => $form),
 		                                         $request);
 	}
+	
+	function passwordRecoveryAsk ($request, $match) {
+		$title = 'Recuperar contraseña';
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Password ($request->POST);
+			if ($form->isValid ()) {
+				$url = $form->save ();
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Password ();
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/user/recuperarcontra-ask.html',
+		                                         array ('page_title' => $title,
+		                                         'form' => $form),
+		                                         $request);
+	}
+	
+	function passwordRecoveryInputCode ($request, $match) {
+		$title = 'Recuperar contraseña';
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_PasswordInputKey($request->POST);
+			if ($form->isValid ()) {
+				$url = $form->save ();
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+		 	$form = new Calif_Form_PasswordInputKey ();
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/user/recuperarcontra-codigo.html',
+		                                         array ('page_title' => $title,
+		                                         'form' => $form),
+		                                         $request);
+	}
+	
+	function passwordRecovery ($request, $match) {
+		$title = 'Recuperar contraseña';
+		$key = $match[1];
+		
+		$email_id = Calif_Form_PasswordInputKey::checkKeyHash($key);
+		if (false == $email_id) {
+			$url = Gatuf_HTTP_URL_urlForView ('Gatuf_Views::passwordRecoveryInputKey');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		$user = Gatuf::factory('Calif_User')->getUser ($email_id[1]);
+		$extra = array ('key' => $key,
+		                'user' => $user);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_PasswordReset($request->POST, $extra);
+			if ($form->isValid()) {
+				$user = $form->save();
+				$request->user = $user;
+				$request->session->clear();
+				$request->session->setData('login_time', gmdate('Y-m-d H:i:s'));
+				$user->last_login = gmdate('Y-m-d H:i:s');
+				$user->updateSession ();
+				/* Establecer un mensaje
+				$request->user->setMessage(); */
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::index');
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_PasswordReset (null, $extra);
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/user/recuperarcontra.html',
+		                                         array ('page_title' => $title,
+		                                         'new_user' => $user,
+		                                         'form' => $form),
+		                                         $request);
+	}
 }
