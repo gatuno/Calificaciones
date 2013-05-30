@@ -254,14 +254,25 @@ function Calif_Utils_importoferta ($form_field) {
 	$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
 	$con->execute ($req);
 	
-	$req = sprintf ('TRUNCATE TABLE Horarios'); /* FIXME: prefijo de la tabla */
+	/* Ya no borrar todos los horarios
+	$horario_model = new Calif_Horario ();
+	$req = sprintf ('TRUNCATE TABLE %s', $horario_model->getSqlTable());
 	$con->execute ($req);
+	 */
 	
 	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getGruposSqlTable());
 	$con->execute ($req);
 	
+	/* Tampoco borrar todos los NRC
 	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getSqlTable ());
 	$con->execute ($req);
+	 */
+	
+	/* Tampoco borrar todas las aulas existentes
+	$salon_model = new Calif_Salon ();
+	$req = sprintF ('TRUNCATE TABLE %s', $salon_model->getSqlTable ());
+	$con->execute ($req);
+	 */
 	
 	$maestro = new Calif_Maestro ();
 	
@@ -287,7 +298,9 @@ function Calif_Utils_importoferta ($form_field) {
 			continue;
 		}
 		
-		if ($linea[0] === '') $linea[0] = $nrc_vacio++;
+		if ($linea[0] === '') {
+			throw new Exception ('Alto: NRC vacio. Cerca de la materia '.$linea[2].' con sección '.$linea[4]);
+		}
 		
 		Calif_Utils_agregar_materia ($materias, $linea[2], $linea[3]);
 		Calif_Utils_agregar_seccion ($secciones, $linea[0], $linea[2], $linea[4], '1111111');
@@ -307,15 +320,26 @@ function Calif_Utils_importoferta ($form_field) {
 	$seccion_model = new Calif_Seccion ();
 	foreach ($secciones as $nrc => $value) {
 		if ($seccion_model->getNrc ($nrc) === false) {
+			/* El NRC no existe, crearlo */
 			$seccion_model->nrc = $nrc;
 			$seccion_model->materia = $value[0];
 			$seccion_model->seccion = $value[1];
 			$seccion_model->maestro = $value[2];
 			
 			$seccion_model->create ();
+		} else {
+			$req = sprintf ('INSERT INTO NRC_Duplicados (nrc) VALUES (%s)', $seccion_model->nrc);
+			$con->execute ($req);
+			
+			/* En el caso de que este NRC ya exista, eliminar todos su horarios */
+			$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
+			$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+			
+			foreach ($horas as $hora) {
+				$hora->delete ();
+			}
 		}
 	}
-	
 	$salon_model = new Calif_Salon ();
 	foreach ($salones as $edificio => &$aulas) {
 		foreach ($aulas as $aula => &$cupo) {
@@ -344,7 +368,9 @@ function Calif_Utils_importoferta ($form_field) {
 			continue;
 		}
 		
-		if ($linea[0] === '') $linea[0] = $nrc_vacio++;
+		if ($linea[0] === '') {
+			throw new Exception ("Alto, NRC Vacio");
+		}
 		
 		$horario_model->nrc = $linea[0];
 		$horario_model->hora_inicio = $linea[6];

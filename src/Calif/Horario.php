@@ -1,6 +1,7 @@
 <?php
 
 class Calif_Horario extends Gatuf_Model {
+	public $id;
 	public $nrc;
 	public $hora_inicio;
 	public $hora_fin;
@@ -30,6 +31,17 @@ class Calif_Horario extends Gatuf_Model {
 		
 		$this->_con->execute ($req);
 		
+		$this->id = $this->_con->getLastId ();
+		
+		return true;
+	}
+	
+	function delete () {
+		$req = sprintf ('DELETE FROM %s WHERE id=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->id, $this->_con));
+		
+		$this->_con->execute ($req);
+		
+		$this->id = 0;
 		return true;
 	}
 }
