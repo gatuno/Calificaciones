@@ -65,7 +65,7 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		
 		$this->fields['correo'] = new Gatuf_Form_Field_Email (
 			array (
-				'required' => false,
+				'required' => true,
 				'label' => 'Correo',
 				'initial' => '',
 				'help_text' => 'Un correo',
@@ -79,11 +79,11 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ('El código del alumno es incorrecto');
 		}
 		
-		$sql = new Gatuf_SQL ('Codigo=%s', array ($codigo));
+		$sql = new Gatuf_SQL ('codigo=%s', array ($codigo));
 		$l = Gatuf::factory('Calif_Alumno')->getList(array ('filter' => $sql->gen(), 'count' => true));
 		
 		if ($l > 0) {
-			throw new Gatuf_Form_Invalid (sprintf ('El código \'%s\' de alumno especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Alumno::verAlumno', array ($codigo))));
+			throw new Gatuf_Form_Invalid (sprintf ('El código \'<a href="%s">%s</a>\' de alumno especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Alumno::verAlumno', array ($codigo)), $codigo));
 		}
 		
 		return $codigo;
@@ -100,7 +100,7 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		$alumno->nombre = $this->cleaned_data['nombre'];
 		$alumno->apellido = $this->cleaned_data['apellido'];
 		$alumno->carrera = $this->cleaned_data['carrera'];
-		$alumno->correo = empty ($this->cleaned_data['correo']) ? null : $this->cleaned_data['correo'];
+		$alumno->correo = $this->cleaned_data['correo'];
 		
 		$alumno->create();
 		

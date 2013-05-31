@@ -250,6 +250,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/maestros/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'agregarMaestro',
+);
+
+$ctl[] = array (
 	'regex' => '#^/maestro/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',

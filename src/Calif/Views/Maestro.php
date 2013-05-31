@@ -81,4 +81,29 @@ class Calif_Views_Maestro {
                                                        'grupos' => $grupos),
                                                  $request);
 	}
+	
+	public $agregarMaestro_precond = array ('Gatuf_Precondition::loginRequired');
+	public function agregarMaestro ($request, $match) {
+		$title = 'Nuevo profesor';
+		
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Maestro_Agregar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$maestro = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($maestro->codigo));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Maestro_Agregar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/edit-maestro.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
 }
