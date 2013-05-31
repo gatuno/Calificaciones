@@ -26,6 +26,21 @@ class Gatuf {
 		return $default;
 	}
 	
+	static function prefixconfig($pfx, $strip=false) {
+		$ret = array();
+		$pfx_len = strlen($pfx);
+		foreach ($GLOBALS['_GATUF_config'] as $key=>$val) {
+			if (0 === strpos($key, $pfx)) {
+				if (!$strip) {
+					$ret[$key] = $val;
+				} else {
+					$ret[substr($key, $pfx_len)] = $val;
+				}
+			}
+		}
+		return $ret;
+	}
+	
 	public static function fileExists($file) {
 		$file = trim ($file);
 		if (!$file) {
