@@ -264,6 +264,7 @@ function Gatuf_Template_varExport($mixed)
 function Gatuf_Template_dateAgo($date, $f='withal')
 {
     Gatuf::loadFunction('Gatuf_Date_Easy');
+    if (is_null ($date)) return 'nunca';
     $date = Gatuf_Template_dateFormat($date, '%Y-%m-%d %H:%M:%S');
     if ($f == 'withal') {
         return Gatuf_Date_Easy($date, null, 2, 'ahora');

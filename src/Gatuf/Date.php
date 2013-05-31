@@ -201,7 +201,7 @@ function Gatuf_Date_Easy($date, $ref=null, $blocks=2, $notime='now', $show=true)
         if ($past) {
             $res = sprintf('hace %s', $res);
         } else {
-            $res = sprintf('%s left', $res);
+            $res = sprintf('faltan %s', $res);
         }
     }
     return $res;
