@@ -74,6 +74,15 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
+	/* Eliminar todos los alumnos de este grupo */
+	function clearAlumnos () {
+		$sql = new Gatuf_SQL ('nrc=%s', $this->nrc);
+		$req = sprintf ('DELETE FROM %s WHERE %s', $this->getGruposSqlTable (), $sql->gen());
+		
+		$this->_con->execute ($req);
+		return true;
+	}
+	
 	function create () {
 		$req = sprintf ('INSERT INTO %s (nrc, seccion, materia, maestro) VALUES (%s, %s, %s, %s);', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($this->seccion, $this->_con), Gatuf_DB_IdentityToDb ($this->materia,$this->_con), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con));
 		
@@ -115,6 +124,6 @@ class Calif_Seccion extends Gatuf_Model {
 	public function displaylinkedmaestro ($extra=null) {
 		$m = new Calif_Maestro ();
 		$m->getMaestro ($this->maestro);
-		return '<a href=".">'.$m->apellido.' '.$m->nombre.' ('.$m->codigo.')</a>';
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$m->apellido.' '.$m->nombre.' ('.$m->codigo.')</a>';
 	}
 }

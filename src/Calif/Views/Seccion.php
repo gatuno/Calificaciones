@@ -161,10 +161,23 @@ class Calif_Views_Seccion {
 		$materia->getMateria ($seccion->materia);
 		
 		if ($request->method == 'POST') {
+			
+			/* Eliminar todos los alumnos de este grupo */
+			$seccion->clearAlumnos ();
+			
+			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
+			
+			/* Eliminar todas los horarios dde esta sección */
+			$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+			
+			foreach ($horas as $hora) {
+				$hora->delete ();
+			}
+			
 			$seccion->delete ();
 			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::index');
 			
-			return Gatuf_HTTP_Response_Redirect ($url);
+			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/eliminar-seccion.html',
