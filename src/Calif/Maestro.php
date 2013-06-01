@@ -51,4 +51,8 @@ class Calif_Maestro extends Calif_User {
 		
 		return true;
 	}
+	
+	function displaylinkedcodigo ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->codigo)).'">'.$this->codigo.'</a>';
+	}
 }

@@ -10,7 +10,7 @@ class Calif_Views_Maestro {
 		$pag->action = array ('Calif_Views_Maestro::index');
 		$pag->summary = 'Lista de maestros';
 		$list_display = array (
-			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
+			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
 		);
