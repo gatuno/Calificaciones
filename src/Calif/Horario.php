@@ -44,4 +44,17 @@ class Calif_Horario extends Gatuf_Model {
 		$this->id = 0;
 		return true;
 	}
+	
+	function displayDias () {
+		$cadena = '';
+	
+		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+			if ($this->$dia) {
+				$cadena .= strtoupper ($dia[0]);
+			} else {
+				$cadena .= '.';
+			}
+		}
+		return $cadena;
+	}
 }

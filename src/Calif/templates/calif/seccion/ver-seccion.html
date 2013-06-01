@@ -3,6 +3,23 @@
 <h1>NRC {$seccion.nrc}</h1>
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a></p>
 <p>Grupo del profesor {$maestro.apellido} {$maestro.nombre}. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
+<h2>Horarios de la sección</h2>
+{if $horarios}
+<table border="1">
+<thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th><th>Acciones</th></tr></thead>
+<tbody>
+{foreach $horarios as $hora}
+<tr>
+<td>{$hora.hora_inicio}</td>
+<td>{$hora.hora_fin}</td>
+<td>{$hora.displayDias()}</td>
+<td>{$salones[$hora->salon].edificio}</td>
+<td>{$salones[$hora->salon].aula}</td>
+<td>Listar acciones aqui...</td>
+</tr>
+{/foreach}
+</tbody></table>
+{/if}
 <p>FIXME: Mostrar las calificaciones</p>
 {if $alumnos}
 	<table>

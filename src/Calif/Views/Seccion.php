@@ -54,6 +54,16 @@ class Calif_Views_Seccion {
 		$maestro = new Calif_Maestro ();
 		$maestro->getMaestro ($seccion->maestro);
 		
+		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
+		
+		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+		
+		$salones = array ();
+		foreach ($horarios as $hora) {
+			$salones[$hora->salon] = new Calif_Salon ();
+			$salones[$hora->salon]->getSalonById ($hora->salon);
+		}
+			
 		$lista = $seccion->getAlumnos ();
 		
 		$alumnos = array ();
@@ -68,6 +78,8 @@ class Calif_Views_Seccion {
 		                                                 'page_title' => $title,
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
+		                                                 'horarios' => $horarios,
+		                                                 'salones' => $salones,
 		                                                 'alumnos' => $alumnos),
 		                                          $request);
 	}
