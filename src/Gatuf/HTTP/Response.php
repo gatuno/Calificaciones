@@ -121,7 +121,7 @@ class Gatuf_HTTP_Response
         }
         $this->content = $content;
         $this->headers['Content-Type'] = $mimetype;
-        $this->headers['X-Powered-By'] = 'Gatuno';
+        $this->headers['X-Powered-By'] = 'Gatuf/Pluf Framework';
         $this->status_code = 200;
         $this->cookies = array();
     }

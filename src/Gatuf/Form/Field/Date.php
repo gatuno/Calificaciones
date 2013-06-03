@@ -48,6 +48,6 @@ class Gatuf_Form_Field_Date extends Gatuf_Form_Field {
                 }
             }
         }
-        throw new Gatuf_Form_Invalid(__('Enter a valid date.'));
+        throw new Gatuf_Form_Invalid('Enter a valid date.');
     }
 }
