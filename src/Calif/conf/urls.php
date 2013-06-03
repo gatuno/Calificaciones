@@ -215,6 +215,27 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/timeadd/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Horario',
+	'method' => 'agregarHora',
+);
+
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/timedel/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Horario',
+	'method' => 'eliminarHora',
+);
+
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/timeupdate/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'actualizarHora',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

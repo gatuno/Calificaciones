@@ -2,8 +2,9 @@
 {block body}
 <h1>NRC {$seccion.nrc}</h1>
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a></p>
-<p>Grupo del profesor {$maestro.apellido} {$maestro.nombre}. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
+<p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
 <h2>Horarios de la sección</h2>
+<p>Puede <a href="{url 'Calif_Views_Horario::agregarHora', array ($seccion.nrc)}">agregar una nueva hora</a> a esta sección</p>
 {if $horarios}
 <table border="1">
 <thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th><th>Acciones</th></tr></thead>
@@ -13,8 +14,8 @@
 <td>{$hora.hora_inicio}</td>
 <td>{$hora.hora_fin}</td>
 <td>{$hora.displayDias()}</td>
-<td>{$salones[$hora->salon].edificio}</td>
-<td>{$salones[$hora->salon].aula}</td>
+<td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salones[$hora->salon].edificio)}">{$salones[$hora->salon].edificio}</a></td>
+<td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$salones[$hora->salon].aula}</a></td>
 <td>Listar acciones aqui...</td>
 </tr>
 {/foreach}
