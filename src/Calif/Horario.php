@@ -45,6 +45,25 @@ class Calif_Horario extends Gatuf_Model {
 		return true;
 	}
 	
+	function getHorario ($id) {
+		$sql = new Gatuf_SQL ('id=%s', $id);
+		$req = sprintf ('SELECT * FROM %s WHERE %s', $this->getSqlTable (), $sql->gen ());
+		
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if (count ($rs) == 0) {
+			return false;
+		}
+		foreach ($rs[0] as $col => $val) {
+			$this->$col = $val;
+		}
+		
+		$this->restore ();
+		return true;
+	}
+	
 	function displayDias () {
 		$cadena = '';
 		$letra = array ('L', 'M', 'I', 'J', 'V', 'S');

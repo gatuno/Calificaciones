@@ -1,0 +1,19 @@
+{extends 'calif/base.html'}
+{block body}
+<form method="POST" action=".">
+<h2>¿Esta seguro de que desea eliminar esta hora del NRC {$seccion.nrc}?</h2>
+<p>La hora se muestra a continuación:</p>
+<table border="1">
+<thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th></tr></thead>
+<tbody>
+<tr>
+<td>{$horario.hora_inicio}</td>
+<td>{$horario.hora_fin}</td>
+<td>{$horario.displayDias()}</td>
+<td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}">{$salon.edificio}</a></td>
+<td><a href="{url 'Calif_Views_Salon::verSalon', array ($horario->salon)}">{$salon.aula}</a></td>
+</tr>
+</tbody>
+</table>
+<p><input type="submit" value="Sí, borrarlo" /> | <a href="{url 'Calif_Views_Seccion::verNrc', array ($seccion.nrc)}">No</a></p>
+{/block}

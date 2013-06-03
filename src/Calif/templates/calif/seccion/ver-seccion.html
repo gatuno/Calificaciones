@@ -16,7 +16,7 @@
 <td>{$hora.displayDias()}</td>
 <td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salones[$hora->salon].edificio)}">{$salones[$hora->salon].edificio}</a></td>
 <td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$salones[$hora->salon].aula}</a></td>
-<td>Listar acciones aqui...</td>
+<td><a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a></td>
 </tr>
 {/foreach}
 </tbody></table>

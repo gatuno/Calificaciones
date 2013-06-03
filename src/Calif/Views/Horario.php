@@ -1,6 +1,10 @@
 <?php
 
+Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
+Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
+
 class Calif_Views_Horario {
+	public $agregarHora_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
@@ -31,10 +35,46 @@ class Calif_Views_Horario {
 		
 	}
 	
+	public $eliminarHora_precond = array ('Gatuf_Precondition::loginRequired');
 	public function eliminarHora ($request, $match) {
+		$title = 'Eliminar hora de una sección';
 		
+		$seccion = new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$hora = new Calif_Horario ();
+		
+		if (false === ($hora->getHorario ($match[2]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		if ($hora->nrc != $seccion->nrc) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$salon = new Calif_Salon ();
+		$salon->getSalonById ($hora->salon);
+		
+		if ($request->method == 'POST') {
+			/* Adelante, eliminar esta hora */
+			$hora->delete ();
+			
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/horario/eliminar-horario.html',
+		                                         array ('page_title' => $title,
+		                                                'seccion' => $seccion,
+		                                                'salon' => $salon,
+		                                                'horario' => $hora),
+		                                         $request);
 	}
 	
+	public $actualizarHora_precond = array ('Gatuf_Precondition::loginRequired');
 	public function actualizarHora ($request, $match) {
 		
 	}
