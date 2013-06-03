@@ -36,6 +36,14 @@ class Calif_Horario extends Gatuf_Model {
 		return true;
 	}
 	
+	function update () {
+		$req = sprintf ('UPDATE %s SET hora_inicio=%s, hora_fin=%s, salon=%s, lunes=%s, martes=%s, miercoles=%s, jueves=%s, viernes=%s, sabado=%s WHERE id = %s', $this->getSqlTable(), Gatuf_DB_HoraSiiauToDb ($this->hora_inicio, $this->_con), Gatuf_DB_HoraSiiauToDb ($this->hora_fin, $this->_con), Gatuf_DB_IntegerToDb ($this->salon, $this->_con), Gatuf_DB_BooleanToDB ($this->lunes, $this->_con), Gatuf_DB_BooleanToDB ($this->martes, $this->_con), Gatuf_DB_BooleanToDB ($this->miercoles, $this->_con), Gatuf_DB_BooleanToDB ($this->jueves, $this->_con), Gatuf_DB_BooleanToDB ($this->viernes, $this->_con), Gatuf_DB_BooleanToDB ($this->sabado, $this->_con), Gatuf_DB_IntegerToDb ($this->id, $this->_con));
+		
+		$this->_con->execute ($req);
+		
+		return true;
+	}
+	
 	function delete () {
 		$req = sprintf ('DELETE FROM %s WHERE id=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->id, $this->_con));
 		
@@ -46,8 +54,7 @@ class Calif_Horario extends Gatuf_Model {
 	}
 	
 	function getHorario ($id) {
-		$sql = new Gatuf_SQL ('id=%s', $id);
-		$req = sprintf ('SELECT * FROM %s WHERE %s', $this->getSqlTable (), $sql->gen ());
+		$req = sprintf ('SELECT * FROM %s WHERE id=%s', $this->getSqlTable (), Gatuf_DB_IntegerToDb ($id, $this->_con));
 		
 		if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());

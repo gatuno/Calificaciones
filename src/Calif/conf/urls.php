@@ -231,7 +231,7 @@ $ctl[] = array (
 $ctl[] = array (
 	'regex' => '#^/seccion/(\d+)/timeupdate/(\d+)/$#',
 	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
+	'model' => 'Calif_Views_Horario',
 	'method' => 'actualizarHora',
 );
 
