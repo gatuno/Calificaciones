@@ -56,10 +56,12 @@ class Calif_Views_Materia {
 		$grupos = $e->getGruposEvals ();
 		$evals = array ();
 		$disponibles = array ();
+		$sumas = array ();
 		
 		foreach ($grupos as $id_grupo => $grupo) {
 			$sql = new Gatuf_SQL ('Grupo=%s', $id_grupo);
 			$evals[$id_grupo] = $materia->getEvals ($sql);
+			$sumas[$id_grupo] = $materia->getGroupSum ($sql);
 			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
 		}
 		
@@ -96,6 +98,7 @@ class Calif_Views_Materia {
 		                                               'grupos' => $grupos,
 		                                               'materia' => $materia,
 		                                               'disponibles' => $disponibles,
+		                                               'sumas' => $sumas,
 		                                               'paginador' => $pag),
 		                                         $request);
 	}

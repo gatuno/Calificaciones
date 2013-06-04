@@ -65,7 +65,7 @@ class Calif_Materia extends Gatuf_Model {
 		/* Super SQL:
 		 SELECT * FROM Evaluaciones AS E WHERE NOT EXISTS (SELECT * FROM Porcentajes AS P WHERE P.Materia = 'CC100' AND E.Id = P.Evaluacion) AND Grupo = 2 */
 		$eval = new Calif_Evaluacion ();
-		$filtro = new Gatuf_SQL ('NOT EXISTS (SELECT * FROM '.$this->getPorcentajesSqlTable().' WHERE '.$this->getPorcentajesSqlTable().'.Materia=%s AND '.$this->getPorcentajesSqlTable().'.Evaluacion='.$eval->getSqlTable().'.Id)', $this->clave);
+		$filtro = new Gatuf_SQL ('NOT EXISTS (SELECT * FROM '.$this->getPorcentajesSqlTable().' WHERE '.$this->getPorcentajesSqlTable().'.materia=%s AND '.$this->getPorcentajesSqlTable().'.evaluacion='.$eval->getSqlTable().'.Id)', $this->clave);
 		
 		if (!is_null ($grupo)) {
 			$filtro->SAnd ($grupo);
@@ -90,6 +90,28 @@ class Calif_Materia extends Gatuf_Model {
 		}
 		
 		return $res;
+	}
+	
+	public function getGroupSum ($grupo) {
+		$eval = new Calif_Evaluacion ();
+		
+		$sql_filter = new Gatuf_SQL ('materia=%s', $this->clave);
+		if (!is_null ($grupo)) {
+			$sql_filter->SAnd ($grupo);
+		}
+		
+		/* SELECT E.grupo, SUM(P.porcentaje) FROM Porcentajes AS P INNER JOIN Evaluaciones AS E ON P.evaluacion = E.id WHERE materia='I5882' GROUP BY E.grupo */
+		$req = sprintf ('SELECT E.grupo, SUM(P.porcentaje) AS suma FROM %s AS P INNER JOIN %s AS E ON P.evaluacion = E.id WHERE %s GROUP BY (E.grupo)', $this->getPorcentajesSqlTable (), $eval->getSqlTable(), $sql_filter->gen());
+		
+		if (false === ($rs = $this->_con->select ($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if (count ($rs) == 0) {
+			return array ();
+		}
+		
+		return $rs[0];
 	}
 	
 	function create () {

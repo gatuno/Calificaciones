@@ -5,8 +5,9 @@
 <p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:</p>
 {if $evals[$id_grupo]}
 <ul>{foreach $evals[$id_grupo] as $eval}
-<li>{$eval['descripcion']}</li>
+<li>{$eval['porcentaje']}% - {$eval['descripcion']}</li>
 {/foreach}</ul>
+<p>El total para {$grupo} es de {$sumas[$id_grupo]['suma']}</p>
 {if $disponibles[$id_grupo]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $id_grupo)}">agregar una nueva forma de evaluación</a> a {$grupo}</p>{/if}
 {else}
 <p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
