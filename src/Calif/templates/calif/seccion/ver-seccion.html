@@ -3,6 +3,7 @@
 <h1>NRC {$seccion.nrc}</h1>
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a></p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
+<p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
 <h2>Horarios de la sección</h2>
 <p>Puede <a href="{url 'Calif_Views_Horario::agregarHora', array ($seccion.nrc)}">agregar una nueva hora</a> a esta sección</p>
 {if $horarios}
