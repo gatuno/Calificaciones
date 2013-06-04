@@ -82,6 +82,18 @@ class Gatuf_Session extends Gatuf_Model {
 		return true;
 	}
 	
+	function delete () {
+	    $this->preSave ();
+	    
+	    $req = sprintf ('DELETE FROM %s WHERE session_key=%s', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con));
+	    
+	    $this->_con->execute ($req);
+	    $this->session_key = '';
+	    $this->touched = true;
+	    
+	    return true;
+	}
+	
 	function setData($key, $value=null) {
 		if (is_null($value)) {
 			unset($this->data[$key]);
@@ -123,7 +135,7 @@ class Gatuf_Session extends Gatuf_Model {
 		if ($this->session_key == '') {
 			$this->session_key = $this->getNewSessionKey();
 		}
-		$this->expire = gmdate('Y-m-d H:i:s', time()+31536000);
+		$this->expire = gmdate('Y-m-d H:i:s', time()+86400);
 	}
 	
 	function restore() {

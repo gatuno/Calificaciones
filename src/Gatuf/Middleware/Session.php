@@ -69,6 +69,30 @@ class Gatuf_Middleware_Session {
             return false;
         }
         
+        /* Recuperar la sessión del sistema */
+        if (isset($data['Gatuf_Session_key'])) {
+            $sql = new Gatuf_SQL('session_key=%s' ,$data['Gatuf_Session_key']);
+            $found_session = Gatuf::factory('Gatuf_Session')->getList(array('filter' => $sql->gen()));
+            if (isset($found_session[0])) {
+                $session_timestamp = strtotime ($found_session[0]->expire);
+                if (time () >= $session_timestamp) {
+                    /* Destruir esta sesión, es vieja */
+                    $found_session[0]->delete ();
+                    $request->session = $session;
+                    
+                    if (isset ($data[$user->session_key])) unset ($data[$user->session_key]);
+                } else {
+                    $request->session = $found_session[0];
+                }
+            } else {
+                $request->session = $session;
+                if (isset ($data[$user->session_key])) unset ($data[$user->session_key]);
+            }
+        } else {
+            $request->session = $session;
+            if (isset ($data[$user->session_key])) unset ($data[$user->session_key]);
+        }
+        
         if (isset($data[$user->session_key])) {
             // We can get the corresponding user
             $found_user = Gatuf::factory($user_model)->getUser ($data[$user->session_key]);
@@ -88,17 +112,6 @@ class Gatuf_Middleware_Session {
             }
         } else {
             $request->user = $user;
-        }
-        if (isset($data['Gatuf_Session_key'])) {
-            $sql = new Gatuf_SQL('session_key=%s' ,$data['Gatuf_Session_key']);
-            $found_session = Gatuf::factory('Gatuf_Session')->getList(array('filter' => $sql->gen()));
-            if (isset($found_session[0])) {
-                $request->session = $found_session[0];
-            } else {
-                $request->session = $session;
-            }
-        } else {
-            $request->session = $session;
         }
         
         if (isset($request->COOKIE[$request->session->test_cookie_name])) {
