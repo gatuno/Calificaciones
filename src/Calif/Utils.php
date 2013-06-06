@@ -17,6 +17,14 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea) {
 	$n = count ($explote);
 	
 	$codigo = trim ($explote [($n - 1)], "()");
+	if ($codigo == '') {
+		/* Oops, código vacio */
+		$codigo = '1111111';
+		
+		$explote = array ('Staff', 'Staff Staff');
+		$n = 3;
+	}
+	
 	settype ($codigo, "string");
 	if (isset ($maestros [$codigo])) {
 		unset ($explote);
@@ -58,8 +66,7 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea) {
 	}
 	
 	if (!isset ($nombre) || !isset ($apellido)) {
-		echo "Advertencia, Maestro incorrecto\n";
-		echo "La linea causante es: \"" . $linea . "\"\n";
+		throw new Exception ('Nombre del maestro raro. El dato en cuestión es: '.$linea);
 	}
 	$nombre = ucwords (strtolower (Calif_Utils_arreglar_n ($nombre)));
 	$apellido = ucwords (strtolower (Calif_Utils_arreglar_n ($apellido)));
@@ -76,8 +83,7 @@ function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $ca
 	
 	$explote = explode (",", $linea);
 	if (!isset ($explote [1])) {
-		echo "Advertencia, alumno con nombre raro\n";
-		echo "El alumno en cuestión es: \"" . $linea . "\"\n";
+		throw new Exception ('Nombre del alumno raro. El dato en cuestión es: '.$linea);
 	}
 	$apellido = trim (ucwords (strtolower (Calif_Utils_arreglar_n ($explote[0]))));
 	$nombre = trim (ucwords (strtolower (Calif_Utils_arreglar_n ($explote[1]))));
@@ -115,6 +121,20 @@ function Calif_Utils_displayHoraSiiau ($val) {
 	$parte_horas = ($val - $parte_minutos) / 100;
 	
 	return sprintf ('%02s:%02s', $parte_horas, $parte_minutos);
+}
+
+function Calif_Utils_detectarColumnas ($cabecera) {
+	$indices = array ();
+	
+	foreach ($cabecera as $index => $columna) {
+		$col = strtolower ($columna);
+		
+		if (!isset ($indices[$col])) {
+			$indices[$col] = $index;
+		}
+	}
+	
+	return $indices;
 }
 
 function Calif_Utils_importsiiau ($form_field) {
@@ -241,160 +261,6 @@ function Calif_Utils_importsiiau ($form_field) {
 	fclose ($archivo);
 }
 
-function Calif_Utils_importoferta ($form_field) {
-	$ruta = $form_field['tmp_name'];
-	
-	if (($archivo = fopen ($ruta, "r")) === false) {
-		throw new Exception ('Falló al abrir el archivo '.$ruta);
-	}
-	
-	$con = &Gatuf::db();
-	
-	$seccion_model = new Calif_Seccion ();
-	$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
-	$con->execute ($req);
-	
-	/* Ya no borrar todos los horarios
-	$horario_model = new Calif_Horario ();
-	$req = sprintf ('TRUNCATE TABLE %s', $horario_model->getSqlTable());
-	$con->execute ($req);
-	 */
-	
-	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getGruposSqlTable());
-	$con->execute ($req);
-	
-	/* Tampoco borrar todos los NRC
-	$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getSqlTable ());
-	$con->execute ($req);
-	 */
-	
-	/* Tampoco borrar todas las aulas existentes
-	$salon_model = new Calif_Salon ();
-	$req = sprintF ('TRUNCATE TABLE %s', $salon_model->getSqlTable ());
-	$con->execute ($req);
-	 */
-	
-	$maestro = new Calif_Maestro ();
-	
-	if (false === $maestro->getMaestro ('1111111')) {
-		$maestro->codigo = '1111111';
-		$maestro->nombre = 'Staff';
-		$maestro->apellido = 'Staff Staff';
-		$maestro->correo = '';
-		
-		$maestro->create ();
-	}
-	
-	$materias = array ();
-	$secciones = array ();
-	$salones = array ();
-	$edificios = array ();
-	
-	$nrc_vacio = 40000;
-	/* Primera pasada, llenar los arreglos */
-	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
-		$no_campos = count ($linea);
-		
-		if ($no_campos < 17) {
-			continue;
-		}
-		
-		if ($linea[0] === '') {
-			throw new Exception ('Alto: NRC vacio. Cerca de la materia '.$linea[2].' con sección '.$linea[4]);
-		}
-		
-		Calif_Utils_agregar_materia ($materias, $linea[2], $linea[3]);
-		Calif_Utils_agregar_seccion ($secciones, $linea[0], $linea[2], $linea[4], '1111111');
-		Calif_Utils_agregar_salon ($salones, $linea [14], $linea [15], $linea[5]);
-	}
-	
-	$materia_model = new Calif_Materia ();
-	foreach ($materias as $clave => $descripcion) {
-		if ($materia_model->getMateria ($clave) === false) {
-			$materia_model->clave = $clave;
-			$materia_model->descripcion = $descripcion;
-			
-			$materia_model->create ();
-		}
-	}
-	
-	$seccion_model = new Calif_Seccion ();
-	foreach ($secciones as $nrc => $value) {
-		if ($seccion_model->getNrc ($nrc) === false) {
-			/* El NRC no existe, crearlo */
-			$seccion_model->nrc = $nrc;
-			$seccion_model->materia = $value[0];
-			$seccion_model->seccion = $value[1];
-			$seccion_model->maestro = $value[2];
-			
-			$seccion_model->create ();
-		} else {
-			$req = sprintf ('INSERT INTO NRC_Duplicados (nrc) VALUES (%s)', $seccion_model->nrc);
-			$con->execute ($req);
-			
-			/* En el caso de que este NRC ya exista, eliminar todos su horarios */
-			$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
-			$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
-			
-			foreach ($horas as $hora) {
-				$hora->delete ();
-			}
-		}
-	}
-	$salon_model = new Calif_Salon ();
-	$edificio_model = new Calif_Edificio ();
-	ksort ($salones);
-	foreach ($salones as $edificio => &$aulas) {
-		if (false === $edificio_model->getEdificio ($edificio)) {
-			$edificio_model->clave = $edificio;
-			$edificio_model->descripcion = 'Módulo '.$edificio;
-			$edificio_model->create ();
-		}
-		ksort ($aulas);
-		foreach ($aulas as $aula => &$cupo) {
-			if ($salon_model->getSalon ($edificio, $aula) === false) {
-				$salon_model->edificio = $edificio;
-				$salon_model->aula = $aula;
-				$salon_model->cupo = $cupo;
-				
-				$salon_model->create ();
-			}
-			
-			$cupo = $salon_model->id;
-		}
-	}
-	
-	rewind ($archivo);
-	
-	$horario_model = new Calif_Horario ();
-	
-	$nrc_vacio = 40000;
-	/* Segunda pasada, crear los horarios */
-	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
-		$no_campos = count ($linea);
-		
-		if ($no_campos < 17) {
-			continue;
-		}
-		
-		if ($linea[0] === '') {
-			throw new Exception ("Alto, NRC Vacio");
-		}
-		
-		$horario_model->nrc = $linea[0];
-		$horario_model->hora_inicio = $linea[6];
-		$horario_model->hora_fin = $linea[7];
-		$horario_model->salon = $salones[$linea[14]][$linea[15]];
-		$horario_model->lunes = $linea[8];
-		$horario_model->martes = $linea[9];
-		$horario_model->miercoles = $linea[10];
-		$horario_model->jueves = $linea[11];
-		$horario_model->viernes = $linea[12];
-		$horario_model->sabado = $linea[13];
-		
-		$horario_model->create ();
-	}
-	
-	fclose ($archivo);
+function Calif_Utils_dontmove ($field) {
+	/* Solo no mover el archivo */
 }
-
