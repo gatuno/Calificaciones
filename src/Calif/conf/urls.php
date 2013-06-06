@@ -264,6 +264,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/salones/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'agregarSalon',
+);
+
+$ctl[] = array (
 	'regex' => '#^/maestros/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
