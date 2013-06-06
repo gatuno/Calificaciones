@@ -241,16 +241,15 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					
 					$seccion_model->create ();
 				} else {
-					if ($this->cleaned_data['destruirnrcs']) {
-						/* En el caso de que este NRC ya exista, eliminar todos su horarios */
+					if ($this->cleaned_data['horarios'] || $this->cleaned_data['destruirnrcs']) {
 						$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
 						$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 				
 						foreach ($horas as $hora) {
 							$hora->delete ();
 						}
-						$seccion_model->delete ();
-						
+					}
+					if ($this->cleaned_data['destruirnrcs']) {
 						/* Y recrearlo */
 						$seccion_model->nrc = $nrc;
 						$seccion_model->materia = $value[0];
@@ -302,13 +301,6 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			
 			/* Segunda pasada, crear los horarios */
 			while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
-				$sql = new Gatuf_SQL ('nrc=%s', $linea[$cabecera['nrc']]);
-				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
-			
-				foreach ($horas as $hora) {
-					$hora->delete ();
-				}
-				
 				if ($linea[$cabecera['edif']] == '') {
 					$linea[$cabecera['edif']] = 'DEDX';
 				}
