@@ -52,19 +52,22 @@ class Calif_Views_Maestro {
 			$horario_maestro->opts['conflicts'] = true;
 			$horario_maestro->opts['conflict-color'] = '#FFE428';
 			
+			$salon_model = new Calif_Salon ();
 			foreach ($grupos as $grupo) {
 				$sql = new Gatuf_SQL ('nrc=%s', $grupo->nrc);
 				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 				
 				foreach ($horas as $hora) {
 					$cadena_desc = $grupo->materia . ' ' . $grupo->seccion.'<br />';
-					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $grupo->nrc);
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
 					$dia_semana = strtotime ('next Monday');
+					
+					$salon_model->getSalonById ($hora->salon);
 					foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 						if ($hora->$dia) {
 							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
 											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin + 45),
-											             'title' => $hora->nrc,
+											             'title' => $salon_model->edificio.' '.$salon_model->aula,
 											             'content' => $cadena_desc,
 											             'url' => $url, 'color' => '');
 						}

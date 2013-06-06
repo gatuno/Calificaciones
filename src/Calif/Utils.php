@@ -343,12 +343,14 @@ function Calif_Utils_importoferta ($form_field) {
 	}
 	$salon_model = new Calif_Salon ();
 	$edificio_model = new Calif_Edificio ();
+	ksort ($salones);
 	foreach ($salones as $edificio => &$aulas) {
 		if (false === $edificio_model->getEdificio ($edificio)) {
 			$edificio_model->clave = $edificio;
 			$edificio_model->descripcion = 'Módulo '.$edificio;
 			$edificio_model->create ();
 		}
+		ksort ($aulas);
 		foreach ($aulas as $aula => &$cupo) {
 			if ($salon_model->getSalon ($edificio, $aula) === false) {
 				$salon_model->edificio = $edificio;
