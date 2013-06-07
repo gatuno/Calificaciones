@@ -198,7 +198,7 @@ class Gatuf_Middleware_Session {
  */
 function Gatuf_Middleware_Session_ContextPreProcessor($request)
 {
-    return array('user' => $request->user);
+    return array('user' => $request->user, 'session' => $request->session);
 }
 
 Gatuf_Signal::connect('Gatuf_Template_Context_Request::construct',

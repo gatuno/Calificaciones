@@ -9,6 +9,12 @@
 	<title>Calificaciones - {$page_title}</title>
 </head>
 <body>
+	<ul style="list-style-type: none;">
+		<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::index'}">Maestros</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Materia::index'}">Materias</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Salon::index'}">Salones</a></li>
+	</ul>
 	<!-- Esta es la información del usuario -->
 	<div style="float: right">
 		{if !$user.isAnonymous()}

@@ -157,4 +157,10 @@ class Gatuf_Session extends Gatuf_Model {
 		$this->set_test_cookie = true;
 		$this->test_cookie_value = null;
 	}
+	
+	function __get ($prop) {
+	    if (isset ($this->data[$prop])) return $this->data[$prop];
+	    
+	    return $this->$prop ();
+	}
 }
