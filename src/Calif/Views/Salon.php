@@ -99,4 +99,35 @@ class Calif_Views_Salon {
 		                                               'form' => $form,),
                                                  $request);
 	}
+	
+	public function actualizarSalon ($request, $match) {
+		$title = 'Actualizar un salon';
+		
+		$salon = new Calif_Salon ();
+		
+		if (false === ($salon->getSalonById ($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		$extra = array ();
+		$extra['salon'] = $salon;
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Salon_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$salon = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $salon->id);
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Salon_Actualizar (null, $extra);
+		}
+
+		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/edit-salon.html',
+		                                         array('page_title' => $title,
+		                                               'form' => $form,),
+                                                 $request);
+	}
 }

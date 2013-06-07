@@ -264,6 +264,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/salon/(\d+)/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'actualizarSalon',
+);
+
+$ctl[] = array (
 	'regex' => '#^/salones/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Salon',

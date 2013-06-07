@@ -57,7 +57,7 @@ class Calif_Salon extends Gatuf_Model {
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET cupo = %s WHERE id = %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->cupo, $this->_con));
+		$req = sprintf ('UPDATE %s SET cupo = %s WHERE id = %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->cupo, $this->_con), Gatuf_DB_IntegerToDb ($this->id, $this->_con));
 		
 		$this->_con->execute ($req);
 		
