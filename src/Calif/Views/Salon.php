@@ -140,8 +140,13 @@ class Calif_Views_Salon {
 			if ($form->isValid ()) {
 				$libres = $form->save ();
 				
-				var_dump ($libres);
-				throw new Exception ('Alto, crear reporte');
+				return Gatuf_Shortcuts_RenderToResponse ('calif/salon/reporte-vacios.html',
+		                                         array ('page_title' => $title,
+		                                         'bus_inicio' => $form->cleaned_data['horainicio'],
+		                                         'bus_fin' => $form->cleaned_data['horafin'],
+		                                         'semana' => implode (',', $form->semana),
+		                                         'salones' => $libres),
+		                                         $request);
 			}
 		} else {
 			$form = new Calif_Form_Salon_Buscarsalon (null, null);
