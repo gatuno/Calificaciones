@@ -278,6 +278,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/salones/buscar/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'buscarSalon',
+);
+
+$ctl[] = array (
 	'regex' => '#^/maestros/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',

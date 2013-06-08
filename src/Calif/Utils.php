@@ -264,3 +264,36 @@ function Calif_Utils_importsiiau ($form_field) {
 function Calif_Utils_dontmove ($field) {
 	/* Solo no mover el archivo */
 }
+
+function Calif_Utils_buscarSalonVacio ($dia, $bus_inicio, $bus_fin) {
+	$salones = Gatuf::factory('Calif_Salon')->getList (array ('order' => array ('edificio ASC', 'aula ASC')));
+	
+	if (count ($salones) == 0)  return array ();
+	
+	$libres = array ();
+	foreach ($salones as $salon) {
+		$libres[$salon->id] = array ('libre' => 1, 'salon' => $salon);
+	}
+	
+	$sql = new Gatuf_SQL (sprintf ('%s=1', $dia));
+	
+	$horarios_en_dia = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+	
+	foreach ($horarios_en_dia as $hora) {
+		if (($bus_inicio >= $hora->hora_inicio && $bus_inicio < $hora->hora_fin) ||
+		    ($bus_fin > $hora->hora_inicio && $bus_fin <= $hora->hora_fin) ||
+		    ($bus_inicio <= $hora->hora_inicio && $bus_fin >= $hora->hora_fin)) {
+			/* Choque, este salon está ocupado a la hora solicitada */
+			$libres[$hora->salon]['libre'] = 0;
+		}
+	}
+	
+	$realmente_libres = array ();
+	foreach ($libres as $salon) {
+		if ($salon['libre']) {
+			$realmente_libres[] = $salon['salon'];
+		}
+	}
+	
+	return $realmente_libres;
+}

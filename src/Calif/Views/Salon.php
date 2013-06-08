@@ -130,4 +130,26 @@ class Calif_Views_Salon {
 		                                               'form' => $form,),
                                                  $request);
 	}
+	
+	function buscarSalon ($request, $match) {
+		$title = 'Buscar salon vacio';
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Salon_Buscarsalon ($request->POST, null);
+			
+			if ($form->isValid ()) {
+				$libres = $form->save ();
+				
+				var_dump ($libres);
+				throw new Exception ('Alto, crear reporte');
+			}
+		} else {
+			$form = new Calif_Form_Salon_Buscarsalon (null, null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/buscar-salon.html',
+		                                         array ('page_title' => $title,
+		                                         'form' => $form),
+		                                         $request);
+	}
 }
