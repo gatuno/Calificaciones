@@ -66,6 +66,11 @@ class Calif_Form_Horario_Agregar extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ('La hora para la sección debe tener al menos un día activo');
 		}
 		
+		/* Verificar que la hora de entrada sea siempre menor */
+		if ($this->cleaned_data['horainicio'] >= $this->cleaned_data['horafin']) {
+			throw new Gatuf_Form_Invalid ('Las horas de inicio y fin son inválidas');
+		}
+		
 		return $this->cleaned_data;
 	}
 	
