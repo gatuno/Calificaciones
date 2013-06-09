@@ -8,7 +8,7 @@ class Gatuf_Model {
 	public $_con = null;
     
     public $tabla;
-    public $primary_key;
+    public $default_query;
     
 	function _getConnection () {
 		static $con = null;
@@ -36,16 +36,7 @@ class Gatuf_Model {
                          'nb' => null,
                          'count' => false);
         $p = array_merge ($default, $p);
-        $query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
+        $query = $this->default_query;
         
 		if (!is_null($p['select'])) {
 			$query['select'] = $p['select'];
@@ -67,9 +58,9 @@ class Gatuf_Model {
 				$p['order'] = implode(', ', $p['order']);
 			}
 			if (strlen($query['order']) > 0 and strlen($p['order']) > 0) {
-				$query['order'] .= ', ';
+				$p['order'] .= ', ';
 			}
-			$query['order'] .= $p['order'];
+			$query['order'] = $p['order'].$query['order'];
 		}
 		/* El número de objetos a elegir */
 		if (!is_null($p['start']) && is_null($p['nb'])) {

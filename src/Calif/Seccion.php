@@ -19,6 +19,16 @@ class Calif_Seccion extends Gatuf_Model {
 		
 		$this->tabla = 'Secciones';
 		$this->tabla_grupos = 'Grupos';
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function getGruposSqlTable () {

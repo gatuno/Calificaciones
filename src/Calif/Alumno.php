@@ -6,6 +6,7 @@ class Calif_Alumno extends Calif_User {
 	/* Campos */
 	public $codigo;
 	public $carrera;
+	public $carrera_desc;
 	public $nombre;
 	public $apellido;
 	public $correo;
@@ -15,6 +16,18 @@ class Calif_Alumno extends Calif_User {
 		
 		$this->tabla = 'Alumnos';
 		$this->login_tabla = 'Alumnos_Login';
+		$carreras_tabla = $this->_con->pfx.'Carreras';
+		
+		$this->default_query = array(
+                       'select' => $this->getSqlTable().'.*, '.$carreras_tabla.'.descripcion AS carrera_desc',
+                       'from' => $this->getSqlTable(),
+                       'join' => 'INNER JOIN '.$carreras_tabla.' ON '.$this->getSqlTable().'.carrera='.$carreras_tabla.'.clave',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => 'apellido ASC, nombre ASC',
+                       'limit' => '',
+                       );
 	}
     
     function getAlumno ($codigo) {

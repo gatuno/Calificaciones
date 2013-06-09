@@ -11,6 +11,16 @@ class Calif_Carrera extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Carreras';
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function getCarrera ($clave) {

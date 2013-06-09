@@ -17,6 +17,16 @@ class Calif_Materia extends Gatuf_Model {
 		$this->tabla = 'Materias';
 		$this->tabla_porcentajes = 'Porcentajes';
 		$this->misevals = array ();
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function getPorcentajesSqlTable () {

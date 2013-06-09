@@ -16,6 +16,16 @@ class Calif_Evaluacion extends Gatuf_Model {
 		
 		$this->tabla = 'Evaluaciones';
 		$this->tabla_grupos = 'Grupos_Evaluaciones';
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function getGruposSqlTable () {

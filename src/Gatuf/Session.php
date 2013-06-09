@@ -43,6 +43,17 @@ class Gatuf_Session extends Gatuf_Model {
 	    $this->_getConnection();
 	    $this->tabla = 'sessions';
 		$this->session_key = '';
+		
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function get ($session_key) {

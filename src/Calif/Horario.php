@@ -13,6 +13,16 @@ class Calif_Horario extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Horarios';
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	public function restore () {

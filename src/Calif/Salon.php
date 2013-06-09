@@ -13,6 +13,16 @@ class Calif_Salon extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Salones';
+		$this->default_query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => '',
+                       'limit' => '',
+                       );
 	}
 	
 	function getSalon ($edificio, $aula) {
