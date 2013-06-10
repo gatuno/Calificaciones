@@ -1,0 +1,14 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Esta utilería tratará de verificar si los nrcs de su sistema coinciden contra las de siiau</p>
+<p>Deberá elegir un departamento a verificar y subir un archivo separado por comas de la oferta de siiau de ese departamento. El sistema hace su mejor intento por coincidir las horas.</p>
+{if $form.errors}
+	<p>Ha ocurrido un error subiendo el archivo, por favor intente de nuevo</p>
+	{if $form.get_top_errors}{$form.render_top_errors}{/if}
+{/if}
+<form method="post" enctype="multipart/form-data" action=".">
+{$form.render_p}
+<p>
+<input type="submit" id="submit" name="submit" value="Verificar" />
+</form>
+{/block}

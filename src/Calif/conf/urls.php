@@ -47,6 +47,13 @@ $ctl[] = array (
 	'method' => 'import_oferta',
 );
 
+$ctl[] = array (
+	'regex' => '#^/verificaroferta/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'verificar_oferta',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',

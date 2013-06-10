@@ -102,6 +102,41 @@ class Calif_Views {
 		                                         $request);
 	}
 	
+	function verificar_oferta ($request, $match) {
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Views_verificaroferta (array_merge ($request->POST, $request->FILES), $extra);
+			if ($form->isValid ()) {
+				$observaciones = $form->save ();
+				
+				$departamento = new Calif_Departamento ();
+				$departamento->getDepartamento ($form->cleaned_data['departamento']);
+				/* Recuperar cada uno de los salones para observación y
+				 * meterlo dentro del arreglo de observaciones */
+				$seccion = new Calif_Seccion ();
+				foreach ($observaciones as $nrc => &$obs) {
+					$seccion->getNrc ($nrc);
+					
+					$obs['seccion'] = clone ($seccion);
+				}
+				
+				return Gatuf_Shortcuts_RenderToResponse ('calif/reporte_verificar.html',
+		                                         array ('page_title' => 'Reporte verificar oferta',
+		                                         'departamento' => $departamento,
+		                                         'observaciones' => $observaciones),
+		                                         $request);
+			}
+		} else {
+			$form = new Calif_Form_Views_verificaroferta (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/verificar_oferta.html',
+		                                         array ('page_title' => 'Verificar Oferta',
+		                                         'form' => $form),
+		                                         $request);
+	}
+	
 	function passwordRecoveryAsk ($request, $match) {
 		$title = 'Recuperar contraseña';
 		

@@ -1,0 +1,59 @@
+{extends 'calif/base.html'}
+{block body}
+<table border="1">
+<thead><tr><th>Sección Solicitada por Nosotros</th><th>¿NRC Inventado?</th><th>¿NRC existe en SIIAU?</th>
+<th>¿Todas las horas coinciden con SIIAU?</th><th>¿Edificios correctos?</th><th>¿Salon correcto?</th>
+<th>¿Días establecidos?</th><th>¿Horas establecidas?</th><th>¿Equivalente en SIIAU (por horas)?</th></thead>
+<tbody>
+{foreach $observaciones as $obs}
+<tr>
+<td>{$obs['seccion'].materia} - {$obs['seccion'].seccion}<br />{$obs['seccion'].nrc}</td>
+{if $obs['inventado']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['existe']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['horas_bien']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['edificio']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['salon']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['dias']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['hora']}
+<td><img src="{media '/img/ok.png'}" />Sí</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{if $obs['match']}
+<td><img src="{media '/img/ok.png'}" />Sí, el NRC {$obs['match_nrc']}</td>
+{else}
+{if $obs['existe']}
+<td>Ya existe en Siiau</td>
+{else}
+<td><img src="{media '/img/important.png'}" />No</td>
+{/if}
+{/if}
+</tr>
+{/foreach}
+</tbody>
+</table>
+{/block}
