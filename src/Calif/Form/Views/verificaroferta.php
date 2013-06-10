@@ -146,7 +146,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		/* Primera pasada, determinar si el NRC existe sobre siiau */
 		foreach ($secciones_solicitadas as $seccion_solicitada) {
 			$nrc = $seccion_solicitada->nrc;
-			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'hora' => true, 'dias' => true, 'horas_bien' => false, 'match' => false);
+			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'hora' => true, 'dias' => true, 'horas_bien' => false, 'match' => false, 'match_seccion' => false);
 			
 			$observaciones_solicitadas[$nrc]['inventado'] = false;
 			if ($nrc > 60000) {
@@ -288,6 +288,44 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			}
 		} /* Foreach de la busqueda de los inexistentes */
 		
+		/* Tercera pasada
+		 * Buscar si la clave-seccion coinciden
+		 * Debería ser más fácil, pues no se comparan horarios */
+		foreach ($secciones_solicitadas as $index_solicitado => $seccion_solicitada) {
+			$nrc = $seccion_solicitada->nrc;
+			
+			if ($observaciones_solicitadas[$nrc]['existe']) continue;
+			if ($observaciones_solicitadas[$nrc]['match']) continue;
+			
+			foreach ($secciones as $nrc_siiau => $seccion_siiau) {
+				if ($seccion_siiau[0] != $seccion_solicitada->materia) continue;
+				
+				if ($seccion_siiau[1] == $seccion_solicitada->seccion) {
+					/* Esta sección de siiau hace match de la clave y la materia */
+					$observaciones_solicitadas[$nrc]['match_seccion'] = true;
+					$observaciones_solicitadas[$nrc]['match_nrc'] = $nrc_siiau;
+					
+					/* Jalar sus observaciones de siiau */
+					if ($observaciones[$nrc_siiau]['edificio'] === false) {
+						$observaciones_solicitadas[$nrc]['edificio'] = false;
+					}
+			
+					if ($observaciones[$nrc_siiau]['salon'] === false) {
+						$observaciones_solicitadas[$nrc]['salon'] = false;
+					}
+			
+					if ($observaciones[$nrc_siiau]['hora'] === false) {
+						$observaciones_solicitadas[$nrc]['hora'] = false;
+					}
+			
+					if ($observaciones[$nrc_siiau]['dias'] === false) {
+						$observaciones_solicitadas[$nrc]['dias'] = false;
+					}
+					/* Eliminar el nrc de siiau, no debería hacer Match con otra */
+					unset ($secciones[$nrc_siiau]);
+				}
+			}
+		}
 		return $observaciones_solicitadas;
 	} /* Fin del save */
 } /* Fin de la clase */
