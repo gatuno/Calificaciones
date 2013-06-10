@@ -115,15 +115,24 @@ class Calif_Views {
 				/* Recuperar cada uno de los salones para observación y
 				 * meterlo dentro del arreglo de observaciones */
 				$seccion = new Calif_Seccion ();
+				$total = count ($observaciones);
+				$bien = 0;
+				
 				foreach ($observaciones as $nrc => &$obs) {
 					$seccion->getNrc ($nrc);
-					
+					if ($obs['servida']) {
+						$bien++;
+					}
 					$obs['seccion'] = clone ($seccion);
 				}
+				$mal = $total - $bien;
 				
 				return Gatuf_Shortcuts_RenderToResponse ('calif/reporte_verificar.html',
 		                                         array ('page_title' => 'Reporte verificar oferta',
 		                                         'departamento' => $departamento,
+		                                         'total' => $total,
+		                                         'total_bien' => $bien,
+		                                         'total_mal' => $mal,
 		                                         'observaciones' => $observaciones),
 		                                         $request);
 			}

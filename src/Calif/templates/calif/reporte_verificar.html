@@ -1,12 +1,13 @@
 {extends 'calif/base.html'}
 {block body}
 <p>Presentando ante usted el reporte de la oferta del {$departamento.departamento}</p>
-<p>FIXME: Poner aquí las estadísticas</p>
+<p>Total de secciones solicitadas: {$total}</p>
+<p>Total de secciones servidas: {$total_bien}</p>
+<p>Total de secciones NO servidas: {$total_mal}</p>
 <h2>Detalles de cada nrc</h2>
 <table border="1">
 <thead><tr><th>Sección Solicitada por Nosotros</th><th>¿NRC existe en SIIAU?</th>
-<th>¿Coincide totalmente con SIIAU?</th><th>¿Hay edificio en SIIAU?</th><th>¿Hay salon en SIIAU?</th>
-<th>¿Hay dias en SIIAU?</th><th>¿Tiene horas inicio/fin en SIIAU?</th><th>¿Maestro en SIIAU?</th>
+<th>¿Sección servida?</th><th>¿Maestro en SIIAU?</th>
 <th>¿Equivalente en SIIAU (por horas)?</th><th>¿Equivalente en SIIAU (por Materia-Sección)?</th>
 </thead>
 <tbody>
@@ -20,50 +21,10 @@
 <td><img src="{media '/img/important.png'}" />No</td>
 {/if}
 
-{if $obs['horas_bien']}
+{if $obs['servida']}
 <td><img src="{media '/img/ok.png'}" />Sí</td>
 {else}
 <td><img src="{media '/img/important.png'}" />No</td>
-{/if}
-
-{if $obs['existe'] || $obs['match'] || $obs['match_seccion']}
-{if $obs['edificio']}
-<td><img src="{media '/img/ok.png'}" />Sí</td>
-{else}
-<td><img src="{media '/img/important.png'}" />No</td>
-{/if}
-{else}
-<td>No aplica</td>
-{/if}
-
-{if $obs['existe'] || $obs['match'] || $obs['match_seccion']}
-{if $obs['salon']}
-<td><img src="{media '/img/ok.png'}" />Sí</td>
-{else}
-<td><img src="{media '/img/important.png'}" />No</td>
-{/if}
-{else}
-<td>No aplica</td>
-{/if}
-
-{if $obs['existe'] || $obs['match'] || $obs['match_seccion']}
-{if $obs['dias']}
-<td><img src="{media '/img/ok.png'}" />Sí</td>
-{else}
-<td><img src="{media '/img/important.png'}" />No</td>
-{/if}
-{else}
-<td>No aplica</td>
-{/if}
-
-{if $obs['existe'] || $obs['match'] || $obs['match_seccion']}
-{if $obs['hora']}
-<td><img src="{media '/img/ok.png'}" />Sí</td>
-{else}
-<td><img src="{media '/img/important.png'}" />No</td>
-{/if}
-{else}
-<td>No aplica</td>
 {/if}
 
 {if $obs['existe'] || $obs['match'] || $obs['match_seccion']}

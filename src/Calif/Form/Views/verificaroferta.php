@@ -149,7 +149,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		/* Primera pasada, determinar si el NRC existe sobre siiau */
 		foreach ($secciones_solicitadas as $seccion_solicitada) {
 			$nrc = $seccion_solicitada->nrc;
-			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'hora' => true, 'dias' => true, 'horas_bien' => false, 'match' => false, 'match_seccion' => false);
+			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'horas_bien' => false, 'hora' => true, 'dias' => true, 'match' => false, 'match_seccion' => false, 'servida' => true, 'fallas' => array());
 			
 			$observaciones_solicitadas[$nrc]['inventado'] = false;
 			if ($nrc > 60000) {
@@ -167,21 +167,33 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			
 			if ($observaciones[$nrc]['edificio'] === false) {
 				$observaciones_solicitadas[$nrc]['edificio'] = false;
+				$observaciones_solicitadas[$nrc]['servida'] = false;
+				$observaciones_solicitadas[$nrc]['fallas'][] = 'edificio';
 			}
 			
 			if ($observaciones[$nrc]['salon'] === false) {
 				$observaciones_solicitadas[$nrc]['salon'] = false;
+				$observaciones_solicitadas[$nrc]['fallas'][] = 'salon';
 			}
 			
 			if ($observaciones[$nrc]['hora'] === false) {
 				$observaciones_solicitadas[$nrc]['hora'] = false;
+				$observaciones_solicitadas[$nrc]['servida'] = false;
+				$observaciones_solicitadas[$nrc]['fallas'][] = 'hora';
+				
 			}
 			
 			if ($observaciones[$nrc]['dias'] === false) {
 				$observaciones_solicitadas[$nrc]['dias'] = false;
+				$observaciones_solicitadas[$nrc]['servida'] = false;
+				$observaciones_solicitadas[$nrc]['fallas'][] = 'dias';
 			}
 			
 			$observaciones_solicitadas[$nrc]['maestro'] = $observaciones[$nrc]['maestro'];
+			if ($observaciones[$nrc]['maestro'] == 0) {
+				$observaciones_solicitadas[$nrc]['servida'] = false;
+				$observaciones_solicitadas[$nrc]['fallas'][] = 'maestro';
+			}
 			
 			if ($observaciones_solicitadas[$nrc]['dias'] === false ||
 			    $observaciones_solicitadas[$nrc]['edificio'] === false ||
@@ -204,6 +216,17 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				
 				$coincide = false;
 				foreach ($horas_por_seccion[$nrc] as $hora) {
+					if ($hora['edificio'] != 'DEDX' &&
+					    $hora['edificio'] != 'DEDT' &&
+					    $hora['edificio'] != 'DEDU' &&
+					    $hora['edificio'] != 'DEDR' &&
+					    $hora['edificio'] != 'DEDN' &&
+					    $hora['edificio'] != 'DEDW' &&
+					    $hora['edificio'] != 'DUCT1' &&
+					    $hora['edificio'] != 'DUCT2') {
+						$observaciones_solicitadas[$nrc]['servida'] = false;
+						$observaciones_solicitadas[$nrc]['fallas'][] = 'edificio';
+					}
 					if ($hora['inicio'] == $hora_seccion->hora_inicio &&
 					    $hora['fin'] == $hora_seccion->hora_fin &&
 					    $hora['aula'] == $salon_model->aula &&
@@ -221,6 +244,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				
 				if ($coincide === false) {
 					$observaciones_solicitadas[$nrc]['horas_bien'] = false;
+					$observaciones_solicitadas[$nrc]['servida'] = false;
 					break;
 				}
 			}
@@ -238,6 +262,9 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			if ($observaciones_solicitadas[$nrc]['existe']) continue;
 			$observaciones_solicitadas[$nrc]['match'] = false;
 			
+			/* No está servida, debido a que no existe el nrc */
+			$observaciones_solicitadas[$nrc]['servida'] = false;
+			
 			foreach ($secciones as $nrc_siiau => $seccion_siiau) {
 				/* Si esta sección ofertada por siiau es diferente de la materia que la que buscamos,
 				 * ignorarla */
@@ -249,25 +276,12 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				$sql = new Gatuf_SQL ('nrc=%s', $nrc);
 				$horarios_solicitados = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 				
-				$total_coincide = true;
 				foreach ($horarios_solicitados as $hora_seccion) {
 					$salon_model->getSalonById ($hora_seccion->salon);
 					
 					$coincide = false;
 					
 					foreach ($horas_por_seccion[$nrc_siiau] as $hora) {
-						if ($hora['inicio'] != $hora_seccion->hora_inicio ||
-							$hora['fin'] != $hora_seccion->hora_fin ||
-							$hora['aula'] != $salon_model->aula ||
-							$hora['edificio'] != $salon_model->edificio ||
-							$hora['lunes'] !== $hora_seccion->lunes ||
-							$hora['martes'] !== $hora_seccion->martes ||
-							$hora['miercoles'] !== $hora_seccion->miercoles ||
-							$hora['jueves'] !== $hora_seccion->jueves ||
-							$hora['viernes'] !== $hora_seccion->viernes ||
-							$hora['sabado'] !== $hora_seccion->sabado) {
-							$total_coincide = false;
-						}
 						if ($hora['inicio'] == $hora_seccion->hora_inicio &&
 							$hora['fin'] == $hora_seccion->hora_fin &&
 							$hora['lunes'] === $hora_seccion->lunes &&
@@ -285,11 +299,6 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 						$match_por_horas = false;
 						break;
 					}
-				}
-				if ($total_coincide) {
-					$observaciones_solicitadas[$nrc]['horas_bien'] = true;
-				} else {
-					$observaciones_solicitadas[$nrc]['horas_bien'] = false;
 				}
 				
 				if ($match_por_horas) {
