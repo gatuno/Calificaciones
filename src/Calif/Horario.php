@@ -5,7 +5,7 @@ class Calif_Horario extends Gatuf_Model {
 	public $nrc;
 	public $hora_inicio;
 	public $hora_fin;
-	public $salon;
+	public $salon, $salon_aula, $salon_edificio;
 	
 	public $lunes, $martes, $miercoles, $jueves, $viernes, $sabado;
 	
@@ -13,10 +13,11 @@ class Calif_Horario extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Horarios';
+		$salones_tabla = $this->_con->pfx.'Salones';
 		$this->default_query = array(
-                       'select' => '*',
+                       'select' => $this->getSqlTable().'.*, '.$salones_tabla.'.edificio AS salon_edificio, '.$salones_tabla.'.aula AS salon_aula',
                        'from' => $this->getSqlTable(),
-                       'join' => '',
+                       'join' => 'INNER JOIN '.$salones_tabla.' ON '.$this->getSqlTable().'.salon='.$salones_tabla.'.id',
                        'where' => '',
                        'group' => '',
                        'having' => '',

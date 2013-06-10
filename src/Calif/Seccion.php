@@ -5,9 +5,9 @@ class Calif_Seccion extends Gatuf_Model {
 	
 	/* Campos */
 	public $nrc;
-	public $materia;
+	public $materia, $materia_desc, $materia_departamento;
 	public $seccion;
-	public $maestro;
+	public $maestro, $maestro_nombre, $maestro_apellido;
 	
 	public $tabla_grupos;
 	
@@ -19,14 +19,16 @@ class Calif_Seccion extends Gatuf_Model {
 		
 		$this->tabla = 'Secciones';
 		$this->tabla_grupos = 'Grupos';
+		$materias_tabla = $this->_con->pfx.'Materias';
+		$maestros_tabla = $this->_con->pfx.'Maestros';
 		$this->default_query = array(
-                       'select' => '*',
+                       'select' => $this->getSqlTable().'.*, '.$materias_tabla.'.descripcion AS materia_desc, '.$materias_tabla.'.departamento AS materia_departamento, '.$maestros_tabla.'.nombre AS maestro_nombre, '.$maestros_tabla.'.apellido AS maestro_apellido',
                        'from' => $this->getSqlTable(),
-                       'join' => '',
+                       'join' => 'INNER JOIN '.$materias_tabla.' ON '.$this->getSqlTable().'.materia='.$materias_tabla.'.clave INNER JOIN '.$maestros_tabla.' ON '.$this->getSqlTable().'.maestro='.$maestros_tabla.'.codigo',
                        'where' => '',
                        'group' => '',
                        'having' => '',
-                       'order' => '',
+                       'order' => 'materia ASC, seccion ASC',
                        'limit' => '',
                        );
 	}

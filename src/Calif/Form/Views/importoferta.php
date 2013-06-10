@@ -155,7 +155,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			    !isset ($cabecera['l']) || !isset ($cabecera['m']) ||
 			    !isset ($cabecera['i']) || !isset ($cabecera['j']) ||
 			    !isset ($cabecera['v']) || !isset ($cabecera['s'])) {
-				throw new Exception ('Se solicitó importar horarios para los nrcs, pero el archivo no contiene los campos suficientes (hora de inicio, de fin, lunes, martes, etc...)');
+				throw new Exception ('Se solicitó importar horarios para los nrcs, pero el archivo no contiene los campos suficientes (hora de inicio, de fin, lunes, martes, ...)');
 			}
 		}
 		
@@ -242,6 +242,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					$seccion_model->create ();
 				} else {
 					if ($this->cleaned_data['horarios'] || $this->cleaned_data['destruirnrcs']) {
+						/* Se solicitó crear horarios, hay que destruir todos los horarios existentes de este NRC */
 						$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
 						$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 				
@@ -272,11 +273,13 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			ksort ($salones);
 			foreach ($salones as $edificio => &$aulas) {
 				if (false === $edificio_model->getEdificio ($edificio)) {
+					/* Si el edificio no existe, también crearlo */
 					$edificio_model->clave = $edificio;
 					$edificio_model->descripcion = 'Módulo '.$edificio;
 					$edificio_model->create ();
 				}
 				ksort ($aulas);
+				/* Y luego crear las aulas */
 				foreach ($aulas as $aula => &$cupo) {
 					if ($salon_model->getSalon ($edificio, $aula) === false) {
 						$salon_model->edificio = $edificio;
@@ -293,9 +296,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		
 		if ($this->cleaned_data['horarios']) {
 			rewind ($archivo);
-			
+			/* Descartar las cabeceras */
 			$linea = fgetcsv ($archivo, 600, ',', '"');
-			Calif_Utils_detectarColumnas ($linea);
 			
 			$horario_model = new Calif_Horario ();
 			
