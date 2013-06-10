@@ -11,7 +11,7 @@ function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion) {
 	$materias [$clave] = ucwords (strtolower (Calif_Utils_arreglar_n ($descripcion)));
 }
 
-function Calif_Utils_agregar_maestro (&$maestros, $linea) {
+function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=111111) {
 	$explote = explode (" ", $linea);
 	
 	$n = count ($explote);
@@ -19,7 +19,7 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea) {
 	$codigo = trim ($explote [($n - 1)], "()");
 	if ($codigo == '') {
 		/* Oops, código vacio */
-		$codigo = '1111111';
+		$codigo = $vacio;
 		
 		$explote = array ('Staff', 'Staff Staff');
 		$n = 3;

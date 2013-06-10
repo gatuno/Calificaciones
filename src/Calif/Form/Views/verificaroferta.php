@@ -80,13 +80,16 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		/* Primera pasada, llenar todos los nrc diferentes */
 		while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
 			if (is_null ($linea[0])) continue; /* Linea vacia */
-			$codigo_del_maestro = Calif_Utils_agregar_maestro ($maestros, $linea[$cabecera['profesor']]);
+			$codigo_del_maestro = Calif_Utils_agregar_maestro ($maestros, $linea[$cabecera['profesor']], 0);
 			
 			$nrc = $linea[$cabecera['nrc']];
 			Calif_Utils_agregar_seccion ($secciones, $nrc, $linea[$cabecera['clave']], $linea[$cabecera['secc']], $codigo_del_maestro);
 			
 			$horas_por_seccion [$nrc] = array ();
 			$observaciones [$nrc] = array ('salon' => true, 'edificio' => true, 'hora' => true, 'dias' => true);
+			if ($codigo_del_maestro == 0) $observaciones [$nrc]['maestro'] = 0;
+			else if ($codigo_del_maestro == '1111111') $observaciones [$nrc]['maestro'] = 1; /* Staff */
+			else $observaciones [$nrc]['maestro'] = 2; /* Un maestro no vacio diferente de Staff */
 		}
 		
 		/* Rebobinar el archivo y descartar la fila de las cabeceras */
@@ -178,6 +181,8 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				$observaciones_solicitadas[$nrc]['dias'] = false;
 			}
 			
+			$observaciones_solicitadas[$nrc]['maestro'] = $observaciones[$nrc]['maestro'];
+			
 			if ($observaciones_solicitadas[$nrc]['dias'] === false ||
 			    $observaciones_solicitadas[$nrc]['edificio'] === false ||
 			    $observaciones_solicitadas[$nrc]['salon'] === false ||
@@ -244,11 +249,25 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				$sql = new Gatuf_SQL ('nrc=%s', $nrc);
 				$horarios_solicitados = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 				
+				$total_coincide = true;
 				foreach ($horarios_solicitados as $hora_seccion) {
 					$salon_model->getSalonById ($hora_seccion->salon);
 					
 					$coincide = false;
+					
 					foreach ($horas_por_seccion[$nrc_siiau] as $hora) {
+						if ($hora['inicio'] != $hora_seccion->hora_inicio ||
+							$hora['fin'] != $hora_seccion->hora_fin ||
+							$hora['aula'] != $salon_model->aula ||
+							$hora['edificio'] != $salon_model->edificio ||
+							$hora['lunes'] !== $hora_seccion->lunes ||
+							$hora['martes'] !== $hora_seccion->martes ||
+							$hora['miercoles'] !== $hora_seccion->miercoles ||
+							$hora['jueves'] !== $hora_seccion->jueves ||
+							$hora['viernes'] !== $hora_seccion->viernes ||
+							$hora['sabado'] !== $hora_seccion->sabado) {
+							$total_coincide = false;
+						}
 						if ($hora['inicio'] == $hora_seccion->hora_inicio &&
 							$hora['fin'] == $hora_seccion->hora_fin &&
 							$hora['lunes'] === $hora_seccion->lunes &&
@@ -267,6 +286,11 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 						break;
 					}
 				}
+				if ($total_coincide) {
+					$observaciones_solicitadas[$nrc]['horas_bien'] = true;
+				} else {
+					$observaciones_solicitadas[$nrc]['horas_bien'] = false;
+				}
 				
 				if ($match_por_horas) {
 					$observaciones_solicitadas[$nrc]['match'] = true;
@@ -280,6 +304,8 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 					if ($observaciones[$nrc_siiau]['salon'] === false) {
 						$observaciones_solicitadas[$nrc]['salon'] = false;
 					}
+					
+					$observaciones_solicitadas[$nrc]['maestro'] = $observaciones[$nrc_siiau]['maestro'];
 					
 					/* Eliminar el nrc de siiau, no debería hacer Match con otra */
 					unset ($secciones[$nrc_siiau]);
@@ -321,6 +347,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 					if ($observaciones[$nrc_siiau]['dias'] === false) {
 						$observaciones_solicitadas[$nrc]['dias'] = false;
 					}
+					$observaciones_solicitadas[$nrc]['maestro'] = $observaciones[$nrc_siiau]['maestro'];
 					/* Eliminar el nrc de siiau, no debería hacer Match con otra */
 					unset ($secciones[$nrc_siiau]);
 				}
