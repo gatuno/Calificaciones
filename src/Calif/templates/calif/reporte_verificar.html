@@ -1,7 +1,10 @@
 {extends 'calif/base.html'}
 {block body}
+<p>Presentando ante usted el reporte de la oferta del {$departamento.departamento}</p>
+<p>FIXME: Poner aquí las estadísticas</p>
+<h2>Detalles de cada nrc</h2>
 <table border="1">
-<thead><tr><th>Sección Solicitada por Nosotros</th><th>¿NRC Inventado?</th><th>¿NRC existe en SIIAU?</th>
+<thead><tr><th>Sección Solicitada por Nosotros</th><th>¿NRC existe en SIIAU?</th>
 <th>¿Coincide totalmente con SIIAU?</th><th>¿Hay edificio en SIIAU?</th><th>¿Hay salon en SIIAU?</th>
 <th>¿Hay dias en SIIAU?</th><th>¿Tiene horas inicio/fin en SIIAU?</th><th>¿Maestro en SIIAU?</th>
 <th>¿Equivalente en SIIAU (por horas)?</th><th>¿Equivalente en SIIAU (por Materia-Sección)?</th>
@@ -10,12 +13,6 @@
 {foreach $observaciones as $obs}
 <tr>
 <td>{$obs['seccion'].materia} - {$obs['seccion'].seccion}<br />{$obs['seccion'].nrc}</td>
-
-{if $obs['inventado']}
-<td><img src="{media '/img/ok.png'}" />Sí</td>
-{else}
-<td><img src="{media '/img/important.png'}" />No</td>
-{/if}
 
 {if $obs['existe']}
 <td><img src="{media '/img/ok.png'}" />Sí</td>
