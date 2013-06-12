@@ -92,11 +92,46 @@ class Calif_Views_Materia {
 		$pag->forced_where = $sql_filter;
 		$pag->setFromRequest ($request);
 		
+		/* Recuperar todos las secciones de esta materia */
+		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
+		$calendario_materia = new Gatuf_Calendar ();
+		$calendario_materia->events = array ();
+		$calendario_materia->opts['conflicts'] = false;
+		
+		$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql_filter->gen ()));
+		
+		$salon_model = new Calif_Salon ();
+		
+		foreach ($secciones as $seccion) {
+			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
+			$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+			
+			foreach ($horas as $hora) {
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+				$cadena_desc = sprintf ('%s <a href="%s">%s</a><br />', $seccion->materia, $url, $seccion->seccion);
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
+				$dia_semana = strtotime ('next Monday');
+				
+				$salon_model->getSalonById ($hora->salon);
+				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+					if ($hora->$dia) {
+						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
+										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin + 45),
+										             'title' => $salon_model->edificio.' '.$salon_model->aula,
+										             'content' => $cadena_desc,
+										             'url' => $url, 'color' => '');
+					}
+					$dia_semana = $dia_semana + 86400;
+				}
+			}
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
 		                                         array('page_title' => 'Ver materia',
 		                                               'evals' => $evals,
 		                                               'grupos' => $grupos,
 		                                               'materia' => $materia,
+		                                               'calendario' => $calendario_materia,
 		                                               'disponibles' => $disponibles,
 		                                               'sumas' => $sumas,
 		                                               'paginador' => $pag),

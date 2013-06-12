@@ -13,6 +13,10 @@
 <p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
 {/if}
 {/foreach}
+{if $calendario.events}
+<h2>Horas de la materia</h2>
+{$calendario.render}
+{/if}
 <h2>Lista de secciones de {$materia.clave}</h2>
 <p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrcConMateria', array ($materia.clave)}">agregar una nueva sección</a> a esta materia</p>
 {$paginador.render}
