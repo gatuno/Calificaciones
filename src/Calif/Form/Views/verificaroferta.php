@@ -86,7 +86,11 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			Calif_Utils_agregar_seccion ($secciones, $nrc, $linea[$cabecera['clave']], $linea[$cabecera['secc']], $codigo_del_maestro);
 			
 			$horas_por_seccion [$nrc] = array ();
-			$observaciones [$nrc] = array ('salon' => true, 'edificio' => true, 'hora' => true, 'dias' => true);
+			
+			/* Al principio asumir que todas las horas que Siiau tenga están bien */
+			$observaciones [$nrc] = array ('edificio' => true, 'salon' => true, 'hora' => true, 'dias' => true);
+			
+			/* Si el maestro es raro, marcarlo como observación */
 			if ($codigo_del_maestro == 0) $observaciones [$nrc]['maestro'] = 0;
 			else if ($codigo_del_maestro == '1111111') $observaciones [$nrc]['maestro'] = 1; /* Staff */
 			else $observaciones [$nrc]['maestro'] = 2; /* Un maestro no vacio diferente de Staff */
@@ -96,30 +100,33 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		rewind ($archivo);
 		$linea = fgetcsv ($archivo, 600, ',', '"');
 		
+		/* Recorrer otra vez el archivo y llenar todos los horarios de la sección */
 		while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
 			if (is_null ($linea[0])) continue; /* Linea vacia */
 			$nrc = $linea[$cabecera['nrc']];
 			
+			/* Si alguno de los campos no existe, marcarlo para una revisión posterior */
 			if ($linea[$cabecera['edif']] == '') {
 				$observaciones[$nrc]['edificio'] = false;
 			}
-			
+
 			if ($linea[$cabecera['aula']] == '') {
 				$observaciones[$nrc]['salon'] = false;
 			}
-			
+
 			if ($linea[$cabecera['ini']] == '' || $linea[$cabecera['fin']] == '') {
 				$observaciones[$nrc]['hora'] = false;
 			}
-			
+
 			$activo = false;
 			foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 				if ($linea[$cabecera[$dia]] != '') $activo = true;
 			}
-			
+
 			if ($activo === false) {
 				$observaciones[$nrc]['dias'] = false;
 			}
+			
 			$horario = array ('nrc' => $nrc,
 			                  'inicio' => $linea[$cabecera['ini']],
 			                  'fin' => $linea[$cabecera['fin']],
@@ -149,51 +156,47 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		/* Primera pasada, determinar si el NRC existe sobre siiau */
 		foreach ($secciones_solicitadas as $seccion_solicitada) {
 			$nrc = $seccion_solicitada->nrc;
-			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'horas_bien' => false, 'hora' => true, 'dias' => true, 'match' => false, 'match_seccion' => false, 'servida' => true, 'fallas' => array());
+			/* Observaciones positivas sobre las secciones solicitadas,
+			 * Todo existe, los salones están asignados, todo es flores en SIIAU */
+			$observaciones_solicitadas[$nrc] = array ('edificio' => true, 'salon' => true, 'horas_dias' => true, 'match' => false, 'match_seccion' => false, 'servida' => true);
 			
-			$observaciones_solicitadas[$nrc]['inventado'] = false;
-			if ($nrc > 60000) {
-				$observaciones_solicitadas[$nrc]['inventado'] = true;
+			/* Si este nrc no existe sobre siiau, omitirlo */
+			if (!isset ($secciones[$nrc])) {
 				$observaciones_solicitadas[$nrc]['existe'] = false;
+				$observaciones_solicitadas[$nrc]['servida'] = false;
 				continue;
 			}
 			
-			if (isset ($secciones[$nrc])) {
-				$observaciones_solicitadas[$nrc]['existe'] = true;
-			} else {
-				$observaciones_solicitadas[$nrc]['existe'] = false;
-				continue;
-			}
+			$observaciones_solicitadas[$nrc]['existe'] = true;
 			
+			/* Si el edificio ya tiene problemas al importarlo desde Siiau,
+			 * marcarlo en automático en nuestras secciones solicitadas */
 			if ($observaciones[$nrc]['edificio'] === false) {
 				$observaciones_solicitadas[$nrc]['edificio'] = false;
 				$observaciones_solicitadas[$nrc]['servida'] = false;
-				$observaciones_solicitadas[$nrc]['fallas'][] = 'edificio';
 			}
 			
+			/* Lo mismo para los salones */
 			if ($observaciones[$nrc]['salon'] === false) {
 				$observaciones_solicitadas[$nrc]['salon'] = false;
-				$observaciones_solicitadas[$nrc]['fallas'][] = 'salon';
 			}
 			
-			if ($observaciones[$nrc]['hora'] === false) {
-				$observaciones_solicitadas[$nrc]['hora'] = false;
+			/* Y lo mismo si alguna hora o todos los días están vacios,
+			 * un horario vacio NO puede ser comparado contra
+			 * las horas de nuestras secciones */
+			if ($observaciones[$nrc]['hora'] === false || $observaciones[$nrc]['dias'] === false) {
+				$observaciones_solicitadas[$nrc]['horas_dias'] = false;
 				$observaciones_solicitadas[$nrc]['servida'] = false;
-				$observaciones_solicitadas[$nrc]['fallas'][] = 'hora';
-				
 			}
 			
-			if ($observaciones[$nrc]['dias'] === false) {
-				$observaciones_solicitadas[$nrc]['dias'] = false;
-				$observaciones_solicitadas[$nrc]['servida'] = false;
-				$observaciones_solicitadas[$nrc]['fallas'][] = 'dias';
-			}
-			
+			/* Si la sección de siiau ya tiene observaciones,
+			 * aplicarla a nuestras secciones */
 			$observaciones_solicitadas[$nrc]['maestro'] = $observaciones[$nrc]['maestro'];
+			
 			if ($observaciones[$nrc]['maestro'] == 0) {
 				$observaciones_solicitadas[$nrc]['servida'] = false;
-				$observaciones_solicitadas[$nrc]['fallas'][] = 'maestro';
 			}
+			
 			
 			if ($observaciones_solicitadas[$nrc]['dias'] === false ||
 			    $observaciones_solicitadas[$nrc]['edificio'] === false ||
