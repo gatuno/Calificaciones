@@ -11,7 +11,7 @@ function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion) {
 	$materias [$clave] = ucwords (strtolower (Calif_Utils_arreglar_n ($descripcion)));
 }
 
-function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=111111) {
+function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
 	$explote = explode (" ", $linea);
 	
 	$n = count ($explote);

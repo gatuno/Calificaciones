@@ -7,8 +7,9 @@
 	{if $form.get_top_errors}{$form.render_top_errors}{/if}
 {/if}
 <form method="post" enctype="multipart/form-data" action=".">
-{$form.render_p}
-<p>
-<input type="submit" id="submit" name="submit" value="Importar" />
+<table border="1">
+{$form.render_table}
+</table>
+<p><input type="submit" id="submit" name="submit" value="Importar" /></p>
 </form>
 {/block}

@@ -111,8 +111,6 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		if ($this->cleaned_data['maestrosnrc']) {
 			/* Crear maestros */
 			$this->cleaned_data['maestros'] = true;
-			/* Crear NRCS */
-			$this->cleaned_data['nrcs'] = true;
 		}
 		
 		if ($this->cleaned_data['nrcs']) {
@@ -181,7 +179,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				$codigo_del_maestro = '1111111';
 			}
 			
-			if ($this->cleaned_data['nrcs']) {
+			if ($this->cleaned_data['nrcs'] || $this->cleaned_data['maestrosnrc']) {
 				Calif_Utils_agregar_seccion ($secciones, $linea[$cabecera['nrc']], $linea[$cabecera['clave']], $linea[$cabecera['secc']], $codigo_del_maestro);
 			}
 			if ($this->cleaned_data['salones']) {
@@ -233,13 +231,15 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$seccion_model = new Calif_Seccion ();
 			foreach ($secciones as $nrc => $value) {
 				if ($seccion_model->getNrc ($nrc) === false) {
-					/* El NRC no existe, crearlo */
-					$seccion_model->nrc = $nrc;
-					$seccion_model->materia = $value[0];
-					$seccion_model->seccion = $value[1];
-					$seccion_model->maestro = $value[2];
+					if ($this->cleaned_data['nrcs']) {
+						/* El NRC no existe, crearlo */
+						$seccion_model->nrc = $nrc;
+						$seccion_model->materia = $value[0];
+						$seccion_model->seccion = $value[1];
+						$seccion_model->maestro = $value[2];
 					
-					$seccion_model->create ();
+						$seccion_model->create ();
+					} /* Si el nrc no existe, no importa */
 				} else {
 					if ($this->cleaned_data['horarios'] || $this->cleaned_data['destruirnrcs']) {
 						/* Se solicitó crear horarios, hay que destruir todos los horarios existentes de este NRC */
