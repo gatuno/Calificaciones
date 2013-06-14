@@ -5,19 +5,9 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 class Calif_Views_Alumno {
 	public $index_precond = array ('Gatuf_Precondition::loginRequired');
 	public function index ($request, $match) {
-		/* Utilizar un paginador aquí, por favor */
-		
-		/* Recuperar todas las carreras para la paginación */
-		$carreras = Gatuf::factory('Calif_Carrera')->getList ();
-		$extra = array ();
-		foreach ($carreras as $car) {
-			$extra [$car->clave] = $car->descripcion;
-		}
-		
 		$alumno =  new Calif_Alumno ();
 		
 		$pag = new Gatuf_Paginator ($alumno);
-		$pag->extra = $extra;
 		$pag->action = array ('Calif_Views_Alumno::index');
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
