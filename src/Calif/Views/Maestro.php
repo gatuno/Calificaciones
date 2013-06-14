@@ -78,7 +78,7 @@ class Calif_Views_Maestro {
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-maestro.html',
-		                                         array('page_title' => 'Ver maestro',
+		                                         array('page_title' => 'Perfil público',
 		                                               'maestro' => $maestro,
 		                                               'calendario' => $horario_maestro,
                                                        'grupos' => $grupos),
@@ -106,6 +106,35 @@ class Calif_Views_Maestro {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/edit-maestro.html',
 		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
+	
+	public $actualizarMaestro_precond = array ('Gatuf_Precondition::loginRequired');
+	public function actualizarMaestro ($request, $match) {
+		$maestro = new Calif_Maestro ();
+		
+		if (false === $maestro->getMaestro ($match[1])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$extra = array ('maestro' => $maestro);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Maestro_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$maestro = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($maestro->codigo));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Maestro_Actualizar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/edit-maestro.html',
+		                                         array ('page_title' => 'Actualizar maestro',
 		                                                'form' => $form),
 		                                         $request);
 	}

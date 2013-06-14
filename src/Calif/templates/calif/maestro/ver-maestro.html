@@ -1,19 +1,30 @@
 {extends 'calif/base.html'}
 {block body}
+<p><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Cambiar la información</a> de este profesor</a>
 <table class="form" summary="">
 <tr>
 <th style="text-align: right">
+	{if $user.codigo == $maestro.codigo}
+	<a href="http://gravatar.com/emails/" title="Cambie su imagen en gravatar.com">
+	{else}
+    <a href="http://www.gravatar.com/avatar/{$maestro.correo|md5}.jpg?s=400">
+    {/if}
     <img src="http://www.gravatar.com/avatar/{$maestro.correo|md5}.jpg?s=60" alt=" " />
+    </a>
 </th>
-<td>{$maestro.apellido} {$maestro.nombre}</td>
+{if $user.codigo == $maestro.codigo}
+	<td>Yo</td>
+{else}
+	<td>{$maestro.apellido} {$maestro.nombre}</td>
+{/if}
 </tr>
 <tr>
 <th>Última vez visto:</th>
 <td>{$maestro.last_login|dateago}</td>
 </tr>
 </table>
-{if $grupos}
 <h2>Grupos del profesor</h2>
+{if $grupos}
 <table>
 <thead><tr><th>NRC</th><th>Materia</th><th>Sección</th></tr></thead>
 <tbody>
@@ -24,8 +35,8 @@
 {else}
 <p>Este profesor no tiene grupos activos</p>
 {/if}
-{if $calendario}
 <h2>Horario del profesor</h2>
+{if $calendario}
 {$calendario.render()}
 {else}
 <p>Este profesor no tiene grupos activos</p>

@@ -13,7 +13,7 @@ class Calif_Horario extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Horarios';
-		$this->tabla = 'Horarios_View';
+		$this->tabla_view = 'Horarios_View';
 	}
 	
 	public function restore () {
