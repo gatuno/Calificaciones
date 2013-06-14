@@ -2,6 +2,25 @@
 
 class Calif_Form_Materia_Agregar extends Gatuf_Form {
 	public function initFields($extra=array()) {
+		$departamentos = Gatuf::factory('Calif_Departamento')->getList ();
+		
+		$choices = array ();
+		foreach ($departamentos as $departamento) {
+			$choices[$departamento->departamento] = $departamento->clave;
+		}
+		
+		$this->fields['departamento'] = new Gatuf_Form_Field_Varchar (
+			array(
+				'required' => true,
+				'label' => 'Departamento',
+				'initial' => '',
+				'help_text' => 'El departamento al que pertenece la materia',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+				'widget' => 'Gatuf_Form_Widget_SelectInput'
+		));
+		
 		$this->fields['clave'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,
@@ -54,6 +73,7 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 		
 		$materia->clave = $this->cleaned_data['clave'];
 		$materia->descripcion = $this->cleaned_data['descripcion'];
+		$materia->departamento = $this->cleaned_data['departamento'];
 		
 		$materia->create();
 		

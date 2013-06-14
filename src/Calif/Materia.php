@@ -117,14 +117,14 @@ class Calif_Materia extends Gatuf_Model {
 	}
 	
 	function create () {
-		$req = sprintf ('INSERT INTO %s (clave, descripcion) VALUES (%s, %s);', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->clave, $this->_con), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con));
+		$req = sprintf ('INSERT INTO %s (clave, descripcion, departamento) VALUES (%s, %s, %s);', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->clave, $this->_con), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con));
 		$this->_con->execute($req);
 		
 		return true;
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET descripcion = %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IdentityToDb ($this->clave, $this->_con));
+		$req = sprintf ('UPDATE %s SET descripcion = %s, departamento = %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con), Gatuf_DB_IdentityToDb ($this->clave, $this->_con));
 		
 		$this->_con->execute($req);
 		
