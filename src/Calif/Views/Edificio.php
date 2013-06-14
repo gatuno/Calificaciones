@@ -12,8 +12,8 @@ class Calif_Views_Edificio {
 		$pag->summary = 'Lista de los edificios';
 		
 		$list_display = array (
-			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave Siiau'),
-			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Descripción')
+			array ('clave', 'Gatuf_Paginator_DisplayVal', 'Clave Siiau'),
+			array ('descripcion', 'Gatuf_Paginator_FKLink', 'Descripción')
 		);
 		
 		$pag->items_per_page = 40;
@@ -56,6 +56,10 @@ class Calif_Views_Edificio {
 			$sql = new Gatuf_SQL ('salon=%s', $salon->id);
 			$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 			
+			if (count ($horas_salon) == 0) {
+				$super_calendarios[$salon->id] = null;
+				continue;
+			}
 			$calendar = new Gatuf_Calendar ();
 			$calendar->events = array ();
 			$calendar->opts['conflicts'] = true;

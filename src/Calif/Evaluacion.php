@@ -17,7 +17,7 @@ class Calif_Evaluacion extends Gatuf_Model {
 		$this->tabla = 'Evaluaciones';
 		$this->tabla_view = 'Evaluaciones_View';
 		$this->tabla_grupos = 'Grupos_Evaluaciones';
-		$this->default_order = 'grupo ASC, descripcion ASC'
+		$this->default_order = 'grupo ASC, descripcion ASC';
 	}
 	
 	function getGruposSqlTable () {

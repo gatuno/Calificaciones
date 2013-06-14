@@ -3,18 +3,22 @@
 <p>Este es el salón {$edificio.descripcion} ({$edificio.clave})</p>
 <p>Se muestran los horarios de todos los salones</p>
 {if $salones}
-<div id="salones_tabs"><ul>
-{foreach $salones as $salon}
-<li><a href="#{$salon.id}">{$salon.aula}</a></li>
-{/foreach}</ul>
-{foreach $salones as $salon}
-<div id="{$salon.id}">
-{$calendarios[$salon.id].render}
-</div>
-{/foreach}
-</div>
+	<div id="salones_tabs"><ul>
+	{foreach $salones as $salon}
+		<li><a href="#{$salon.id}">{$salon.aula}</a></li>
+	{/foreach}</ul>
+	{foreach $salones as $salon}
+		<div id="{$salon.id}">
+		{if $calendarios[$salon.id]}
+			{$calendarios[$salon.id].render}
+		{else}
+			<p>Este salón no tiene registrada ninguna hora. En hora buena, está libre.</p>
+		{/if}
+		</div>
+	{/foreach}
+	</div>
 {else}
-<p>Este edificio no tiene salones registrados</p>
+	<p>Este edificio no tiene salones registrados</p>
 {/if}
 {/block}
 {block javascript}{literal}
