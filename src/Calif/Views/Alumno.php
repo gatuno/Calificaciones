@@ -31,7 +31,7 @@ class Calif_Views_Alumno {
 		$pag->no_results_text = 'No se encontraron alumnos';
 		$pag->max_number_pages = 5;
 		$pag->configure ($list_display,
-			array ('codigo', 'nombre', 'apellido'),
+			array ('codigo', 'nombre', 'apellido', 'carrera'),
 			array ('codigo', 'nombre', 'apellido', 'carrera')
 		);
 		

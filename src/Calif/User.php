@@ -32,7 +32,7 @@ class Calif_User extends Gatuf_Model {
 	}
 	
 	function checkCreditentials ($login, $password) {
-		$where = new Gatuf_SQL ('Login=%s', $login);
+		$where = new Gatuf_SQL ('login=%s', $login);
 		
 		$users = $this->getLoginList (array ('filter' => $where->gen()));
 		

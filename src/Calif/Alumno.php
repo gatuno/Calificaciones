@@ -15,19 +15,9 @@ class Calif_Alumno extends Calif_User {
 		$this->_getConnection();
 		
 		$this->tabla = 'Alumnos';
+		$this->tabla_view = 'Alumnos_View';
 		$this->login_tabla = 'Alumnos_Login';
-		$carreras_tabla = $this->_con->pfx.'Carreras';
-		
-		$this->default_query = array(
-                       'select' => $this->getSqlTable().'.*, '.$carreras_tabla.'.descripcion AS carrera_desc',
-                       'from' => $this->getSqlTable(),
-                       'join' => 'INNER JOIN '.$carreras_tabla.' ON '.$this->getSqlTable().'.carrera='.$carreras_tabla.'.clave',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => 'apellido ASC, nombre ASC',
-                       'limit' => '',
-                       );
+		$this->default_order = 'apellido ASC, nombre ASC';
 	}
     
     function getAlumno ($codigo) {
@@ -66,19 +56,11 @@ class Calif_Alumno extends Calif_User {
 		return true;
 	}
 	
-	public function displaycarrera ($extra) {
-		if (!isset ($extra[$this->carrera])) {
-			throw new Exception ("Oops: Un alumno tiene registrada una carrera inexistente");
-		}
-		
-		return '<abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr>';
+	public function displaycarrera ($extra=null) {
+		return '<abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr>';
 	}
 	
-	public function displaylinkedcarrera ($extra) {
-		if (!isset ($extra[$this->carrera])) {
-			throw new Exception ("Oops: Un alumno tiene registrada una carrera inexistente");
-		}
-		
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Carrera::verCarrera', array ($this->carrera)).'"><abbr title="'.$extra[$this->carrera].'">'.$this->carrera.'</abbr></a>';
+	public function displaylinkedcarrera ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Carrera::verCarrera', array ($this->carrera)).'"><abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr></a>';
 	}
 }

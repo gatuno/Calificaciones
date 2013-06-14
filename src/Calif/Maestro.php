@@ -14,16 +14,7 @@ class Calif_Maestro extends Calif_User {
 		
 		$this->tabla = 'Maestros';
 		$this->login_tabla = 'Maestros_Login';
-		$this->default_query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
+		$this->default_order = 'apellido ASC, nombre ASC';
 	}
     
     function getMaestro ($codigo) {

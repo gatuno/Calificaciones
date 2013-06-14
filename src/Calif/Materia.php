@@ -6,7 +6,7 @@ class Calif_Materia extends Gatuf_Model {
 	/* Campos */
 	public $clave;
 	public $descripcion;
-	public $departamento;
+	public $departamento, $departamento_desc;
 	
 	public $misevals;
 	
@@ -16,18 +16,9 @@ class Calif_Materia extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Materias';
+		$this->tabla_view = 'Materias_View';
 		$this->tabla_porcentajes = 'Porcentajes';
 		$this->misevals = array ();
-		$this->default_query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
 	}
 	
 	function getPorcentajesSqlTable () {

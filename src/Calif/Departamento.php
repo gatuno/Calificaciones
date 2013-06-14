@@ -11,17 +11,6 @@ class Calif_Departamento extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Departamentos';
-		
-		$this->default_query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
 	}
 	
 	function getDepartamento ($id) {

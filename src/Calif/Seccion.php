@@ -18,19 +18,9 @@ class Calif_Seccion extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Secciones';
+		$this->tabla_view = 'Secciones_View';
 		$this->tabla_grupos = 'Grupos';
-		$materias_tabla = $this->_con->pfx.'Materias';
-		$maestros_tabla = $this->_con->pfx.'Maestros';
-		$this->default_query = array(
-                       'select' => $this->getSqlTable().'.*, '.$materias_tabla.'.descripcion AS materia_desc, '.$materias_tabla.'.departamento AS materia_departamento, '.$maestros_tabla.'.nombre AS maestro_nombre, '.$maestros_tabla.'.apellido AS maestro_apellido',
-                       'from' => $this->getSqlTable(),
-                       'join' => 'INNER JOIN '.$materias_tabla.' ON '.$this->getSqlTable().'.materia='.$materias_tabla.'.clave INNER JOIN '.$maestros_tabla.' ON '.$this->getSqlTable().'.maestro='.$maestros_tabla.'.codigo',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => 'materia ASC, seccion ASC',
-                       'limit' => '',
-                       );
+		$this->default_order = 'materia ASC, seccion ASC';
 	}
 	
 	function getGruposSqlTable () {
@@ -128,14 +118,14 @@ class Calif_Seccion extends Gatuf_Model {
 	}
 	
 	public function displaylinkedmateria ($extra=null) {
-		$m = new Calif_Materia ();
-		$m->getMateria ($this->materia);
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$m->clave.' - '.$m->descripcion.'</a>';
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->materia)).'">'.$this->materia.' - '.$this->materia_desc.'</a>';
 	}
 	
 	public function displaylinkedmaestro ($extra=null) {
-		$m = new Calif_Maestro ();
-		$m->getMaestro ($this->maestro);
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$m->apellido.' '.$m->nombre.' ('.$m->codigo.')</a>';
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$this->maestro_apellido.' '.$this->maestro_nombre.' ('.$this->maestro.')</a>';
+	}
+	
+	public function displaylinkedmaestro_apellido ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$this->maestro_apellido.' '.$this->maestro_nombre.' ('.$this->maestro.')</a>';
 	}
 }

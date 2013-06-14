@@ -7,8 +7,8 @@ class Gatuf_Model {
 	/** Database connection. */
 	public $_con = null;
     
-    public $tabla;
-    public $default_query;
+    public $tabla, $tabla_view;
+    public $default_order = '';
     
 	function _getConnection () {
 		static $con = null;
@@ -28,6 +28,10 @@ class Gatuf_Model {
 		return $this->_con->pfx.$this->tabla;
 	}
 	
+	function getSqlViewTable () {
+		return $this->_con->pfx.($this->tabla_view == '' ? $this->tabla : $this->tabla_view);
+	}
+	
 	function getList ($p=array()) {
 		$default = array('filter' => null,
                          'order' => null,
@@ -36,7 +40,16 @@ class Gatuf_Model {
                          'nb' => null,
                          'count' => false);
         $p = array_merge ($default, $p);
-        $query = $this->default_query;
+        $query = array(
+                       'select' => '*',
+                       'from' => $this->getSqlViewTable(),
+                       'join' => '',
+                       'where' => '',
+                       'group' => '',
+                       'having' => '',
+                       'order' => $this->default_order,
+                       'limit' => '',
+                       );
         
 		if (!is_null($p['select'])) {
 			$query['select'] = $p['select'];

@@ -13,17 +13,7 @@ class Calif_Horario extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Horarios';
-		$salones_tabla = $this->_con->pfx.'Salones';
-		$this->default_query = array(
-                       'select' => $this->getSqlTable().'.*, '.$salones_tabla.'.edificio AS salon_edificio, '.$salones_tabla.'.aula AS salon_aula',
-                       'from' => $this->getSqlTable(),
-                       'join' => 'INNER JOIN '.$salones_tabla.' ON '.$this->getSqlTable().'.salon='.$salones_tabla.'.id',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
+		$this->tabla = 'Horarios_View';
 	}
 	
 	public function restore () {

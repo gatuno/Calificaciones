@@ -11,16 +11,6 @@ class Calif_Edificio extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Edificios';
-		$this->default_query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
 	}
 	
 	function getEdificio ($clave) {

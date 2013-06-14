@@ -20,15 +20,15 @@ class Calif_Views_Seccion {
 			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
 			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
 			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
-			array ('maestro', 'Gatuf_Paginator_FKLink', 'Maestro'),
+			array ('maestro_apellido', 'Gatuf_Paginator_FKLink', 'Maestro'),
 		);
 		
 		$pag->items_per_page = 30;
 		$pag->no_results_text = 'No se encontraron secciones';
 		$pag->max_number_pages = 5;
 		$pag->configure ($list_display,
-			array ('nrc', 'materia', 'seccion', 'maestro'),
-			array ('nrc', 'materia', 'seccion', 'maestro')
+			array ('nrc', 'materia', 'seccion', 'materia_desc', 'maestro_nombre', 'maestro_apellido'),
+			array ('nrc', 'materia', 'seccion', 'maestro_apellido')
 		);
 		
 		$pag->setFromRequest ($request);
