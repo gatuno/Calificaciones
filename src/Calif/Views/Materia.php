@@ -21,14 +21,15 @@ class Calif_Views_Materia {
 		$list_display = array (
 			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
 			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
+			array ('departamento_desc', 'Gatuf_Paginator_DisplayVal', 'Departamento'),
 		);
 		
 		$pag->items_per_page = 40;
 		$pag->no_results_text = 'No hay materias';
 		$pag->max_number_pages = 5;
 		$pag->configure ($list_display,
-			array ('clave', 'descripcion'),
-			array ('clave', 'descripcion')
+			array ('clave', 'descripcion', 'departamento_desc'),
+			array ('clave', 'descripcion', 'departamento_desc')
 		);
 		
 		$pag->setFromRequest ($request);
@@ -59,7 +60,7 @@ class Calif_Views_Materia {
 		$sumas = array ();
 		
 		foreach ($grupos as $id_grupo => $grupo) {
-			$sql = new Gatuf_SQL ('Grupo=%s', $id_grupo);
+			$sql = new Gatuf_SQL ('grupo=%s', $id_grupo);
 			$evals[$id_grupo] = $materia->getEvals ($sql);
 			$sumas[$id_grupo] = $materia->getGroupSum ($sql);
 			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
