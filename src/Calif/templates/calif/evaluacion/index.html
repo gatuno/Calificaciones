@@ -1,13 +1,20 @@
 {extends 'calif/base.html'}
 {block body}
 <p>Existen las siguientes formas de evaluación para las materias. <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">Agregar una forma de evaluación</a></p>
-{foreach $grupos_evals as $grupo_id => $grupo_desc}
-{if $evals[$grupo_id]}
-<ul>{foreach $evals[$grupo_id] as $eval}
-<li>{$eval.descripcion}, del grupo {$grupo_desc}</li>
-{/foreach}</ul>
+{if $grupos_evals}
+	{foreach $grupos_evals as $grupo_id => $grupo_desc}
+		<h2>{$grupo_desc}</h2>
+		{if $evals[$grupo_id]}
+			<ul>
+			{foreach $evals[$grupo_id] as $eval}
+				<li>{$eval.descripcion}</li>
+			{/foreach}
+			</ul>
+		{else}
+			<p>Su sistema no contiene formas de evaluación para {$grupo_desc}, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación</a></p>
+		{/if}
+	{/foreach}
 {else}
-<p>Su sistema no contiene formas de evaluación para {$grupo_desc}, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación</a></p>
+	<p>Su sistema no contiene ninguna forma de evaluación. Si quiere que las materias sean evaluables, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación.</a></p>
 {/if}
-{/foreach}
 {/block}

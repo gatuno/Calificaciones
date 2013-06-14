@@ -8,7 +8,7 @@ class Calif_Views_Evaluacion {
 		$grupos_evals = Gatuf::factory('Calif_Evaluacion')->getGruposEvals ();
 		
 		foreach ($grupos_evals as $grupo => $desc) {
-			$sql_filter = new Gatuf_SQL ('Grupo=%s', $grupo);
+			$sql_filter = new Gatuf_SQL ('grupo=%s', $grupo);
 			$evals [$grupo] = Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $sql_filter->gen()));
 		}
 		
