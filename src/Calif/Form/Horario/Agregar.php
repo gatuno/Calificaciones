@@ -8,11 +8,16 @@ class Calif_Form_Horario_Agregar extends Gatuf_Form {
 		$this->nrc = $extra['seccion'];
 		
 		/* Preparar la lista de salones a elegir */
-		$salones = Gatuf::factory('Calif_Salon')->getList (array ('order' => array ('edificio ASC', 'aula ASC'))); /* FIXME Eliminar esto del ordenamiento */
+		$edificios = Gatuf::factory('Calif_Edificio')->getList ();
 		
 		$choices = array ();
-		foreach ($salones as $salon) {
-			$choices[$salon->edificio.' '.$salon->aula] = $salon->id;
+		foreach ($edificios as $edificio) {
+			$sql = new Gatuf_SQL ('edificio=%s', $edificio->clave);
+			$salones = Gatuf::factory('Calif_Salon')->getList (array ('filter' => $sql->gen ()));
+			$choices[$edificio->descripcion] = array ();
+			foreach ($salones as $salon) {
+				$choices[$edificio->descripcion][$salon->aula] = $salon->id;
+			}
 		}
 		
 		$this->fields['salon'] = new Gatuf_Form_Field_Integer(
