@@ -34,7 +34,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 					'choices' => $choices,
 				),
 				'help_text' => 'El salon',
-				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget' => 'Gatuf_Form_Widget_DobleInput',
 		));
 		
 		$this->fields['horainicio'] = new Gatuf_Form_Field_Time(
