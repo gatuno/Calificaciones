@@ -310,6 +310,10 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				if ($linea[$cabecera['aula']] == '') {
 					$linea[$cabecera['aula']] = 'A050';
 				}
+				if ($linea[$cabecera['ini']] == '' || $linea[$cabecera['fin']] == '') {
+					$linea[$cabecera['ini']] = '300';
+					$linea[$cabecera['fin']] = '500';
+				}
 				
 				$horario_model->nrc = $linea[$cabecera['nrc']];
 				$horario_model->hora_inicio = $linea[$cabecera['ini']];

@@ -144,10 +144,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 		fclose ($archivo);
 		
 		/* Recuperar la lista de secciones que nos interesan */
-		$materia = new Calif_Materia ();
-		
-		$cad = sprintf ('%s.departamento=%%s', $materia->getSqlTable ());
-		$sql = new Gatuf_SQL ($cad, $this->cleaned_data['departamento']);
+		$sql = new Gatuf_SQL ('materia_departamento=%s', $this->cleaned_data['departamento']);
 		$secciones_solicitadas = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen ()));
 		
 		$observaciones_solicitadas = array ();

@@ -313,6 +313,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/maestro/(\d+)/update/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'actualizarMaestro',
+);
+
+$ctl[] = array (
 	'regex' => '#^/edificios/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Edificio',
