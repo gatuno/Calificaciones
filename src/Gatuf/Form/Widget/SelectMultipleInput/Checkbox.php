@@ -51,6 +51,8 @@ class Gatuf_Form_Widget_SelectMultipleInput_Checkbox extends Gatuf_Form_Widget_S
             $final_attrs['value'] = htmlspecialchars($option_value, ENT_COMPAT, 'UTF-8');
             if (in_array($option_value, $value)) {
                 $final_attrs['checked'] = 'checked';
+            } else {
+                unset ($final_attrs['checked']);
             }
             $check_attrs = $this->buildAttrs(array('name' => $name.'[]', 
                                                'type' => 'checkbox'),

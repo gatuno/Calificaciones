@@ -28,6 +28,32 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				'help_text' => 'El departamento a verificar',
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 		));
+		
+		$this->fields['horasestrictas'] = new Gatuf_Form_Field_Boolean (
+			array ('required' => true,
+			       'label' => 'Verificar horas-dias',
+			       'initial' => true,
+			       'help_text' => 'Seleccione esta opción si desea verificar las horas de forma estricta, es decir, que coincidan todos los horarios y días',
+			       'widget' => 'Gatuf_Form_Widget_CheckboxInput'
+		));
+		
+		$edificios = Gatuf::factory('Calif_Edificio')->getList ();
+		$choices = array ();
+		foreach ($edificios as $edificio) {
+			$choices[$edificio->descripcion] = $edificio->clave;
+		}
+		
+		$this->fields['edificios'] = new Gatuf_Form_Field_Varchar (
+			array('required' => true,
+		          'label' => 'Edificios',
+		          'initial' => array ('DEDX', 'DEDT', 'DEDU', 'DEDR', 'DEDN', 'DEDW', 'DUCT1', 'DUCT2'),
+		          'multiple' => true,
+		          'widget' => 'Gatuf_Form_Widget_SelectMultipleInput_Checkbox',
+		          'help_text' => 'Los edificios en los que debería estar la oferta de SIIAU',
+		          'widget_attrs' => array (
+			      'choices' => $choices,
+			      ),
+		));
 	}
 	
 	function save ($commit=true) {
@@ -183,7 +209,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			 * las horas de nuestras secciones */
 			if ($observaciones[$nrc]['hora'] === false || $observaciones[$nrc]['dias'] === false) {
 				$observaciones_solicitadas[$nrc]['horas_dias'] = false;
-				$observaciones_solicitadas[$nrc]['servida'] = false;
+				if ($this->cleaned_data['horasestrictas']) $observaciones_solicitadas[$nrc]['servida'] = false;
 			}
 			
 			/* Si la sección de siiau ya tiene observaciones,
@@ -195,10 +221,9 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 			}
 			
 			
-			if ($observaciones_solicitadas[$nrc]['dias'] === false ||
+			if ($observaciones_solicitadas[$nrc]['horas_dias'] === false ||
 			    $observaciones_solicitadas[$nrc]['edificio'] === false ||
-			    $observaciones_solicitadas[$nrc]['salon'] === false ||
-			    $observaciones_solicitadas[$nrc]['hora'] === false) {
+			    $observaciones_solicitadas[$nrc]['salon'] === false) {
 				/* No hacer chequeo de estas horas, según siiau tiene algún campo vacio */
 				$observaciones_solicitadas[$nrc]['horas_bien'] = false;
 				unset ($secciones[$nrc]);
@@ -216,17 +241,11 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				
 				$coincide = false;
 				foreach ($horas_por_seccion[$nrc] as $hora) {
-					if ($hora['edificio'] != 'DEDX' &&
-					    $hora['edificio'] != 'DEDT' &&
-					    $hora['edificio'] != 'DEDU' &&
-					    $hora['edificio'] != 'DEDR' &&
-					    $hora['edificio'] != 'DEDN' &&
-					    $hora['edificio'] != 'DEDW' &&
-					    $hora['edificio'] != 'DUCT1' &&
-					    $hora['edificio'] != 'DUCT2') {
+					if (!in_array ($hora['edificio'], $this->cleaned_data['edificios'])) {
 						$observaciones_solicitadas[$nrc]['servida'] = false;
-						$observaciones_solicitadas[$nrc]['fallas'][] = 'edificio';
+						$observaciones_solicitadas[$nrc]['edificio'] = false;
 					}
+					
 					if ($hora['inicio'] == $hora_seccion->hora_inicio &&
 					    $hora['fin'] == $hora_seccion->hora_fin &&
 					    $hora['aula'] == $salon_model->aula &&
@@ -244,7 +263,7 @@ class Calif_Form_Views_verificaroferta extends Gatuf_Form {
 				
 				if ($coincide === false) {
 					$observaciones_solicitadas[$nrc]['horas_bien'] = false;
-					$observaciones_solicitadas[$nrc]['servida'] = false;
+					if ($this->cleaned_data['horasestrictas']) $observaciones_solicitadas[$nrc]['servida'] = false;
 					break;
 				}
 			}

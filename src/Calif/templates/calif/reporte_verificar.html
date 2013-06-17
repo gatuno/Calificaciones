@@ -7,7 +7,7 @@
 <h2>Detalles de cada nrc</h2>
 <table border="1">
 <thead><tr><th>Sección Solicitada por Nosotros</th><th>¿NRC existe en SIIAU?</th>
-<th>¿Sección servida?</th><th>¿Maestro en SIIAU?</th>
+<th>¿Sección servida?</th><th>¿Maestro en SIIAU?</th><th>¿Edificio dentro de los solicitados?</th>
 <th>¿Equivalente en SIIAU (por horas)?</th><th>¿Equivalente en SIIAU (por Materia-Sección)?</th>
 </thead>
 <tbody>
@@ -36,6 +36,16 @@
 {else}
 <td><img src="{media '/img/ok.png'}" />Sí</td>
 {/if}
+{/if}
+{else}
+<td>No aplica</td>
+{/if}
+
+{if $obs['existe'] || $obs['match'] || $obs['match_seccion']}
+{if $obs['edificio']}
+<td><img src="{media '/img/ok.png'}" />Correcto</td>
+{else}
+<td><img src="{media '/img/important.png'}" />Erróneo</td>
 {/if}
 {else}
 <td>No aplica</td>
