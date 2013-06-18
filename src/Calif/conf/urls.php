@@ -320,6 +320,21 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/maestro/(\d+)/horario/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'verHorario',
+	'params' => array ('general' => 1),
+);
+
+$ctl[] = array (
+	'regex' => '#^/maestro/(\d+)/horario/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'verHorario',
+);
+
+$ctl[] = array (
 	'regex' => '#^/edificios/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Edificio',

@@ -138,4 +138,45 @@ class Calif_Views_Maestro {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public function verHorario ($request, $match, $params = array ()) {
+		$maestro = new Calif_Maestro ();
+		
+		if (false === $maestro->getMaestro ($match[1])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$sql = new Gatuf_SQL ('maestro=%s', $maestro->codigo);
+		
+		if (!isset ($params['general'])) {
+			$departamento = new Calif_Departamento ();
+			
+			if (false === $departamento->getDepartamento ($match[2])) {
+				throw new Gatuf_HTTP_Error404();
+			}
+			
+			$sql->Q('materia_departamento=%s', $departamento->clave);
+		}
+		
+		$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen ()));
+		
+		$horarios = array ();
+		foreach ($secciones as $seccion) {
+			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
+			$horarios[$seccion->nrc] = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+		}
+		
+		$pdf = new Calif_PDF_Horario ('P', 'mm', 'Letter');
+		$pdf->maestro = $maestro;
+		$pdf->renderBase ();
+		
+		$pdf->secciones = $secciones;
+		$pdf->horarios = $horarios;
+		$pdf->renderHorario ();
+		
+		$pdf->Close ();
+		$pdf->Output ('/tmp/mipdf.pdf', 'F');
+		
+		return new Gatuf_HTTP_Response_File ('/tmp/mipdf.pdf', 'horario.pdf', 'application/pdf');
+	}
 }

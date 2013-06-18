@@ -23,9 +23,10 @@
 
 class Gatuf_HTTP_Response_File extends Gatuf_HTTP_Response {
     public $delete_file = false;
-
-    function __construct($filepath, $mimetype=null, $delete_file=false) {
+    public $nombre_archivo;
+    function __construct($filepath, $nombre_archivo, $mimetype=null, $delete_file=false) {
         parent::__construct($filepath, $mimetype);
+        $this->nombre_archivo = $nombre_archivo;
         $this->delete_file = $delete_file;
     }
 
@@ -34,6 +35,7 @@ class Gatuf_HTTP_Response_File extends Gatuf_HTTP_Response {
      */
     function render($output_body=true) {
         $this->headers['Content-Length'] = (string)filesize($this->content);
+        $this->headers['Content-Disposition'] = 'attachment; filename='.$this->nombre_archivo.';';
         $this->outputHeaders();
         if ($output_body) {
             $fp = fopen($this->content, 'rb');
