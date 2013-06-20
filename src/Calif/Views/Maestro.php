@@ -173,7 +173,7 @@ class Calif_Views_Maestro {
 		$pdf->secciones = $secciones;
 		$pdf->horarios = $horarios;
 		$pdf->renderHorario ();
-		
+		$pdf->renderFirmas ();
 		$pdf->Close ();
 		$pdf->Output ('/tmp/mipdf.pdf', 'F');
 		

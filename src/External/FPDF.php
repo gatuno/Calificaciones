@@ -600,6 +600,7 @@ function AcceptPageBreak()
 function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
 {
 	// Output a cell
+	$txt = iconv('UTF-8', 'windows-1252', $txt);
 	$k = $this->k;
 	if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak())
 	{
@@ -613,6 +614,7 @@ function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link
 		}
 		$this->AddPage($this->CurOrientation,$this->CurPageSize);
 		$this->x = $x;
+		$this->y = $this->tMargin;
 		if($ws>0)
 		{
 			$this->ws = $ws;
