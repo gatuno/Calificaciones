@@ -58,4 +58,8 @@ class Calif_Maestro extends Calif_User {
 	function displaylinkedcodigo ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->codigo)).'">'.$this->codigo.'</a>';
 	}
+	
+	function displaylinkedmaestro_departamento ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('HorarioPorDepartamento', array ($this->codigo, $this->maestro_departamento)).'">Imprimir Horario</a>';
+	}
 }

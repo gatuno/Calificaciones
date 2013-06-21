@@ -306,6 +306,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/maestros/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'porDepartamento',
+);
+
+$ctl[] = array (
 	'regex' => '#^/maestro/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
@@ -332,6 +339,7 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
 	'method' => 'verHorario',
+	'name' => 'HorarioPorDepartamento',
 );
 
 $ctl[] = array (
