@@ -8,12 +8,14 @@ class Calif_Maestro extends Calif_User {
 	public $nombre;
 	public $apellido;
 	public $correo;
+	public $maestro_departamento;
 	
 	function __construct () {
 		$this->_getConnection();
 		
 		$this->tabla = 'Maestros';
 		$this->login_tabla = 'Maestros_Login';
+		$this->special_tabla = 'Maestros_View';
 		$this->default_order = 'apellido ASC, nombre ASC';
 	}
     

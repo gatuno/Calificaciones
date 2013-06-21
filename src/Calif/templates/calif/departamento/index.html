@@ -1,0 +1,17 @@
+{extends 'calif/base.html'}
+{block body}
+{if $departamentos}
+<table><thead><tr><th>Departamento</th><th>Maestros</th></tr></thead>
+<tbody>
+{foreach $departamentos as $departamento}
+<tr>
+<td>{$departamento.departamento}</td>
+<td>{$maestros[$departamento.clave]} maestros</td>
+</tr>
+{/foreach}
+</tbody>
+</table>
+{else}
+<p>Por una serie de eventos desafortunados, su sistema no contiene ningún departamento</p>
+{/if}
+{/block}

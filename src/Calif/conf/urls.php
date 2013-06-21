@@ -348,4 +348,11 @@ $ctl[] = array (
 	'method' => 'verEdificio',
 );
 
+$ctl[] = array (
+	'regex' => '#^/departamentos/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Departamento',
+	'method' => 'index',
+);
+
 return $ctl;

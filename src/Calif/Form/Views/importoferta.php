@@ -165,6 +165,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		
 		/* Primera pasada, llenar los arreglos */
 		while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+			if (is_null ($linea[0])) continue;
 			if ($linea[$cabecera['nrc']] === '') {
 				throw new Exception ('Alto: NRC vacio. Cerca de la materia '.$linea[$cabecera['clave']].' con sección '.$linea[$cabecera['secc']]);
 			}
@@ -303,6 +304,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			
 			/* Segunda pasada, crear los horarios */
 			while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+				if (is_null ($linea[0])) continue;
 				if ($linea[$cabecera['edif']] == '') {
 					$linea[$cabecera['edif']] = 'DEDX';
 				}
