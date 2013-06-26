@@ -218,7 +218,9 @@ class Calif_Views_Maestro {
 		$pdf->total_horarios = $total_horarios;
 		$pdf->departamento = $departamento;
 		$pdf->renderHorario ();
-		$pdf->renderFirmas ();
+		if (!is_null ($departamento)) {
+			$pdf->renderFirmas ();
+		}
 		$pdf->Close ();
 		
 		$nombre_pdf = $maestro->codigo;

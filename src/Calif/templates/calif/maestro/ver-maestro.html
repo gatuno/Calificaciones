@@ -37,6 +37,7 @@
 {/if}
 <h2>Horario del profesor</h2>
 {if $calendario}
+<p>Vista para <a href="{url 'Calif_Views_Maestro::verHorario', array ($maestro.codigo)}">impresión</a></p>
 {$calendario.render()}
 {else}
 <p>Este profesor no tiene grupos activos</p>
