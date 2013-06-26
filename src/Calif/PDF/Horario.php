@@ -4,6 +4,8 @@ class Calif_PDF_Horario extends External_FPDF {
 	public $maestro;
 	public $horarios;
 	public $secciones;
+	public $departamento;
+	public $total_horarios;
 	
 	function Header () {
 		$this->SetY (7);
@@ -22,7 +24,8 @@ class Calif_PDF_Horario extends External_FPDF {
 		$this->Cell (0, 0, 'http://siiauescolar.siiau.udg.mx/wse/siphora.horario');
 		
 		$this->SetX (-45);
-		$this->Cell (0, 0, '17/06/2013');
+		setlocale (LC_TIME, 'es_MX.UTF-8');
+		$this->Cell (0, 0, strftime ('%d/%m/%Y'));
 	}
 	
 	function renderBase () {
@@ -83,14 +86,12 @@ class Calif_PDF_Horario extends External_FPDF {
 					$this->Cell ($w[0], 8, $seccion->nrc, 1, 0, 'C');
 					$this->Cell ($w[1], 8, $seccion->materia, 1, 0, 'L');
 					$save_y = $this->GetY();
-					$save_next_page = $this->page;
-					$this->MultiCell ($w[2], 4, $seccion->materia_desc, 1, 'L');
-					$next_page = $this->page;
-					$next_y = $this->GetY();
+					$save_x = $this->GetX();
+					$this->Cell ($w[2], 8, '', 1, 0, '');
+					$this->SetY($save_y);
+					$this->SetX($save_x);
+					$this->MultiCell ($w[2], 4, $seccion->materia_desc, 0, 'L', 0, 2);
 					$this->SetY ($save_y);
-					if ($next_page != $save_next_page) {
-						$this->page = $save_next_page;
-					}
 					$this->SetX (87);
 					$this->Cell ($w[3], 8, $seccion->seccion, 1, 0, 'L');
 					$first = false;
@@ -100,9 +101,9 @@ class Calif_PDF_Horario extends External_FPDF {
 					$this->Cell ($w[2], 8, '', 'B', 0, 'L');
 					$this->Cell ($w[3], 8, '', 'B', 0, 'L');
 				}
-				$this->Cell ($w[4], 8, '', 1, 0, 'L');
+				$this->Cell ($w[4], 8, '', 1, 0, 'L'); /* FIXME: Cŕeditos aquí */
 				$this->Cell ($w[5], 8, $hora->salon_edificio, 1, 0, 'C');
-				$this->Cell ($w[6], 8, $hora->salon_aula, 1, 0, 'C');
+				$this->Cell ($w[6], 8, $hora->salon_aula == 'A050' ? '' : $hora->salon_aula, 1, 0, 'C');
 				$this->Cell ($w[7], 8, $hora->hora_inicio, 1, 0, 'C');
 				$this->Cell ($w[8], 8, $hora->hora_fin, 1, 0, 'C');
 				
@@ -130,43 +131,61 @@ class Calif_PDF_Horario extends External_FPDF {
 				$this->SetXY ($x_del, $altura_y);
 				$this->Cell ($w[15], 8, '', 1, 0, 'L');
 				$this->Cell ($w[16], 8, '', 1, 0, 'L');
-				$es_salto = $this->page;
-				$this->Ln();
-				if ($this->page != $es_salto) {
-					$this->SetY ($this->GetY() + 30);
-				}
-				$next_y = $this->GetY();
-				if ($this->page == $next_page) $save_next_page = $next_page;
+				$this->Ln ();
 			}
-			if ($next_page != $save_next_page) $this->page = $next_page;
-			$this->SetY($next_y);
 		}
 	}
 	
 	function renderFirmas () {
 		$this->Ln ();
-		$this->Ln ();
-		$this->Ln ();
-		
+		if ($this->total_horarios != 6) $this->Ln ();
+		if ($this->total_horarios < 4 || $this->total_horarios > 6) {
+			$this->Ln ();
+		}
+		if ($this->total_horarios == 9 || $this->total_horarios == 7) $this->Ln ();
+		if ($this->total_horarios == 8 || $this->total_horarios == 7) {
+			$this->Ln ();
+			$this->Ln ();
+		}
 		$this->SetFont('Times', '', 12);
 		//throw new Exception ("Página = ".$this->page.", Alto, Y = ".$this->y);
 		$this->Cell (0, 2, 'ATENTAMENTE', 0, 1, 'C');
 		//throw new Exception ("Página = ".$this->page.",Alto, Y = ".$this->y. ", Top margin = ".$this->tMargin);
 		$this->Cell (0, 5, '"PIENSA Y TRABAJA"', 0, 1, 'C');
-		$this->Cell (0, 8, 'GUADALAJARA, JAL., 20 de Junio de 2013', 0, 1, 'C');
+		setlocale (LC_TIME, 'es_MX.UTF-8');
+		$cadena = strftime ('GUADALAJARA, JAL., %d de %B de %Y');
+		$this->Cell (0, 8, $cadena, 0, 1, 'C');
 		
 		$mitad = ($this->w) / 2;
 		
 		$this->Ln ();
 		$this->Ln ();
-		$this->Ln ();
-		$this->x = 0;
-		$this->Cell ($mitad, 5, '__________________________________', 0, 0, 'C');
-		$this->Cell ($mitad, 5, '__________________________________', 0, 0, 'C');
-		$this->Ln ();
-		$this->x = 0;
-		$this->Cell ($mitad, 5, 'Jefe del departamento', 0, 0, 'C');
-		$this->Cell ($mitad, 5, 'Recibe', 0, 0, 'C');
+		if ($this->total_horarios < 4 || $this->total_horarios > 6) {
+			$this->Ln ();
+		}
 		
+		$this->x = 0;
+		$this->Cell ($mitad, 5, '__________________________________', 0, 0, 'C');
+		$this->Cell ($mitad, 5, '__________________________________', 0, 0, 'C');
+		$this->Ln ();
+		$this->x = 0;
+		if (!is_null ($this->departamento)) {
+			if ($this->departamento->clave == 1500) {
+				$this->Cell ($mitad, 5, 'Ing. Patricia Mendoza Sánchez', 0, 0, 'C');
+			} else if ($this->departamento->clave == 1510) {
+				$this->Cell ($mitad, 5, 'Dra. María Teresa Rodríguez Sahagún', 0, 0, 'C');
+			}
+		} else {
+			$this->Cell ($mitad, 5, 'Jefe del departamento', 0, 0, 'C');
+		}
+ 		$this->Cell ($mitad, 5, 'Recibe', 0, 0, 'C');
+ 		
+		if (!is_null ($this->departamento)) {
+		    if ($this->departamento->clave == 1500 || $this->departamento->clave == 1510) {
+				$this->Ln ();
+				$this->x = 0;
+				$this->Cell ($mitad, 5, 'Jefa del departamento', 0, 0, 'C');
+			}
+		}
 	}
 }

@@ -597,88 +597,130 @@ function AcceptPageBreak()
 	return $this->AutoPageBreak;
 }
 
-function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
-{
-	// Output a cell
+function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='') {
+	//Output a cell
 	$txt = iconv('UTF-8', 'windows-1252', $txt);
-	$k = $this->k;
-	if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak())
-	{
-		// Automatic page break
-		$x = $this->x;
-		$ws = $this->ws;
-		if($ws>0)
-		{
-			$this->ws = 0;
+	$k=$this->k;
+	if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak()) {
+		//Automatic page break
+		$x=$this->x;
+		$ws=$this->ws;
+		if($ws>0) {
+			$this->ws=0;
 			$this->_out('0 Tw');
 		}
 		$this->AddPage($this->CurOrientation,$this->CurPageSize);
-		$this->x = $x;
+		$this->x=$x;
 		$this->y = $this->tMargin;
-		if($ws>0)
-		{
-			$this->ws = $ws;
+		if($ws>0) {
+			$this->ws=$ws;
 			$this->_out(sprintf('%.3F Tw',$ws*$k));
 		}
 	}
-	if($w==0)
-		$w = $this->w-$this->rMargin-$this->x;
-	$s = '';
-	if($fill || $border==1)
-	{
-		if($fill)
-			$op = ($border==1) ? 'B' : 'f';
-		else
-			$op = 'S';
-		$s = sprintf('%.2F %.2F %.2F %.2F re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+	if($w==0) $w=$this->w-$this->rMargin-$this->x;
+	$s='';
+	// begin change Cell function
+	if($fill || $border>0) {
+		if($fill) $op=($border>0) ? 'B' : 'f';
+		else $op='S';
+		if ($border>1) {
+			$s=sprintf('q %.2F w %.2F %.2F %.2F %.2F re %s Q ',$border,
+			$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
+		} else
+		$s=sprintf('%.2F %.2F %.2F %.2F re %s ',$this->x*$k,($this->h-$this->y)*$k,$w*$k,-$h*$k,$op);
 	}
-	if(is_string($border))
-	{
-		$x = $this->x;
-		$y = $this->y;
-		if(strpos($border,'L')!==false)
-			$s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
-		if(strpos($border,'T')!==false)
-			$s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
-		if(strpos($border,'R')!==false)
-			$s .= sprintf('%.2F %.2F m %.2F %.2F l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
-		if(strpos($border,'B')!==false)
-			$s .= sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+	if(is_string($border)) {
+		$x=$this->x;
+		$y=$this->y;
+		if(is_int(strpos($border,'L')))
+		$s.=sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+		else if(is_int(strpos($border,'l')))
+		$s.=sprintf('q 2 w %.2F %.2F m %.2F %.2F l S Q ',$x*$k,($this->h-$y)*$k,$x*$k,($this->h-($y+$h))*$k);
+
+		if(is_int(strpos($border,'T')))
+		$s.=sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+		else if(is_int(strpos($border,'t')))
+		$s.=sprintf('q 2 w %.2F %.2F m %.2F %.2F l S Q ',$x*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-$y)*$k);
+
+		if(is_int(strpos($border,'R')))
+		$s.=sprintf('%.2F %.2F m %.2F %.2F l S ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+		else if(is_int(strpos($border,'r')))
+		$s.=sprintf('q 2 w %.2F %.2F m %.2F %.2F l S Q ',($x+$w)*$k,($this->h-$y)*$k,($x+$w)*$k,($this->h-($y+$h))*k);
+
+		if(is_int(strpos($border,'B')))
+		$s.=sprintf('%.2F %.2F m %.2F %.2F l S ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*$k);
+		else if(is_int(strpos($border,'b')))
+		$s.=sprintf('q 2 w %.2F %.2F m %.2F %.2F l S Q ',$x*$k,($this->h-($y+$h))*$k,($x+$w)*$k,($this->h-($y+$h))*k);
 	}
-	if($txt!=='')
-	{
-		if($align=='R')
-			$dx = $w-$this->cMargin-$this->GetStringWidth($txt);
-		elseif($align=='C')
-			$dx = ($w-$this->GetStringWidth($txt))/2;
-		else
-			$dx = $this->cMargin;
-		if($this->ColorFlag)
-			$s .= 'q '.$this->TextColor.' ';
-		$txt2 = str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
-		$s .= sprintf('BT %.2F %.2F Td (%s) Tj ET',($this->x+$dx)*$k,($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,$txt2);
-		if($this->underline)
-			$s .= ' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
-		if($this->ColorFlag)
-			$s .= ' Q';
-		if($link)
-			$this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$this->GetStringWidth($txt),$this->FontSize,$link);
+	if (trim($txt)!='') {
+		$cr=substr_count($txt,"\n");
+		if ($cr>0) { // Multi line
+			$txts = explode("\n", $txt);
+			$lines = count($txts);
+			for($l=0;$l<$lines;$l++) {
+				$txt=$txts[$l];
+				$w_txt=$this->GetStringWidth($txt);
+				if($align=='R')
+				$dx=$w-$w_txt-$this->cMargin;
+				elseif($align=='C')
+				$dx=($w-$w_txt)/2;
+				else
+				$dx=$this->cMargin;
+
+				$txt=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
+				if($this->ColorFlag)
+				$s.='q '.$this->TextColor.' ';
+				$s.=sprintf('BT %.2F %.2F Td (%s) Tj ET ',
+				($this->x+$dx)*$k,
+				($this->h-($this->y+.5*$h+(.7+$l-$lines/2)*$this->FontSize))*$k,
+				$txt);
+				if($this->underline)
+				$s.=' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+				if($this->ColorFlag)
+				$s.=' Q ';
+				if($link)
+				$this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$w_txt,$this->FontSize,$link);
+			}
+		} else { // Single line
+			$w_txt=$this->GetStringWidth($txt);
+			$Tz=100;
+			if ($w_txt>$w-2*$this->cMargin) { // Need compression
+				$Tz=($w-2*$this->cMargin)/$w_txt*100;
+				$w_txt=$w-2*$this->cMargin;
+			}
+			if($align=='R')
+				$dx=$w-$w_txt-$this->cMargin;
+			elseif($align=='C')
+				$dx=($w-$w_txt)/2;
+			else
+				$dx=$this->cMargin;
+			$txt=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',$txt)));
+			if($this->ColorFlag)
+			$s.='q '.$this->TextColor.' ';
+			$s.=sprintf('q BT %.2F %.2F Td %.2F Tz (%s) Tj ET Q ',
+				($this->x+$dx)*$k,
+				($this->h-($this->y+.5*$h+.3*$this->FontSize))*$k,
+				$Tz,$txt);
+			if($this->underline)
+			$s.=' '.$this->_dounderline($this->x+$dx,$this->y+.5*$h+.3*$this->FontSize,$txt);
+			if($this->ColorFlag)
+			$s.=' Q ';
+			if($link)
+			$this->Link($this->x+$dx,$this->y+.5*$h-.5*$this->FontSize,$w_txt,$this->FontSize,$link);
+		}
 	}
-	if($s)
-		$this->_out($s);
-	$this->lasth = $h;
-	if($ln>0)
-	{
-		// Go to next line
-		$this->y += $h;
-		if($ln==1)
-			$this->x = $this->lMargin;
-	}
-	else
-		$this->x += $w;
+	// end change Cell function
+	if($s) $this->_out($s);
+	$this->lasth=$h;
+	if($ln>0) {
+		//Go to next line
+		$this->y+=$h;
+		if($ln==1) $this->x=$this->lMargin;
+	} else
+	$this->x+=$w;
 }
 
-function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false)
+function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $limit_nl=100)
 {
 	// Output text with automatic or explicit line breaks
 	$cw = &$this->CurrentFont['cw'];
@@ -714,6 +756,7 @@ function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false)
 	$l = 0;
 	$ns = 0;
 	$nl = 1;
+	$first_line = true;
 	while($i<$nb)
 	{
 		// Get next character
@@ -744,7 +787,7 @@ function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false)
 			$ns++;
 		}
 		$l += $cw[$c];
-		if($l>$wmax)
+		if($l>$wmax && $nl < $limit_nl)
 		{
 			// Automatic line break
 			if($sep==-1)

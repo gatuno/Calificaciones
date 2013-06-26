@@ -6,7 +6,7 @@
 {foreach $departamentos as $departamento}
 <tr>
 <td>{$departamento.departamento}</td>
-<td>{$maestros[$departamento.clave]} maestros</td>
+<td><a href="{url 'Calif_Views_Maestro::porDepartamento', array ($departamento.clave)}">{$maestros[$departamento.clave]} maestros</a></td>
 </tr>
 {/foreach}
 </tbody>

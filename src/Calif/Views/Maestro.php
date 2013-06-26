@@ -195,14 +195,18 @@ class Calif_Views_Maestro {
 			}
 			
 			$sql->Q('materia_departamento=%s', $departamento->clave);
+		} else {
+			$departamento = null;
 		}
 		
 		$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen ()));
 		
 		$horarios = array ();
+		$total_horarios = 0;
 		foreach ($secciones as $seccion) {
 			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 			$horarios[$seccion->nrc] = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+			$total_horarios += count ($horarios[$seccion->nrc]);
 		}
 		
 		$pdf = new Calif_PDF_Horario ('P', 'mm', 'Letter');
@@ -211,11 +215,20 @@ class Calif_Views_Maestro {
 		
 		$pdf->secciones = $secciones;
 		$pdf->horarios = $horarios;
+		$pdf->total_horarios = $total_horarios;
+		$pdf->departamento = $departamento;
 		$pdf->renderHorario ();
 		$pdf->renderFirmas ();
 		$pdf->Close ();
-		$pdf->Output ('/tmp/mipdf.pdf', 'F');
 		
-		return new Gatuf_HTTP_Response_File ('/tmp/mipdf.pdf', 'horario.pdf', 'application/pdf');
+		$nombre_pdf = $maestro->codigo;
+		if (!is_null ($departamento)) {
+			$nombre_pdf .= '_departamento_'.$departamento->clave;
+		}
+ 		
+		$nombre_pdf .= '.pdf';
+		$pdf->Output ('/tmp/'.$nombre_pdf, 'F');
+		
+		return new Gatuf_HTTP_Response_File ('/tmp/'.$nombre_pdf, $nombre_pdf, 'application/pdf', true);
 	}
 }
