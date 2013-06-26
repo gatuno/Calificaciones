@@ -43,6 +43,11 @@ class Gatuf_Form_Field_Varchar extends Gatuf_Form_Field
                 throw new Gatuf_Form_Invalid(sprintf('Ensure this value has at least %1$d characters (it has %2$d).', $this->min_length, $value_length));
             }
         }
+        if (isset ($this->widget->choices)) {
+            if (!in_array ($value, $this->widget->choices)) {
+                throw new Gatuf_Form_Invalid('Selección inválida');
+            }
+        }
         return $value;
     }
 
