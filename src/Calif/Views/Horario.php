@@ -21,6 +21,30 @@ class Calif_Views_Horario {
 			if ($form->isValid ()) {
 				$horario = $form->save ();
 				
+				/* Antes de guardar, verificar si la hora recién agregada colisiona con 
+				 * otro salon */
+				$sql = new Gatuf_SQL ('salon=%s', $horario->salon);
+				$ors = array ();
+				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+					if ($horario->$dia) {
+						$ors[] = $dia.'=1';
+					}
+				}
+				$sql_dias = new Gatuf_SQL (implode (' OR ', $ors));
+				$sql->SAnd ($sql_dias);
+				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				
+				/* Recorrer estas horas */
+				foreach ($horas as $hora) {
+					if (($horario->hora_inicio >= $hora->hora_inicio && $horario->hora_fin < $hora->hora_fin) ||
+						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
+						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
+						/* Choque, este salon está ocupado en la hora recién agregada */
+						$request->user->setMessage (1, 'La hora agregada al nrc '.$horario->nrc.' colisiona en el salon');
+						break;
+					}
+				}
+				
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($horario->nrc));
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
@@ -101,6 +125,28 @@ class Calif_Views_Horario {
 			if ($form->isValid ()) {
 				$horario = $form->save ();
 				
+				$sql = new Gatuf_SQL ('salon=%s', $horario->salon);
+				$ors = array ();
+				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+					if ($horario->$dia) {
+						$ors[] = $dia.'=1';
+					}
+				}
+				$sql_dias = new Gatuf_SQL (implode (' OR ', $ors));
+				$sql->SAnd ($sql_dias);
+				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				
+				/* Recorrer estas horas */
+				foreach ($horas as $hora) {
+					if ($hora->id == $horario->id) continue;
+					if (($horario->hora_inicio >= $hora->hora_inicio && $horario->hora_fin < $hora->hora_fin) ||
+						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
+						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
+						/* Choque, este salon está ocupado en la hora recién agregada */
+						$request->user->setMessage (1, 'La hora actualizada al nrc '.$horario->nrc.' colisiona en el salon');
+						break;
+					}
+				}
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($horario->nrc));
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
