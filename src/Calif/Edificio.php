@@ -45,7 +45,7 @@ class Calif_Edificio extends Gatuf_Model {
 		return true;
 	}
 	
-	function displaylinkeddescripcion () {
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', array ($this->clave)).'">'.$this->descripcion.'</a>';
+	function displaylinkedclave () {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', array ($this->clave)).'">'.$this->clave.'</a>';
 	}
 }

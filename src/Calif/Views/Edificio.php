@@ -12,8 +12,8 @@ class Calif_Views_Edificio {
 		$pag->summary = 'Lista de los edificios';
 		
 		$list_display = array (
-			array ('clave', 'Gatuf_Paginator_DisplayVal', 'Clave Siiau'),
-			array ('descripcion', 'Gatuf_Paginator_FKLink', 'Descripción')
+			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave Siiau'),
+			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Descripción')
 		);
 		
 		$pag->items_per_page = 40;
@@ -27,7 +27,7 @@ class Calif_Views_Edificio {
 		$pag->setFromRequest ($request);
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/edificio/index.html',
-		                                         array('page_title' => 'Edificio',
+		                                         array('page_title' => 'Edificios',
                                                        'paginador' => $pag),
                                                  $request);
 	}
