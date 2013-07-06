@@ -132,8 +132,8 @@ class Gatuf_Template_Compiler {
                                     'aurl' => 'Gatuf_Template_Tag_Rurl',
                                     'media' => 'Gatuf_Template_Tag_MediaUrl',
                                     'amedia' => 'Gatuf_Template_Tag_RmediaUrl',
-                                    /*'aperm' => 'Pluf_Template_Tag_APerm',
-                                    'getmsgs' => 'Pluf_Template_Tag_Messages',*/
+                                    /*'aperm' => 'Pluf_Template_Tag_APerm',*/
+                                    'getmsgs' => 'Gatuf_Template_Tag_Messages',
                                     );
     /**
      * During compilation, all the tags are created once so to query

@@ -24,6 +24,7 @@
 			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>
 		{/if}
 	</div>
+	{if $user and $user.codigo}{getmsgs $user}{/if}
 	<div style="clear: both">
 	<h1>{$page_title}</h1>
 	{block body}{/block}
