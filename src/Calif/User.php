@@ -103,4 +103,30 @@ class Calif_User extends Gatuf_Model {
 	function isAnonymous () {
 		return (0 === (int) $this->codigo);
 	}
+	
+	function setMessage ($message, $type) {
+		if ($this->isAnonymous ()) {
+			return false;
+		}
+		
+		$m = new Gatuf_Message ();
+		$m->message = $message;
+		$m->type = $type;
+		$m->user = $this->codigo;
+		
+		return $m->create ();
+	}
+	
+	function getAndDeleteMessages () {
+		if ($this->isAnonymous ()) {
+			return false;
+		}
+		$sql = new Gatuf_SQL ('user=%s', array ($this->codigo));
+		$ms = Gatuf::factory('Gatuf_Message')->getList (array ('filter' => $sql->gen ()));
+		foreach ($ms as $m) {
+			$m->delete ();
+		}
+		
+		return $ms;
+	}
 }
