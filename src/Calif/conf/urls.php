@@ -54,6 +54,13 @@ $ctl[] = array (
 	'method' => 'verificar_oferta',
 );
 
+$ctl[] = array (
+	'regex' => '#^/sobreoferta/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'sobre_oferta',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',

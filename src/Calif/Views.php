@@ -146,6 +146,44 @@ class Calif_Views {
 		                                         $request);
 	}
 	
+	function sobre_oferta ($request, $match) {
+		$extra = array ();
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Views_sobreoferta (array_merge ($request->POST, $request->FILES), $extra);
+			
+			if ($form->isValid ()) {
+				$totales = $form->save ();
+				
+				$departamento = new Calif_Departamento ();
+				$departamento->getDepartamento ($form->cleaned_data['departamento']);
+				
+				$sql = new Gatuf_SQL ('materia_departamento=%s', $departamento->clave);
+				$total_solicitadas =  Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen (), 'count' => true));
+				$mega_total = 0;
+				
+				foreach ($totales as $valor) {
+					if ($valor > 0) $mega_total += $valor;
+				}
+				
+				return Gatuf_Shortcuts_RenderToResponse ('calif/reporte_sobreoferta.html',
+		                                         array ('page_title' => 'Reporte verificar oferta',
+		                                         'departamento' => $departamento,
+		                                         'total_solicitadas' => $total_solicitadas,
+		                                         'mega_total' => $mega_total,
+		                                         'totales' => $totales),
+		                                         $request);
+			}
+		} else {
+			$form = new Calif_Form_Views_sobreoferta (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/verificar_sobreoferta.html',
+		                                         array ('page_title' => 'Verificar sobre oferta',
+		                                         'form' => $form),
+		                                         $request);
+	}
+	
 	function passwordRecoveryAsk ($request, $match) {
 		$title = 'Recuperar contraseña';
 		
