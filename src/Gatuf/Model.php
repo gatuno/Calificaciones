@@ -6,10 +6,11 @@ Gatuf::loadFunction ('Gatuf_DB_getConnection');
 class Gatuf_Model {
 	/** Database connection. */
 	public $_con = null;
-    
-    public $tabla, $tabla_view;
-    public $default_order = '';
-    
+		
+	public $tabla, $tabla_view;
+	public $default_order = '';
+	public $views;
+	
 	function _getConnection () {
 		static $con = null;
 		if ($this->_con !== null) {
@@ -22,8 +23,8 @@ class Gatuf_Model {
 		$this->_con = &Gatuf::db($this);
 		$con = $this->_con;
 		return $this->_con;
-    }
-    
+	}
+	
 	function getSqlTable () {
 		return $this->_con->pfx.$this->tabla;
 	}
@@ -33,29 +34,37 @@ class Gatuf_Model {
 	}
 	
 	function getList ($p=array()) {
-		$default = array('filter' => null,
-                         'order' => null,
-                         'start' => null,
-                         'select' => null,
-                         'nb' => null,
-                         'count' => false);
-        $p = array_merge ($default, $p);
-        $query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlViewTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => $this->default_order,
-                       'limit' => '',
-                       );
-        
+		$default = array('view' => null,
+		                 'filter' => null,
+		                 'order' => null,
+		                 'start' => null,
+		                 'select' => null,
+		                 'nb' => null,
+		                 'count' => false);
+		$p = array_merge ($default, $p);
+		if (!is_null($p['view']) && !isset($this->views[$p['view']])) {
+			throw new Exception(sprintf('The view "%s" is not defined.', $p['view']));
+		}
+		$query = array(
+		               'select' => '*',
+		               'from' => $this->getSqlViewTable(),
+		               'join' => '',
+		               'where' => '',
+		               'group' => '',
+		               'having' => '',
+		               'order' => $this->default_order,
+		               'limit' => '',
+		               );
+		
+		if (!is_null($p['view'])) {
+			$query = array_merge($query, $this->views[$p['view']]);
+		}
+		
 		if (!is_null($p['select'])) {
 			$query['select'] = $p['select'];
 		}
 		/* Activar los filtros where */
-        if (!is_null($p['filter'])) {
+		if (!is_null($p['filter'])) {
 			if (is_array($p['filter'])) {
 				$p['filter'] = implode(' AND ', $p['filter']);
 			}
@@ -63,9 +72,9 @@ class Gatuf_Model {
 				$query['where'] .= ' AND ';
 			}
 			$query['where'] .= ' ('.$p['filter'].') ';
-        }
-        
-        /* Elegir el orden */
+		}
+		
+		/* Elegir el orden */
 		if (!is_null($p['order'])) {
 			if (is_array($p['order'])) {
 				$p['order'] = implode(', ', $p['order']);

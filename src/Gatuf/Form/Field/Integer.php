@@ -37,6 +37,25 @@ class Gatuf_Form_Field_Integer extends Gatuf_Form_Field {
                 throw new Gatuf_Form_Invalid('El valor debe ser un número.');
             }
             $this->checkMinMax($value);
+            if (isset ($this->widget->choices)) {
+                $found = false;
+                foreach ($this->widget->choices as $val) {
+                    if (is_array ($val)) {
+                        foreach ($val as $subval) {
+                            if ($value === $subval) {
+                                $found = true;
+                                break;
+                            }
+                         }
+                    } else {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    throw new Gatuf_Form_Invalid('Selección inválida');
+                }
+            }
         }
         return (int) $value;
     }
