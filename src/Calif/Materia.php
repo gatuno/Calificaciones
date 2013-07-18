@@ -7,6 +7,7 @@ class Calif_Materia extends Gatuf_Model {
 	public $clave;
 	public $descripcion;
 	public $departamento, $departamento_desc;
+	public $creditos;
 	
 	public $misevals;
 	

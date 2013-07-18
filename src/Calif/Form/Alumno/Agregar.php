@@ -83,7 +83,7 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		$l = Gatuf::factory('Calif_Alumno')->getList(array ('filter' => $sql->gen(), 'count' => true));
 		
 		if ($l > 0) {
-			throw new Gatuf_Form_Invalid (sprintf ('El código \'<a href="%s">%s</a>\' de alumno especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Alumno::verAlumno', array ($codigo)), $codigo));
+			throw new Gatuf_Form_Invalid (sprintf ('El código %s de alumno especificado ya existe', $codigo));
 		}
 		
 		return $codigo;

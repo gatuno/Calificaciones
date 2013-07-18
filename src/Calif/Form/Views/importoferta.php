@@ -208,7 +208,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				if ($materia_model->getMateria ($clave) === false) {
 					$materia_model->clave = $clave;
 					$materia_model->descripcion = $descripcion;
-			
+					$materia_model->departamento = 0;
+					
 					$materia_model->create ();
 				}
 			}

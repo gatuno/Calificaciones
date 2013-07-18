@@ -36,6 +36,7 @@ class Calif_Views_Horario {
 				
 				/* Recorrer estas horas */
 				foreach ($horas as $hora) {
+					if ($hora->id == $horario->id) continue;
 					if (($horario->hora_inicio >= $hora->hora_inicio && $horario->hora_fin < $hora->hora_fin) ||
 						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
 						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
