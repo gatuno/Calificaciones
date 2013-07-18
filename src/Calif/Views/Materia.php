@@ -178,6 +178,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 	
+	public $agregarMateria_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarMateria ($request, $match) {
 		$title = 'Nueva materia';
 		
@@ -202,6 +203,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 	
+	public $actualizarMateria_precond = array ('Gatuf_Precondition::loginRequired');
 	public function actualizarMateria ($request, $match) {
 		$title = 'Actualizar materia';
 		
@@ -238,6 +240,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 	
+	public $agregarEval_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarEval ($request, $match) {
 		$extra = array ();
 		

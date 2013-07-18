@@ -51,6 +51,47 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 					'size' => 30,
 				),
 		));
+		
+		$this->fields['creditos'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => 'Créditos',
+				'initial' => $this->materia->creditos,
+				'help_text' => 'La cantidad de créditos de la materia',
+				'min' => 0,
+		));
+		
+		$this->fields['curso'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'Curso',
+				'initial' => $this->materia->curso,
+				'help_text' => '¿La materia es un curso?'
+		));
+		
+		$this->fields['taller'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'Taller',
+				'initial' => $this->materia->taller,
+				'help_text' => '¿La materia es un taller?'
+		));
+		
+		$this->fields['laboratorio'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'Laboratorio',
+				'initial' => $this->materia->laboratorio,
+				'help_text' => '¿La materia es un laboratorio?'
+		));
+		
+		$this->fields['seminario'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'Seminario',
+				'initial' => $this->materia->seminario,
+				'help_text' => '¿La materia es un seminario?'
+		));
 	}
 	
 	public function save ($commit=true) {
@@ -60,6 +101,11 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 		
 		$this->materia->descripcion = $this->cleaned_data['descripcion'];
 		$this->materia->departamento = $this->cleaned_data['departamento'];
+		$materia->creditos = $this->cleaned_data['creditos'];
+		$materia->curso = $this->cleaned_data['curso'];
+		$materia->taller = $this->cleaned_data['taller'];
+		$materia->laboratorio = $this->cleaned_data['laboratorio'];
+		$materia->seminario = $this->cleaned_data['seminario'];
 		
 		$this->materia->update();
 		
