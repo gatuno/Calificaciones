@@ -68,18 +68,18 @@ class Gatuf_Precondition {
      * @param string Permission
      * @return mixed
      */
-    /* TODO: Adaptar a nuestro sistema de permisos
+    /* TODO: Adaptar a nuestro sistema de permisos */
     static public function hasPerm($request, $permission)
     {
-        $res = Pluf_Precondition::loginRequired($request);
+        $res = Gatuf_Precondition::loginRequired($request);
         if (true !== $res) {
             return $res;
         }
         if ($request->user->hasPerm($permission)) {
             return true;
         }
-        return new Pluf_HTTP_Response_Forbidden($request);
-    } */
+        return new Gatuf_HTTP_Response_Forbidden($request);
+    }
 
     /**
      * Requires SSL to access the view.

@@ -132,7 +132,7 @@ class Gatuf_Template_Compiler {
                                     'aurl' => 'Gatuf_Template_Tag_Rurl',
                                     'media' => 'Gatuf_Template_Tag_MediaUrl',
                                     'amedia' => 'Gatuf_Template_Tag_RmediaUrl',
-                                    /*'aperm' => 'Pluf_Template_Tag_APerm',*/
+                                    'aperm' => 'Gatuf_Template_Tag_APerm',
                                     'getmsgs' => 'Gatuf_Template_Tag_Messages',
                                     );
     /**

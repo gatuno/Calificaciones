@@ -784,13 +784,13 @@ function Gatuf_Paginator_DateYMDHMS($field, $item) {
     return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');
 }
 
-function Pluf_Paginator_DateYMDHM($field, $item) {
+function Gatuf_Paginator_DateYMDHM($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
     return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M');
 }
 
 function Gatuf_Paginator_DateYMD($field, $item) {
-    Gatuf::loadFunction('Pluf_Template_dateFormat');
+    Gatuf::loadFunction('Gatuf_Template_dateFormat');
     return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d');
 }
 
