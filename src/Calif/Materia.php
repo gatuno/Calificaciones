@@ -1,20 +1,26 @@
 <?php
 
 class Calif_Materia extends Gatuf_Model {
-	/* Manejador de la tabla de carreras */
+	/* Manejador de la tabla de materias */
 	
 	/* Campos */
 	public $clave;
 	public $descripcion;
-	public $departamento, $departamento_desc;
 	public $creditos;
+	public $curso, $taller, $laboratorio, $seminario;
 	
+	/* El departamento, la llave foranea */
+	public $departamento, $departamento_desc;
+	/* La academia, la llave foranea */
+	public $academia;
+	
+	/* Para las formas de evaluación */
 	public $misevals;
-	
 	public $tabla_porcentajes;
 	
 	function __construct () {
 		$this->_getConnection();
+		$this->academia = null; /* FIXME: La academia */
 		
 		$this->tabla = 'Materias';
 		$this->tabla_view = 'Materias_View';
@@ -118,14 +124,14 @@ class Calif_Materia extends Gatuf_Model {
 	}
 	
 	function create () {
-		$req = sprintf ('INSERT INTO %s (clave, descripcion, departamento) VALUES (%s, %s, %s);', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->clave, $this->_con), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con));
+		$req = sprintf ('INSERT INTO %s (clave, descripcion, creditos, curso, taller, laboratorio, seminario, departamento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->clave, $this->_con), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->creditos, $this->_con), Gatuf_DB_BooleanToDb ($this->curso, $this->_con), Gatuf_DB_BooleanToDb ($this->taller, $this->_con), Gatuf_DB_BooleanToDb ($this->laboratorio, $this->_con), Gatuf_DB_BooleanToDb ($this->seminario, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con));
 		$this->_con->execute($req);
 		
 		return true;
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET descripcion = %s, departamento = %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con), Gatuf_DB_IdentityToDb ($this->clave, $this->_con));
+		$req = sprintf ('UPDATE %s SET descripcion = %s, departamento = %s, creditos = %s, curso = %s, taller = %s, laboratorio = %s, seminario = %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IntegerToDb ($this->departamento, $this->_con), Gatuf_DB_IntegerToDb ($this->creditos, $this->_con), Gatuf_DB_BooleanToDb ($this->curso, $this->_con), Gatuf_DB_BooleanToDb ($this->taller, $this->_con), Gatuf_DB_BooleanToDb ($this->laboratorio, $this->_con), Gatuf_DB_BooleanToDb ($this->seminario, $this->_con), Gatuf_DB_IdentityToDb ($this->clave, $this->_con));
 		
 		$this->_con->execute($req);
 		
@@ -142,5 +148,24 @@ class Calif_Materia extends Gatuf_Model {
 	
 	public function displaylinkedclave ($extra) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
+	}
+	
+	public function displaytipo ($extra) {
+		if ($this->taller && $this->curso) {
+			return 'Curso-Taller';
+		} else if ($this->curso) {
+			return 'Curso';
+		} else if ($this->taller) {
+			return 'Taller';
+		} else if ($this->laboratorio) {
+			return 'Laboratorio';
+		} else if ($this->seminario) {
+			return 'Seminario';
+		}
+		return 'Desconocido';
+	}
+	
+	public function displaylinkeddepartamento ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::porDepartamento', array ($this->departamento)).'">'.$this->departamento_desc.'</a>';
 	}
 }

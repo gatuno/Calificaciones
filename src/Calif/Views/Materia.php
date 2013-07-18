@@ -21,7 +21,7 @@ class Calif_Views_Materia {
 		$list_display = array (
 			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
 			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
-			array ('departamento_desc', 'Gatuf_Paginator_DisplayVal', 'Departamento'),
+			array ('departamento', 'Gatuf_Paginator_FKLink', 'Departamento'),
 		);
 		
 		$pag->items_per_page = 40;
@@ -36,6 +36,45 @@ class Calif_Views_Materia {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/index.html',
 		                                         array('page_title' => 'Materias',
+                                                       'paginador' => $pag),
+                                                 $request);
+	}
+	
+	public function porDepartamento ($request, $match) {
+		$departamento = new Calif_Departamento ();
+		
+		if (false === ($departamento->getDepartamento ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$materia = new Calif_Materia ();
+		
+		$sql = new Gatuf_SQL ('departamento=%s', $departamento->clave);
+		
+		$pag = new Gatuf_Paginator ($materia);
+		$pag->forced_where = $sql;
+		$pag->action = array ('Calif_Views_Materia::porDepartamento', array ($departamento->clave));
+		$pag->summary = 'Lista de las materias';
+		
+		$list_display = array (
+			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
+			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
+			array ('departamento_desc', 'Gatuf_Paginator_DisplayVal', 'Departamento'),
+		);
+		
+		$pag->items_per_page = 40;
+		$pag->no_results_text = 'No hay materias';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('clave', 'descripcion'),
+			array ('clave', 'descripcion')
+		);
+		
+		$pag->setFromRequest ($request);
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/por-departamento.html',
+		                                         array('page_title' => 'Materias',
+		                                               'departamento' => $departamento,
                                                        'paginador' => $pag),
                                                  $request);
 	}

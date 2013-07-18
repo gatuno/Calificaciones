@@ -150,6 +150,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materias/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'porDepartamento',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materias/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
