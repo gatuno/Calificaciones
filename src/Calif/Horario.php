@@ -8,6 +8,7 @@ class Calif_Horario extends Gatuf_Model {
 	public $salon, $salon_aula, $salon_edificio;
 	
 	public $lunes, $martes, $miercoles, $jueves, $viernes, $sabado;
+	public $seccion_maestro, $seccion_asignacion, $seccion_asignacion_color;
 	
 	function __construct () {
 		$this->_getConnection();

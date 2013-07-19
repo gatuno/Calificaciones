@@ -178,14 +178,13 @@ class Calif_Views_Materia {
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
 				$dia_semana = strtotime ('next Monday');
 				
-				$salon_model->getSalonById ($hora->salon);
 				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 					if ($hora->$dia) {
 						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
 										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin + 45),
-										             'title' => $salon_model->edificio.' '.$salon_model->aula,
+										             'title' => $hora->salon_edificio.' '.$hora->salon_aula,
 										             'content' => $cadena_desc,
-										             'url' => $url, 'color' => '');
+										             'url' => $url, 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
 					}
 					$dia_semana = $dia_semana + 86400;
 				}

@@ -6,6 +6,7 @@ class Calif_Carrera extends Gatuf_Model {
 	/* Campos */
 	public $clave;
 	public $descripcion;
+	public $color;
 	
 	function __construct () {
 		$this->_getConnection();

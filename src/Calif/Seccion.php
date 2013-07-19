@@ -8,6 +8,7 @@ class Calif_Seccion extends Gatuf_Model {
 	public $materia, $materia_desc, $materia_departamento;
 	public $seccion;
 	public $maestro, $maestro_nombre, $maestro_apellido;
+	public $asignacion;
 	
 	public $tabla_grupos;
 	
