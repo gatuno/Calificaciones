@@ -3,6 +3,7 @@
 class Gatuf {
 	
 	static function start($config) {
+		$GLOBALS['_PX_starttime'] = microtime(true);
 		$GLOBALS['_GATUF_starttime'] = microtime(true);
 		$GLOBALS['_GATUF_uniqid'] = uniqid($GLOBALS['_GATUF_starttime'], true);
 		Gatuf::loadConfig($config);
