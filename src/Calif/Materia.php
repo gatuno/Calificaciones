@@ -26,6 +26,14 @@ class Calif_Materia extends Gatuf_Model {
 		$this->tabla_view = 'Materias_View';
 		$this->tabla_porcentajes = 'Porcentajes';
 		$this->misevals = array ();
+		
+		/* Relación N-M contra las carreras */
+		$tabla = 'Catalogo_Carreras';
+		
+		$this->views['__catalogo_c__'] = array ();
+		$this->views['__catalogo_c__']['tabla'] = $tabla;
+		$this->views['__catalogo_c__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.materia';
+		$this->views['__catalogo_c__']['order'] = $this->default_order;
 	}
 	
 	function getPorcentajesSqlTable () {
@@ -156,15 +164,12 @@ class Calif_Materia extends Gatuf_Model {
 		$p = array_merge($default, $p);
 		
 		$c = new Calif_Carrera ();
+		
 		$tabla = 'Catalogo_Carreras';
+		$sql = new Gatuf_SQL ($this->_con->pfx.$c->views['__catalogo_c__']['tabla'].'.materia=%s', $this->clave);
+		$c->views['__catalogo_c__']['where'] = $sql->gen ();
 		
-		$c->views['__manytomany__'] = array ();
-		$c->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$c->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.carrera';
-		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.materia=%s', $this->clave);
-		
-		$c->views['__manytomany__']['where'] = $sql->gen ();
-		
-		$p['view'] = '__manytomany__';
+		$p['view'] = '__catalogo_c__';
 		
 		return $c->getList ($p);
 	}

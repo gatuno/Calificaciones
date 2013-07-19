@@ -11,6 +11,12 @@ class Calif_Carrera extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Carreras';
+		$tabla = 'Catalogo_Carreras';
+		
+		$this->views['__catalogo_c__'] = array ();
+		$this->views['__catalogo_c__']['tabla'] = $tabla;
+		$this->views['__catalogo_c__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.carrera';
+		$this->views['__catalogo_c__']['order'] = $this->default_order;
 	}
 	
 	function getCarrera ($clave) {
@@ -55,15 +61,12 @@ class Calif_Carrera extends Gatuf_Model {
 		$p = array_merge($default, $p);
 		
 		$m = new Calif_Materia ();
-		$tabla = 'Catalogo_Carreras';
 		
-		$m->views['__manytomany__'] = array ();
-		$m->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$m->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.materia';
-		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.carrera=%s', $this->clave);
+		$sql = new Gatuf_SQL ($this->_con->pfx.$m->views['__catalogo_c__']['tabla'].'.carrera=%s', $this->clave);
 		
-		$m->views['__manytomany__']['where'] = $sql->gen ();
+		$m->views['__catalogo_c__']['where'] = $sql->gen ();
 		
-		$p['view'] = '__manytomany__';
+		$p['view'] = '__catalogo_c__';
 		
 		return $m->getList ($p);
 	}

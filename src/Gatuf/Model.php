@@ -46,7 +46,7 @@ class Gatuf_Model {
 			throw new Exception(sprintf('The view "%s" is not defined.', $p['view']));
 		}
 		$query = array(
-		               'select' => '*',
+		               'select' => $this->getSqlViewTable().'.*',
 		               'from' => $this->getSqlViewTable(),
 		               'join' => '',
 		               'where' => '',
