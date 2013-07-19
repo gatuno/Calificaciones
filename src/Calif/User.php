@@ -9,6 +9,8 @@ class Calif_User extends Gatuf_Model {
 	
 	public $active = true, $last_login = null, $admin = false;
 	
+	public $_cache_perms = null;
+	
 	function getLoginSqlTable () {
 		return $this->_con->pfx.$this->login_tabla;
 	}
@@ -128,5 +130,54 @@ class Calif_User extends Gatuf_Model {
 		}
 		
 		return $ms;
+	}
+	
+	function getPermissionList ($p = array ()) {
+		$default = array('view' => null,
+		                 'filter' => null,
+		                 'order' => null,
+		                 'start' => null,
+		                 'nb' => null,
+		                 'count' => false);
+		$p = array_merge($default, $p);
+		
+		$m = new Gatuf_Permission ();
+		$tabla = 'usuarios_permisos';
+		
+		$m->views['__manytomany__'] = array ();
+		$m->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$m->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.permiso';
+		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.usuario=%s', $this->codigo);
+		$m->views['__manytomany__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__manytomany__';
+		return $m->getList ($p);
+	}
+	
+	function getAllPermissions () {
+		if (!is_null($this->_cache_perms)) {
+			return $this->_cache_perms;
+		}
+		
+		$this->_cache_perms = array ();
+		$perms = $this->getPermissionList ();
+		
+		/* TODO: Gestionar los grupos aquí */
+		
+		foreach ($perms as $perm) {
+			if (!in_array ($perm->application.'.'.$perm->code_name, $this->_cache_perms)) {
+				$this->_cache_perms[] = $perm->application.'.'.$perm->code_name;
+			}
+		}
+		return $this->_cache_perms;
+	}
+	
+	function hasPerm ($perm, $obj = null) {
+		if (!$this->active) return false;
+		if ($this->admin) return true;
+		$perms = $this->getAllPermissions ();
+		
+		if (in_array ($perm, $perms)) return true;
+		
+		return false;
 	}
 }
