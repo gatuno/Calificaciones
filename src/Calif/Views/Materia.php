@@ -79,6 +79,17 @@ class Calif_Views_Materia {
                                                  $request);
 	}
 	
+	public function porCarrera ($request, $match) {
+		$carrera = new Calif_Carrera ();
+		
+		if (false === ($carrera->getCarrera ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		var_dump ($carrera->getMateriasList ());
+		throw new Exception ('Alto');
+	}
+	
 	public function verMateria ($request, $match) {
 		$materia =  new Calif_Materia ();
 		

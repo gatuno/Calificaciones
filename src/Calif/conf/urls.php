@@ -157,6 +157,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materias/([A-Za-z]{3,5})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'porCarrera',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materias/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',

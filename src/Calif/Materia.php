@@ -146,6 +146,29 @@ class Calif_Materia extends Gatuf_Model {
 		return true;
 	}
 	
+	public function getCarrerasList ($p = array ()) {
+		$default = array('view' => null,
+		                 'filter' => null,
+		                 'order' => null,
+		                 'start' => null,
+		                 'nb' => null,
+		                 'count' => false);
+		$p = array_merge($default, $p);
+		
+		$c = new Calif_Carrera ();
+		$tabla = 'Catalogo_Carreras';
+		
+		$c->views['__manytomany__'] = array ();
+		$c->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$c->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.carrera';
+		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.materia=%s', $this->clave);
+		
+		$c->views['__manytomany__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__manytomany__';
+		
+		return $c->getList ($p);
+	}
+	
 	public function displaylinkedclave ($extra) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
 	}
