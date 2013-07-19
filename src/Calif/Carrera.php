@@ -11,6 +11,7 @@ class Calif_Carrera extends Gatuf_Model {
 		$this->_getConnection();
 		
 		$this->tabla = 'Carreras';
+		$this->default_order = 'clave ASC, descripcion ASC';
 		$tabla = 'Catalogo_Carreras';
 		
 		$this->views['__catalogo_c__'] = array ();

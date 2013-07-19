@@ -25,6 +25,7 @@ class Calif_Materia extends Gatuf_Model {
 		$this->tabla = 'Materias';
 		$this->tabla_view = 'Materias_View';
 		$this->tabla_porcentajes = 'Porcentajes';
+		$this->default_order = 'clave ASC, descripcion ASC';
 		$this->misevals = array ();
 		
 		/* Relación N-M contra las carreras */

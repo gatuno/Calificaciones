@@ -86,8 +86,36 @@ class Calif_Views_Materia {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		var_dump ($carrera->getMateriasList ());
-		throw new Exception ('Alto');
+		$materia = new Calif_Materia ();
+		$sql = new Gatuf_SQL ($materia->_con->pfx.$materia->views['__catalogo_c__']['tabla'].'.carrera=%s', $carrera->clave);
+		
+		$pag = new Gatuf_Paginator ($materia);
+		$pag->model_view = '__catalogo_c__';
+		$pag->forced_where = $sql;
+		$pag->action = array ('Calif_Views_Materia::porCarrera', array ($carrera->clave));
+		$pag->summary = 'Lista de las materias';
+		
+		$list_display = array (
+			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
+			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
+			array ('departamento_desc', 'Gatuf_Paginator_DisplayVal', 'Departamento'),
+		);
+		
+		$pag->items_per_page = 40;
+		$pag->no_results_text = 'No hay materias';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('clave', 'descripcion'),
+			array ('clave', 'descripcion')
+		);
+		
+		$pag->setFromRequest ($request);
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/por-carrera.html',
+		                                         array('page_title' => 'Materias',
+		                                               'carrera' => $carrera,
+                                                       'paginador' => $pag),
+                                                 $request);
 	}
 	
 	public function verMateria ($request, $match) {
