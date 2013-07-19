@@ -43,7 +43,7 @@ class Calif_Materia extends Gatuf_Model {
 	
 	function getMateria ($clave) {
 		/* Recuperar una carrera */
-		$req = sprintf ('SELECT * FROM %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($clave, $this->_con));
+		$req = sprintf ('SELECT * FROM %s WHERE clave = %s', $this->getSqlViewTable(), Gatuf_DB_IdentityToDb ($clave, $this->_con));
 		
 		if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());

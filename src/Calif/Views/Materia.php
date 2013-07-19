@@ -192,10 +192,13 @@ class Calif_Views_Materia {
 			}
 		}
 		
+		$carreras = $materia->getCarrerasList ();
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
 		                                         array('page_title' => 'Ver materia',
 		                                               'materia' => $materia,
 		                                               'calendario' => $calendario_materia,
+		                                               'carreras' => $carreras,
 		                                               'paginador' => $pag),
 		                                         $request);
 	}

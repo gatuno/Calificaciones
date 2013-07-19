@@ -5,6 +5,19 @@
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>
 </ul>
+<h2>Detalles</h2>
+<p>Departamento: {$materia.departamento_desc}. FIXME Poner enlace hacia el departamento.
+<p>Créditos: {$materia.creditos}</p>
+{if $carreras}
+	<p>La materia es tomada por:
+	<ul>
+	{foreach $carreras as $carrera}
+		<li><a href="{url 'Calif_Views_Materia::porCarrera', array ($carrera.clave)}">{$carrera.descripcion}</a></li>
+	{/foreach}
+	</ul></p>
+{else}
+	<p>La materia no tomada por ninguna carrera</p>
+{/if}
 {if $calendario.events}
 	<h2>Horas de la materia</h2>
 	{$calendario.render}
