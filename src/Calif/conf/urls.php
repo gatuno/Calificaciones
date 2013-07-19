@@ -11,6 +11,14 @@ $ctl[] = array (
 );
 */
 
+/* Sistema de login, y vistas base */
+$ctl[] = array (
+	'regex' => '#^/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'index',
+);
+
 $ctl[] = array (
 	'regex' => '#^/login/$#',
 	'base' => $base,
@@ -33,6 +41,7 @@ $ctl[] = array (
 	'method' => 'logout',
 );
 
+/* Reportes y acciones varias */
 $ctl[] = array (
 	'regex' => '#^/importsiiau/$#',
 	'base' => $base,
@@ -284,6 +293,7 @@ $ctl[] = array (
 	'method' => 'agregarNrcConMateria',
 );
 
+/* Los salones */
 $ctl[] = array (
 	'regex' => '#^/salones/$#',
 	'base' => $base,
@@ -319,6 +329,7 @@ $ctl[] = array (
 	'method' => 'buscarSalon',
 );
 
+/* Los maestros */
 $ctl[] = array (
 	'regex' => '#^/maestros/$#',
 	'base' => $base,
@@ -370,6 +381,7 @@ $ctl[] = array (
 	'name' => 'HorarioPorDepartamento',
 );
 
+/* Edificios */
 $ctl[] = array (
 	'regex' => '#^/edificios/$#',
 	'base' => $base,
@@ -384,6 +396,7 @@ $ctl[] = array (
 	'method' => 'verEdificio',
 );
 
+/* Departamentos */
 $ctl[] = array (
 	'regex' => '#^/departamentos/$#',
 	'base' => $base,

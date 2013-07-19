@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<meta name="author" content="Félix Arreola Rodríguez" />
+	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/smoothness/jquery-ui-1.8.16.custom.css" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+	<title>Sistema de Calificaciones</title>
+</head>
+<body>
+	<ul style="list-style-type: none;">
+		<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::index'}">Maestros</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Materia::index'}">Materias</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Edificio::index'}">Edificios</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Salon::index'}">Salones</a></li>
+		<li style="display: inline;"><a href="{url 'Calif_Views_Departamento::index'}">Departamentos</a></li>
+	</ul>
+	<!-- Esta es la información del usuario -->
+	<div style="float: right">
+		{if !$user.isAnonymous()}
+			<p><img src="http://www.gravatar.com/avatar/{$user.correo|md5}.jpg?s=30" alt=" " /> <strong>{$user.nombre} {$user.apellido}</strong>. <a href="{url 'Calif_Views::logout'}"><img src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>
+		{else}
+			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>
+		{/if}
+	</div>
+	{if $user and $user.codigo}{getmsgs $user}{/if}
+	<div style="clear: both">
+		<p>Bienvenido</p>
+	</div>
+</body>
+</html>
