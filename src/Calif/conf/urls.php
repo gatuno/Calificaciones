@@ -178,6 +178,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materia/([a-zA-Z]+\d+)/evals/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'verEval',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materia/([a-zA-Z]+\d+)/update/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',

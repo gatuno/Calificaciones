@@ -1,21 +1,13 @@
 {extends 'calif/base.html'}
 {block body}
 <h1>{$materia.clave} - {$materia.descripcion}</h1>
-{foreach $grupos as $id_grupo => $grupo}
-<p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:</p>
-{if $evals[$id_grupo]}
-<ul>{foreach $evals[$id_grupo] as $eval}
-<li>{$eval['porcentaje']}% - {$eval['descripcion']}</li>
-{/foreach}</ul>
-<p>El total para {$grupo} es de {$sumas[$id_grupo]['suma']}</p>
-{if $disponibles[$id_grupo]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $id_grupo)}">agregar una nueva forma de evaluación</a> a {$grupo}</p>{/if}
-{else}
-<p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
-{/if}
-{/foreach}
+<ul style="list-style-type: none;">
+<li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>
+</ul>
 {if $calendario.events}
-<h2>Horas de la materia</h2>
-{$calendario.render}
+	<h2>Horas de la materia</h2>
+	{$calendario.render}
 {/if}
 <h2>Lista de secciones de {$materia.clave}</h2>
 <p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrcConMateria', array ($materia.clave)}">agregar una nueva sección</a> a esta materia</p>

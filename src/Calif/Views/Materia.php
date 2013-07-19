@@ -98,7 +98,7 @@ class Calif_Views_Materia {
 		$list_display = array (
 			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
 			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
-			array ('departamento_desc', 'Gatuf_Paginator_DisplayVal', 'Departamento'),
+			array ('departamento', 'Gatuf_Paginator_FKLink', 'Departamento'),
 		);
 		
 		$pag->items_per_page = 40;
@@ -129,19 +129,6 @@ class Calif_Views_Materia {
 		if ($match[1] != $nueva_clave) {
 			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::verMateria', array ($nueva_clave));
 			return new Gatuf_HTTP_Response_Redirect ($url);
-		}
-		
-		$e = new Calif_Evaluacion ();
-		$grupos = $e->getGruposEvals ();
-		$evals = array ();
-		$disponibles = array ();
-		$sumas = array ();
-		
-		foreach ($grupos as $id_grupo => $grupo) {
-			$sql = new Gatuf_SQL ('grupo=%s', $id_grupo);
-			$evals[$id_grupo] = $materia->getEvals ($sql);
-			$sumas[$id_grupo] = $materia->getGroupSum ($sql);
-			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
 		}
 		
 		/* Listar las secciones de esta materia */
@@ -207,13 +194,45 @@ class Calif_Views_Materia {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
 		                                         array('page_title' => 'Ver materia',
+		                                               'materia' => $materia,
+		                                               'calendario' => $calendario_materia,
+		                                               'paginador' => $pag),
+		                                         $request);
+	}
+	
+	public function verEval ($request, $match) {
+		$materia =  new Calif_Materia ();
+		
+		if (false === ($materia->getMateria($match[1]))) {
+			throw new Pluf_HTTP_Error404();
+		}
+		
+		$nueva_clave = mb_strtoupper ($match[1]);
+		if ($match[1] != $nueva_clave) {
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::verMateria', array ($nueva_clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		$e = new Calif_Evaluacion ();
+		$grupos = $e->getGruposEvals ();
+		$evals = array ();
+		$disponibles = array ();
+		$sumas = array ();
+		
+		foreach ($grupos as $id_grupo => $grupo) {
+			$sql = new Gatuf_SQL ('grupo=%s', $id_grupo);
+			$evals[$id_grupo] = $materia->getEvals ($sql);
+			$sumas[$id_grupo] = $materia->getGroupSum ($sql);
+			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-eval.html',
+		                                         array('page_title' => 'Ver materia',
 		                                               'evals' => $evals,
 		                                               'grupos' => $grupos,
 		                                               'materia' => $materia,
-		                                               'calendario' => $calendario_materia,
 		                                               'disponibles' => $disponibles,
-		                                               'sumas' => $sumas,
-		                                               'paginador' => $pag),
+		                                               'sumas' => $sumas),
 		                                         $request);
 	}
 	
