@@ -31,11 +31,9 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 				'label' => 'Clave',
 				'initial' => $this->materia->clave,
 				'help_text' => 'La clave de la materia',
-				'max_length' => 5,
-				'min_length' => 5,
 				'widget_attrs' => array(
-					'maxlength' => 5,
 					'readonly' => 'readonly',
+					'disabled' => 'disabled'
 				),
 		));
 		
@@ -101,11 +99,11 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 		
 		$this->materia->descripcion = $this->cleaned_data['descripcion'];
 		$this->materia->departamento = $this->cleaned_data['departamento'];
-		$materia->creditos = $this->cleaned_data['creditos'];
-		$materia->curso = $this->cleaned_data['curso'];
-		$materia->taller = $this->cleaned_data['taller'];
-		$materia->laboratorio = $this->cleaned_data['laboratorio'];
-		$materia->seminario = $this->cleaned_data['seminario'];
+		$this->materia->creditos = $this->cleaned_data['creditos'];
+		$this->materia->curso = $this->cleaned_data['curso'];
+		$this->materia->taller = $this->cleaned_data['taller'];
+		$this->materia->laboratorio = $this->cleaned_data['laboratorio'];
+		$this->materia->seminario = $this->cleaned_data['seminario'];
 		
 		$this->materia->update();
 		
