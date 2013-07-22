@@ -75,7 +75,7 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		}
 		
 		/* Verificar que este nrc no esté duplicado */
-		$sql = new Gatuf_SQL('Nrc=%s', array($nrc));
+		$sql = new Gatuf_SQL('nrc=%s', array($nrc));
         $l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));
         if ($l > 0) {
             throw new Gatuf_Form_Invalid('Este NRC ya existe');
@@ -99,8 +99,7 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		$materia = $this->cleaned_data['materia'];
 		$seccion = $this->cleaned_data['seccion'];
 		
-		$sql = new Gatuf_SQL ('Seccion=%s', $seccion);
-		$sql->Q ('Materia=%s', $materia);
+		$sql = new Gatuf_SQL ('seccion=%s AND materia=%s', array ($seccion, $materia));
 		$l = Gatuf::factory ('Calif_Seccion')->getList (array ('filter'=>$sql->gen(), 'count' => true));
 		
 		if ($l > 0) {

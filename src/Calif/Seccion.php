@@ -4,7 +4,7 @@ class Calif_Seccion extends Gatuf_Model {
 	/* Manejador de la tabla de secciones */
 	
 	/* Campos */
-	public $nrc;
+	public $nrc, $new_nrc;
 	public $materia, $materia_desc, $materia_departamento;
 	public $seccion;
 	public $maestro, $maestro_nombre, $maestro_apellido;
@@ -95,10 +95,11 @@ class Calif_Seccion extends Gatuf_Model {
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET maestro=%s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		$req = sprintf ('UPDATE %s SET nrc = %s, maestro=%s, seccion=%s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->new_nrc, $this->_con), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con), Gatuf_DB_IdentityToDb ($this->seccion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
 		
 		$this->_con->execute($req);
 		
+		$this->nrc = $this->new_nrc;
 		return true;
 	}
 	
