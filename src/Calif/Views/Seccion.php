@@ -58,6 +58,7 @@ class Calif_Views_Seccion {
 		
 		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 		
+		/* FIXME: Resolver con relación N-M de vista */
 		$lista = $seccion->getAlumnos ();
 		
 		$alumnos = array ();
@@ -77,7 +78,7 @@ class Calif_Views_Seccion {
 		                                          $request);
 	}
 	
-	public $agregarNrc_precond = array ('Gatuf_Precondition::loginRequired');
+	public $agregarNrc_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarNrc ($request, $match) {
 		$title = 'Crear NRC';
 		
@@ -116,12 +117,12 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
-	public $agregarNrcConMateria_precond = array ('Gatuf_Precondition::loginRequired');
+	public $agregarNrcConMateria_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarNrcConMateria ($request, $match) {
 		return $this->agregarNrc ($request, $match);
 	}
 	
-	public $actualizarNrc_precond = array ('Gatuf_Precondition::loginRequired');
+	public $actualizarNrc_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarNrc ($request, $match) {
 		$title = 'Actualizar NRC';
 		
@@ -152,7 +153,7 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
-	public $eliminarNrc_precond = array ('Gatuf_Precondition::loginRequired');
+	public $eliminarNrc_precond = array ('Gatuf_Precondition::adminRequired');
 	public function eliminarNrc ($request, $match) {
 		$title = 'Eliminar NRC';
 		
@@ -190,5 +191,83 @@ class Calif_Views_Seccion {
 		                                                'materia' => $materia,
 		                                                'seccion' => $seccion),
 		                                         $request);
+	}
+	
+	public $reclamarNrc_precond = array ('Calif_Precondition::coordinadorRequired');
+	public function reclamarNrc ($request, $match) {
+		$seccion = new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+		
+		$carrera = new Calif_Carrera ();
+		
+		if (false === ($carrera->getCarrera ($match[2]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		/* Verificar que el maestro sea coordinador de la carrera que quiere reclamar */
+		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$carrera->clave)) {
+			$request->user->setMessage (1, 'No puede reclamar secciones para '.$carrera->clave.'. Usted no es coordinador de esta carrera');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Si ya está asignado, marcar error */
+		if (!is_null ($seccion->asignacion)) {
+			$request->user->setMessage (1, 'La sección ya ha sido reclamada por '.$seccion->asignacion);
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Verificar que la materia pertenezca a la carrera */
+		$materia = new Calif_Materia ();
+		$materia->getMateria ($seccion->materia);
+		
+		$carreras = $materia->getCarrerasList ();
+		
+		$permiso = false;
+		foreach ($carreras as $c) {
+			if ($request->user->hasPerm ('SIIAU.coordinador.'.$c->clave)) $permiso = true;
+		}
+		
+		if ($permiso == false) {
+			$request->user->setMessage (1, 'No puede reclamar esta sección. La materia no pertenece a alguna carrera que usted coordina');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Ahora, intentar asignar el nrc */
+		$seccion->asignacion = $carrera->clave;
+		
+		if ($seccion->updateAsignacion () === true) {
+			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido marcada para la carrera '.$carrera->clave);
+		} else {
+			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' no pudo ser reclamada. Por favor intentelo otra vez');
+		}
+		
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public $liberarNrc_precond = array ('Calif_Precondition::coordinadorRequired');
+	public function liberarNrc ($request, $match) {
+		$seccion = new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+		
+		if (is_null ($seccion->asignacion)) {
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
+			$request->user->setMessage (1, 'No puede liberar la sección '.$seccion->nrc.', usted no es el coordinador que la solicitó.');
+		} else {
+			$seccion->liberarAsignacion ();
+			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido liberada.');
+		}
+		
+		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 }

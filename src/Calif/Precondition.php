@@ -1,7 +1,7 @@
 <?php
 
 class Calif_Precondition {
-	static public function isCoord($request) {
+	static public function coordinadorRequired($request) {
 		$res = Gatuf_Precondition::loginRequired($request);
 		if (true !== $res) {
 			return $res;

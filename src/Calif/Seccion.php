@@ -30,7 +30,7 @@ class Calif_Seccion extends Gatuf_Model {
     
 	function getNrc ($nrc) {
 		/* Recuperar una seccion */
-		$req = sprintf ('SELECT * FROM %s WHERE nrc=%s', $this->tabla, Gatuf_DB_IdentityToDb ($nrc, $this->_con));
+		$req = sprintf ('SELECT * FROM %s WHERE nrc=%s', $this->getSqlViewTable(), Gatuf_DB_IdentityToDb ($nrc, $this->_con));
 		
 		if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());
@@ -100,6 +100,31 @@ class Calif_Seccion extends Gatuf_Model {
 		$this->_con->execute($req);
 		
 		$this->nrc = $this->new_nrc;
+		return true;
+	}
+	
+	function updateAsignacion () {
+		$req = sprintf ('UPDATE %s SET asignacion = %s WHERE nrc=%s AND asignacion IS NULL', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->asignacion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		$req = sprintf ('SELECT asignacion FROM %s WHERE nrc = %s', $this->getSqlTable (), $this->nrc);
+		
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if ($rs[0]['asignacion'] != $this->asignacion) {
+			return false;
+		}
+		return true;
+	}
+	
+	function liberarAsignacion () {
+		$req = sprintf ('UPDATE %s SET asignacion = NULL WHERE nrc=%s', $this->getSqlTable (), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		
+		$this->_con->execute($req);
+		
 		return true;
 	}
 	

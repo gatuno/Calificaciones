@@ -293,6 +293,20 @@ $ctl[] = array (
 	'method' => 'agregarNrcConMateria',
 );
 
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/reclamar/([A-Za-z]{3,5})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'reclamarNrc',
+);
+
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/liberar/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'liberarNrc',
+);
+
 /* Los salones */
 $ctl[] = array (
 	'regex' => '#^/salones/$#',
