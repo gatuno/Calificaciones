@@ -180,4 +180,16 @@ class Calif_User extends Gatuf_Model {
 		
 		return false;
 	}
+	
+	function isCoord () {
+		if (!$this->active) return false;
+		if ($this->admin) return true;
+		
+		$perms = $this->getAllPermissions ();
+		
+		$coords = preg_grep ('/SIIAU.coordinador.*/', $perms);
+		
+		if (count ($coords) > 0) return true;
+		return false;
+	}
 }
