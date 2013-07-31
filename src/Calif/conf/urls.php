@@ -159,6 +159,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materias/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'agregarMateria',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materias/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
@@ -170,13 +177,6 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
 	'method' => 'porCarrera',
-);
-
-$ctl[] = array (
-	'regex' => '#^/materias/add/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Materia',
-	'method' => 'agregarMateria',
 );
 
 $ctl[] = array (
@@ -238,6 +238,20 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'agregarNrc',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/add/([a-zA-Z]+\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'agregarNrcConMateria',
+);
+
+$ctl[] = array (
 	'regex' => '#^/seccion/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
@@ -277,20 +291,6 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Horario',
 	'method' => 'actualizarHora',
-);
-
-$ctl[] = array (
-	'regex' => '#^/secciones/add/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'agregarNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/secciones/add/([a-zA-Z]+\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'agregarNrcConMateria',
 );
 
 $ctl[] = array (

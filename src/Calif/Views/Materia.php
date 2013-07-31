@@ -1,9 +1,5 @@
 <?php
 
-/*Pluf::loadFunction('Pluf_HTTP_URL_urlForView');
-Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
-Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');*/
-
 Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Materia {
@@ -122,7 +118,7 @@ class Calif_Views_Materia {
 		$materia =  new Calif_Materia ();
 		
 		if (false === ($materia->getMateria($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$nueva_clave = mb_strtoupper ($match[1]);
@@ -206,7 +202,7 @@ class Calif_Views_Materia {
 		$materia =  new Calif_Materia ();
 		
 		if (false === ($materia->getMateria($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$nueva_clave = mb_strtoupper ($match[1]);

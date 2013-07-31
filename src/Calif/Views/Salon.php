@@ -40,7 +40,7 @@ class Calif_Views_Salon {
 		$salon = new Calif_Salon ();
 		
 		if (false === ($salon->getSalonById ($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$sql = new Gatuf_SQL ('salon=%s', $salon->id);
@@ -106,7 +106,7 @@ class Calif_Views_Salon {
 		$salon = new Calif_Salon ();
 		
 		if (false === ($salon->getSalonById ($match[1]))) {
-			throw new Pluf_HTTP_Error404();
+			throw new Gatuf_HTTP_Error404();
 		}
 		
 		$extra = array ();
