@@ -4,7 +4,7 @@
 
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
-<p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
+<p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
 {if $user.isCoord}
 	<h3>Oferta académica</h3>
 	{if $seccion.asignacion}
@@ -32,8 +32,8 @@
 		<td>{$hora.salon_edificio}</td>
 		<td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$hora.salon_aula}</a></td>
 		<td>
-		<a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a>
-		<a href="{url 'Calif_Views_Horario::actualizarHora', array ($seccion->nrc, $hora->id)}"><img src="{media '/img/document-properties.png'}" alt="Editar" /></a>
+		<a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a>
+		<a href="{url 'Calif_Views_Horario::actualizarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/document-properties.png'}" alt="Editar" /></a>
 		</td></tr>
 	{/foreach}
 	</tbody></table>

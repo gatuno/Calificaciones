@@ -221,19 +221,19 @@ class Calif_Views_Seccion {
 		}
 		
 		if ($permiso == false) {
-			$request->user->setMessage (1, sprintf ('No puede reclamar esta sección. La materia "%s" no pertenece a la carrera %s', $materia->descripcion, $carrera_a_reclamar->descripcion));
+			$request->user->setMessage (2, sprintf ('No puede reclamar esta sección. La materia "%s" no pertenece a la carrera %s', $materia->descripcion, $carrera_a_reclamar->descripcion));
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		 /* Verificar que el maestro sea coordinador de la carrera que quiere reclamar */
 		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$carrera_a_reclamar->clave)) {
-			$request->user->setMessage (1, 'No puede reclamar secciones para '.$carrera_a_reclamar->clave.'. Usted no es coordinador de esta carrera');
+			$request->user->setMessage (2, 'No puede reclamar secciones para '.$carrera_a_reclamar->clave.'. Usted no es coordinador de esta carrera');
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		/* Si ya está asignado, marcar error */
 		if (!is_null ($seccion->asignacion)) {
-			$request->user->setMessage (1, 'La sección ya ha sido reclamada por '.$seccion->asignacion);
+			$request->user->setMessage (2, 'La sección ya ha sido reclamada por '.$seccion->asignacion);
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
@@ -243,7 +243,7 @@ class Calif_Views_Seccion {
 		if ($seccion->updateAsignacion () === true) {
 			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido marcada para la carrera '.$carrera_a_reclamar->clave);
 		} else {
-			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' no pudo ser reclamada. Por favor intentelo otra vez');
+			$request->user->setMessage (2, 'La sección '.$seccion->nrc.' no pudo ser reclamada. Por favor intentelo otra vez');
 		}
 		
 		return new Gatuf_HTTP_Response_Redirect ($url);
@@ -263,7 +263,7 @@ class Calif_Views_Seccion {
 		}
 		
 		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
-			$request->user->setMessage (1, 'No puede liberar la sección '.$seccion->nrc.', usted no es el coordinador que la solicitó.');
+			$request->user->setMessage (2, 'No puede liberar la sección '.$seccion->nrc.', usted no es el coordinador que la solicitó.');
 		} else {
 			$seccion->liberarAsignacion ();
 			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido liberada.');

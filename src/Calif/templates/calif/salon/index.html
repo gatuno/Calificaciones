@@ -1,6 +1,6 @@
 {extends 'calif/base.html'}
 {block body}
-<p><a href="{url 'Calif_Views_Salon::agregarSalon'}"><img src="{media '/img/list-add.png'}" alt="Crear salon" />Agregar nuevo salon</a><br />
-<a href="{url 'Calif_Views_Salon::buscarSalon'}"><img src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon vacio</a></p>
+<p><a href="{url 'Calif_Views_Salon::agregarSalon'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Crear salon" />Agregar nuevo salon</a><br />
+<a href="{url 'Calif_Views_Salon::buscarSalon'}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon vacio</a></p>
 {$paginador.render}
 {/block}

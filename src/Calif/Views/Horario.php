@@ -144,7 +144,7 @@ class Calif_Views_Horario {
 						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
 						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
 						/* Choque, este salon está ocupado en la hora recién agregada */
-						$request->user->setMessage (1, 'La hora actualizada al nrc '.$horario->nrc.' colisiona en el salon');
+						$request->user->setMessage (2, 'La hora actualizada al nrc '.$horario->nrc.' colisiona en el salon');
 						break;
 					}
 				}

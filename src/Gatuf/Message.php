@@ -16,7 +16,7 @@ class Gatuf_Message extends Gatuf_Model {
 	}
 	
 	function create () {
-		$req = sprintf ('INSERT INTO %s (user, message, type) VALUES (%s, %s, %s)', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->user, $this->_con), Gatuf_DB_IdentityToDb ($this->type, $this->_con), Gatuf_DB_IntegerToDb ($this->type, $this->_con));
+		$req = sprintf ('INSERT INTO %s (user, message, type) VALUES (%s, %s, %s)', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->user, $this->_con), Gatuf_DB_IdentityToDb ($this->message, $this->_con), Gatuf_DB_IntegerToDb ($this->type, $this->_con));
 		$this->id = $this->_con->getLastId ();
 		$this->_con->execute($req);
 		return true;

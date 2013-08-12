@@ -31,11 +31,22 @@ class Gatuf_Template_Tag_Messages extends Gatuf_Template_Tag
         if (is_object($user) && !$user->isAnonymous()) {
             $messages = $user->getAndDeleteMessages();
             if (count($messages) > 0) {
-                echo '<div class="user-messages">'."\n".'<ul>'."\n";
+                echo '<div class="user-messages">'."\n";
                 foreach ($messages as $m) {
-                    echo '<li>'.$m.'</li>';
+                    switch ($m->type) {
+                        case 1:
+                            $clase = "info";
+                            break;
+                        case 2:
+                            $clase = "advertencia";
+                            break;
+                        case 3:
+                            $clase = "error";
+                            break;
+                    }
+                    echo '<div class="'.$clase.'"><p>'.$m.'</p></div>';
                 }
-                echo '</ul></div>';
+                echo '</div>';
             }
         }
     }
