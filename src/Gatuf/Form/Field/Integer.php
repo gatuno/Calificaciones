@@ -42,14 +42,16 @@ class Gatuf_Form_Field_Integer extends Gatuf_Form_Field {
                 foreach ($this->widget->choices as $val) {
                     if (is_array ($val)) {
                         foreach ($val as $subval) {
-                            if ($value === $subval) {
+                            if ($value == $subval) {
                                 $found = true;
                                 break;
                             }
                          }
                     } else {
-                        $found = true;
-                        break;
+                        if ($value == $options) {
+                            $found = true;
+                            break;
+                        }
                     }
                 }
                 if (!$found) {
