@@ -6,6 +6,7 @@ class ODS {
 	public $hojas;
 	private $max_col;
 	private $max_row;
+	private $auto_sytles;
 	
 	public function __construct () {
 		/* Inicializar algunos atributos meta */
@@ -17,6 +18,18 @@ class ODS {
 		              'meta:editing-cycles' => 1);
 		$this->max_col = array ();
 		$this->max_row = array ();
+		
+		$this->auto_styles = array (
+			'number:text-style' => array (
+				'style:name' => 'CELTEXT',
+				'number:text-content' => array ()
+			),
+			'style:style' => array (
+				'style:name' => 'cel',
+				'style:family' => 'table-cell',
+				'style:data-style-name' => 'CELTEXT'
+			),
+		);
 	}
 	
 	public function addNewSheet ($sheet_name) {
@@ -34,7 +47,7 @@ class ODS {
 		
 		if (!isset ($this->hojas[$sheet][$row])) $this->hojas[$sheet][$row] = array ();
 		
-		$this->hojas[$sheet][$row][$col] = array ('office:value-type' => 'string', 'value' => $string);
+		$this->hojas[$sheet][$row][$col] = array ('office:value-type' => 'string', 'table:style-name' => 'cel', 'value' => $string);
 	}
 	
 	public function addPercentageCell ($sheet, $row, $col, $percentage) {
@@ -161,8 +174,27 @@ class ODS {
 		$etiqueta_estilos_automaticos = $dom_contenido->createElement ('office:automatic-styles');
 		$raiz->appendChild ($etiqueta_estilos_automaticos);
 		
+		foreach ($this->auto_styles as $auto_style => $attrs) {
+			$tag_vacia = $dom_contenido->createElement ($auto_style);
+			$etiqueta_estilos_automaticos->appendChild ($tag_vacia);
+			
+			foreach ($attrs as $key => $value) {
+				if (is_array ($value)) {
+					$subelement = $dom_contenido->createElement ($key);
+					$tag_vacia->appendChild ($subelement);
+					
+					foreach ($value as $subkey => $subvalue) {
+						$subelement->setAttribute ($subkey, $subvalue);
+					}
+				} else {
+					$tag_vacia->setAttribute ($key, $value);
+				}
+			}
+		}
+		
 		$tag_vacia = $dom_contenido->createElement ('office:body');
 		$raiz->appendChild ($tag_vacia);
+		
 		$spreadsheet = $dom_contenido->createElement ('office:spreadsheet');
 		$tag_vacia->appendChild ($spreadsheet);
 		

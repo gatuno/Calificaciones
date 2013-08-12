@@ -27,7 +27,7 @@
 class Gatuf_Form_Widget_DatetimeInput extends Gatuf_Form_Widget_Input
 {
     public $input_type = 'text';
-    public $format = 'Y-m-d H:i'; // '2006-10-25 14:30' by default do
+    public $format = 'd/m/Y H:i'; // '25-10-2006 14:30' by default do
                                   // not show the seconds.
 
     /**

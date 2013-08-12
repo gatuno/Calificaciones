@@ -24,15 +24,15 @@
 class Gatuf_Form_Field_Datetime extends Gatuf_Form_Field {
     public $widget = 'Gatuf_Form_Widget_DatetimeInput';
     public $input_formats = array(
-             '%Y-%m-%d %H:%M:%S',     // '2006-10-25 14:30:59'
-             '%Y-%m-%d %H:%M',        // '2006-10-25 14:30'
-             '%Y-%m-%d',              // '2006-10-25'
-             '%m/%d/%Y %H:%M:%S',     // '10/25/2006 14:30:59'
-             '%m/%d/%Y %H:%M',        // '10/25/2006 14:30'
-             '%m/%d/%Y',              // '10/25/2006'
-             '%m/%d/%y %H:%M:%S',     // '10/25/06 14:30:59'
-             '%m/%d/%y %H:%M',        // '10/25/06 14:30'
-             '%m/%d/%y',              // '10/25/06'
+             '%d-%m-%Y %H:%M:%S',     // '25-10-2006 14:30:59'
+             '%d-%m-%Y %H:%M',        // '25-10-2006 14:30'
+             '%d-%m-%Y',              // '25-10-2006'
+             '%d/%m/%Y %H:%M:%S',     // '25/10/2006 14:30:59'
+             '%d/%m/%Y %H:%M',        // '25/10/2006 14:30'
+             '%d/%m/%Y',              // '25/10/2006'
+             '%d/%m/%y %H:%M:%S',     // '25/10/06 14:30:59'
+             '%d/%m/%y %H:%M',        // '25/10/06 14:30'
+             '%d/%m/%y',              // '25/10/06'
                                   );
 
     public function clean($value) {
@@ -53,7 +53,7 @@ class Gatuf_Form_Field_Datetime extends Gatuf_Form_Field {
                             str_pad($month, 2, '0', STR_PAD_LEFT).'-'.
                             str_pad($day,   2, '0', STR_PAD_LEFT).' '.
                             str_pad($date['tm_hour'], 2, '0', STR_PAD_LEFT).':'.
-                            str_pad($date['tm_min'],  2, '0', STR_PAD_LEFT).':';
+                            str_pad($date['tm_min'],  2, '0', STR_PAD_LEFT).':'.
                             str_pad($date['tm_sec'],  2, '0', STR_PAD_LEFT);
                     
                     // we internally use GMT, so we convert it to a GMT date.
@@ -61,6 +61,6 @@ class Gatuf_Form_Field_Datetime extends Gatuf_Form_Field {
                 }
             }
         }
-        throw new Gatuf_Form_Invalid(__('Enter a valid date/time.'));
+        throw new Gatuf_Form_Invalid('Enter a valid date/time.');
     }
 }

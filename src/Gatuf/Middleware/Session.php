@@ -139,7 +139,7 @@ class Gatuf_Middleware_Session {
             }
             $data = array();
             
-            if ($request->user->codigo > 0) {
+            if ($request->user->codigo !== 0) {
                 $data[$request->user->session_key] = $request->user->codigo;
             }
             $data['Gatuf_Session_key'] = $request->session->session_key;

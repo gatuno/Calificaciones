@@ -781,17 +781,17 @@ function Gatuf_Paginator_FKLink ($field, $item, $extra = null) {
 
 function Gatuf_Paginator_DateYMDHMS($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
-    return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');
+    return Gatuf_Template_dateFormat($item->$field, '%d/%m/%Y %H:%M:%S');
 }
 
 function Gatuf_Paginator_DateYMDHM($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
-    return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M');
+    return Gatuf_Template_dateFormat($item->$field, '%d/%m/%Y %H:%M');
 }
 
 function Gatuf_Paginator_DateYMD($field, $item) {
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
-    return Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d');
+    return Gatuf_Template_dateFormat($item->$field, '%d/%m/%Y');
 }
 
 function Gatuf_Paginator_DisplayVal($field, $item) {
@@ -801,6 +801,6 @@ function Gatuf_Paginator_DisplayVal($field, $item) {
 function Gatuf_Paginator_DateAgo($field, $item) {
     Gatuf::loadFunction('Gatuf_Date_Easy');
     Gatuf::loadFunction('Gatuf_Template_dateFormat');
-    $date = Gatuf_Template_dateFormat($item->$field, '%Y-%m-%d %H:%M:%S');
+    $date = Gatuf_Template_dateFormat($item->$field, '%d/%m/%Y %H:%M:%S');
     return Gatuf_Date_Easy($date, null, 2, 'ahora');
 }
