@@ -197,4 +197,8 @@ class Calif_Materia extends Gatuf_Model {
 	public function displaylinkeddepartamento ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::porDepartamento', array ($this->departamento)).'">'.$this->departamento_desc.'</a>';
 	}
+	
+	public function __get ($name) {
+		return $this->$name ();
+	}
 }

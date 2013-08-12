@@ -111,4 +111,6 @@ $cfg['middleware_classes'] = array(
 
 $cfg['gatuf_custom_user'] = 'Calif_User';
 
+$cfg['template_tags'] = array ('coordperm' => 'Calif_Template_CoordPerm');
+
 return $cfg;

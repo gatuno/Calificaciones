@@ -192,4 +192,8 @@ class Calif_User extends Gatuf_Model {
 		if (count ($coords) > 0) return true;
 		return false;
 	}
+	
+	public function __get ($name) {
+		return $this->$name ();
+	}
 }

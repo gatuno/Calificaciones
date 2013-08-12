@@ -218,9 +218,9 @@ class Gatuf_Template_Compiler {
                         'modifiers' => array());
         /*Pluf_Signal::send('Pluf_Template_Compiler::construct_template_tags_modifiers', 
                           'Pluf_Template_Compiler', $params);*/
-        /*$this->_allowedTags = array_merge($this->_allowedTags,
+        $this->_allowedTags = array_merge($this->_allowedTags,
                                           $params['tags'],
-                                          Gatuf::config('template_tags', array()));*/
+                                          Gatuf::config('template_tags', array()));
         $this->_modifier = array_merge($this->_modifier,
                                        $params['modifiers'],
                                        Gatuf::config('template_modifiers', array()));

@@ -202,22 +202,10 @@ class Calif_Views_Seccion {
 		}
 		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 		
-		$carrera = new Calif_Carrera ();
+		$carrera_a_reclamar = new Calif_Carrera ();
 		
-		if (false === ($carrera->getCarrera ($match[2]))) {
+		if (false === ($carrera_a_reclamar->getCarrera ($match[2]))) {
 			throw new Gatuf_HTTP_Error404 ();
-		}
-		
-		/* Verificar que el maestro sea coordinador de la carrera que quiere reclamar */
-		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$carrera->clave)) {
-			$request->user->setMessage (1, 'No puede reclamar secciones para '.$carrera->clave.'. Usted no es coordinador de esta carrera');
-			return new Gatuf_HTTP_Response_Redirect ($url);
-		}
-		
-		/* Si ya está asignado, marcar error */
-		if (!is_null ($seccion->asignacion)) {
-			$request->user->setMessage (1, 'La sección ya ha sido reclamada por '.$seccion->asignacion);
-			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		/* Verificar que la materia pertenezca a la carrera */
@@ -227,20 +215,33 @@ class Calif_Views_Seccion {
 		$carreras = $materia->getCarrerasList ();
 		
 		$permiso = false;
+		
 		foreach ($carreras as $c) {
-			if ($request->user->hasPerm ('SIIAU.coordinador.'.$c->clave)) $permiso = true;
+			if ($carrera_a_reclamar->clave == $c->clave) $permiso = true;
 		}
 		
 		if ($permiso == false) {
-			$request->user->setMessage (1, 'No puede reclamar esta sección. La materia no pertenece a alguna carrera que usted coordina');
+			$request->user->setMessage (1, sprintf ('No puede reclamar esta sección. La materia "%s" no pertenece a la carrera %s', $materia->descripcion, $carrera_a_reclamar->descripcion));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		 /* Verificar que el maestro sea coordinador de la carrera que quiere reclamar */
+		if (!$request->user->hasPerm ('SIIAU.coordinador.'.$carrera_a_reclamar->clave)) {
+			$request->user->setMessage (1, 'No puede reclamar secciones para '.$carrera_a_reclamar->clave.'. Usted no es coordinador de esta carrera');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		/* Si ya está asignado, marcar error */
+		if (!is_null ($seccion->asignacion)) {
+			$request->user->setMessage (1, 'La sección ya ha sido reclamada por '.$seccion->asignacion);
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		/* Ahora, intentar asignar el nrc */
-		$seccion->asignacion = $carrera->clave;
+		$seccion->asignacion = $carrera_a_reclamar->clave;
 		
 		if ($seccion->updateAsignacion () === true) {
-			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido marcada para la carrera '.$carrera->clave);
+			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido marcada para la carrera '.$carrera_a_reclamar->clave);
 		} else {
 			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' no pudo ser reclamada. Por favor intentelo otra vez');
 		}

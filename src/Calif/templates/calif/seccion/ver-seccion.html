@@ -5,7 +5,20 @@
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
-
+{if $user.isCoord}
+	<h3>Oferta académica</h3>
+	{if $seccion.asignacion}
+		{coordperm 'puede_liberar', $user, $seccion.asignacion}
+			<p>La sección está pedida para {$seccion.asignacion}.{if $puede_liberar}<a href="{url 'Calif_Views_Seccion::liberarNrc', array ($seccion.nrc)}">Liberar esta sección</a>.{/if}</p>
+	{else}
+		{foreach $materia.getCarrerasList as $carrera}
+			{coordperm 'puede', $user, $carrera.clave}
+			{if $puede}
+				<p><a href="{url 'Calif_Views_Seccion::reclamarNrc', array ($seccion.nrc, $carrera.clave)}">Reclamar sección para {$carrera.clave}</a></p>
+			{/if}
+		{/foreach}
+	{/if}
+{/if}
 <h2>Horarios de la sección</h2>
 <p>Puede <a href="{url 'Calif_Views_Horario::agregarHora', array ($seccion.nrc)}">agregar una nueva hora</a> a esta sección</p>
 {if $horarios}
