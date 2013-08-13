@@ -78,7 +78,7 @@ class Calif_Views_Seccion {
 		                                          $request);
 	}
 	
-	public $agregarNrc_precond = array ('Gatuf_Precondition::adminRequired');
+	public $agregarNrc_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function agregarNrc ($request, $match) {
 		$title = 'Crear NRC';
 		
@@ -98,17 +98,35 @@ class Calif_Views_Seccion {
 			$extra['materia'] = $materia->clave;
 		}
 		
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
+		if ($request->user->admin) {
+			/* Formulario completo para los administradores, o la otra condición */
+			if ($request->method == 'POST') {
+				$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
 			
-			if ($form->isValid()) {
-				$seccion = $form->save ();
+				if ($form->isValid()) {
+					$seccion = $form->save ();
 				
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
-				return new Gatuf_HTTP_Response_Redirect ($url);
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+					return new Gatuf_HTTP_Response_Redirect ($url);
+				}
+			} else {
+				$form = new Calif_Form_Seccion_Agregar (null, $extra);
 			}
 		} else {
-			$form = new Calif_Form_Seccion_Agregar (null, $extra);
+			/* El caso de los coordinadores */
+			$extra['user'] = $request->user;
+			if ($request->method == 'POST') {
+				$form = new Calif_Form_Seccion_AgregarMini ($request->POST, $extra);
+				
+				if ($form->isValid ()) {
+					$seccion = $form->save ();
+					
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+					return new Gatuf_HTTP_Response_Redirect ($url);
+				}
+			} else {
+				$form = new Calif_Form_Seccion_AgregarMini (null, $extra);
+			}
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/edit-seccion.html',
@@ -117,7 +135,7 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
-	public $agregarNrcConMateria_precond = array ('Gatuf_Precondition::adminRequired');
+	public $agregarNrcConMateria_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function agregarNrcConMateria ($request, $match) {
 		return $this->agregarNrc ($request, $match);
 	}

@@ -128,6 +128,26 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
+	function maxNrc () {
+		$req = sprintf ('SELECT MAX(nrc) AS max_nrc FROM %s', $this->getSqlTable ());
+		
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		return $rs[0]['max_nrc'];
+	}
+	
+	function maxSeccion ($materia) {
+		$req = sprintf ('SELECT MAX(seccion) AS max_seccion FROM %s WHERE materia=%s', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($materia, $this->_con));
+		
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		return $rs[0]['max_seccion'];
+	}
+	
 	function delete () {
 		$req = sprintf ('DELETE FROM %s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
 		

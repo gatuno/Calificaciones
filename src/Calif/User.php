@@ -154,6 +154,7 @@ class Calif_User extends Gatuf_Model {
 	}
 	
 	function getAllPermissions () {
+		if ($this->isAnonymous ()) return array ();
 		if (!is_null($this->_cache_perms)) {
 			return $this->_cache_perms;
 		}
@@ -172,6 +173,7 @@ class Calif_User extends Gatuf_Model {
 	}
 	
 	function hasPerm ($perm, $obj = null) {
+		if ($this->isAnonymous ()) return false;
 		if (!$this->active) return false;
 		if ($this->admin) return true;
 		$perms = $this->getAllPermissions ();

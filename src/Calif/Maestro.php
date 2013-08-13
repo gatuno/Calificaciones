@@ -21,7 +21,7 @@ class Calif_Maestro extends Calif_User {
     
     function getMaestro ($codigo) {
     	/* Recuperar un maestro */
-		$req = sprintf ('SELECT * FROM %s WHERE codigo = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($codigo, $this->_con));
+		$req = sprintf ('SELECT * FROM %s WHERE codigo = %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($codigo, $this->_con));
 		
 		if (false === ($rs = $this->_con->select($req))) {
 			throw new Exception($this->_con->getError());
