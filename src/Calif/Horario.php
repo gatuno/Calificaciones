@@ -85,4 +85,24 @@ class Calif_Horario extends Gatuf_Model {
 		}
 		return $cadena;
 	}
+	
+	public static function chocan ($a, $b) {
+		$coincide = false;
+		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+			if ($a->$dia && $b->$dia) {
+				$coincide = true;
+				break;
+			}
+		}
+		
+		if (!$coincide) return false;
+		
+		if (($a->hora_inicio >= $b->hora_inicio && $a->hora_fin < $b->hora_fin) ||
+			($a->hora_fin > $b->hora_inicio && $a->hora_fin <= $b->hora_fin) ||
+			($a->hora_inicio <= $b->hora_inicio && $a->hora_fin >= $b->hora_fin)) {
+			return true;
+		}
+		
+		return false;
+	}
 }

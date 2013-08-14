@@ -4,12 +4,20 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
 
 class Calif_Views_Horario {
-	public $agregarHora_precond = array ('Gatuf_Precondition::loginRequired');
+	public $agregarHora_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function agregarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
+		}
+		
+		if (!$request->user->admin) { // || !el otro permiso
+			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
+				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
 		}
 		
 		$title = 'Agregar un nuevo horario';
@@ -32,16 +40,13 @@ class Calif_Views_Horario {
 				}
 				$sql_dias = new Gatuf_SQL (implode (' OR ', $ors));
 				$sql->SAnd ($sql_dias);
-				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 				
 				/* Recorrer estas horas */
-				foreach ($horas as $hora) {
-					if ($hora->id == $horario->id) continue;
-					if (($horario->hora_inicio >= $hora->hora_inicio && $horario->hora_fin < $hora->hora_fin) ||
-						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
-						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
-						/* Choque, este salon está ocupado en la hora recién agregada */
-						$request->user->setMessage (1, 'La hora agregada al nrc '.$horario->nrc.' colisiona en el salon');
+				foreach ($horas_salon as $hora_en_salon) {
+					if ($hora_en_salon->id == $horario->id) continue;
+					if (Calif_Horario::chocan ($horario, $hora_en_salon)) {
+						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $horario->salon), $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
 						break;
 					}
 				}
@@ -60,7 +65,7 @@ class Calif_Views_Horario {
 		
 	}
 	
-	public $eliminarHora_precond = array ('Gatuf_Precondition::loginRequired');
+	public $eliminarHora_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function eliminarHora ($request, $match) {
 		$title = 'Eliminar hora de una sección';
 		
@@ -68,6 +73,14 @@ class Calif_Views_Horario {
 		
 		if (false === ($seccion->getNrc($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
+		}
+		
+		if (!$request->user->admin) { // || !el otro permiso
+			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
+				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
 		}
 		
 		$hora = new Calif_Horario ();
@@ -99,12 +112,20 @@ class Calif_Views_Horario {
 		                                         $request);
 	}
 	
-	public $actualizarHora_precond = array ('Gatuf_Precondition::loginRequired');
+	public $actualizarHora_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function actualizarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
+		}
+		
+		if (!$request->user->admin) { // || !el otro permiso
+			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
+				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
 		}
 		
 		$hora = new Calif_Horario ();
