@@ -105,7 +105,7 @@ class Calif_Views_Maestro {
 					foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 						if ($hora->$dia) {
 							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
-											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin + 45),
+											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin),
 											             'title' => $salon_model->edificio.' '.$salon_model->aula,
 											             'content' => $cadena_desc,
 											             'url' => $url, 'color' => '');

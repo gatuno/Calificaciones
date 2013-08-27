@@ -60,7 +60,7 @@ class Calif_Views_Salon {
 			foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 				if ($horario->$dia) {
 					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-							                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_fin + 45),
+							                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_fin),
 							                     'title' => $horario->nrc,
 							                     'content' => $cadena_desc,
 							                     'url' => $url, 'color' => '');

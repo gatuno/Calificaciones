@@ -1,6 +1,6 @@
 <?php
 function Calif_Utils_arreglar_n ($cadena) {
-	return str_replace ("~", "ñ", $cadena);
+	return str_replace ('~', 'ñ', $cadena);
 }
 
 function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion) {
@@ -12,58 +12,64 @@ function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion) {
 }
 
 function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
-	$explote = explode (" ", $linea);
+	$codigo = trim (strstr ($linea, '('), '() ');
+	$nombre_completo = trim (strstr ($linea, '(', true), ' ');
 	
-	$n = count ($explote);
-	
-	$codigo = trim ($explote [($n - 1)], "()");
 	if ($codigo == '') {
 		/* Oops, código vacio */
 		$codigo = $vacio;
 		
-		$explote = array ('Staff', 'Staff Staff');
-		$n = 3;
+		$nombre_completo = 'Staff, Staff Staff';
 	}
 	
 	settype ($codigo, "string");
 	if (isset ($maestros [$codigo])) {
-		unset ($explote);
 		return $codigo;
 	}
 	
-	/* Separar los campos */
-	if ($n == 3) {
-		/* Sólo un nombre y código */
-		$nombre = $explote[0];
-		$apellido = $explote[1];
-	} else if ($n == 4) {
-		$nombre = $explote[0];
-		$apellido = $explote[1] . " " . $explote[2];
-	} else if ($n == 5) {
-		/* Lo normal */
-		$nombre = $explote[0] . " " . $explote[1];
-		$apellido = $explote[2] . " " . $explote[3];
-	} else if ($n == 6) {
-		$nombre = $explote[0] . " " . $explote[1] . " " . $explote[2];
-		$apellido = $explote[3] . " " . $explote[4];
-	} else if ($n == 7) {
-		$nombre = $explote[0] . " " . $explote[1] . " " . $explote[2];
-		$apellido = $explote[3] . " " . $explote[4] . " " . $explote[5];
+	if (strpos ($nombre_completo, ',') === false) {
+		/* Separar los campos manualmente */
+		$explote = explode (" ", $nombre_completo);
+		
+		$n = count ($explote);
+		
+		if ($n == 3) {
+			/* Sólo un nombre y código */
+			$nombre = $explote[0];
+			$apellido = $explote[1];
+		} else if ($n == 4) {
+			$nombre = $explote[0];
+			$apellido = $explote[1].' '.$explote[2];
+		} else if ($n == 5) {
+			/* Lo normal */
+			$nombre = $explote[0].' '.$explote[1];
+			$apellido = $explote[2].' '.$explote[3];
+		} else if ($n == 6) {
+			$nombre = $explote[0].' '.$explote[1].' '.$explote[2];
+			$apellido = $explote[3].' '.$explote[4];
+		} else if ($n == 7) {
+			$nombre = $explote[0].' '.$explote[1].' '.$explote[2];
+			$apellido = $explote[3].' '.$explote[4].' '.$explote[5];
+		} else {
+			$nombre = '';
+			$apellido = '';
+		
+			$mitad = ($n - 1) / 2;
+			for ($g = 0; $g < $mitad; $g++) {
+				$nombre = $nombre.' '.$explote[$g];
+			}
+		
+			for ($g = $mitad; $g < ($n - 1); $g++) {
+				$apellido = $apellido.' '.$explote[$g];
+			}
+			$nombre = trim ($nombre, ' ');
+			$apellido = trim ($apellido, ' ');
+		}
 	} else {
-		$nombre = "";
-		$apellido = "";
-		
-		$mitad = ($n - 1) / 2;
-		for ($g = 0; $g < $mitad; $g++) {
-			$nombre = $nombre . " " . $explote[$g];
-		}
-		
-		for ($g = $mitad; $g < ($n - 1); $g++) {
-			$apellido = $apellido . " " . $explote[$g];
-		}
-		$nombre = trim ($nombre, " ");
-		$apellido = trim ($apellido, " ");
+		$nombre = trim (strstr ($nombre_completo, ','), ', ');
+		$apellido = trim (strstr ($nombre_completo, ',', true), ', ');
 	}
+	
 	
 	if (!isset ($nombre) || !isset ($apellido)) {
 		throw new Exception ('Nombre del maestro raro. El dato en cuestión es: '.$linea);
@@ -78,10 +84,10 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
 }
 
 function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $carrera) {
-	settype ($codigo, "string");
+	settype ($codigo, 'string');
 	if (isset ($alumnos [$codigo])) return;
 	
-	$explote = explode (",", $linea);
+	$explote = explode (',', $linea);
 	if (!isset ($explote [1])) {
 		throw new Exception ('Nombre del alumno raro. El dato en cuestión es: '.$linea);
 	}
@@ -91,14 +97,14 @@ function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $ca
 	
 	/* Si la carrera no existe, agregarla */
 	if (!isset ($carreras [$carrera])) {
-		$carreras [$carrera] = "Una carrera con clave " . $carrera;
+		$carreras [$carrera] = 'Una carrera con clave ' . $carrera;
 	}
 	
 	$alumnos [$codigo] = array (0 => $nombre, 1 => $apellido, 2 => $carrera);
 }
 
 function Calif_Utils_agregar_seccion (&$secciones, $nrc, $materia, $seccion, $maestro) {
-	settype ($nrc, "string");
+	settype ($nrc, 'string');
 	if (isset ($secciones [$nrc])) return;
 	
 	$secciones [$nrc] = array (0 => $materia, 1 => $seccion, 2 => $maestro);
@@ -116,6 +122,10 @@ function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
 
 function Calif_Utils_displayHoraSiiau ($val) {
 	settype ($val, 'integer');
+	
+	if ($val % 100 == 55) {
+		$val += 45;
+	}
 	
 	$parte_minutos = $val % 100;
 	$parte_horas = ($val - $parte_minutos) / 100;
@@ -140,7 +150,7 @@ function Calif_Utils_detectarColumnas ($cabecera) {
 function Calif_Utils_importsiiau ($form_field) {
 	$ruta = $form_field['tmp_name'];
 	
-	if (($archivo = fopen ($ruta, "r")) === false) {
+	if (($archivo = fopen ($ruta, 'r')) === false) {
 		throw new Exception ('Falló al abrir el archivo '.$ruta);
 	}
 		
@@ -151,7 +161,7 @@ function Calif_Utils_importsiiau ($form_field) {
 	$carreras = array ();
 	
 	/* Primera pasada, llenar los arreglos */
-	while (($linea = fgetcsv ($archivo, 400, ",", "\"")) !== FALSE) {
+	while (($linea = fgetcsv ($archivo, 400, ',', '"')) !== FALSE) {
 		$no_campos = count ($linea);
 		
 		if ($no_campos < 20) {

@@ -42,6 +42,8 @@ class Calif_Seccion extends Gatuf_Model {
 		foreach ($rs[0] as $col => $val) {
 			$this->$col = $val;
 		}
+		
+		$this->restore ();
 		return true;
 	}
     
@@ -126,6 +128,10 @@ class Calif_Seccion extends Gatuf_Model {
 		$this->_con->execute($req);
 		
 		return true;
+	}
+	
+	function restore () {
+		$this->new_nrc = $this->nrc;
 	}
 	
 	function maxNrc () {

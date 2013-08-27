@@ -6,7 +6,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		
 		$this->fields['oferta'] = new Gatuf_Form_Field_File (
 			array('label' => 'Seleccionar archivo',
-				'help_text' => 'Su archivo separado por comas. (Estilo Monica Durón)',
+				'help_text' => 'Su archivo separado por comas. (Estilo Monica Durón, estilo SIIAU)',
 				'move_function_params' => array(),
 				'max_size' => 10485760,
 				'move_function' => 'Calif_Utils_dontmove'
@@ -187,15 +187,15 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				if (isset ($cabecera['cupo'])) {
 					$cupo = $linea[$cabecera['cupo']];
 				} else {
-					$cupo = 40;
+					$cupo = 0;
 				}
 				
 				if ($linea[$cabecera['edif']] == '') {
-					$linea[$cabecera['edif']] = 'DEDX';
+					$linea[$cabecera['edif']] = 'DNONE';
 				}
 				
 				if ($linea[$cabecera['aula']] == '') {
-					$linea[$cabecera['aula']] = 'A050';
+					$linea[$cabecera['aula']] = 'A999';
 				}
 				
 				Calif_Utils_agregar_salon ($salones, $linea [$cabecera['edif']], $linea [$cabecera['aula']], $linea[$cabecera['cupo']]);
@@ -229,8 +229,9 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			}
 		}
 		
-		if ($this->cleaned_data['nrcs'] || $this->cleaned_data['maestrosnrc']) {
-			$seccion_model = new Calif_Seccion ();
+		$seccion_model = new Calif_Seccion ();
+		
+		if ($this->cleaned_data['nrcs'] || $this->cleaned_data['maestrosnrc'] || $this->cleaned_data['horarios']) {
 			foreach ($secciones as $nrc => $value) {
 				if ($seccion_model->getNrc ($nrc) === false) {
 					if ($this->cleaned_data['nrcs']) {
@@ -244,7 +245,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					} /* Si el nrc no existe, no importa */
 				} else {
 					if ($this->cleaned_data['horarios'] || $this->cleaned_data['destruirnrcs']) {
-						/* Se solicitó crear horarios, hay que destruir todos los horarios existentes de este NRC */
+						/* Se solicitó destruir el nrc, hay que eliminar todos sus horarios */
 						$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
 						$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
 				
@@ -254,6 +255,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					}
 					if ($this->cleaned_data['destruirnrcs']) {
 						/* Y recrearlo */
+						$seccion_model->delete ();
+						
 						$seccion_model->nrc = $nrc;
 						$seccion_model->materia = $value[0];
 						$seccion_model->seccion = $value[1];
@@ -277,7 +280,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				if (false === $edificio_model->getEdificio ($edificio)) {
 					/* Si el edificio no existe, también crearlo */
 					$edificio_model->clave = $edificio;
-					$edificio_model->descripcion = 'Módulo '.$edificio;
+					$edificio_model->descripcion = 'Edificio '.$edificio;
 					$edificio_model->create ();
 				}
 				ksort ($aulas);
@@ -304,19 +307,21 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$horario_model = new Calif_Horario ();
 			
 			/* Segunda pasada, crear los horarios */
-			while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+			while (($linea = fgetcsv ($archivo, 600, ',', '"')) !== FALSE) {
 				if (is_null ($linea[0])) continue;
 				if ($linea[$cabecera['edif']] == '') {
-					$linea[$cabecera['edif']] = 'DEDX';
+					$linea[$cabecera['edif']] = 'DNONE';
 				}
 				
 				if ($linea[$cabecera['aula']] == '') {
-					$linea[$cabecera['aula']] = 'A050';
+					$linea[$cabecera['aula']] = 'A999';
 				}
 				if ($linea[$cabecera['ini']] == '' || $linea[$cabecera['fin']] == '') {
 					$linea[$cabecera['ini']] = '300';
-					$linea[$cabecera['fin']] = '500';
+					$linea[$cabecera['fin']] = '455';
 				}
+				
+				if ($seccion_model->getNrc ($linea[$cabecera['nrc']]) === false) continue;
 				
 				$horario_model->nrc = $linea[$cabecera['nrc']];
 				$horario_model->hora_inicio = $linea[$cabecera['ini']];
@@ -328,7 +333,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				$horario_model->jueves = $linea[$cabecera['j']];
 				$horario_model->viernes = $linea[$cabecera['v']];
 				$horario_model->sabado = $linea[$cabecera['s']];
-				
+				/* FIXME: Insertar en una tabla RAM para ganar velocidad */
 				$horario_model->create ();
 			}
 		}

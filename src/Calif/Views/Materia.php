@@ -177,7 +177,7 @@ class Calif_Views_Materia {
 				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
 					if ($hora->$dia) {
 						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
-										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin + 45),
+										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin),
 										             'title' => $hora->salon_edificio.' '.$hora->salon_aula,
 										             'content' => $cadena_desc,
 										             'url' => $url, 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
