@@ -72,6 +72,7 @@ class Calif_Views {
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Views_importsiiau (array_merge ($request->POST, $request->FILES), $extra);
 			if ($form->isValid ()) {
+				$form->save ();
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::index');
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}

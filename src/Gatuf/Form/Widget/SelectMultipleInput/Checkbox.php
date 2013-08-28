@@ -68,7 +68,7 @@ class Gatuf_Form_Widget_SelectMultipleInput_Checkbox extends Gatuf_Form_Widget_S
 
     public function idForLabel($id) {
         if ($id) {
-            $id += '_0';
+            $id .= '_0';
         }
         return $id;
     }

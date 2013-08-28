@@ -72,7 +72,7 @@ class Calif_Seccion extends Gatuf_Model {
 	}
 	
 	function addAlumnoToRam ($tabla, $alumno) {
-		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $tabla, Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
+		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $tabla, Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
 		
 		$this->_con->execute($req);
 		
