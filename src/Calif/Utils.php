@@ -151,8 +151,14 @@ function Calif_Utils_dontmove ($field) {
 	/* Solo no mover el archivo */
 }
 
-function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin) {
-	$salones = Gatuf::factory('Calif_Salon')->getList (array ('order' => array ('edificio ASC', 'aula ASC')));
+function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificios = array ()) {
+	if (count ($edificios) != 0) {
+		$sql = new Gatuf_SQL ('edificio IN ('.implode (',', array_fill (0, count ($edificios), '%s')).')', $edificios);
+		$where = $sql->gen ();
+	} else {
+		$where = '';
+	}
+	$salones = Gatuf::factory('Calif_Salon')->getList (array ('order' => array ('edificio ASC', 'aula ASC'), 'filter' => $where));
 	
 	if (count ($salones) == 0)  return array ();
 	

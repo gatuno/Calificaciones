@@ -30,7 +30,11 @@ class Gatuf_Form_Field_Varchar extends Gatuf_Form_Field
     public function clean($value) {
         parent::clean($value);
         if (in_array($value, $this->empty_values)) {
-            $value = '';
+            if ($this->multiple) {
+                return array ();
+            } else {
+                $value = '';
+            }
         }
         if ($this->multiple) {
             return $this->multiClean($value);

@@ -30,6 +30,28 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 					'widget' => 'Gatuf_Form_Widget_CheckboxInput',
 			));
 		}
+		
+		$pre_seleccionados = array ('DEDX', 'DEDU', 'DUCT1', 'DUCT2', 'DEDR', 'DEDT', 'DEDW');
+		
+		$edificios = Gatuf::factory ('Calif_Edificio')->getList ();
+		
+		$choices = array ();
+		foreach ($edificios as $edificio) {
+			$choices [$edificio->descripcion] = $edificio->clave;
+		}
+		
+		$this->fields['edificios'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => false,
+				'label' => 'Edificios',
+				'initial' => $pre_seleccionados,
+				'help_text' => 'Puede limitar la busqueda a estos edificios',
+				'widget' => 'Gatuf_Form_Widget_SelectMultipleInput_Checkbox',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+				'multiple' => true,
+		));
 	}
 	
 	function clean () {
@@ -56,7 +78,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 	function save ($commit=true) {
 		Gatuf::loadFunction ('Calif_Utils_buscarSalonVacio');
 		
-		$libres = Calif_Utils_buscarSalonVacio ($this->semana, Gatuf_DB_HoraSiiauFromDb ($this->cleaned_data['horainicio']), Gatuf_DB_HoraSiiauFromDb($this->cleaned_data['horafin']));
+		$libres = Calif_Utils_buscarSalonVacio ($this->semana, Gatuf_DB_HoraSiiauFromDb ($this->cleaned_data['horainicio']), Gatuf_DB_HoraSiiauFromDb($this->cleaned_data['horafin']), $this->cleaned_data['edificios']);
 		
 		return $libres;
 	}
