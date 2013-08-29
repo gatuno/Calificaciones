@@ -58,15 +58,7 @@ class Calif_Views_Seccion {
 		
 		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 		
-		/* FIXME: Resolver con relación N-M de vista */
-		$lista = $seccion->getAlumnos ();
-		
-		$alumnos = array ();
-		$alumno = new Calif_Alumno ();
-		foreach ($lista as $al) {
-			$alumno->getAlumno ($al['alumno']);
-			$alumnos[] = clone ($alumno);
-		}
+		$alumnos = $seccion->getAlumnosList ();
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,

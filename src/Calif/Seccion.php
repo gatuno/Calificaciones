@@ -10,8 +10,6 @@ class Calif_Seccion extends Gatuf_Model {
 	public $maestro, $maestro_nombre, $maestro_apellido;
 	public $asignacion;
 	
-	public $tabla_grupos;
-	
 	/* La conexión mysql con la base de datos */
 	public $_con = null;
 	
@@ -22,10 +20,13 @@ class Calif_Seccion extends Gatuf_Model {
 		$this->tabla_view = 'Secciones_View';
 		$this->tabla_grupos = 'Grupos';
 		$this->default_order = 'materia ASC, seccion ASC';
-	}
-	
-	function getGruposSqlTable () {
-		return $this->_con->pfx.$this->tabla_grupos;
+		
+		$tabla = 'Grupos';
+		
+		$this->views['__grupos__'] = array ();
+		$this->views['__grupos__']['tabla'] = $tabla;
+		$this->views['__grupos__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable ().'.nrc='.$this->_con->pfx.$tabla.'.nrc';
+		$this->views['__grupos__']['order'] = $this->default_order;
 	}
     
 	function getNrc ($nrc) {
@@ -47,21 +48,24 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
     
-    function getAlumnos () {
-    	$sql = new Gatuf_SQL ('nrc=%s', $this->nrc);
-    	
-    	$req = sprintf ('SELECT * FROM %s WHERE %s', $this->getGruposSqlTable(), $sql->gen());
-    	
-    	if (false === ($rs = $this->_con->select($req))) {
-			throw new Exception($this->_con->getError());
-		}
+	function getAlumnosList ($p = array ()) {
+		$default = array ('view' => null,
+		                  'filter' => null,
+		                  'order' => null,
+		                  'start' => null,
+		                  'nb' => null,
+		                  'count' => false);
+		$p = array_merge ($default, $p);
 		
-		if (count ($rs) == 0) {
-			return array ();
-		}
+		$a = new Calif_Alumno ();
 		
-		return $rs;
-    }
+		$sql = new Gatuf_SQL ($this->_con->pfx.$a->views['__grupos__']['tabla'].'.nrc=%s', $this->nrc);
+		$a->views['__grupos__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__grupos__';
+		
+		return $a->getList ($p);
+	}
 	
 	function addAlumno ($alumno) {
 		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $this->getGruposSqlTable (), Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));

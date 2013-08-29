@@ -39,8 +39,9 @@
 	</tbody></table>
 {/if}
 <p>FIXME: Mostrar las calificaciones</p>
+<p>Sección con {$alumnos|count} alumnos.</p>
 {if $alumnos}
-	<table>
+	<table border="1">
 		<thead><tr><th>Alumno</th></tr></thead>
 		<tbody>
 		{foreach $alumnos as $alumno}

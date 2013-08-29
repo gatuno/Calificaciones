@@ -18,6 +18,13 @@ class Calif_Alumno extends Calif_User {
 		$this->tabla_view = 'Alumnos_View';
 		$this->login_tabla = 'Alumnos_Login';
 		$this->default_order = 'apellido ASC, nombre ASC';
+		
+		$tabla = 'Grupos';
+		
+		$this->views['__grupos__'] = array ();
+		$this->views['__grupos__']['tabla'] = $tabla;
+		$this->views['__grupos__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable().'.codigo='.$this->_con->pfx.$tabla.'.alumno';
+		$this->views['__grupos__']['order'] = $this->default_order;
 	}
     
     function getAlumno ($codigo) {
@@ -54,6 +61,25 @@ class Calif_Alumno extends Calif_User {
 		$this->_con->execute($req);
 		
 		return true;
+	}
+	
+	public function getSeccionesList ($p = array ()) {
+		$default = array ('view' => null,
+		                  'filter' => null,
+		                  'order' => null,
+		                  'start' => null,
+		                  'nb' => null,
+		                  'count' => false);
+		$p = array_merge ($default, $p);
+		
+		$s = new Calif_Seccion ();
+		
+		$sql = new Gatuf_SQL ($this->_con->pfx.$s->views['__grupos__']['tabla'].'.alumno=%s', $this->codigo);
+		$s->views['__grupos__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__grupos__';
+		
+		return $s->getList ($p);
 	}
 	
 	public function displaycarrera ($extra=null) {

@@ -57,7 +57,6 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 			if ($no_campos < 20) {
 				continue;
 			}
-			settype ($linea[$cabecera['nrc']], 'integer');
 			if (!isset ($secciones[$linea[$cabecera['nrc']]])) {
 				if ($seccion_model->getNrc ($linea[$cabecera['nrc']]) === false) continue;
 				/* TODO: Verificar que el nrc coincida con la materia y la sección */
@@ -98,10 +97,10 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 		rewind ($archivo);
 		
 		$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
-		$con->execute ($req);
+		//$con->execute ($req);
 		
-		$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getGruposSqlTable());
-		$con->execute ($req);
+		$req = sprintf ('TRUNCATE TABLE Grupos'); /* FIXME: prefijo de la tabla */
+		//$con->execute ($req);
 		
 		$req = 'CREATE TABLE Grupos_RAM (`nrc` INT( 5 ) unsigned zerofill NOT NULL, `alumno` CHAR( 9 ) NOT NULL) ENGINE = MEMORY DEFAULT CHARSET=utf8';
 		
@@ -110,14 +109,15 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 		while (($linea = fgetcsv ($archivo, 400, ',', '"')) !== false) {
 			$no_campos = count ($linea);
 			if ($no_campos < 20) continue;
-			settype ($linea[$cabecera['nrc']], 'integer');
 			
 			if (!isset ($secciones [$linea[$cabecera['nrc']]])) continue;
 			$secciones[$linea[$cabecera['nrc']]]->addAlumnoToRam ('Grupos_RAM', $linea[$cabecera['cod_al']]);
 		}
-		/* Copiar todos los datos de RAM a la tabla */
+		$req = 'ALTER IGNORE TABLE Grupos_RAM ADD UNIQUE INDEX (nrc, alumno);';
+		$con->execute ($req);
 		
-		$req = sprintf ('INSERT INTO %s SELECT * FROM Grupos_RAM', $seccion_model->getGruposSqlTable());
+		/* Copiar todos los datos de RAM a la tabla */
+		$req = sprintf ('INSERT INTO Grupos SELECT * FROM Grupos_RAM');
 		
 		$con->execute ($req);
 		
