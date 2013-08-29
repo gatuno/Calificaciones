@@ -41,7 +41,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => 'Hora inicio',
-				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_inicio),
+				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_inicio, false),
 				'help_text' => 'La hora de inicio. Puede ser del tipo 17:00 o formato Siiau 1700',
 		));
 		
@@ -49,7 +49,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => 'Hora fin',
-				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_fin),
+				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_fin, false),
 				'help_text' => 'La hora de final. Puede ser del tipo 17:00 o formato Siiau 1700. Recuerde que las clases terminan en el minuto 55',
 		));
 		

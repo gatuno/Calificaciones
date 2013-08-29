@@ -120,10 +120,10 @@ function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
 	$salones [$edificio][$aula] = $cupo;
 }
 
-function Calif_Utils_displayHoraSiiau ($val) {
+function Calif_Utils_displayHoraSiiau ($val, $fix55 = true) {
 	settype ($val, 'integer');
 	
-	if ($val % 100 == 55) {
+	if ($fix55 && $val % 100 == 55) {
 		$val += 45;
 	}
 	
