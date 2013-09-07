@@ -18,6 +18,54 @@ class Gatuf {
 		} else {
 			throw new Exception('El archivo de configuración no existe: ' . $config_file);
 		}
+		
+		self::loadRelations(!Gatuf::config('debug', false));
+	}
+	
+	static function loadRelations ($usecache=true) {
+		$GLOBALS['_GATUF_models'] = array ();
+		$GLOBALS['_GATUF_models_init_cache'] = array ();
+		$apps = Gatuf::config('installed_apps', array ());
+		/* $cache = Gatuf::config ('tmp_folder').'/Pluf_relations_cache_'.md5(serialize($apps)).'.phps';
+		if ($usecache and file_exists ($cache)) {
+			list($GLOBALS['_GATUF_models'],
+			     $GLOBALS['_GATUF_models_related'],
+			     $GLOBALS['_GATUF_signal']) = include $cache;
+			return;
+		}*/
+		$m = $GLOBALS['_GATUF_models'];
+		foreach ($apps as $app) {
+			$m = array_merge_recursive ($m, require $app.'/relations.php');
+		}
+		$GLOBALS['_GATUF_models'] = $m;
+		
+		$_r = array (
+		             'relate_to' => array (),
+		             'relate_to_many' => array (),
+		);
+		foreach ($GLOBALS['_GATUF_models'] as $model => $relations) {
+			foreach ($relations as $type => $related) {
+				foreach ($related as $related_model) {
+					if (!isset($_r[$type][$related_model])) {
+						$_r[$type][$related_model] = array ();
+					}
+					$_r[$type][$related_model][] = $model;
+				}
+			}
+		}
+		
+		$_r['foreignkey'] = $_r['relate_to'];
+		$_r['manytomany'] = $_r['relate_to_many'];
+		$GLOBALS['_GATUF_models_related'] = $_r;
+		
+		/* if ($usecache) {
+			$s = var_export(array($GLOBALS['_GATUF_models'],
+			                      $GLOBALS['_GATUF_models_related'],
+			                      $GLOBALS['_GATUF_signal']), true);
+			if (@file_put_contents($cache, '<?php return '.$s.';'."\n", LOCK_EX)) {
+				chmod($cache, 0755);
+			}
+		}*/
 	}
 	
 	static function config($cfg, $default = '') {
