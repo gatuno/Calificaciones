@@ -21,6 +21,8 @@ class Calif_Materia extends Gatuf_Model {
 	function __construct () {
 		$this->_getConnection();
 		$this->academia = null; /* FIXME: La academia */
+		$this->creditos = 0; /* FIXME: Los créditos */
+		$this->curso = $this->taller = $this->laboratorio = $this->seminario = false;
 		
 		$this->tabla = 'Materias';
 		$this->tabla_view = 'Materias_View';

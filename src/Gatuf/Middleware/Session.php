@@ -139,8 +139,10 @@ class Gatuf_Middleware_Session {
             }
             $data = array();
             
-            if ($request->user->codigo !== 0) {
+            if ($request->user->codigo !== 0 && $request->user->codigo !== '') {
                 $data[$request->user->session_key] = $request->user->codigo;
+            } else {
+                unset ($data[$request->user->session_key]);
             }
             $data['Gatuf_Session_key'] = $request->session->session_key;
             $response->cookies[$request->session->cookie_name] = self::_encodeData($data);

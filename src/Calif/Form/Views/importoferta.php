@@ -84,7 +84,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		$con->execute ($req);
 		
 		$seccion_model = new Calif_Seccion ();
-		$req = sprintf ('TRUNCATE TABLE %s', $seccion_model->getGruposSqlTable());
+		$req = sprintf ('TRUNCATE TABLE Grupos'); /* FIXME: prefijo de la tabla */
 		$con->execute ($req);
 	
 		$maestro = new Calif_Maestro ();
