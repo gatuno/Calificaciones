@@ -2,47 +2,28 @@
 
 class Calif_Edificio extends Gatuf_Model {
 	/* Manejador de la tabla de edificios */
+	public $_model = __CLASS__;
 	
-	/* Campos */
-	public $clave;
-	public $descripcion;
-	
-	function __construct () {
-		$this->_getConnection();
+	function init () {
+		$this->_a['table'] = 'edificios';
+		$this->_a['model'] = __CLASS__;
+		$this->primary_key = 'clave';
 		
-		$this->tabla = 'Edificios';
-	}
-	
-	function getEdificio ($clave) {
-		/* Recuperar un edificio */
-		$req = sprintf ('SELECT * FROM %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($clave, $this->_con));
+		$this->_a['cols'] = array (
+			'clave' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'size' => 10,
+			),
+			'descripcion' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 10,
+			),
+		);
 		
-		if (false === ($rs = $this->_con->select($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			return false;
-		}
-		foreach ($rs[0] as $col => $val) {
-			$this->$col = $val;
-		}
-		return true;
-	}
-	
-	function create () {
-		$req = sprintf ('INSERT INTO %s (clave, descripcion) VALUES (%s, %s);', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->clave, $this->_con), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con));
-		$this->_con->execute($req);
-		
-		return true;
-	}
-	
-	function update () {
-		$req = sprintf ('UPDATE %s SET descripcion = %s WHERE clave = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->descripcion, $this->_con), Gatuf_DB_IdentityToDb ($this->clave, $this->_con));
-		
-		$this->_con->execute($req);
-		
-		return true;
 	}
 	
 	function displaylinkedclave () {

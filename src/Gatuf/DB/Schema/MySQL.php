@@ -48,6 +48,8 @@ class Gatuf_DB_Schema_MySQL {
 	                         'password' => 'varchar(150)',
 	                         'float' => 'numeric(%s, %s)',
 	                         'blob' => 'blob',
+	                         'char' => 'char(%s)',
+	                         'time' => 'time',
 	                         );
 
 	public $defaults = array(
@@ -67,6 +69,8 @@ class Gatuf_DB_Schema_MySQL {
 	                         'password' => "''",
 	                         'float' => 0.0,
 	                         'blob' => "''",
+	                         'char' => "''",
+	                         'time' => '00:00:00',
 	                         );
 	private $con = null;
 
@@ -106,6 +110,13 @@ class Gatuf_DB_Schema_MySQL {
 						$val['decimal_places'] = 8;
 					}
 					$_tmp = sprintf($this->mappings['float'], $val['max_digits'], $val['decimal_places']);
+				}
+				if ($field->type == 'char') {
+				    if (isset($val['size'])) {
+				        $_tmp = sprintf ($this->mappings['char'], $val['size']);
+				    } else {
+				        $_tmp = sprintf ($this->mappings['char'], 10);
+				    }
 				}
 				$sql .= $_tmp;
 				if (empty($val['is_null'])) {

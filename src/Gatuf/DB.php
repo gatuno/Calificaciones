@@ -23,36 +23,40 @@ function Gatuf_DB_getConnection() {
 	return $GLOBALS['_GATUF_db'];
 }
 
-function Pluf_DB_defaultTypecast() {
+function Gatuf_DB_defaultTypecast() {
 	return array(
-	             'Pluf_DB_Field_Boolean' =>
-	                 array('Pluf_DB_BooleanFromDb', 'Pluf_DB_BooleanToDb'),
-	             'Pluf_DB_Field_Date' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Datetime' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Email' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_File' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Float' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Foreignkey' =>
-	                 array('Pluf_DB_IntegerFromDb', 'Pluf_DB_IntegerToDb'),
-	             'Pluf_DB_Field_Integer' =>
-	                 array('Pluf_DB_IntegerFromDb', 'Pluf_DB_IntegerToDb'),
-	             'Pluf_DB_Field_Password' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_PasswordToDb'),
-	             'Pluf_DB_Field_Sequence' =>
-	                 array('Pluf_DB_IntegerFromDb', 'Pluf_DB_IntegerToDb'),
-	             'Pluf_DB_Field_Text' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Varchar' =>
-	                 array('Pluf_DB_IdentityFromDb', 'Pluf_DB_IdentityToDb'),
-	             'Pluf_DB_Field_Serialized' =>
-	                 array('Pluf_DB_SerializedFromDb', 'Pluf_DB_SerializedToDb'),
-	             'Pluf_DB_Field_Compressed' =>
-	                 array('Pluf_DB_CompressedFromDb', 'Pluf_DB_CompressedToDb'),
+	             'Gatuf_DB_Field_Boolean' =>
+	                 array('Gatuf_DB_BooleanFromDb', 'Gatuf_DB_BooleanToDb'),
+	             'Gatuf_DB_Field_Date' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Datetime' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Email' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_File' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Float' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Foreignkey' =>
+	                 array('Gatuf_DB_IntegerFromDb', 'Gatuf_DB_IntegerToDb'),
+	             'Gatuf_DB_Field_Integer' =>
+	                 array('Gatuf_DB_IntegerFromDb', 'Gatuf_DB_IntegerToDb'),
+	             'Gatuf_DB_Field_Password' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_PasswordToDb'),
+	             'Gatuf_DB_Field_Sequence' =>
+	                 array('Gatuf_DB_IntegerFromDb', 'Gatuf_DB_IntegerToDb'),
+	             'Gatuf_DB_Field_Text' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Varchar' =>
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Serialized' =>
+	                 array('Gatuf_DB_SerializedFromDb', 'Gatuf_DB_SerializedToDb'),
+	             'Gatuf_DB_Field_Compressed' =>
+	                 array('Gatuf_DB_CompressedFromDb', 'Gatuf_DB_CompressedToDb'),
+	             'Gatuf_DB_Field_Char' =>
+	                 array('Gatuf_DB_IdentityFromDB', 'Gatuf_DB_IdentityToDb'),
+	             'Gatuf_DB_Field_Time' =>
+	                 array('Gatuf_DB_IdentityFromDB', 'Gatuf_DB_IdentityToDb'),
 	);
 }
 

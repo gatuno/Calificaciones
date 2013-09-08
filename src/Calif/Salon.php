@@ -2,6 +2,7 @@
 
 class Calif_Salon extends Gatuf_Model {
 	/* Manejador de la tabla salones */
+	public $_model = __CLASS__;
 	
 	/* Mis campos */
 	public $id;
@@ -9,10 +10,37 @@ class Calif_Salon extends Gatuf_Model {
 	public $aula;
 	public $cupo;
 	
-	function __construct () {
-		$this->_getConnection();
+	function init () {
+		$this->_a['table'] = 'salones';
+		$this->_a['model'] = __CLASS__;
+		$this->primary_key = 'id';
 		
-		$this->tabla = 'Salones';
+		$this->_a['cols'] = array (
+			'id' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Sequence',
+			       'blank' => true,
+			),
+			'edificio' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Calif_Edificio',
+			),
+			'aula' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'size' => 10,
+			),
+			'cupo' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0,
+			),
+		);
+		
 		$this->default_order = 'edificio ASC, aula ASC';
 	}
 	
@@ -29,39 +57,6 @@ class Calif_Salon extends Gatuf_Model {
 		foreach ($rs[0] as $col => $val) {
 			$this->$col = $val;
 		}
-		return true;
-	}
-	
-	function getSalonById ($id) {
-		$req = sprintf ('SELECT * FROM %s WHERE id = %s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($id, $this->_con));
-		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError ());
-		}
-		
-		if (count ($rs) == 0) {
-			return false;
-		}
-		foreach ($rs[0] as $col => $val) {
-			$this->$col = $val;
-		}
-		return true;
-	}
-	
-	function create () {
-		$req = sprintf ('INSERT INTO %s (edificio, aula, cupo) VALUES (%s, %s, %s);', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->edificio, $this->_con), Gatuf_DB_IdentityToDb ($this->aula, $this->_con), Gatuf_DB_IntegerToDb ($this->cupo, $this->_con));
-		$this->_con->execute ($req);
-		
-		$this->id = $this->_con->getLastId();
-		
-		return true;
-	}
-	
-	function update () {
-		$req = sprintf ('UPDATE %s SET cupo = %s WHERE id = %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->cupo, $this->_con), Gatuf_DB_IntegerToDb ($this->id, $this->_con));
-		
-		$this->_con->execute ($req);
-		
 		return true;
 	}
 	
