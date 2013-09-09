@@ -44,6 +44,7 @@ class Calif_Alumno extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Manytomany',
 			       'blank' => false,
 			       'model' => 'Calif_Seccion',
+			       'relate_name' => 'grupos',
 			),
 		);
 		

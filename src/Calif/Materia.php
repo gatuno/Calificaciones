@@ -63,6 +63,7 @@ class Calif_Materia extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Manytomany',
 			       'blank' => false,
 			       'model' => 'Calif_Carrera',
+			       'relate_name' => 'catalogo',
 			),
 		);
 		

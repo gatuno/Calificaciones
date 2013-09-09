@@ -21,6 +21,18 @@
 #
 # ***** END LICENSE BLOCK ***** */
 
-class Gatuf_DB_Field_Datetime extends Gatuf_DB_Field {
-	public $type = 'datetime';
+/**
+ * Setup of the Plume Framework.
+ *
+ * It creates all the tables for the framework models.
+ */
+
+function Gatuf_Migrations_1Setup_up($params=null)
+{
+    // Do nothing as now in the Install.php file.
+}
+
+function Gatuf_Migrations_1Setup_down($params=null)
+{
+    // Do nothing as now in the Install.php file.
 }

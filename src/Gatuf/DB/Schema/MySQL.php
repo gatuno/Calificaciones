@@ -70,7 +70,7 @@ class Gatuf_DB_Schema_MySQL {
 	                         'float' => 0.0,
 	                         'blob' => "''",
 	                         'char' => "''",
-	                         'time' => '00:00:00',
+	                         'time' => "'00:00:00'",
 	                         );
 	private $con = null;
 
@@ -89,43 +89,29 @@ class Gatuf_DB_Schema_MySQL {
 		$cols = $model->_a['cols'];
 		$manytomany = array();
 		$sql = 'CREATE TABLE `'.$this->con->pfx.$model->_a['table'].'` (';
-
 		foreach ($cols as $col => $val) {
 			$field = new $val['type']();
 			if ($field->type != 'manytomany') {
+			    $fk = false;
 				$sql .= "\n".$this->con->qn($col).' ';
-				$_tmp = $this->mappings[$field->type];
-				if ($field->type == 'varchar') {
-					if (isset($val['size'])) {
-						$_tmp = sprintf($this->mappings['varchar'], $val['size']);
-					} else {
-						$_tmp = sprintf($this->mappings['varchar'], '150');
-					}
-				}
-				if ($field->type == 'float') {
-					if (!isset($val['max_digits'])) {
-						$val['max_digits'] = 32;
-					}
-					if (!isset($val['decimal_places'])) {
-						$val['decimal_places'] = 8;
-					}
-					$_tmp = sprintf($this->mappings['float'], $val['max_digits'], $val['decimal_places']);
-				}
-				if ($field->type == 'char') {
-				    if (isset($val['size'])) {
-				        $_tmp = sprintf ($this->mappings['char'], $val['size']);
-				    } else {
-				        $_tmp = sprintf ($this->mappings['char'], 10);
+				if ($field->type == 'foreignkey') {
+				    $submodel = new $val['model']();
+				    $subfield = new $submodel->_a['cols'][$submodel->primary_key]['type']();
+				    if ($subfield->type != 'sequence') {
+				        $fk = true;
+				        $field = $subfield;
+				        $val = $submodel->_a['cols'][$submodel->primary_key];
 				    }
 				}
+				$_tmp = $this->process_mapping ($field->type, $val);
 				$sql .= $_tmp;
 				if (empty($val['is_null'])) {
 					$sql .= ' NOT NULL';
 				}
-				if (isset($val['default'])) {
+				if (isset($val['default']) && !$fk) {
 					$sql .= ' default ';
 					$sql .= $model->_toDb($val['default'], $col);
-				} elseif ($field->type != 'sequence') {
+				} elseif ($field->type != 'sequence' && !$fk) {
 					$sql .= ' default '.$this->defaults[$field->type];
 				}
 				$sql .= ',';
@@ -144,12 +130,15 @@ class Gatuf_DB_Schema_MySQL {
 			sort($hay);
 			$table = $hay[0].'_'.$hay[1].'_assoc';
 			$sql = 'CREATE TABLE `'.$this->con->pfx.$table.'` (';
-			$type_a = new $model->_a[$model->primary_key]['type']();
-			$mapping_a = ($type_a->type == 'sequence') ? 'foreignkey' : $type_a->type;
-			$sql .= "\n".'`'.strtolower($model->_a['model']).'_'.$model->primary_key.'` '.$this->mappings[$mapping_a].',';
-			$type_b = new $model->_a[$model->primary_key]['type']();
-			$mapping_b = ($type_b->type == 'sequence') ? 'foreignkey' : $type_b->type;
-			$sql .= "\n".'`'.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.'` '.$this->mappings[$mapping_b].',';
+			
+			$type_a = new $model->_a['cols'][$model->primary_key]['type']();
+			$mapping_a = ($type_a->type == 'sequence') ? $this->mappings['foreignkey'] : $this->process_mapping ($type_a->type, $model->_a['cols'][$model->primary_key]);
+			$sql .= "\n".'`'.strtolower($model->_a['model']).'_'.$model->primary_key.'` '.$mapping_a.',';
+			
+			$type_b = new $omodel->_a['cols'][$omodel->primary_key]['type']();
+			$mapping_b = ($type_b->type == 'sequence') ? $this->mappings['foreignkey'] : $this->process_mapping ($type_b->type, $omodel->_a['cols'][$omodel->primary_key]);
+			$sql .= "\n".'`'.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.'` '.$mapping_b.',';
+			
 			$sql .= "\n".'PRIMARY KEY ('.strtolower($model->_a['model']).'_'.$model->primary_key.', '.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.')';
 			$sql .= "\n".') ENGINE=InnoDB';
 			$sql .=' DEFAULT CHARSET=utf8;';
@@ -194,7 +183,33 @@ class Gatuf_DB_Schema_MySQL {
 		}
 		return $index;
 	}
-
+    function process_mapping ($type, $val) {
+        $_tmp = $this->mappings[$type];
+		if ($type == 'varchar') {
+			if (isset($val['size'])) {
+				$_tmp = sprintf($this->mappings['varchar'], $val['size']);
+			} else {
+				$_tmp = sprintf($this->mappings['varchar'], '150');
+			}
+		}
+		if ($type == 'float') {
+			if (!isset($val['max_digits'])) {
+				$val['max_digits'] = 32;
+			}
+			if (!isset($val['decimal_places'])) {
+				$val['decimal_places'] = 8;
+			}
+			$_tmp = sprintf($this->mappings['float'], $val['max_digits'], $val['decimal_places']);
+		}
+		if ($type == 'char') {
+		    if (isset($val['size'])) {
+		        $_tmp = sprintf ($this->mappings['char'], $val['size']);
+		    } else {
+		        $_tmp = sprintf ($this->mappings['char'], 10);
+		    }
+		}
+		return $_tmp;
+    }
 	/**
 	 * Workaround for <http://bugs.mysql.com/bug.php?id=13942> which limits the
 	 * length of foreign key identifiers to 64 characters.

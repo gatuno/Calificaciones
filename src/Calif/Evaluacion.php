@@ -5,7 +5,7 @@ class Calif_Evaluacion extends Gatuf_Model {
 	public $_model = __CLASS__;
 	
 	function init () {
-		$this->_a['table'] = 'Evaluaciones';
+		$this->_a['table'] = 'evaluaciones';
 		$this->_a['model'] = __CLASS__;
 		$this->primary_key = 'id';
 		

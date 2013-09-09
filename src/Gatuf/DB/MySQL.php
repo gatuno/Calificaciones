@@ -31,11 +31,11 @@ class Gatuf_DB_MySQL {
 	/** The last query, set with debug(). Used when an error is returned. */
 	public $lastquery = '';
 	public $engine = 'MySQL';
-	public $type_case = array ();
+	public $type_cast = array ();
 
 	function __construct($user, $pwd, $server, $dbname, $pfx='', $debug=false) {
-		Pluf::loadFunction('Pluf_DB_defaultTypecast');
-		$this->type_cast = Pluf_DB_defaultTypecast();
+		Gatuf::loadFunction('Gatuf_DB_defaultTypecast');
+		$this->type_cast = Gatuf_DB_defaultTypecast();
 		$this->debug ('* MYSQL CONNECT');
 		$this->con_id = mysql_connect ($server, $user, $pwd);
 		$this->debug = $debug;

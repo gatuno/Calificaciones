@@ -26,7 +26,7 @@ class Calif_Seccion extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
-			       'model' => 'Calif_Seccion',
+			       'model' => 'Calif_Materia',
 			),
 			'seccion' =>
 			array (

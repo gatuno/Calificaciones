@@ -8,12 +8,19 @@ class Gatuf_Model {
 	
 	/** Database connection. */
 	public $_con = null;
-		
-	public $tabla, $tabla_view;
-	public $default_order = '';
-	public $views;
-	public $primary_key = '';
 	
+	public $default_order = '';
+	public $primary_key = 'id';
+	
+	protected $_data = array();
+	
+	protected $_fk = array();
+	
+	protected $_m = array('list' => array(), // get_*_list methods
+                          'many' => array(), // many to many
+                          'get' => array(), // foreign keys
+                          'extra' => array(), // added by some fields
+                          );
 	/** 
 	 * Store the attributes of the model. To minimize pollution of the
 	 * property space, all the attributes are stored in this array.
@@ -56,7 +63,7 @@ class Gatuf_Model {
 			
 			$type = 'foreignkey';
 			if ($type === $field->type) {
-				$this->_m['get']['get_'.$col_lower] = array ($val['model', $col);
+				$this->_m['get']['get_'.$col_lower] = array ($val['model'], $col);
 				/* TODO: Caché aquí también */
 				$this->_fk[$col] = $type;
 			}
@@ -212,7 +219,7 @@ class Gatuf_Model {
 	}
 	
 	function getSqlTable () {
-		return $this->_con->pfx.$this->tabla;
+		return $this->_con->pfx.$this->_a['table'];
 	}
 	
 	function getSqlViewTable () {
@@ -321,8 +328,8 @@ class Gatuf_Model {
 			throw new Exception(sprintf('The view "%s" is not defined.', $p['view']));
 		}
 		$query = array(
-					   'select' => $this->getSqlViewTable().'.*',
-					   'from' => $this->a_['table'],
+					   'select' => $this->getSelect (),
+					   'from' => $this->_a['table'],
 					   'join' => '',
 					   'where' => '',
 					   'group' => '',
@@ -409,7 +416,7 @@ class Gatuf_Model {
 		}
 		
 		if (count($rs) == 0) {
-			return array ();
+			return new ArrayObject ();
 		}
 		
 		if ($p['count'] == true) {
@@ -420,10 +427,10 @@ class Gatuf_Model {
 			}
 		}
 		
-		$res = array ();
+		$res = new ArrayObject ();
 		foreach ($rs as $row) {
 			$this->_reset ();
-			foreach ($this->a_['cols'] as $col => $val) {
+			foreach ($this->_a['cols'] as $col => $val) {
 				if (isset($row[$col])) $this->_data[$col] = $this->_fromDb($row[$col], $col);
 			}
 			
@@ -725,12 +732,12 @@ class Gatuf_Model {
 	public function preDelete () {}
 	
 	function _toDb ($val, $col) {
-		$m = $this->_con->type_case[$this->_a['cols'][$col]['type']][1];
+		$m = $this->_con->type_cast[$this->_a['cols'][$col]['type']][1];
 		return $m($val, $this->_con);
 	}
 	
 	function _fromDb ($val, $col) {
-		$m = $this->_con->type_case[$this->_a['cols'][$col]['type']][0];
+		$m = $this->_con->type_cast[$this->_a['cols'][$col]['type']][0];
 		return ($m == 'Gatuf_DB_IdentityFromDb') ? $val : $m($val);
 	}
 	

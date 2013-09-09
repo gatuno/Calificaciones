@@ -26,83 +26,58 @@
  * Yes, very crappy
  */
 class Gatuf_Session extends Gatuf_Model {
+    public $_model = 'Gatuf_Session';
 	public $data = array();
-	public $cookie_name = 'sessionid'; /*FIXME: Concatenar el año para evitar conflictos */
+	public $cookie_name = 'sessionid';
 	public $touched = false;
 	public $test_cookie_name = 'testcookie';
 	public $test_cookie_value = 'worked';
 	public $set_test_cookie = false;
 	public $test_cookie = null;
 	
-	public $_con = null;
-	
-	/* Campos de la tabla */
-	public $session_key = '', $session_data, $expire;
-	
-	public function __construct () {
-	    $this->_getConnection();
-	    $this->tabla = 'sessions';
-		$this->session_key = '';
-		
-		$this->default_query = array(
-                       'select' => '*',
-                       'from' => $this->getSqlTable(),
-                       'join' => '',
-                       'where' => '',
-                       'group' => '',
-                       'having' => '',
-                       'order' => '',
-                       'limit' => '',
-                       );
+	function _init () {
+	    $this->cookie_name = Gatuf::config ('session_cookie_id', 'sessionid');
+	    parent::_init ();
 	}
 	
-	function get ($session_key) {
-		$req = sprintf ('SELECT * FROM %s WHERE session_key=%s', Gatuf_DB_IdentityToDb ($session_key, $this->_con));
-		
-		if (false === ($rs = $this->_con->select($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			return false;
-		}
-		foreach ($rs[0] as $col => $val) {
-			$this->$col = $val;
-		}
-		
-		self::restore ();
-		return true;
-	}
-	
-	function create () {
-		$this->preSave();
-        
-		$req = sprintf ('INSERT INTO %s (session_key, session_data, expire) VALUES (%s, %s, %s)', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con), Gatuf_DB_IdentityToDb ($this->session_data, $this->_con), Gatuf_DB_IdentityToDb ($this->expire, $this->_con));
-		
-		$this->_con->execute($req);
-		
-		return true;
-	}
-	
-	function update () {
-		$this->preSave();
-		$req = sprintf ('UPDATE %s SET session_data=%s, expire=%s WHERE session_key=%s', $this->getSqlTable(), Gatuf_DB_IdentityToDb ($this->session_data, $this->_con), Gatuf_DB_IdentityToDb ($this->expire, $this->_con), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con));
-		
-		$this->_con->execute($req);
-		
-		return true;
-	}
-	
-	function delete () {
-	    $this->preSave ();
+	function init () {
+	    $this->_a['table'] = 'sessions';
+	    $this->_a['model'] = __CLASS__;
+	    $this->primary_key = 'id';
 	    
-	    $req = sprintf ('DELETE FROM %s WHERE session_key=%s', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->session_key, $this->_con));
+	    $this->_a['cols'] = array (
+	        'id' =>
+	        array (
+	               'type' => 'Gatuf_DB_Field_Sequence',
+	               'blank' => true,
+	        ),
+	        'session_key' =>
+	        array (
+	               'type' => 'Gatuf_DB_Field_Varchar',
+	               'blank' => false,
+	               'size' => 100,
+	        ),
+	        'session_data' =>
+	        array (
+	               'type' => 'Gatuf_DB_Field_Text',
+	               'blank' => false,
+	        ),
+	        'expire' =>
+	        array (
+	               'type' => 'Gatuf_DB_Field_Datetime',
+	               'blank' => false,
+	        ),
+	    );
+	    $this->_a['idx'] = array (
+	        'session_key_idx' =>
+	        array (
+	               'type' => 'unique',
+	               'col' => 'session_key'
+	        ),
+	    );
 	    
-	    $this->_con->execute ($req);
-	    $this->session_key = '';
-	    $this->touched = true;
-	    
-	    return true;
+	    $this->_admin = array ();
+	    $this->_a['views'] = array ();
 	}
 	
 	function setData($key, $value=null) {
@@ -114,7 +89,10 @@ class Gatuf_Session extends Gatuf_Model {
 		$this->touched = true;
 	}
 	
-	function getData($key, $default='') {
+	function getData($key=null, $default='') {
+	    if (is_null ($key)) {
+	        return parent::getData();
+	    }
 		if (isset($this->data[$key])) {
 			return $this->data[$key];
 		} else {
@@ -167,11 +145,5 @@ class Gatuf_Session extends Gatuf_Model {
 	public function deleteTestCookie() {
 		$this->set_test_cookie = true;
 		$this->test_cookie_value = null;
-	}
-	
-	function __get ($prop) {
-	    if (isset ($this->data[$prop])) return $this->data[$prop];
-	    
-	    return $this->$prop ();
 	}
 }
