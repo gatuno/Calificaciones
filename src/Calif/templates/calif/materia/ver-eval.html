@@ -5,16 +5,16 @@
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>
 </ul>
-{foreach $grupos as $id_grupo => $grupo}
-<p>En la modalidad de {$grupo}, la materia tiene las siguientes formas de evaluación:</p>
-{if $evals[$id_grupo]}
-<ul>{foreach $evals[$id_grupo] as $eval}
-<li>{$eval['porcentaje']}% - {$eval['descripcion']}</li>
+{foreach $grupos as $grupo}
+<p>En la modalidad de {$grupo.descripcion}, la materia tiene las siguientes formas de evaluación:</p>
+{if $evals[$grupo.id]}
+<ul>{foreach $evals[$grupo.id] as $eval}
+<li>{$porcentajes[$eval.id].porcentaje}% - {$eval.descripcion}</li>
 {/foreach}</ul>
-<p>El total para {$grupo} es de {$sumas[$id_grupo]['suma']}</p>
-{if $disponibles[$id_grupo]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $id_grupo)}">agregar una nueva forma de evaluación</a> a {$grupo}</p>{/if}
+<p>El total para {$grupo.descripcion} es de {$sumas[$grupo.id]}</p>
+{if $disponibles[$grupo.id]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $grupo.id)}">agregar una nueva forma de evaluación</a> a {$grupo.descripcion}</p>{/if}
 {else}
-<p>Su materia no contiene formas de evaluación en el modo {$grupo}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $id_grupo)}">agregar una forma de evaluación</a></p>
+<p>Su materia no contiene formas de evaluación en el modo {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $grupo.id)}">agregar una forma de evaluación</a></p>
 {/if}
 {/foreach}
 {/block}

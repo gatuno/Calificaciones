@@ -38,10 +38,18 @@ class Calif_Form_Materia_AgregarEval extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$porcentaje = $this->cleaned_data['porcentaje'];
-		$eval = $this->cleaned_data['eval'];
+		$ponderacion = $this->cleaned_data['porcentaje'];
+		$id_eval = $this->cleaned_data['eval'];
+		$evaluacion = new Calif_Evaluacion ();
+		$evaluacion->getEval ($id_eval);
 		
-		$this->materia->addEval ($eval, $porcentaje);
+		$porcentaje = new Calif_Porcentaje ();
+		$porcentaje->materia = $this->materia->clave;
+		$porcentaje->porcentaje = $ponderacion;
+		$porcentaje->grupo = $evaluacion->grupo;
+		$porcentaje->evaluacion = $evaluacion->id;
+		
+		$porcentaje->create ();
 		
 		return true;
 	}

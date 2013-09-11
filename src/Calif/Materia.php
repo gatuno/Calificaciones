@@ -14,10 +14,6 @@ class Calif_Materia extends Gatuf_Model {
 	/* La academia, la llave foranea */
 	public $academia;
 	
-	/* Para las formas de evaluación */
-	public $misevals;
-	public $tabla_porcentajes;
-	
 	function __construct () {
 		$this->_getConnection();
 		$this->academia = null; /* FIXME: La academia */
@@ -26,9 +22,7 @@ class Calif_Materia extends Gatuf_Model {
 		
 		$this->tabla = 'Materias';
 		$this->tabla_view = 'Materias_View';
-		$this->tabla_porcentajes = 'Porcentajes';
 		$this->default_order = 'clave ASC, descripcion ASC';
-		$this->misevals = array ();
 		
 		/* Relación N-M contra las carreras */
 		$tabla = 'Catalogo_Carreras';
@@ -37,10 +31,6 @@ class Calif_Materia extends Gatuf_Model {
 		$this->views['__catalogo_c__']['tabla'] = $tabla;
 		$this->views['__catalogo_c__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable().'.clave='.$this->_con->pfx.$tabla.'.materia';
 		$this->views['__catalogo_c__']['order'] = $this->default_order;
-	}
-	
-	function getPorcentajesSqlTable () {
-		return $this->_con->pfx.$this->tabla_porcentajes;
 	}
 	
 	function getMateria ($clave) {
@@ -60,78 +50,55 @@ class Calif_Materia extends Gatuf_Model {
 		return true;
 	}
 	
-	public function getEvals ($grupo = null) {
-		$eval = new Calif_Evaluacion ();
-		
-		$sql_filter = new Gatuf_SQL ('materia=%s', $this->clave);
+	function getEvals ($grupo = null) {
 		if (!is_null ($grupo)) {
-			$sql_filter->SAnd ($grupo);
+			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array ($this->clave, $grupo));
+		} else {
+			$sql = new Gatuf_SQL ('materia=%s', $this->clave);
 		}
 		
-		$req = sprintf ('SELECT P.evaluacion, P.porcentaje, P.abierto, P.apertura, P.cierre, E.descripcion FROM %s AS P INNER JOIN %s AS E ON P.evaluacion = E.id WHERE %s', $this->getPorcentajesSqlTable (), $eval->getSqlTable(), $sql_filter->gen());
+		$porcentajes = Gatuf::factory ('Calif_Porcentaje')->getList (array ('filter' => $sql->gen()));
 		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError());
+		$ids = array ();
+		
+		foreach ($porcentajes as $p) {
+			$ids[] = $p->evaluacion;
 		}
 		
-		if (count ($rs) == 0) {
+		if (count ($ids) == 0) {
 			return array ();
 		}
 		
-		return $rs;
+		$where = 'id IN ('.join(', ', $ids).')';
+		return Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $where));
 	}
 	
 	public function getNotEvals ($grupo = null, $count = false) {
-		/* Super SQL:
-		 SELECT * FROM Evaluaciones AS E WHERE NOT EXISTS (SELECT * FROM Porcentajes AS P WHERE P.Materia = 'CC100' AND E.Id = P.Evaluacion) AND Grupo = 2 */
-		$eval = new Calif_Evaluacion ();
-		$filtro = new Gatuf_SQL ('NOT EXISTS (SELECT * FROM '.$this->getPorcentajesSqlTable().' WHERE '.$this->getPorcentajesSqlTable().'.materia=%s AND '.$this->getPorcentajesSqlTable().'.evaluacion='.$eval->getSqlTable().'.Id)', $this->clave);
+		$sql = new Gatuf_SQL ('materia=%s', $this->clave);
+		$porcentajes = Gatuf::factory ('Calif_Porcentaje')->getList (array ('filter' => $sql->gen()));
+		
+		$ids = array ();
+		
+		foreach ($porcentajes as $p) {
+			$ids[] = $p->evaluacion;
+		}
+		
+		if (count ($ids) == 0) {
+			if (!is_null ($grupo)) {
+				$where = 'grupo='.$grupo;
+			} else {
+				$where = '';
+			}
+			return Gatuf::factory ('Calif_Evaluacion')->getList (array ('count' => $count, 'filter' => $where));
+		}
+		
+		$where = 'id NOT IN ('.join(', ', $ids).')';
 		
 		if (!is_null ($grupo)) {
-			$filtro->SAnd ($grupo);
+			$where .= 'AND grupo='.$grupo;
 		}
 		
-		$req = sprintf ('SELECT * FROM %s WHERE %s', $eval->getSqlTable(), $filtro->gen());
-		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception ($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			if ($count == true) return false;
-			return array ();
-		}
-		
-		if ($count == true) return true;
-		$res = array ();
-		foreach ($rs as $row) {
-			$eval->getEval ($row['id']);
-			$res[] = clone ($eval);
-		}
-		
-		return $res;
-	}
-	
-	public function getGroupSum ($grupo) {
-		$eval = new Calif_Evaluacion ();
-		
-		$sql_filter = new Gatuf_SQL ('materia=%s', $this->clave);
-		if (!is_null ($grupo)) {
-			$sql_filter->SAnd ($grupo);
-		}
-		
-		/* SELECT E.grupo, SUM(P.porcentaje) FROM Porcentajes AS P INNER JOIN Evaluaciones AS E ON P.evaluacion = E.id WHERE materia='I5882' GROUP BY E.grupo */
-		$req = sprintf ('SELECT E.grupo, SUM(P.porcentaje) AS suma FROM %s AS P INNER JOIN %s AS E ON P.evaluacion = E.id WHERE %s GROUP BY (E.grupo)', $this->getPorcentajesSqlTable (), $eval->getSqlTable(), $sql_filter->gen());
-		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			return array ();
-		}
-		
-		return $rs[0];
+		return Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $where, 'count' => $count));
 	}
 	
 	function create () {

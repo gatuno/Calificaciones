@@ -211,17 +211,22 @@ class Calif_Views_Materia {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		$e = new Calif_Evaluacion ();
-		$grupos = $e->getGruposEvals ();
+		$grupos = Gatuf::factory ('Calif_GrupoEvaluacion')->getList ();
+		$sql = new Gatuf_SQL ('materia=%s', $materia->clave);
+		$ps = Gatuf::factory ('Calif_Porcentaje')->getList (array ('filter' => $sql->gen ()));
+		$porcentajes = array ();
+		foreach ($ps as $p) {
+			$porcentajes[$p->evaluacion] = $p;
+		}
+		
 		$evals = array ();
 		$disponibles = array ();
 		$sumas = array ();
 		
-		foreach ($grupos as $id_grupo => $grupo) {
-			$sql = new Gatuf_SQL ('grupo=%s', $id_grupo);
-			$evals[$id_grupo] = $materia->getEvals ($sql);
-			$sumas[$id_grupo] = $materia->getGroupSum ($sql);
-			$disponibles[$id_grupo] = $materia->getNotEvals ($sql, true);
+		foreach ($grupos as $gp) {
+			$evals[$gp->id] = $materia->getEvals ($gp->id);
+			$sumas[$gp->id] = Gatuf::factory ('Calif_Porcentaje')->getGroupSum ($materia->clave, $gp->id);
+			$disponibles[$gp->id] = $materia->getNotEvals ($gp->id, true);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-eval.html',
@@ -230,6 +235,7 @@ class Calif_Views_Materia {
 		                                               'grupos' => $grupos,
 		                                               'materia' => $materia,
 		                                               'disponibles' => $disponibles,
+		                                               'porcentajes' => $porcentajes,
 		                                               'sumas' => $sumas),
 		                                         $request);
 	}
@@ -312,20 +318,20 @@ class Calif_Views_Materia {
 		}
 		
 		/* Verificar que el grupo de evaluación exista */
-		$descr_grupo = Gatuf::factory ('Calif_Evaluacion')->getGrupoEval ($match[2]);
-		if ($descr_grupo === false) {
+		$grupo_eval = new Calif_GrupoEvaluacion  ();
+		
+		if (false === ($grupo_eval->getGrupoEval ($match[2]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$filtro = new Gatuf_SQL ('Grupo=%s', $match[2]);
-		$disponibles = $materia->getNotEvals ($filtro);
+		$disponibles = $materia->getNotEvals ($grupo_eval->id);
 		
 		if (count ($disponibles) == 0) {
 			/* TODO: Lanzar un lindo mensaje de error */
 			throw new Exception ('La materia no tiene formas de evaluacion disponibles para este grupo');
 		}
 		
-		$title = 'Agregar evaluación a la materia "' . $materia->descripcion .'", para '.$descr_grupo;
+		$title = 'Agregar evaluación a la materia "' . $materia->descripcion .'", para '.$grupo_eval->descripcion;
 		
 		$extra = array ('evals' => $disponibles, 'materia' => $materia);
 		if ($request->method == 'POST') {

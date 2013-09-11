@@ -9,8 +9,6 @@ class Calif_Evaluacion extends Gatuf_Model {
 	public $descripcion;
 	public $grupo_desc;
 	
-	public $tabla_grupos;
-	
 	function __construct () {
 		$this->_getConnection();
 		
@@ -18,10 +16,6 @@ class Calif_Evaluacion extends Gatuf_Model {
 		$this->tabla_view = 'Evaluaciones_View';
 		$this->tabla_grupos = 'Grupos_Evaluaciones';
 		$this->default_order = 'grupo ASC, descripcion ASC';
-	}
-	
-	function getGruposSqlTable () {
-		return $this->_con->pfx.$this->tabla_grupos;
 	}
 	
 	function getEval ($id) {
@@ -39,40 +33,6 @@ class Calif_Evaluacion extends Gatuf_Model {
 			$this->$col = $val;
 		}
 		return true;
-	}
-	
-	function getGruposEvals () {
-		$req = sprintf ('SELECT * FROM %s', $this->getGruposSqlTable());
-		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			return false;
-		}
-		
-		$grupos_evals = array ();
-		foreach ($rs as $row) {
-			$grupos_evals[$row['id']] = $row['descripcion'];
-		}
-		
-		return $grupos_evals;
-	}
-	
-	function getGrupoEval ($id) {
-		$where = new Gatuf_SQL ('id=%s', $id);
-		$req = sprintf ('SELECT * FROM %s WHERE %s', $this->getGruposSqlTable(), $where->gen());
-		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			return false;
-		}
-		
-		return $rs[0]['descripcion'];
 	}
 	
 	function create () {
