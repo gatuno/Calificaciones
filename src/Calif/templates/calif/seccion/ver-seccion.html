@@ -38,15 +38,13 @@
 	{/foreach}
 	</tbody></table>
 {/if}
-<p>FIXME: Pestañas Evaluaciones</p>
+<h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-
 {if $alumnos}
 <div id="Evals_tabs"><ul>
 	{foreach $evaluacion as $key=> $eval}
 		<li><a href="#{$key}">{$key}</a></li>
 	{/foreach}</ul>
-</div>
 {foreach $evaluacion as $key => $eval}
 	<table id="{$key}" border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th>
@@ -59,13 +57,17 @@
 		{foreach $alumnos as $alumno}
 			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td>
 			{foreach $eval as $key => $e}
-				<td>{$calificacion[$alumno.codigo][$key]}</td>
+				{if $calificacion[$alumno.codigo][$key]}
+				<td style="color:blue;">{$calificacion[$alumno.codigo][$key]}</td>
+				{else}<td >0</td>
+				{/if}
 			{/foreach}
 			</tr>
 		{/foreach}
 		</tbody>
 	</table>
 	{/foreach}
+</div>
 {else}
 <p>La sección no tiene alumnos</p>
 {/if}
