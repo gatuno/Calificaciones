@@ -40,7 +40,7 @@
 {/if}
 <h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-{if $alumnos}
+{if $alumnos && $evaluacion}
 <div id="Evals_tabs"><ul>
 	{foreach $evaluacion as $key=> $eval}
 		<li><a href="#{$key}">{$key}</a></li>
@@ -69,7 +69,16 @@
 	{/foreach}
 </div>
 {else}
-<p>La sección no tiene alumnos</p>
+	{if $alumnos}
+		<table border="1">
+		<thead><tr><th>Alumno</th><th>Codigo</th>
+		{foreach $alumnos as $alumno}
+			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td>
+		{/foreach}
+		</table>
+	{else}
+		<p>La sección no tiene alumnos</p>
+	{/if}
 {/if}
 {/block}
 {block javascript}{literal}

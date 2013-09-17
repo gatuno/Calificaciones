@@ -63,6 +63,7 @@ class Calif_Views_Seccion {
 		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->descripcion][Porcentajes->evaluacion]=Evaluaciones->descripcion
 		$grupo_evals = Gatuf::factory('Calif_GrupoEvaluacion')->getList();
 		$tabla_evaluaciones = Gatuf::factory('Calif_Evaluacion')->getList();
+		$evaluacion = array();
 		foreach($grupo_evals as $eval)
 		{
 			$sql = new Gatuf_SQL ('materia=%s AND grupo = %s', array( $materia->clave, $eval->id));
@@ -74,6 +75,7 @@ class Calif_Views_Seccion {
 		}
 
 		// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
+		$calificacion = array();
 		$sql = new Gatuf_SQL ('nrc=%s',  $seccion->nrc);
 		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
 				
