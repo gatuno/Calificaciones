@@ -229,6 +229,13 @@ $ctl[] = array (
 	'method' => 'verEval',
 );
 
+$ctl[] = array (
+	'regex' => '#^/evaluacion/(\d+)/(\w+)/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Evaluacion',
+	'method' => 'evaluarAlumno',
+);
+
 /* Las secciones */
 $ctl[] = array (
 	'regex' => '#^/secciones/$#',
