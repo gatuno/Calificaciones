@@ -64,30 +64,27 @@ class Calif_Views_Seccion {
 		$grupo_evals = Gatuf::factory('Calif_GrupoEvaluacion')->getList();
 		$tabla_evaluaciones = Gatuf::factory('Calif_Evaluacion')->getList();
 		$evaluacion = array();
-		foreach($grupo_evals as $eval)
-		{
+		foreach ($grupo_evals as $eval) {
 			$sql = new Gatuf_SQL ('materia=%s AND grupo = %s', array( $materia->clave, $eval->id));
 			$temp_eval =Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
-			foreach($temp_eval as $t_eval)
-			{
+			foreach($temp_eval as $t_eval) {
 				$evaluacion[$eval->descripcion][$t_eval->evaluacion] = $tabla_evaluaciones[$t_eval->evaluacion-1]->descripcion;
 			}
 		}
 
 		// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
 		$calificacion = array();
-		$sql = new Gatuf_SQL ('nrc=%s',  $seccion->nrc);
+		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
 				
-		foreach($temp_calif as $t_calif)
-		{
+		foreach ($temp_calif as $t_calif) {
 			$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
 		}
 
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
-								 'evaluacion' => $evaluacion,
-								'calificacion' => $calificacion,
+		                                                 'evaluacion' => $evaluacion,
+		                                                 'calificacion' => $calificacion,
 		                                                 'page_title' => $title,
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
@@ -103,7 +100,7 @@ class Calif_Views_Seccion {
 		$extra = array ();
 		
 		if (isset ($match[1])) {
-			$materia =  new Calif_Materia ();
+			$materia = new Calif_Materia ();
 			if (false === ($materia->getMateria($match[1]))) {
 				throw new Gatuf_HTTP_Error404();
 			}
@@ -162,7 +159,7 @@ class Calif_Views_Seccion {
 	public function actualizarNrc ($request, $match) {
 		$title = 'Actualizar NRC';
 		
-		$seccion =  new Calif_Seccion ();
+		$seccion = new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
@@ -193,7 +190,7 @@ class Calif_Views_Seccion {
 	public function eliminarNrc ($request, $match) {
 		$title = 'Eliminar NRC';
 		
-		$seccion =  new Calif_Seccion ();
+		$seccion = new Calif_Seccion ();
 		
 		if (false === ($seccion->getNrc($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
