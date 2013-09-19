@@ -40,7 +40,7 @@ class Calif_Calificacion extends Gatuf_Model {
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET valor = %s WHERE nrc = %s AND alumno= %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_IdentityToDb ($this->alumno, $this->_con));
+		$req = sprintf ('UPDATE %s SET valor = %s  WHERE nrc = %s AND alumno= %s AND evaluacion = %s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->valor, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($this->alumno, $this->_con), Gatuf_DB_IntegerToDb ($this->evaluacion, $this->_con));
 		
 		$this->_con->execute($req);
 		

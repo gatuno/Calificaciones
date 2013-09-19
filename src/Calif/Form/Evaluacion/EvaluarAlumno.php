@@ -1,11 +1,16 @@
 <?php
 
 class Calif_Form_Evaluacion_EvaluarAlumno extends Gatuf_Form {
+	public $nrc, $codigo;
+	public $gruposeval, $porcentajes;
 	public function initFields($extra=array()) {
-		$gruposeval = $extra['evaluacion'];
+		$this->nrc = $extra['nrc'];
+		$this->codigo = $extra['codigo'];
+		$this->gruposeval = $extra['evaluacion']['eval'];
+		$this->porcentajes = $extra['evaluacion']['porcentajes'];
 		$calificacion = $extra['calificacion'];
-		foreach ($gruposeval as $key => $descrip) {
-				$this->fields[$descrip] = new Gatuf_Form_Field_Varchar(
+		foreach ($this->gruposeval as $key => $descrip) {
+				$this->fields[$key] = new Gatuf_Form_Field_Varchar(
 				array(
 				'label' => $descrip,
 				'initial' => $calificacion [$key],
@@ -21,7 +26,20 @@ class Calif_Form_Evaluacion_EvaluarAlumno extends Gatuf_Form {
 	public function save ($commit=true) {
 		if (!$this->isValid()) {
 			throw new Exception('Cannot save the model from an invalid form.');
+		}	
+		foreach($this->gruposeval as $key => $eval){
+			$valor = $this->cleaned_data[$key];
+			if($this->cleaned_data[$key]){
+				if(!$pos = strpos($valor, '%') ){
+					$valor = ($valor*100)/$this->porcentajes[$key];
+				}
+				$calificacion = new Calif_Calificacion();
+				$calificacion->nrc = $this->nrc;
+				$calificacion->alumno = $this->codigo;
+				$calificacion->evaluacion = $key;
+				$calificacion->valor = $valor;
+				$calificacion->update();
+			}
 		}
-		return 0;
 	}
 }
