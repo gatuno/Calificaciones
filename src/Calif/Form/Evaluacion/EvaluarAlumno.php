@@ -15,7 +15,7 @@ class Calif_Form_Evaluacion_EvaluarAlumno extends Gatuf_Form {
 				array(
 				'label' => $descrip,
 				'initial' => $calificacion [$key].$aux,
-				'help_text' => 'En que modalidad aplica la evaluación',
+				'help_text' => 'Evaluado sobre '.$this->porcentajes[$key].' Puntos',
 				'max_length' => 6,
 				'widget_attrs' => array(
 					'maxlength' => 6,
