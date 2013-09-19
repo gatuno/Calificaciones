@@ -230,7 +230,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/evaluacion/(\d+)/(\w+)/(\d+)/$#',
+	'regex' => '#^/evaluacion/(\d+)/(\w+)/(\d+)/(\w+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Evaluacion',
 	'method' => 'evaluarAlumno',

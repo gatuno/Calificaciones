@@ -47,10 +47,14 @@ class Calif_Views_Evaluacion {
 			$nrc = $match[1];
 			$clave = $match[2];
 			$codigo = $match[3];
+			$grupo = $match[4];
+			$sql = new Gatuf_SQL ('descripcion=%s', array( $grupo));
+			$grupo = Gatuf::factory('Calif_GrupoEvaluacion')->getList(array ('filter' => $sql->gen()));
+			$grupo = $grupo[0]->id;
 			$sql = new Gatuf_SQL ('codigo=%s', array( $codigo));
 			$alumno = Gatuf::factory('Calif_Alumno')->getList(array ('filter' => $sql->gen()));
-			$title = 'Evaluando a '.$alumno[0]->nombre.' '.$alumno[0]->apellido;
-			$sql = new Gatuf_SQL ('materia=%s', array( $clave));
+			$title = 'Evaluando a '.$alumno[0]->nombre.' '.$alumno[0]->apellido.' ('.$match[4].')';
+			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array( $clave, $grupo));
 			$evaluaciones = $this->getEvalMateria($sql);
 			$sql = new Gatuf_SQL ('alumno=%s', array( $codigo));
 			$calificaciones = Gatuf::factory('Calif_Calificacion')->getList(array ('filter' => $sql->gen()));
