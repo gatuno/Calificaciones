@@ -57,10 +57,7 @@
 		{foreach $alumnos as $alumno}
 			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td>
 			{foreach $eval as $key => $e}
-				{if $calificacion[$alumno.codigo][$key]}
-				<td style="color:blue;">{$calificacion[$alumno.codigo][$key]}</td>
-				{else}<td >0</td>
-				{/if}
+				<td>{$calificacion[$alumno.codigo][$key]}</td>
 			{/foreach}
 			<td><a href="{url 'Calif_Views_Evaluacion::evaluarAlumno', array ($seccion->nrc, $seccion->materia, $alumno->codigo)}"><img class="icon" src="{media '/img/document-properties.png'}" alt="Evaluar" /></a></td>
 			</tr>
