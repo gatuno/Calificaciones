@@ -10,10 +10,11 @@ class Calif_Form_Evaluacion_EvaluarAlumno extends Gatuf_Form {
 		$this->porcentajes = $extra['evaluacion']['porcentajes'];
 		$calificacion = $extra['calificacion'];
 		foreach ($this->gruposeval as $key => $descrip) {
+				$aux=($calificacion [$key])?'%':'';
 				$this->fields[$key] = new Gatuf_Form_Field_Varchar(
 				array(
 				'label' => $descrip,
-				'initial' => $calificacion [$key],
+				'initial' => $calificacion [$key].$aux,
 				'max_length' => 6,
 				'widget_attrs' => array(
 					'maxlength' => 6,
