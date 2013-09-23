@@ -42,11 +42,11 @@
 <p>Sección con {$alumnos|count} alumnos.</p>
 {if $alumnos && $evaluacion}
 <div id="Evals_tabs">
-	<ul>{foreach $evaluacion as $grupo_eval=> $eval}
-		<li><a href="#{$grupo_eval}">{$grupo_eval}</a></li>
+	<ul>{foreach $evaluacion as $id_geval => $eval}
+		<li><a href="#{$grupo_evals[$id_geval].descripcion}">{$grupo_evals[$id_geval].descripcion}</a></li>
 	{/foreach}</ul>
-	{foreach $evaluacion as $grupo_eval => $eval}
-	<table id="{$grupo_eval}" border="1">
+	{foreach $evaluacion as $id_geval => $eval}
+	<table id="{$grupo_evals[$id_geval].descripcion}" border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th>
 		{foreach $eval as $e}
 				<th>{$e}</th>
@@ -58,7 +58,7 @@
 			{foreach $eval as $key => $e}
 				<td>{$calificacion[$alumno.codigo][$key] }{if $calificacion[$alumno.codigo][$key]}%{/if}</td>
 			{/foreach}
-			<td><a href="{url 'Calif_Views_Evaluacion::evaluarAlumno', array ($seccion->nrc, $seccion->materia, $alumno->codigo, $grupo_eval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
+			<td><a href="{url 'Calif_Views_Alumno::evaluar', array ($alumno->codigo, $seccion->nrc, $id_geval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
 			</tr>
 		{/foreach}
 		</tbody>

@@ -61,18 +61,21 @@ class Calif_Views_Seccion {
 		$alumnos = $seccion->getAlumnosList ();
 		
 		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->descripcion][Porcentajes->evaluacion]=Evaluaciones->descripcion
-		$grupo_evals = Gatuf::factory('Calif_GrupoEvaluacion')->getList();
-		$tabla_evaluaciones = Gatuf::factory('Calif_Evaluacion')->getList();
-		$evaluacion = array();
-		$todas_evaluaciones = array();
-		foreach($tabla_evaluaciones as $e){
+		$todas_evaluaciones = array ();
+		
+		foreach (Gatuf::factory('Calif_Evaluacion')->getList() as $e){
 			$todas_evaluaciones[$e->id] = $e;
 		}
-		foreach ($grupo_evals as $eval) {
-			$sql = new Gatuf_SQL ('materia=%s AND grupo = %s', array( $materia->clave, $eval->id));
-			$temp_eval =Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
+		
+		$evaluacion = array ();
+		$grupo_evals = array ();
+		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $geval) {
+			$grupo_evals[$geval->id] = $geval;
+			
+			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array($materia->clave, $geval->id));
+			$temp_eval = Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
 			foreach($temp_eval as $t_eval) {
-				$evaluacion[$eval->descripcion][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
+				$evaluacion[$geval->id][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
 			}
 		}
 
@@ -88,6 +91,7 @@ class Calif_Views_Seccion {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
 		                                                 'evaluacion' => $evaluacion,
+		                                                 'grupo_evals' => $grupo_evals,
 		                                                 'calificacion' => $calificacion,
 		                                                 'page_title' => $title,
 		                                                 'materia' => $materia,

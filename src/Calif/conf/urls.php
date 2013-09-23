@@ -150,6 +150,13 @@ $ctl[] = array(
 	'method' => 'actualizarAlumno',
 );
 
+$ctl[] = array (
+	'regex' => '#^/alumno/(\w\d{8})/evaluar/(\d+)/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'evaluar',
+);
+
 /* Algunas materias */
 $ctl[] = array (
 	'regex' => '#^/materias/$#',
@@ -227,13 +234,6 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Evaluacion',
 	'method' => 'verEval',
-);
-
-$ctl[] = array (
-	'regex' => '#^/evaluacion/(\d+)/(\w+)/(\d+)/(\w+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Evaluacion',
-	'method' => 'evaluarAlumno',
 );
 
 /* Las secciones */
