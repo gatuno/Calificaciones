@@ -92,16 +92,16 @@ class Calif_Views_Seccion {
 		$extra = array ("eval" =>$evaluacion);
 		
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Seccion_Evaluar ($request->POST, $extra);
+			$form = new Calif_Form_Evaluacion_Evaluar ($request->POST, $extra);
 			
 			if ($form->isValid()) {
 				$eval_form = $form->save ();
 				
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Evaluacion::evaluar', array ('evaluacion'=>$eval_form, 'nrc'=>$seccion->nrc, 'alumnos'=>$alumnos));
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::evaluar', array ('nrc' => $seccion->nrc, 'evaluacion' => $eval_form ));
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Seccion_Evaluar (null, $extra);
+			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
 		}
 
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
@@ -113,7 +113,7 @@ class Calif_Views_Seccion {
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
-								'form'=>$form,
+								 'form' => $form,
 		                                                 'alumnos' => $alumnos),
 		                                          $request);
 		}
@@ -328,5 +328,43 @@ class Calif_Views_Seccion {
 		}
 		
 		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function evaluar ($request, $match){
+		/* Se recibe:
+		 * nrc en match[1]
+		 * modo evaluacion en match[2]
+		 */
+		$modo_eval = $match[2];
+		$seccion =  new Calif_Seccion ();
+		
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$sql = new Gatuf_SQL ('materia=%s AND evaluacion=%s', array ($seccion->materia, $modo_eval));
+		$porcentaje = Gatuf::factory ('Calif_Porcentaje')->getList (array ('filter' => $sql->gen ()));
+		$porcentaje= $porcentaje[0]->porcentaje;
+		
+		$eval_model = new Calif_Evaluacion ();
+		$eval_model->getEval ($modo_eval);
+		
+		$title = 'Evaluacion de '.$eval_model->descripcion.' Para la seccion '.$seccion->nrc.' Evaluando sobre '.$porcentaje.' puntos';
+		
+		$extra = array ('nrc' => $seccion, 'modo_eval' => $modo_eval, 'porcentaje' => $porcentaje);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Evaluar ($request->POST, $extra);
+			if ($form->isValid ()) {
+				$form->save ();
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Evaluar (null, $extra);
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/seccion-eval.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 }

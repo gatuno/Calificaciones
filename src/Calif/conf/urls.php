@@ -314,6 +314,13 @@ $ctl[] = array (
 	'method' => 'liberarNrc',
 );
 
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/evaluar/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'evaluar'
+);
+
 /* Los salones */
 $ctl[] = array (
 	'regex' => '#^/salones/$#',

@@ -46,12 +46,4 @@ class Calif_Views_Evaluacion {
 	public function verEval ($request, $match) {
 		return new Gatuf_HTTP_Response ('Evaluacion');
 	}
-
-	public function evaluar ($request, $match){
-		/* Se recibe:
-		 * modo evaluacion en match[1]
-		 * nrc en match[2]
-		* alumnos en match[3]
-		 */
-		echo $match[1];
 }
