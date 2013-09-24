@@ -64,6 +64,9 @@
 		</tbody>
 	</table>
 	{/foreach}
+<form method="post" action=".">
+{$form.render_table}
+<input type="submit" name="submit" value="Evaluar" />
 </div>
 {else}
 	{if $alumnos}
