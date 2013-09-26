@@ -5,11 +5,13 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 	public $modo_eval;
 	public $alumnos;
 	public $porcentaje;
+	public $array_eval;
 	
 	public function initFields($extra=array()) {
 		$this->nrc = $extra['nrc'];
 		$this->modo_eval = $extra['modo_eval'];
 		$this->porcentaje = $extra['porcentaje'];
+		$this->array_eval = array(-1 => 'NP', -2 => 'SD');	
 		
 		$sql = new Gatuf_SQL ('evaluacion=%s AND nrc=%s', array ($this->modo_eval, $this->nrc->nrc));
 		$cadena_sql_base = $sql->gen();
@@ -22,11 +24,18 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 			$sql = $cadena_sql_base.sprintf (' AND alumno=%s', $a->codigo);
 			$calif_model->getCalif ($sql);
 			
-			$this->fields[$a->codigo] = new Gatuf_Form_Field_Varchar (
+			$valor = $calif_model->valor;
+			if (array_key_exists($valor , $this->array_eval)) {
+					$valor = $this->array_eval[$valor];
+			}
+			else 
+				$valor = is_null ($valor) ? '' : $valor.'%';
+			
+			$this->fields['calif_'.$a->codigo] = new Gatuf_Form_Field_Varchar (
 				array (
 					'required' => false,
 					'label' => $a->nombre.' '.$a->apellido,
-					'initial' => is_null ($calif_model->valor) ? '' : $calif_model->valor.'%',
+					'initial' => $valor,
 					'max_length' => 6,
 					'widget_attrs' => array (
 						'maxlength' => 6,
@@ -39,11 +48,13 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 		if (!$this->isValid()) {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
-		
+		$flip_eval = array_flip($this->array_eval);
 		foreach($this->alumnos as $key => $alumno){
-			$valor = $this->cleaned_data[$alumno->codigo];
-			if($valor){
-				if(!$pos = strpos($valor, '%') ){
+			if($valor = $this->cleaned_data['calif_'.$alumno->codigo]){
+				if (array_key_exists($valor, $flip_eval)) {
+					$valor = $flip_eval[$valor];
+			}
+				else if(!$pos = strpos($valor, '%')){
 					$valor = ($valor*100)/$this->porcentaje;
 				}
 				$calificacion = new Calif_Calificacion();

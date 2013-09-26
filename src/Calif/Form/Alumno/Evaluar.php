@@ -6,7 +6,6 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 	public $array_eval;
 	
 	public function initFields($extra=array()) {
-	
 		$this->nrc = $extra['nrc'];
 		$this->alumno = $extra['alumno'];
 		$grupo_eval = $extra['grupo_eval'];
