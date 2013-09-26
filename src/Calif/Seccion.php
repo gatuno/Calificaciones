@@ -185,4 +185,13 @@ class Calif_Seccion extends Gatuf_Model {
 	public function displaylinkedmaestro_apellido ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$this->maestro_apellido.' '.$this->maestro_nombre.' ('.$this->maestro.')</a>';
 	}
+	
+	public function getGrupo(){
+		$req = sprintf ('SELECT * FROM %s WHERE nrc=%s', $this->tabla_grupos, Gatuf_DB_IdentityToDb ($this->nrc, $this->_con));
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}		
+		return $rs;
+	}
+	
 }

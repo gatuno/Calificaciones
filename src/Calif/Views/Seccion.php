@@ -109,6 +109,13 @@ class Calif_Views_Seccion {
 		} else {
 			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
 		}
+		
+		// Arreglo Promedios
+		$promedios = array();
+		$prom_temp = $seccion->getGrupo();
+		foreach($prom_temp as $p){
+			$promedios['alumno'][$p['alumno']] = $p['promedio'];
+		}
 
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
@@ -119,8 +126,9 @@ class Calif_Views_Seccion {
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
-								 'form' => $form,
-		                                                 'alumnos' => $alumnos),
+								 										'form' => $form,
+		                                                 'alumnos' => $alumnos,
+		                                                 'promedios' => $promedios),
 		                                          $request);
 		}
 	
