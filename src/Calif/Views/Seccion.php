@@ -80,11 +80,17 @@ class Calif_Views_Seccion {
 		}
 
 		// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
+		$array_eval = array(-1 => 'NP', -2 => 'SD');	
 		$calificacion = array();
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
 				
 		foreach ($temp_calif as $t_calif) {
+			if (array_key_exists($t_calif->valor , $array_eval)) {
+					$t_calif->valor = $array_eval[$t_calif->valor];
+			}
+			else if($t_calif->valor)
+				$t_calif->valor .='%';
 			$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
 		}
 		
