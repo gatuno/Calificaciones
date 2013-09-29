@@ -4,7 +4,6 @@ class Calif_Calificacion extends Gatuf_Model {
 	/* Manejador de la tabla de calificaciones */
 	
 	/* Campos */
-	public $id;
 	public $nrc;
 	public $alumno;
 	public $evaluacion;

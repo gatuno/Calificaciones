@@ -55,12 +55,11 @@ class Calif_Views_Seccion {
 		$maestro->getMaestro ($seccion->maestro);
 		
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
-		
 		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 		
 		$alumnos = $seccion->getAlumnosList ();
 		
-		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->descripcion][Porcentajes->evaluacion]=Evaluaciones->descripcion
+		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->id][Porcentajes->evaluacion]=Evaluaciones->descripcion
 		$todas_evaluaciones = array ();
 		
 		foreach (Gatuf::factory('Calif_Evaluacion')->getList() as $e){
@@ -70,27 +69,29 @@ class Calif_Views_Seccion {
 		$evaluacion = array ();
 		$grupo_evals = array ();
 		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $geval) {
-			$grupo_evals[$geval->id] = $geval;
-			
 			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array($materia->clave, $geval->id));
 			$temp_eval = Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
-			foreach($temp_eval as $t_eval) {
-				$evaluacion[$geval->id][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
+			
+			if (count ($temp_eval) != 0) {
+				$grupo_evals[$geval->id] = $geval;
+				foreach($temp_eval as $t_eval) {
+					$evaluacion[$geval->id][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
+				}
 			}
 		}
-
+		
 		// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
-		$array_eval = array(-1 => 'NP', -2 => 'SD');	
+		$array_eval = array(-1 => 'NP', -2 => 'SD');
 		$calificacion = array();
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
-				
+		
 		foreach ($temp_calif as $t_calif) {
 			if (array_key_exists($t_calif->valor , $array_eval)) {
-					$t_calif->valor = $array_eval[$t_calif->valor];
-			}
-			else if($t_calif->valor)
+				$t_calif->valor = $array_eval[$t_calif->valor];
+			} else if($t_calif->valor) {
 				$t_calif->valor .='%';
+			}
 			$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
 		}
 		
@@ -110,13 +111,8 @@ class Calif_Views_Seccion {
 			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
 		}
 		
-		// Arreglo Promedios
-		$promedios = array();
-		$prom_temp = $seccion->getGrupo();
-		foreach($prom_temp as $p){
-			$promedios['alumno'][$p['alumno']] = $p['promedio'];
-		}
-
+		/* FIXME: Promedios */
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
 		                                                 'evaluacion' => $evaluacion,
@@ -126,11 +122,10 @@ class Calif_Views_Seccion {
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
-								 										'form' => $form,
+		                                                 'form' => $form,
 		                                                 'alumnos' => $alumnos,
-		                                                 'promedios' => $promedios),
 		                                          $request);
-		}
+	}
 	
 	public $agregarNrc_precond = array ('Calif_Precondition::coordinadorRequired');
 	public function agregarNrc ($request, $match) {
@@ -347,7 +342,7 @@ class Calif_Views_Seccion {
 	public function evaluar ($request, $match){
 		/* Se recibe:
 		 * nrc en match[1]
-		 * modo evaluacion en match[2]
+		 * Evaluacion en match[2]
 		 */
 		$modo_eval = $match[2];
 		$seccion =  new Calif_Seccion ();
