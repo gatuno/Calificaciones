@@ -4,7 +4,7 @@ class Calif_Seccion extends Gatuf_Model {
 	/* Manejador de la tabla de secciones */
 	
 	/* Campos */
-	public $nrc, $new_nrc;
+	public $nrc;
 	public $materia, $materia_desc, $materia_departamento;
 	public $seccion;
 	public $maestro, $maestro_nombre, $maestro_apellido;
@@ -68,7 +68,7 @@ class Calif_Seccion extends Gatuf_Model {
 	}
 	
 	function addAlumno ($alumno) {
-		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $this->getGruposSqlTable (), Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
+		$req = sprintf ('INSERT INTO %s (nrc, alumno) VALUES (%s, %s)', $this->_con->pfx.$this->tabla_grupos, Gatuf_DB_IdentityToDb ($this->nrc, $this->_con), Gatuf_DB_IdentityToDb ($alumno, $this->_con));
 		
 		$this->_con->execute($req);
 		
@@ -86,7 +86,7 @@ class Calif_Seccion extends Gatuf_Model {
 	/* Eliminar todos los alumnos de este grupo */
 	function clearAlumnos () {
 		$sql = new Gatuf_SQL ('nrc=%s', $this->nrc);
-		$req = sprintf ('DELETE FROM %s WHERE %s', $this->getGruposSqlTable (), $sql->gen());
+		$req = sprintf ('DELETE FROM %s WHERE %s', $this->_con->pfx.$this->tabla_grupos, $sql->gen());
 		
 		$this->_con->execute ($req);
 		return true;
@@ -101,11 +101,10 @@ class Calif_Seccion extends Gatuf_Model {
 	}
 	
 	function update () {
-		$req = sprintf ('UPDATE %s SET nrc = %s, maestro=%s, seccion=%s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->new_nrc, $this->_con), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con), Gatuf_DB_IdentityToDb ($this->seccion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		$req = sprintf ('UPDATE %s SET maestro=%s, seccion=%s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->maestro, $this->_con), Gatuf_DB_IdentityToDb ($this->seccion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
 		
 		$this->_con->execute($req);
 		
-		$this->nrc = $this->new_nrc;
 		return true;
 	}
 	
@@ -134,10 +133,6 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
-	function restore () {
-		$this->new_nrc = $this->nrc;
-	}
-	
 	function maxNrc () {
 		$req = sprintf ('SELECT MAX(nrc) AS max_nrc FROM %s', $this->getSqlTable ());
 		
@@ -162,6 +157,16 @@ class Calif_Seccion extends Gatuf_Model {
 		$req = sprintf ('DELETE FROM %s WHERE nrc=%s', $this->getSqlTable(), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
 		
 		$this->_con->execute ($req);
+		
+		return true;
+	}
+	
+	function cambiaNrc ($new_nrc) {
+		$req = sprintf ('UPDATE %s SET nrc = %s WHERE nrc = %s', $this->getSqlTable (), $new_nrc, $this->nrc);
+		
+		$this->_con->execute($req);
+		
+		$this->nrc = $new_nrc;
 		
 		return true;
 	}

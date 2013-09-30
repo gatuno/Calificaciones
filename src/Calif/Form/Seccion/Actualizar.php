@@ -97,12 +97,14 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$this->seccion->new_nrc = $this->cleaned_data['nrc'];
 		$this->seccion->maestro = $this->cleaned_data['maestro'];
 		$this->seccion->seccion = $this->cleaned_data['seccion'];
 		
 		$this->seccion->update();
 		
+		if ((int) $this->seccion->nrc != (int) $this->cleaned_data['nrc']) {
+			$this->seccion->cambiaNrc ($this->cleaned_data['nrc']);
+		}
 		return $this->seccion;
 	}
 }

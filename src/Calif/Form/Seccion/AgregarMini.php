@@ -14,7 +14,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 			array(
 				'required' => false,
 				'label' => 'NRC',
-				'initial' => $max_nrc,
+				'initial' => $max_nrc + 1,
 				'help_text' => 'Este valor será asignado por su jefe de departamento',
 				'widget_attrs' => array(
 					'readonly' => 'readonly'
@@ -32,8 +32,8 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 			
 			$choices[$carrera_model->descripcion] = array ();
 			
-			foreach ($carrera_model->getMateriasList (array ('order' => 'descripcion ASC')) as $materia) {
-				$choices[$carrera_model->descripcion][$materia->descripcion] = $materia->clave;
+			foreach ($carrera_model->getMateriasList (array ('order' => 'descripcion ASC')) as $m) {
+				$choices[$carrera_model->descripcion][$m->descripcion] = $m->clave;
 			}
 		}
 		
