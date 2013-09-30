@@ -52,6 +52,7 @@
 				<th>{$e}</th>
 		{/foreach}
 		<th>Promedio</th>
+		<th></th>
 		</tr></thead>
 		<tbody>
 		{foreach $alumnos as $alumno}
@@ -59,7 +60,7 @@
 			{foreach $eval as $key => $e}
 				<td>{$calificacion[$alumno.codigo][$key] }</td>
 			{/foreach}
-			<td>{$promedios['alumno'][$alumno.codigo]}</td>
+			<td>{$promedios[$alumno.codigo][$id_geval]}</td>
 			<td><a href="{url 'Calif_Views_Alumno::evaluar', array ($alumno->codigo, $seccion->nrc, $id_geval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
 			</tr>
 		{/foreach}

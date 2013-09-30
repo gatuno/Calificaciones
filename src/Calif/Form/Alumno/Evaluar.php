@@ -31,7 +31,7 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 			
 			$valor = $calif_model->valor;
 			if (array_key_exists($valor , $this->array_eval)) {
-					$valor = $this->array_eval[$valor];
+				$valor = $this->array_eval[$valor];
 			} else {
 				$valor = is_null ($valor) ? '' : $valor.'%';
 			}
@@ -50,32 +50,41 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 		}
 	}
 	
-	public function __call ($name, $arguments) {
-		/* Sobrecargar los nombres clean_calif_evaluacion */
-		if (preg_match ($name, '/^clean_calif_(\d+)$/', $match) {
-			$eval = $match[1];
+	public function clean () {
+		$eval_model = new Calif_Evaluacion ();
+		foreach ($this->lista_porcentajes as $eval => $p) {
 			$calificacion = $this->cleaned_data ['calif_'.$eval];
 			
 			$flip_eval = array_flip ($this->array_eval);
 			if ($calificacion === '') return null;
 			
-			if (in_array ($calificacion, $flip_eval)) {
-				return $flip_eval[$match[2]];
+			if (array_key_exists ($calificacion, $flip_eval)) {
+				$this->cleaned_data['calif_'.$eval] = $flip_eval[$calificacion];
+				continue;
 			}
-			if (preg_match ($calificacion, '/^(\d+)%$/', $submatch)) {
+			if (preg_match ('/^(\d+)%$/', $calificacion, $submatch)) {
 				/* Es un porcentaje */
-				return (int) (($valor * 100) / $this->lista_porcentajes[$eval]->porcentaje);
+				if ($submatch[1] > 100) {
+					$eval_model->getEval ($p->evaluacion);
+					throw new Gatuf_Form_Invalid ('El porcentaje en la calificacion "'.$eval_model->descripcion.'" es inválida');
+				}
+				$this->cleaned_data['calif_'.$eval] = $submatch[1];
+				continue;
 			}
-			if (preg_match ($calificacion, '/^(\d+)$/', $submatch)) {
+			if (preg_match ('/^(\d+)$/', $calificacion, $submatch)) {
 				/* Es un valor crudo, verificar que no sobrepase el máximo porcentaje */
 				if ($submatch[1] > $this->lista_porcentajes[$eval]->porcentaje) {
-					return $this->lista_porcentajes[$eval]->porcentaje;
+					$this->cleaned_data['calif_'.$eval] = $this->lista_porcentajes[$eval]->porcentaje;
 				}
+				$this->cleaned_data['calif_'.$eval] = (int) (($submatch[1] * 100) / $this->lista_porcentajes[$eval]->porcentaje);
+				continue;
 			}
-			throw new Gatuf_Form_Invalid ('Calificacion no válida');
-		} else {
-			throw new Exception ("Método no implementado"),
+			
+			$eval_model->getEval ($p->evaluacion);
+			throw new Gatuf_Form_Invalid ('La calificacion en '.$eval_model->descripcion.' es inválida');
 		}
+		
+		return $this->cleaned_data;
 	}
 	
 	public function save ($commit=true) {
@@ -88,7 +97,7 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 			$calificacion->nrc = $this->nrc->nrc;
 			$calificacion->alumno = $this->alumno->codigo;
 			$calificacion->evaluacion = $p->evaluacion;
-			$calificacion->valor = $valor;
+			$calificacion->valor = $this->cleaned_data['calif_'.$p->evaluacion];
 			$calificacion->update();
 		}
 	}

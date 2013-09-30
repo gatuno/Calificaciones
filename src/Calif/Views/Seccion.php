@@ -68,6 +68,7 @@ class Calif_Views_Seccion {
 		
 		$evaluacion = array ();
 		$grupo_evals = array ();
+		$promedios = array ();
 		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $geval) {
 			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array($materia->clave, $geval->id));
 			$temp_eval = Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
@@ -93,6 +94,10 @@ class Calif_Views_Seccion {
 				$t_calif->valor .='%';
 			}
 			$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
+			
+			foreach ($grupo_evals as $id => $gp) {
+				$promedios[$t_calif->alumno][$id] = $t_calif->getPromedio ($id);
+			}
 		}
 		
 		//Form Choise Evaluaciones
@@ -111,8 +116,6 @@ class Calif_Views_Seccion {
 			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
 		}
 		
-		/* FIXME: Promedios */
-		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
 		                                                 'evaluacion' => $evaluacion,
@@ -122,8 +125,9 @@ class Calif_Views_Seccion {
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
+		                                                 'promedios' => $promedios,
 		                                                 'form' => $form,
-		                                                 'alumnos' => $alumnos,
+		                                                 'alumnos' => $alumnos),
 		                                          $request);
 	}
 	
@@ -151,10 +155,10 @@ class Calif_Views_Seccion {
 			/* Formulario completo para los administradores, o la otra condición */
 			if ($request->method == 'POST') {
 				$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
-			
+				
 				if ($form->isValid()) {
 					$seccion = $form->save ();
-				
+					
 					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
 					return new Gatuf_HTTP_Response_Redirect ($url);
 				}

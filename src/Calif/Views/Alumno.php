@@ -107,7 +107,7 @@ class Calif_Views_Alumno {
 		} else {
 			$form = new Calif_Form_Alumno_Evaluar (null, $extra);
 		}
-		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/alumno-eval.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/evaluar.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
