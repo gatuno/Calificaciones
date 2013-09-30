@@ -142,28 +142,59 @@ class Calif_User extends Gatuf_Model {
 		$p = array_merge($default, $p);
 		
 		$m = new Gatuf_Permission ();
-		$tabla = 'usuarios_permisos';
+		$tabla = 'users_permissions';
 		
 		$m->views['__manytomany__'] = array ();
-		$m->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$m->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.permiso';
-		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.usuario=%s', $this->codigo);
+		$m->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$m->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.permission';
+		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.user=%s', $this->codigo);
 		$m->views['__manytomany__']['where'] = $sql->gen ();
 		
 		$p['view'] = '__manytomany__';
 		return $m->getList ($p);
 	}
 	
-	function getAllPermissions () {
+	function getGroupList ($p = array ()) {
+		$default = array('view' => null,
+		                 'filter' => null,
+		                 'order' => null,
+		                 'start' => null,
+		                 'nb' => null,
+		                 'count' => false);
+		$p = array_merge($default, $p);
+		
+		$g = new Gatuf_Group ();
+		$tabla = 'groups_users';
+		
+		$g->views['__manytomany__'] = array ();
+		$g->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$g->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.group';
+		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.user=%s', $this->codigo);
+		$g->views['__manytomany__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__manytomany__';
+		return $g->getList ($p);
+	}
+	
+	function getAllPermissions ($force=false) {
 		if ($this->isAnonymous ()) return array ();
-		if (!is_null($this->_cache_perms)) {
+		if ($force == false and !is_null($this->_cache_perms)) {
 			return $this->_cache_perms;
 		}
 		
 		$this->_cache_perms = array ();
 		$perms = $this->getPermissionList ();
 		
-		/* TODO: Gestionar los grupos aquí */
+		$groups = $this->getGroupList ();
+		$ids = array ();
+		foreach ($groups as $group) {
+			$ids[] = $group->id;
+		}
 		
+		if (count ($ids) > 0) {
+			$gperm = new Gatuf_Permission ();
+			$f_name = $this->_con->pfx.$gperm->views['__groups_permissions__']['tabla'].'.group IN ('.join(', ', $ids).')';
+			$gperm->views['__groups_permissions__']['where'] = $f_name;
+			$perms = array_merge ($perms, (array) $gperm->getList (array ('view' => '__groups_permissions__')));
+		}
 		foreach ($perms as $perm) {
 			if (!in_array ($perm->application.'.'.$perm->code_name, $this->_cache_perms)) {
 				$this->_cache_perms[] = $perm->application.'.'.$perm->code_name;
