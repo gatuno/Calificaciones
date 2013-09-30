@@ -24,10 +24,17 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$materia = '';
 		if (isset ($extra['materia'])) $materia = $extra['materia'];
 		
-		$todaslasmaterias = Gatuf::factory ('Calif_Materia')->getList ();
 		$choices = array ();
-		foreach ($todaslasmaterias as $m) {
-			$choices [$m->clave . ' - ' . $m->descripcion] = $m->clave;
+		$carreras = $this->user->returnCoord ();
+		$carrera_model = new Calif_Carrera ();
+		foreach ($carreras as $carrera) {
+			$carrera_model->getCarrera (substr ($carrera, 18));
+			
+			$choices[$carrera_model->descripcion] = array ();
+			
+			foreach ($carrera_model->getMateriasList (array ('order' => 'descripcion ASC')) as $materia) {
+				$choices[$carrera_model->descripcion][$materia->descripcion] = $materia->clave;
+			}
 		}
 		
 		$this->fields['materia'] = new Gatuf_Form_Field_Varchar(

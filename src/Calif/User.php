@@ -195,6 +195,16 @@ class Calif_User extends Gatuf_Model {
 		return false;
 	}
 	
+	function returnCoord () {
+		if (!$this->active) return false;
+		
+		$perms = $this->getAllPermissions ();
+		
+		$coords = preg_grep ('/SIIAU.coordinador.*/', $perms);
+		
+		return $coords;
+	}
+	
 	public function __get ($name) {
 		return $this->$name ();
 	}
