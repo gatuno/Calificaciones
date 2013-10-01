@@ -64,6 +64,11 @@
 			<td><a href="{url 'Calif_Views_Alumno::evaluar', array ($alumno->codigo, $seccion->nrc, $id_geval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
 			</tr>
 		{/foreach}
+		<tr><th colspan='2' >Promedio</th>
+		{foreach $promedios_eval[$id_geval] as $pe}
+				<td>{$pe}</td>
+		{/foreach}		
+		</tr>
 		</tbody>
 	</table>
 	{/foreach}

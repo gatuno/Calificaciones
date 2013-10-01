@@ -69,10 +69,11 @@ class Calif_Views_Seccion {
 		$evaluacion = array ();
 		$grupo_evals = array ();
 		$promedios = array ();
+		$promedios_eval = array();
 		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $geval) {
 			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array($materia->clave, $geval->id));
 			$temp_eval = Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
-			
+		
 			if (count ($temp_eval) != 0) {
 				$grupo_evals[$geval->id] = $geval;
 				foreach($temp_eval as $t_eval) {
@@ -86,7 +87,7 @@ class Calif_Views_Seccion {
 		$calificacion = array();
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
-		
+
 		foreach ($temp_calif as $t_calif) {
 			if (array_key_exists($t_calif->valor , $array_eval)) {
 				$t_calif->valor = $array_eval[$t_calif->valor];
@@ -99,6 +100,15 @@ class Calif_Views_Seccion {
 				$promedios[$t_calif->alumno][$id] = $t_calif->getPromedio ($id);
 			}
 		}
+		
+		// LLenar arreglo con los promedios de la
+		foreach($evaluacion as $key => $eval) {
+				foreach($eval as $ev => $e) {
+					if($promedios_eval[$key][$ev] = $temp_calif[0]->getPromedioEval ($ev)){
+						$promedios_eval[$key][$ev] .= '%'; 
+					}
+				}
+			}
 		
 		//Form Choise Evaluaciones
 		$extra = array ("eval" =>$evaluacion);
@@ -126,6 +136,7 @@ class Calif_Views_Seccion {
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
 		                                                 'promedios' => $promedios,
+		                                                 'promedios_eval' => $promedios_eval,
 		                                                 'form' => $form,
 		                                                 'alumnos' => $alumnos),
 		                                          $request);

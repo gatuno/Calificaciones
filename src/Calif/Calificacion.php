@@ -50,4 +50,18 @@ class Calif_Calificacion extends Gatuf_Model {
 		
 		return $rs[0]['suma'];
 	}
+	
+		public function getPromedioEval ($eval) {
+		$req = sprintf ('SELECT * FROM Promedios_Evaluaciones WHERE seccion = %s AND evaluacion = %s', Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IntegerToDb ($eval, $this->_con));
+		
+		if (false === ($rs = $this->_con->select ($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if (count ($rs) == 0) {
+			return false;
+		}
+		
+		return $rs[0]['promedio'];
+	}
 }
