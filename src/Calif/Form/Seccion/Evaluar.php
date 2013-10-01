@@ -44,26 +44,56 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 		}
 	}
 	
+		public function clean () {
+		$eval_model = new Calif_Evaluacion ();
+		foreach ($this->alumnos as $alumno ) {
+			$calificacion = $this->cleaned_data ['calif_'.$alumno->codigo];
+			$flip_eval = array_flip ($this->array_eval);
+			if ($calificacion === '') {
+			$this->cleaned_data['calif_'.$alumno->codigo] =NULL;
+				continue;
+			}
+			
+			if (array_key_exists ($calificacion, $flip_eval)) {
+				$this->cleaned_data['calif_'.$alumno->codigo] = $flip_eval[$calificacion];
+				continue;
+			}
+			if (preg_match ('/^(\d+)%$/', $calificacion, $submatch)) {
+				/* Es un porcentaje */
+				if ($submatch[1] > 100) {
+					throw new Gatuf_Form_Invalid ('El porcentaje en la calificacion del alumno "'.$alumno->nombre.'" es inválida');
+				}
+				$this->cleaned_data['calif_'.$alumno->codigo] = $submatch[1];
+				continue;
+			}
+			if (preg_match ('/^(\d+)$/', $calificacion, $submatch)) {
+				/* Es un valor crudo, verificar que no sobrepase el máximo porcentaje */
+				if ($submatch[1] > $this->porcentaje) {
+					$this->cleaned_data['calif_'.$alumno->codigo] = $this->porcentaje;
+				}
+				$this->cleaned_data['calif_'.$alumno->codigo] = (int) (($this->cleaned_data['calif_'.$alumno->codigo] * 100) / $this->porcentaje);
+				continue;
+			}
+
+			throw new Gatuf_Form_Invalid ('La calificacion en '.$alumno->nombre.' es inválida');
+		}
+		
+		return $this->cleaned_data;
+	}
+	
+	
 	public function save ($commit=true) {
 		if (!$this->isValid()) {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
-		$flip_eval = array_flip($this->array_eval);
-		foreach($this->alumnos as $key => $alumno){
-			if($valor = $this->cleaned_data['calif_'.$alumno->codigo]){
-				if (array_key_exists($valor, $flip_eval)) {
-					$valor = $flip_eval[$valor];
-			}
-				else if(!$pos = strpos($valor, '%')){
-					$valor = ($valor*100)/$this->porcentaje;
-				}
-				$calificacion = new Calif_Calificacion();
+		$calificacion = new Calif_Calificacion();
+		
+		foreach($this->alumnos as $alumno){
 				$calificacion->nrc = $this->nrc->nrc;
 				$calificacion->alumno = $alumno->codigo;
 				$calificacion->evaluacion = $this->modo_eval;
-				$calificacion->valor = $valor;
+				$calificacion->valor = $this->cleaned_data['calif_'.$alumno->codigo];
 				$calificacion->update();
 			}
 		}
-	}
 }

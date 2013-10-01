@@ -56,8 +56,10 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 			$calificacion = $this->cleaned_data ['calif_'.$eval];
 			
 			$flip_eval = array_flip ($this->array_eval);
-			if ($calificacion === '') return null;
-			
+			if ($calificacion === '') {
+				$this->cleaned_data['calif_'.$eval]  =NULL;
+				continue;
+			}
 			if (array_key_exists ($calificacion, $flip_eval)) {
 				$this->cleaned_data['calif_'.$eval] = $flip_eval[$calificacion];
 				continue;
@@ -76,7 +78,7 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 				if ($submatch[1] > $this->lista_porcentajes[$eval]->porcentaje) {
 					$this->cleaned_data['calif_'.$eval] = $this->lista_porcentajes[$eval]->porcentaje;
 				}
-				$this->cleaned_data['calif_'.$eval] = (int) (($submatch[1] * 100) / $this->lista_porcentajes[$eval]->porcentaje);
+				$this->cleaned_data['calif_'.$eval] = (int) (($this->cleaned_data['calif_'.$eval] * 100) / $this->lista_porcentajes[$eval]->porcentaje);
 				continue;
 			}
 			
