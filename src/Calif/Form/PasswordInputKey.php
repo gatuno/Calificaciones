@@ -22,8 +22,9 @@ class Calif_Form_PasswordInputKey extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ($error);
 		}
 		
-		$guser = Gatuf::factory ('Calif_User')->getUser ($cres[1]);
-		if ($guser === false || $guser->correo != $cres[0]) {
+		$guser = new Calif_User ();
+		$sql = new Gatuf_SQL ('email=%s AND id=%s', array ($cres[0], $cres[1]));
+		if ($guser->getcount(array ('filter' => $sql->gen())) != 1) {
 			throw new Gatuf_Form_Invalid ($error);
 		}
 		

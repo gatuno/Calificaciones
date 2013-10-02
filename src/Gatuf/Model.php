@@ -315,6 +315,21 @@ class Gatuf_Model {
 		return $this;
 	}
 	
+	public function getOne($p=array ()) {
+		if (!is_array($p)) {
+			$p = array ('filter' => $p);
+		}
+		
+		$items = $this->getList ($p);
+		if ($items->count () == 1) {
+			return $items[0];
+		}
+		if ($items->count () == 0) {
+			return null;
+		}
+		throw new Exception ('Error: Más de un item encontrado');
+	}
+	
 	function getList ($p=array()) {
 		$default = array('view' => null,
 						 'filter' => null,
@@ -434,9 +449,6 @@ class Gatuf_Model {
 				if (isset($row[$col])) $this->_data[$col] = $this->_fromDb($row[$col], $col);
 			}
 			
-			foreach ($query['props'] as $prop => $key) {
-				$this->_data[$key] = (isset($row[$prop])) ? $row[$prop] : null;
-			}
 			$this->restore ();
 			$res[] = clone ($this);
 		}

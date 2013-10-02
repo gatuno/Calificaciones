@@ -1,4 +1,4 @@
-Hola {$user.nombre} {$user.apellido},
+Hola,
 
 Has perdido tu contraseña y tu pediste recuperarla.
 Para darte una nueva contraseña, tienes que seguir

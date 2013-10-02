@@ -55,8 +55,9 @@ class Calif_Form_PasswordReset extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ($error);
 		}
 		
-		$guser = Gatuf::factory ('Calif_User')->getUser ($cres[1]);
-		if ($guser === false || $guser->correo != $cres[0]) {
+		$guser = new Calif_User ();
+		$sql = new Gatuf_SQL ('email=%s AND id=%s', array ($cres[0], $cres[1]));
+		if ($guser->getCount(array('filter' => $sql->gen())) != 1) {
 			throw new Gatuf_Form_Invalid ($error);
 		}
 		
@@ -72,7 +73,13 @@ class Calif_Form_PasswordReset extends Gatuf_Form {
 		}
 		
 		$this->user->setPassword ($this->cleaned_data['password']);
-		$this->user->updateSession ();
+		if ($commit) {
+			$this->user->update ();
+			
+			$params = array('user' => $this->user);
+                       Gatuf_Signal::send('Gatuf_User::passwordUpdated',
+                              'Calif_Form_PasswordReset', $params);
+               }
 		
 		return $this->user;
 	}

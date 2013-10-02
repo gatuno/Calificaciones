@@ -21,9 +21,9 @@
 	</ul>
 	<!-- Esta es la información del usuario -->
 	<div class="userinfo">{if !$user.isAnonymous()}
-			<p><img src="http://www.gravatar.com/avatar/{$user.correo|md5}.jpg?s=30" alt=" " /> <strong>{$user.nombre} {$user.apellido}</strong> <a href="{url 'Calif_Views::logout'}"><img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>{else}
+			<p><img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=30" alt=" " /> <strong>Nombre y Apellido</strong> <a href="{url 'Calif_Views::logout'}"><img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>{else}
 			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>{/if}
-	</div>{if $user and $user.codigo}
+	</div>{if $user and $user.id}
 	{getmsgs $user}{/if}
 	<div class="body">
 	<h1>{$page_title}</h1>

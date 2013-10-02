@@ -11,6 +11,9 @@
 <p><label for="id_password">Mi contraseña es:</label><input type="password" name="password" id="id_password" /></p>
 <p><input type="submit" value="Ingresar" /></p>
 </form>
+<p>¿Ha olvidado su contraseña?, Pruebe a <a href="{url 'Calif_Views::passwordRecoveryAsk'}">recuperarla</a></p>
+{/block}
+{block javascript}
 <script type="text/javascript">
 document.getElementById('id_login').focus()
 </script>

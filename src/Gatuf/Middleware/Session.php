@@ -95,8 +95,8 @@ class Gatuf_Middleware_Session {
         
         if (isset($data[$user->session_key])) {
             // We can get the corresponding user
-            $found_user = Gatuf::factory($user_model)->getUser ($data[$user->session_key]);
-            if ($found_user->codigo == $data[$user->session_key]) {
+            $found_user = new $user_model($data[$user->session_key]);
+            if ($found_user->id == $data[$user->session_key]) {
                 // User found!
                 $request->user = $found_user;
                 // If the last login is from 12h or more, set it to
@@ -132,15 +132,15 @@ class Gatuf_Middleware_Session {
      */
     function process_response($request, $response) {
         if ($request->session->touched) {
-            if ($request->session->session_key !== '') {
+            if ($request->session->id > 0) {
                 $request->session->update();
             } else {
                 $request->session->create();
             }
             $data = array();
             
-            if ($request->user->codigo !== 0 && $request->user->codigo !== '') {
-                $data[$request->user->session_key] = $request->user->codigo;
+            if ($request->user->id > 0) {
+                $data[$request->user->session_key] = $request->user->id;
             } else {
                 unset ($data[$request->user->session_key]);
             }

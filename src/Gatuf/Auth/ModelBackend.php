@@ -33,7 +33,8 @@ class Gatuf_Auth_ModelBackend {
     public static function getUser($user_id) {
         /* Recuperar el alumno o maestro */
         $user_model = Gatuf::config('gatuf_custom_user','Gatuf_User');
-        return Gatuf::factory ($user_model)->getUser ($user_id);
+        $sql = new Gatuf_SQL ('login=%s', array ($user_id));
+        return Gatuf::factory ($user_model)->getOne ($sql->gen());
     }
 
     /**
