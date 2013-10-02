@@ -47,9 +47,9 @@ $cfg['template_folders'] = array(
 #   $cfg['calif_base'] = '';
 #   $cfg['url_base'] = 'http://www.mydomain.com';
 #
-$cfg['calif_base'] = '/gatuno';
+$cfg['calif_base'] = '/calificaciones';
 $cfg['url_base'] = 'http://alanturing.cucei.udg.mx';
-$cfg['url_media'] = 'http://alanturing.cucei.udg.mx/gatuno/media';
+$cfg['url_media'] = 'http://alanturing.cucei.udg.mx/calificaciones/media';
 
 
 $cfg['calif_views'] = dirname(__FILE__).'/urls.php';

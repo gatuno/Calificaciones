@@ -5,7 +5,7 @@ class Calif_Seccion extends Gatuf_Model {
 	public $_model = __CLASS__;
 	
 	/* Campos */
-	public $nrc, $new_nrc;
+	public $nrc;
 	public $materia, $materia_desc, $materia_departamento;
 	public $seccion;
 	public $maestro, $maestro_nombre, $maestro_apellido;
@@ -69,6 +69,16 @@ class Calif_Seccion extends Gatuf_Model {
 		}
 		
 		return $rs[0]['max_seccion'];
+	}
+	
+	function cambiaNrc ($new_nrc) {
+		$req = sprintf ('UPDATE %s SET nrc = %s WHERE nrc = %s', $this->getSqlTable (), $new_nrc, $this->nrc);
+		
+		$this->_con->execute($req);
+		
+		$this->nrc = $new_nrc;
+		
+		return true;
 	}
 	
 	public function displaylinkedseccion ($extra=null) {

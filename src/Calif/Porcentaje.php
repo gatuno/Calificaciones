@@ -54,4 +54,19 @@ class Calif_Porcentaje extends Gatuf_Model {
 			),
 		);
 	}
+	
+	public function getGroupSum ($materia, $grupo) {
+		$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array ($materia, $grupo));
+		
+		$req = sprintf ('SELECT grupo, SUM(porcentaje) AS sum FROM %s WHERE %s GROUP BY (grupo)', $this->getSqlTable (), $sql->gen ());
+		
+		if (false === ($rs = $this->_con->select ($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if (count ($rs) == 0) {
+			return 0;
+		}
+		return (int) $rs[0]['sum'];
+	}
 }

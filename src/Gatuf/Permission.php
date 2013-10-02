@@ -8,7 +8,13 @@ class Gatuf_Permission extends Gatuf_Model {
 	
 	public function __construct () {
 		$this->_getConnection ();
-		$this->tabla = 'permisos';
+		$this->tabla = 'permissions';
+		
+		$tabla = 'groups_permissions';
+		
+		$this->views['__groups_permissions__'] = array ();
+		$this->views['__groups_permissions__']['tabla'] = $tabla;
+		$this->views['__groups_permissions__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable ().'.id='.$this->_con->pfx.$tabla.'.permission';
 	}
 	
 	public static function getFromString ($perm) {
@@ -22,5 +28,24 @@ class Gatuf_Permission extends Gatuf_Model {
 		}
 		
 		return $perms[0];
+	}
+	
+	public function getGroupsList ($p = array ()) {
+		$default = array('view' => null,
+		                 'filter' => null,
+		                 'order' => null,
+		                 'start' => null,
+		                 'nb' => null,
+		                 'count' => false);
+		$p = array_merge ($default, $p);
+		
+		$g = new Gatuf_Group ();
+		$sql = new Gatuf_SQL ($this->_con->pfx.$g->views['__groups_permissions__']['tabla'].'.permission=%s', $this->id);
+		
+		$g->views['__groups_permissions__']['where'] = $sql->gen ();
+		
+		$p['view'] = '__groups_permissions__';
+		
+		return $permi->getList ($p);
 	}
 }

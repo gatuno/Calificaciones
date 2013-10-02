@@ -150,6 +150,13 @@ $ctl[] = array(
 	'method' => 'actualizarAlumno',
 );
 
+$ctl[] = array (
+	'regex' => '#^/alumno/(\w\d{8})/evaluar/(\d+)/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Alumno',
+	'method' => 'evaluar',
+);
+
 /* Algunas materias */
 $ctl[] = array (
 	'regex' => '#^/materias/$#',
@@ -305,6 +312,13 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'liberarNrc',
+);
+
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/evaluar/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'evaluar'
 );
 
 /* Los salones */

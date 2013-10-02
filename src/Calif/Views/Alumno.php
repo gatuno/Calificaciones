@@ -57,4 +57,59 @@ class Calif_Views_Alumno {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public function evaluar ($request, $match){
+		/* Se recibe:
+		 * alumno en match[1]
+		 * nrc en match[2]
+		 * grupo_evaluacion en match[3]
+		 */
+		$grupo =  new Calif_GrupoEvaluacion ();
+		if (false === ($grupo->getGrupoEval ($match[3]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$alumno = new Calif_Alumno ();
+		if (false === ($alumno->getAlumno ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$seccion = new Calif_Seccion ();
+		if (false === ($seccion->getNrc ($match[2]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		/* Verificar que el alumno pertenezca a la sección */
+		$sql = new Gatuf_SQL ($seccion->_con->pfx.$seccion->views['__grupos__']['tabla'].'.alumno=%s', $alumno->codigo);
+		$count = $seccion->getAlumnosList (array ('count' => true, 'filter' => $sql->gen ()));
+		
+		if ($count != 1) { /* El dichoso alumno no está en esa sección */
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		$sql = new Gatuf_SQL ('grupo=%s AND materia=%s', array ($grupo->id, $seccion->materia));
+		$count = Gatuf::factory ('Calif_Porcentaje')->getList (array ('count' => true, 'filter' => $sql->gen ()));
+		
+		if ($count == 0) {
+			/* Pidieron evaluar sobre algun grupo de evaluacion, pero la materia no tiene formas de evaluacion */
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$title = 'Evaluando a '.$alumno->nombre.' '.$alumno->apellido.' ('.$grupo->descripcion.')';
+		
+		$extra = array ('grupo_eval' => $grupo, 'nrc' => $seccion, 'alumno' => $alumno);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Alumno_Evaluar ($request->POST, $extra);
+			if ($form->isValid ()) {
+				$form->save ();
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Alumno_Evaluar (null, $extra);
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/evaluar.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
 }

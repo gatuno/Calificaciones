@@ -38,18 +38,61 @@
 	{/foreach}
 	</tbody></table>
 {/if}
-<p>FIXME: Mostrar las calificaciones</p>
+<h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-{if $alumnos}
-	<table border="1">
-		<thead><tr><th>Alumno</th></tr></thead>
+{if $alumnos && $evaluacion}
+<div id="Evals_tabs">
+	<ul>{foreach $evaluacion as $id_geval => $eval}
+		<li><a href="#{$grupo_evals[$id_geval].descripcion}">{$grupo_evals[$id_geval].descripcion}</a></li>
+	{/foreach}</ul>
+	{foreach $evaluacion as $id_geval => $eval}
+	<table id="{$grupo_evals[$id_geval].descripcion}" border="1">
+		<thead><tr><th>Alumno</th><th>Codigo</th>
+		{foreach $eval as $e}
+				<th>{$e}</th>
+		{/foreach}
+		<th>Promedio</th>
+		<th></th>
+		</tr></thead>
 		<tbody>
 		{foreach $alumnos as $alumno}
-			<tr><td>{$alumno.nombre} {$alumno.apellido}</td></tr>
+			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td>
+			{foreach $eval as $key => $e}
+				<td>{$calificacion[$alumno.codigo][$key] }</td>
+			{/foreach}
+			<td>{$promedios[$alumno.codigo][$id_geval]}</td>
+			<td><a href="{url 'Calif_Views_Alumno::evaluar', array ($alumno->codigo, $seccion->nrc, $id_geval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
+			</tr>
 		{/foreach}
+		<tr><th colspan='2' >Promedio</th>
+		{foreach $promedios_eval[$id_geval] as $pe}
+				<td>{$pe}</td>
+		{/foreach}		
+		</tr>
 		</tbody>
 	</table>
+	{/foreach}
+<form method="post" action=".">
+{$form.render_table}
+<input type="submit" name="submit" value="Evaluar" />
+</div>
 {else}
-<p>La sección no tiene alumnos</p>
+	{if $alumnos}
+		<table border="1">
+		<thead><tr><th>Alumno</th><th>Codigo</th></tr></thead>
+		<tbody>{foreach $alumnos as $alumno}
+			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td></tr>
+		{/foreach}</tbody>
+		</table>
+	{else}
+		<p>La sección no tiene alumnos</p>
+	{/if}
 {/if}
 {/block}
+{block javascript}{literal}
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#Evals_tabs').tabs();
+});
+</script>
+{/literal}{/block}
