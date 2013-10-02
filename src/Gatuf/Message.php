@@ -14,9 +14,15 @@ class Gatuf_Message extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Sequence',
 			       'blank' => true,
 			),
-			'user' =>
+			'type' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			),
+			'user' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'model' => Gatuf::config('gatuf_custom_user', 'Gatuf_User'),
 			       'blank' => false,
 			),
 			'message' =>

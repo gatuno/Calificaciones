@@ -4,13 +4,6 @@ class Calif_Seccion extends Gatuf_Model {
 	/* Manejador de la tabla de secciones */
 	public $_model = __CLASS__;
 	
-	/* Campos */
-	public $nrc;
-	public $materia, $materia_desc, $materia_departamento;
-	public $seccion;
-	public $maestro, $maestro_nombre, $maestro_apellido;
-	public $asignacion;
-	
 	function init () {
 		$this->_a['table'] = 'secciones';
 		$this->_a['model'] = __CLASS__;

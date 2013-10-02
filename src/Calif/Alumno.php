@@ -34,11 +34,6 @@ class Calif_Alumno extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 100,
 			),
-			'correo' =>
-			array (
-			       'type' => 'Gatuf_DB_Field_Email',
-			       'blank' => false,
-			),
 			'grupos' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Manytomany',
@@ -46,6 +41,7 @@ class Calif_Alumno extends Gatuf_Model {
 			       'model' => 'Calif_Seccion',
 			       'relate_name' => 'grupos',
 			),
+			/* TODO: Falta sexo */
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';

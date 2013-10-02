@@ -243,10 +243,10 @@ class Gatuf_Model {
 	 * @param mixed Value to set
 	 */
 	function __set($prop, $val) {
-		/*if (null !== $val and isset($this->_cache['fk'][$prop])) {
-			$this->_data[$prop] = $val->$primary_key; FIXME: Tomo su llave primaria cuando la propiedad es foranea
-			unset($this->_cache['get_'.$prop]);
-		} else */{
+		if (null !== $val and isset($this->_fk[$prop])) {
+			$this->_data[$prop] = $val->$val->primary_key;
+			//unset($this->_cache['get_'.$prop]);
+		} else {
 			$this->_data[$prop] = $val;
 		}
 	}

@@ -42,6 +42,7 @@ class Calif_Horario extends Gatuf_Model {
 			$this->_a['cols'][$dia] = array (
 				'type' => 'Gatuf_DB_Field_Boolean',
 				'blank' => false,
+				'default' => false,
 			);
 		};
 	}

@@ -1,18 +1,97 @@
 <?php
 
 class Calif_User extends Gatuf_Model {
-	public $login_tabla;
-	public $password;
-	public $codigo = '';
-	
+	public $_model = __CLASS__;
 	public $session_key = '_GATUF_Gatuf_User_auth';
-	
-	public $active = true, $last_login = null, $admin = false;
 	
 	public $_cache_perms = null;
 	
-	function getLoginSqlTable () {
-		return $this->_con->pfx.$this->login_tabla;
+	function init () {
+		$this->_a['verbose'] = 'user';
+		$this->_a['table'] = 'users';
+		$this->_a['model'] = __CLASS__;
+		$this->primary_key = 'id';
+		$this->_a['cols'] = array (
+			'id' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Sequence',
+			       'blank' => true,
+			),
+			'login' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'unique' => true,
+			       'size' => 50,
+			),
+			'email' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Email',
+			       'blank' => false,
+			),
+			'password' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Password',
+			       'blank' => false,
+			       'size' => 150,
+			),
+			'groups' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Manytomany',
+			       'blank' => true,
+			       'model' => Gatuf::config ('gatuf_custom_group', 'Gatuf_Group'),
+			       'relate_name' => 'users',
+			),
+			'permissions' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Manytomany',
+			       'blank' => true,
+			       'model' => 'Gatuf_Permission',
+			),
+			'administrator' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'default' => false,
+			       'blank' => true,
+			),
+			'active' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'default' => true,
+			       'blank' => true,
+			),
+			'last_login' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Datetime',
+			       'blank' => true,
+			       'editable' => false,
+			),
+			'type' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'size' => 1,
+			       'default' => 'a'
+			),
+		);
+		$this->_a['idx'] = array (
+			'login_idx' =>
+			array (
+				'col' => 'login',
+				'type' => 'unique',
+			),
+		);
+		$this->_a['views'] = array ();
+	}
+	
+	function __toString () {
+		/* FIXME: regresar nombre y apellido */
+	}
+	
+	function preDelete () {
+		$params = array ('user' => $this);
+		
+		Gatuf_Signal::send ('Gatuf_User::preDelete', 'Gatuf_User', $params);
 	}
 	
 	function setPassword ($password) {
@@ -34,9 +113,8 @@ class Calif_User extends Gatuf_Model {
 	}
 	
 	function checkCreditentials ($login, $password) {
-		$where = new Gatuf_SQL ('login=%s', $login);
-		
-		$users = $this->getLoginList (array ('filter' => $where->gen()));
+		$where = 'login = '.$this->_toDb ($login, 'login');
+		$users = $this->getList (array ('filter' => $where));
 		
 		if ($users === false or count ($users) !== 1) {
 			return false;
@@ -48,142 +126,24 @@ class Calif_User extends Gatuf_Model {
 		return false;
 	}
 	
-	function preSave () {
-		if ($this->codigo !== '') {
+	function preSave ($create = false) {
+		if ($this->id > 0) {
 			$this->last_login = gmdate('Y-m-d H:i:s');
 		}
 	}
 	
-	function getSession () {
-		$req = sprintf ('SELECT * FROM %s WHERE login=%s', $this->getLoginSqlTable(), Gatuf_DB_IdentityToDb ($this->codigo, $this->_con));
-		
-		if (false === ($rs = $this->_con->select($req))) {
-			throw new Exception($this->_con->getError());
-		}
-		
-		if (count ($rs) == 0) {
-			throw new Exception ('Alto, no hay datos de sessión');
-		}
-		foreach ($rs[0] as $col => $val) {
-			$this->$col = $val;
-		}
-	}
-	
-	function updateSession () {
-		$req = sprintf ('UPDATE %s SET last_login = %s, password = %s, active = %s, admin = %s WHERE login = %s', $this->getLoginSqlTable(), Gatuf_DB_IdentityToDb ($this->last_login, $this->_con), Gatuf_DB_PasswordToDb ($this->password, $this->_con), Gatuf_DB_BooleanToDb ($this->active, $this->_con), Gatuf_DB_BooleanToDb ($this->admin, $this->_con), Gatuf_DB_IdentityToDb ($this->codigo, $this->_con));
-		
-		$this->_con->execute($req);
-		
-		return true;
-	}
-	
-	function createSession () {
-		$this->setPassword ('12345'); /* FIXME: Generar aleatoria y enviar por correo */
-		$req = sprintf ('INSERT INTO %s (login, password, active, last_login, admin) VALUES (%s, %s, %s, %s, %s)', $this->getLoginSqlTable(), Gatuf_DB_IdentityToDb ($this->codigo, $this->_con), Gatuf_DB_PasswordToDb ($this->password, $this->_con), Gatuf_DB_BooleanToDb ($this->active, $this->_con), Gatuf_DB_IdentityToDb ($this->last_login, $this->_con), Gatuf_DB_BooleanToDB ($this->admin, $this->_con));
-		
-		$this->_con->execute($req);
-		
-		return true;
-	}
-	
-	function getUser ($codigo) {
-		/* Recuperar el alumno o maestro */
-		if (strlen ($codigo) == 7) { 
-			/* Probemos si es maestro */
-			$user_model = new Calif_Maestro ();
-			if ($user_model->getMaestro ($codigo) === false) return false;
-			$user_model->getSession ();
-		} else {
-			/* En caso contrario, creemos es Alumno */
-			$user_model = new Calif_Alumno ();
-			if ($user_model->getAlumno ($codigo) === false) return false;
-			$user_model->getSession ();
-		}
-		return $user_model;
-	}
-	
 	function isAnonymous () {
-		return (0 === (int) $this->codigo);
-	}
-	
-	function setMessage ($type, $message) {
-		if ($this->isAnonymous ()) {
-			return false;
-		}
-		
-		$m = new Gatuf_Message ();
-		$m->message = $message;
-		$m->type = $type;
-		$m->user = $this->codigo;
-		
-		return $m->create ();
-	}
-	
-	function getAndDeleteMessages () {
-		if ($this->isAnonymous ()) {
-			return false;
-		}
-		$sql = new Gatuf_SQL ('user=%s', array ($this->codigo));
-		$ms = Gatuf::factory('Gatuf_Message')->getList (array ('filter' => $sql->gen ()));
-		foreach ($ms as $m) {
-			$m->delete ();
-		}
-		
-		return $ms;
-	}
-	
-	function getPermissionList ($p = array ()) {
-		$default = array('view' => null,
-		                 'filter' => null,
-		                 'order' => null,
-		                 'start' => null,
-		                 'nb' => null,
-		                 'count' => false);
-		$p = array_merge($default, $p);
-		
-		$m = new Gatuf_Permission ();
-		$tabla = 'users_permissions';
-		
-		$m->views['__manytomany__'] = array ();
-		$m->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$m->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.permission';
-		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.user=%s', $this->codigo);
-		$m->views['__manytomany__']['where'] = $sql->gen ();
-		
-		$p['view'] = '__manytomany__';
-		return $m->getList ($p);
-	}
-	
-	function getGroupList ($p = array ()) {
-		$default = array('view' => null,
-		                 'filter' => null,
-		                 'order' => null,
-		                 'start' => null,
-		                 'nb' => null,
-		                 'count' => false);
-		$p = array_merge($default, $p);
-		
-		$g = new Gatuf_Group ();
-		$tabla = 'groups_users';
-		
-		$g->views['__manytomany__'] = array ();
-		$g->views['__manytomany__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$g->getSqlTable().'.id='.$this->_con->pfx.$tabla.'.group';
-		$sql = new Gatuf_SQL ($this->_con->pfx.$tabla.'.user=%s', $this->codigo);
-		$g->views['__manytomany__']['where'] = $sql->gen ();
-		
-		$p['view'] = '__manytomany__';
-		return $g->getList ($p);
+		return (0 === (int) $this->id);
 	}
 	
 	function getAllPermissions ($force=false) {
-		if ($this->isAnonymous ()) return array ();
 		if ($force == false and !is_null($this->_cache_perms)) {
 			return $this->_cache_perms;
 		}
 		
 		$this->_cache_perms = array ();
-		$perms = $this->getPermissionList ();
-		
-		$groups = $this->getGroupList ();
+		$perms = (array) $this->get_permissions_list ();
+		$groups = $this->get_groups_list ();
 		$ids = array ();
 		foreach ($groups as $group) {
 			$ids[] = $group->id;
@@ -191,9 +151,8 @@ class Calif_User extends Gatuf_Model {
 		
 		if (count ($ids) > 0) {
 			$gperm = new Gatuf_Permission ();
-			$f_name = $this->_con->pfx.$gperm->views['__groups_permissions__']['tabla'].'.group IN ('.join(', ', $ids).')';
-			$gperm->views['__groups_permissions__']['where'] = $f_name;
-			$perms = array_merge ($perms, (array) $gperm->getList (array ('view' => '__groups_permissions__')));
+			$f_name = strtolower (Gatuf::config ('gatuf_custom_group', 'Gatuf_Grupo')).'_id';
+			$perms = array_merge ($perms, (array) $gperm->getList (array ('filter' => $f_name.' IN ('.join(', ', $ids).')', 'view' => 'join_group')));
 		}
 		foreach ($perms as $perm) {
 			if (!in_array ($perm->application.'.'.$perm->code_name, $this->_cache_perms)) {
@@ -212,6 +171,42 @@ class Calif_User extends Gatuf_Model {
 		if (in_array ($perm, $perms)) return true;
 		
 		return false;
+	}
+	
+	function hasAppPerms ($app) {
+		if ($this->administrator) return true;
+		
+		foreach ($this->getAllPermissions() as $perm) {
+			if (0 === strpos ($perm, $app.'.')) return true;
+		}
+		return false;
+	}
+	
+	function setMessage ($type, $message) {
+		if ($this->isAnonymous ()) {
+			return false;
+		}
+		
+		$m = new Gatuf_Message ();
+		$m->message = $message;
+		$m->type = $type;
+		$m->user = $this;
+		
+		return $m->create ();
+	}
+	
+	function getAndDeleteMessages () {
+		if ($this->isAnonymous ()) {
+			return false;
+		}
+		$messages = new ArrayObject ();
+		$ms = $this->get_gatuf_message_list();
+		foreach ($ms as $m) {
+			$messages[] = $m;
+			$m->delete ();
+		}
+		
+		return $messages;
 	}
 	
 	function isCoord () {
@@ -234,9 +229,5 @@ class Calif_User extends Gatuf_Model {
 		$coords = preg_grep ('/SIIAU.coordinador.*/', $perms);
 		
 		return $coords;
-	}
-	
-	public function __get ($name) {
-		return $this->$name ();
 	}
 }

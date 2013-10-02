@@ -3,6 +3,7 @@
 function Calif_Migrations_Install_setup ($params=null) {
 	$models = array ('Calif_Alumno',
 	                 'Calif_Carrera',
+	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',
@@ -25,6 +26,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 function Calif_Migrations_Install_teardown ($params=null) {
 	$models = array ('Calif_Alumno',
 	                 'Calif_Carrera',
+	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',

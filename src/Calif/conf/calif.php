@@ -109,7 +109,7 @@ $cfg['middleware_classes'] = array(
 	'Gatuf_Middleware_Session',
 );
 
-$cfg['gatuf_custom_user'] = 'Calif_Alumno';
+$cfg['gatuf_custom_user'] = 'Calif_User';
 
 $cfg['template_tags'] = array ('coordperm' => 'Calif_Template_CoordPerm');
 

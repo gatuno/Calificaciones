@@ -4,12 +4,6 @@ class Calif_Salon extends Gatuf_Model {
 	/* Manejador de la tabla salones */
 	public $_model = __CLASS__;
 	
-	/* Mis campos */
-	public $id;
-	public $edificio;
-	public $aula;
-	public $cupo;
-	
 	function init () {
 		$this->_a['table'] = 'salones';
 		$this->_a['model'] = __CLASS__;

@@ -160,10 +160,17 @@ class Gatuf_DB_Schema_MySQL {
 			if (!isset($val['col'])) {
 				$val['col'] = $idx;
 			}
-			$index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
-				sprintf('CREATE INDEX `%s` ON `%s` (%s);',
-						$idx, $this->con->pfx.$model->_a['table'],
-						Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
+			if ($val['type'] == 'unique') {
+			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
+				    sprintf('CREATE UNIQUE `%s` ON `%s` (%s);',
+						    $idx, $this->con->pfx.$model->_a['table'],
+						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
+			} else {
+			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
+				    sprintf('CREATE INDEX `%s` ON `%s` (%s);',
+						    $idx, $this->con->pfx.$model->_a['table'],
+						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
+			}
 		}
 		foreach ($model->_a['cols'] as $col => $val) {
 			$field = new $val['type']();
@@ -205,7 +212,7 @@ class Gatuf_DB_Schema_MySQL {
 		    if (isset($val['size'])) {
 		        $_tmp = sprintf ($this->mappings['char'], $val['size']);
 		    } else {
-		        $_tmp = sprintf ($this->mappings['char'], 10);
+		        $_tmp = sprintf ($this->mappings['char'], '10');
 		    }
 		}
 		return $_tmp;

@@ -22,46 +22,38 @@
 # ***** END LICENSE BLOCK ***** */
 
 class Gatuf_Group extends Gatuf_Model {
-	public $id;
-	public $name;
-	public $description;
+	public $_model = 'Gatuf_Group';
 	
-	function __construct () {
-		$this->_getConnection ();
-		$this->tabla = 'groups';
+	function init () {
+		$this->_a['table'] = 'groups';
+		$this->_a['model'] = 'Gatuf_Group';
+		$this->primary_key = 'id';
 		
-		/* Relacion N-M con los permisos */
-		$tabla = 'groups_permissions';
-		
-		$this->views['__groups_permissions__'] = array ();
-		$this->views['__groups_permissions__']['tabla'] = $tabla;
-		$this->views['__groups_permissions__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable ().'.id='.$this->_con->pfx.$tabla.'.group';
-		
-		/* Relacion N-M con los usuarios */
-		$tabla = 'groups_users';
-		
-		$this->views['__groups_users__'] = array ();
-		$this->views['__groups_users__']['tabla'] = $tabla;
-		$this->views['__groups_users__']['join'] = ' LEFT JOIN '.$this->_con->pfx.$tabla.' ON '.$this->getSqlViewTable ().'.id='.$this->_con->pfx.$tabla.'.group';
-	}
-	
-	public function getPermissionsList ($p = array ()) {
-		$default = array('view' => null,
-		                 'filter' => null,
-		                 'order' => null,
-		                 'start' => null,
-		                 'nb' => null,
-		                 'count' => false);
-		$p = array_merge ($default, $p);
-		
-		$permi = new Gatuf_Permissions ();
-		$sql = new Gatuf_SQL ($this->_con->pfx.$permi->views['__groups_permissions__']['tabla'].'.group=%s', $this->id);
-		
-		$permi->views['__groups_permissions__']['where'] = $sql->gen ();
-		
-		$p['view'] = '__groups_permissions__';
-		
-		return $permi->getList ($p);
+		$this->_a['cols'] = array (
+			'id' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Sequence',
+			       'blank' => true,
+			),
+			'name' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 50,
+			),
+			'description' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'blank' => false,
+			       'size' => 250,
+			),
+			'permissions' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Manytomany',
+			       'blank' => true,
+			       'model' => 'Gatuf_Permission',
+			),
+		);
 	}
 	
 	function __toString() {
