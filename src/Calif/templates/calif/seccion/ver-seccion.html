@@ -47,7 +47,11 @@
 	{/foreach}</ul>
 	{foreach $evaluacion as $id_geval => $eval}
 	<table id="{$grupo_evals[$id_geval].descripcion}" border="1">
-		<thead><tr><th>Alumno</th><th>Codigo</th>
+		<thead><tr><td colspan="2" style="visibility:collapse"></td>
+		{foreach $eval as $id_eval => $e}
+				<th><a href="{url 'Calif_Views_Seccion::evaluar', array ($seccion->nrc, $id_eval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></th>
+		{/foreach}</tr>
+		<tr><th>Alumno</th><th>Codigo</th>
 		{foreach $eval as $e}
 				<th>{$e}</th>
 		{/foreach}
@@ -72,9 +76,6 @@
 		</tbody>
 	</table>
 	{/foreach}
-<form method="post" action=".">
-{$form.render_table}
-<input type="submit" name="submit" value="Evaluar" />
 </div>
 {else}
 	{if $alumnos}

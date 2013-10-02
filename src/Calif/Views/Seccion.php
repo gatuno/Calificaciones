@@ -109,23 +109,7 @@ class Calif_Views_Seccion {
 					}
 				}
 			}
-		
-		//Form Choise Evaluaciones
-		$extra = array ("eval" =>$evaluacion);
-		
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Evaluacion_Evaluar ($request->POST, $extra);
-			
-			if ($form->isValid()) {
-				$eval_form = $form->save ();
-				
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::evaluar', array ('nrc' => $seccion->nrc, 'evaluacion' => $eval_form ));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-		} else {
-			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
-		}
-		
+
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
 		                                          array ('seccion' => $seccion,
 		                                                 'evaluacion' => $evaluacion,
@@ -137,7 +121,6 @@ class Calif_Views_Seccion {
 		                                                 'horarios' => $horarios,
 		                                                 'promedios' => $promedios,
 		                                                 'promedios_eval' => $promedios_eval,
-		                                                 'form' => $form,
 		                                                 'alumnos' => $alumnos),
 		                                          $request);
 	}
