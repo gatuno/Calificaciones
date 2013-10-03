@@ -351,6 +351,7 @@ class Gatuf_Model {
 					   'having' => '',
 					   'order' => $this->default_order,
 					   'limit' => '',
+					   'props' => array(),
 					   );
 		
 		if (!is_null($p['view'])) {
@@ -447,6 +448,10 @@ class Gatuf_Model {
 			$this->_reset ();
 			foreach ($this->_a['cols'] as $col => $val) {
 				if (isset($row[$col])) $this->_data[$col] = $this->_fromDb($row[$col], $col);
+			}
+			
+			foreach ($query['props'] as $prop) {
+				$this->_data[$prop] = (isset($row[$prop])) ? $row[$prop] : null;
 			}
 			
 			$this->restore ();
@@ -621,8 +626,8 @@ class Gatuf_Model {
 		$req .= '('.implode(', ', $icols).') VALUES ';
 		$req .= '('.implode(','."\n", $ivals).')';
 		$this->_con->execute($req);
-		if (!$raw) {
-			if ($this->primary_key == 'id' && false === ($id=$this->_con->getLastID())) {
+		if (!$raw && $this->primary_key == 'id') {
+			if (false === ($id=$this->_con->getLastID())) {
 				throw new Exception($this->_con->getError());
 			}
 			$this->_data['id'] = $id;

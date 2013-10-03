@@ -45,6 +45,14 @@ class Calif_Alumno extends Gatuf_Model {
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';
+		
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => '*',
+				'from' => 'alumnos_view',
+				'props' => array ('carrera_desc'),
+			),
+		);
 	}
 	
 	public function displaycarrera ($extra=null) {

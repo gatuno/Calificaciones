@@ -17,7 +17,7 @@ class Calif_Views_Carrera {
 	public function verCarrera ($request, $match) {
 		/* Ver si esta carrera es válida */
 		$carrera = new Calif_Carrera ();
-		if (false === ($carrera->getCarrera ($match[1]))) {
+		if (false === ($carrera->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -33,15 +33,16 @@ class Calif_Views_Carrera {
 		/* No se necesitan recuperar todas las carreras, solo la que estamos viendo */
 		$extra = array ($carrera->clave => $carrera->descripcion);
 		
-		$alumno =  new Calif_Alumno ();
+		$alumno = new Calif_Alumno ();
 		
 		$pag = new Gatuf_Paginator ($alumno);
+		$pag->model_view = 'paginador';
 		$pag->extra = $extra;
 		/* Forzar a solo ver los de esta carrera */
-		$sql = new Gatuf_SQL ('Carrera=%s', array ($carrera->clave));
+		$sql = new Gatuf_SQL ('carrera=%s', array ($carrera->clave));
 		$pag->forced_where = $sql;
 		
-		$pag->action = array ('Calif_Views_Carrera::verCarrera', $match[1]);
+		$pag->action = array ('Calif_Views_Carrera::verCarrera', $carrera->clave);
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
 			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),

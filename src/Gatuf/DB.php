@@ -38,7 +38,7 @@ function Gatuf_DB_defaultTypecast() {
 	             'Gatuf_DB_Field_Float' =>
 	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
 	             'Gatuf_DB_Field_Foreignkey' =>
-	                 array('Gatuf_DB_IntegerFromDb', 'Gatuf_DB_IntegerToDb'),
+	                 array('Gatuf_DB_IdentityFromDb', 'Gatuf_DB_IdentityToDb'),
 	             'Gatuf_DB_Field_Integer' =>
 	                 array('Gatuf_DB_IntegerFromDb', 'Gatuf_DB_IntegerToDb'),
 	             'Gatuf_DB_Field_Password' =>
