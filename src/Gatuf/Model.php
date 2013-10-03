@@ -244,7 +244,8 @@ class Gatuf_Model {
 	 */
 	function __set($prop, $val) {
 		if (null !== $val and isset($this->_fk[$prop])) {
-			$this->_data[$prop] = $val->$val->primary_key;
+			$key = $val->primary_key;
+			$this->_data[$prop] = $val->$key;
 			//unset($this->_cache['get_'.$prop]);
 		} else {
 			$this->_data[$prop] = $val;
@@ -266,8 +267,9 @@ class Gatuf_Model {
 				/*$this->_cache[$method] = Gatuf::factory($this->_m['get'][$method][0], $this->_data[$this->_m['get'][$method][1]]);
 				if ($this->_cache[$method]->id == '') $this->_cache[$method] = null;
 				return $this->_cache[$method];*/
-				$ret = Gatuf::factory($this->_m['get'][$method][0], $this->_data[$this->_m['get'][$method][1]]);
-				if ($ret->id == '') $ret = null;
+				$ret = new $this->_m['get'][$method][0]();
+				if (!$ret->get($this->_data[$this->_m['get'][$method][1]])) $ret = null;
+				
 				return $ret;
 			}
 		}
@@ -523,7 +525,7 @@ class Gatuf_Model {
 				' LEFT JOIN '.$this->_con->pfx.$table.' ON '
 				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.$this->_con->pfx.$m->_a['table'].'.'.$this->primary_key;
 
-			$m->_a['views'][$p['view'].'__manytomany__']['where'] = $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).'='.$this->_data[$this->primary_key];
+			$m->_a['views'][$p['view'].'__manytomany__']['where'] = $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).'='.$this->_con->esc ($this->_data[$this->primary_key]);
 			$p['view'] = $p['view'].'__manytomany__';
 		}
 		return $m->getList($p);

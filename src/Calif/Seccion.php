@@ -38,10 +38,19 @@ class Calif_Seccion extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
 			       'model' => 'Calif_Carrera',
+			       'is_null' => true,
 			),
 		);
 		
 		$this->default_order = 'materia ASC, seccion ASC';
+		
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => 'secciones_view.*',
+				'from' => 'secciones_view',
+				'props' => array ('materia_desc', 'materia_departamento', 'maestro_nombre', 'maestro_apellido'),
+			),
+		);
 	}
 	
 	function maxNrc () {

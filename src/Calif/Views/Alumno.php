@@ -8,6 +8,7 @@ class Calif_Views_Alumno {
 		$alumno =  new Calif_Alumno ();
 		
 		$pag = new Gatuf_Paginator ($alumno);
+		$pag->model_view = 'paginador';
 		$pag->action = array ('Calif_Views_Alumno::index');
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
@@ -52,7 +53,7 @@ class Calif_Views_Alumno {
 			$form = new Calif_Form_Alumno_Agregar (null, $extra);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/edit-alumno.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/agregar-alumno.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);

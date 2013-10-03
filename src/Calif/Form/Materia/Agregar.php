@@ -6,7 +6,7 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 		
 		$choices = array ();
 		foreach ($departamentos as $departamento) {
-			$choices[$departamento->departamento] = $departamento->clave;
+			$choices[$departamento->descripcion] = $departamento->clave;
 		}
 		
 		$this->fields['departamento'] = new Gatuf_Form_Field_Varchar (
@@ -110,11 +110,12 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
+		$departamento = new Calif_Departamento ($this->cleaned_data['departamento']);
 		$materia = new Calif_Materia ();
 		
 		$materia->clave = $this->cleaned_data['clave'];
 		$materia->descripcion = $this->cleaned_data['descripcion'];
-		$materia->departamento = $this->cleaned_data['departamento'];
+		$materia->departamento = $departamento;
 		$materia->creditos = $this->cleaned_data['creditos'];
 		$materia->curso = $this->cleaned_data['curso'];
 		$materia->taller = $this->cleaned_data['taller'];

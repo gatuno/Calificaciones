@@ -68,6 +68,14 @@ class Calif_Materia extends Gatuf_Model {
 		);
 		
 		$this->default_order = 'clave ASC, descripcion ASC';
+		
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => 'materias_view.*',
+				'from' => 'materias_view',
+				'props' => array ('departamento_desc'),
+			),
+		);
 	}
 	
 	public function displaylinkedclave ($extra) {

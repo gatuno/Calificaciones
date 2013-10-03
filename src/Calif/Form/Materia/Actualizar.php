@@ -10,7 +10,7 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 		
 		$choices = array ();
 		foreach ($departamentos as $departamento) {
-			$choices[$departamento->departamento] = $departamento->clave;
+			$choices[$departamento->descripcion] = $departamento->clave;
 		}
 		
 		$this->fields['departamento'] = new Gatuf_Form_Field_Varchar (
@@ -97,8 +97,10 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
+		$departamento = new Calif_Departamento ($this->cleaned_data['departamento']);
+		
 		$this->materia->descripcion = $this->cleaned_data['descripcion'];
-		$this->materia->departamento = $this->cleaned_data['departamento'];
+		$this->materia->departamento = $departamento;
 		$this->materia->creditos = $this->cleaned_data['creditos'];
 		$this->materia->curso = $this->cleaned_data['curso'];
 		$this->materia->taller = $this->cleaned_data['taller'];

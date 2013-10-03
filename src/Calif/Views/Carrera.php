@@ -82,7 +82,7 @@ class Calif_Views_Carrera {
 			$form = new Calif_Form_Carrera_Agregar(null, $extra);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/edit-carrera.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/agregar-carrera.html',
 		                                         array('page_title' => $title,
 		                                               'form' => $form),
 		                                         $request);
@@ -94,7 +94,7 @@ class Calif_Views_Carrera {
 		$extra = array ();
 		
 		$carrera = new Calif_Carrera ();
-		if (false === ($carrera->getCarrera ($match[1]))) {
+		if (false === ($carrera->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		/* Verificar que la carrera esté en mayúsculas */
@@ -119,6 +119,7 @@ class Calif_Views_Carrera {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/edit-carrera.html',
 		                                         array('page_title' => $title,
+		                                               'carrera' => $carrera,
 		                                               'form' => $form),
 		                                         $request);
 	}

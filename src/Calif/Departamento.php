@@ -7,10 +7,10 @@ class Calif_Departamento extends Gatuf_Model {
 	function init () {
 		$this->_a['table'] = 'departamentos';
 		$this->_a['model'] = __CLASS__;
-		$this->primary_key = 'id';
+		$this->primary_key = 'clave';
 		
 		$this->_a['cols'] = array (
-			'id' =>
+			'clave' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,

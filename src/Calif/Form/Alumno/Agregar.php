@@ -23,7 +23,6 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 				'initial' => '',
 				'help_text' => 'El nombre o nombres del alumno',
 				'max_length' => 50,
-				'min_length' => 5,
 				'widget_attrs' => array (
 					'maxlength' => 50,
 					'size' => 30,
@@ -37,7 +36,6 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 				'initial' => '',
 				'help_text' => 'Los apellidos del alumno',
 				'max_length' => 100,
-				'min_length' => 5,
 				'widget_attrs' => array (
 					'maxlength' => 100,
 					'size' => 30,
@@ -95,12 +93,11 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		}
 		
 		$alumno = new Calif_Alumno ();
-		
+		$carrera = new Calif_Carrera ($this->cleaned_data['carrera']);
 		$alumno->codigo = $this->cleaned_data['codigo'];
 		$alumno->nombre = $this->cleaned_data['nombre'];
 		$alumno->apellido = $this->cleaned_data['apellido'];
-		$alumno->carrera = $this->cleaned_data['carrera'];
-		$alumno->correo = $this->cleaned_data['correo'];
+		$alumno->carrera = $carrera;
 		
 		$alumno->create();
 		

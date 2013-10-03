@@ -10,10 +10,17 @@
 {/if}
 <form method="post" action=".">
 <table>
-{$form.render_table}
+	<tr><th><strong>Clave:</strong></th>
+	<td>{$carrera.clave}</td>
+	</tr>
+	<tr><th><strong>{$form.f.descripcion.labelTag}:</strong></th>
+	<td>{if $form.f.descripcion.errors}{$form.f.descripcion.fieldErrors}{/if}
+		{$form.f.descripcion|safe}<br />
+		<!-- TODO: Hacer algo con el help text: <span class="helptext">{$form.f.descripcion.help_text}</span> -->
+	</td></tr>
 <tr>
 <td>&nbsp;</td>
-<td><input type="submit" name="submit" value="Submit Form" /></td>
+<td><input type="submit" name="submit" value="Actualizar carrera" /></td>
 </tr>
 </table>
 {/block}
