@@ -10,10 +10,47 @@
 {/if}
 <form method="post" action=".">
 <table>
-{$form.render_table}
+	<tr><th><strong>{$form.f.departamento.labelTag}:</strong></th>
+	<td>{if $form.f.departamento.errors}{$form.f.departamento.fieldErrors}{/if}
+	{$form.f.departamento|safe}<br />
+	<span class="helptext">{$form.f.departamento.help_text}</span>
+	</td></tr>
+	<tr><th><strong>Clave:</strong></th>
+	<td>{$materia.clave}</td>
+	</tr>
+	<tr><th><strong>{$form.f.descripcion.labelTag}:</strong></th>
+	<td>{if $form.f.descripcion.errors}{$form.f.descripcion.fieldErrors}{/if}
+	{$form.f.descripcion|safe}<br />
+	<span class="helptext">{$form.f.descripcion.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.creditos.labelTag}:</strong></th>
+	<td>{if $form.f.creditos.errors}{$form.f.creditos.fieldErrors}{/if}
+	{$form.f.creditos|safe}<br />
+	<span class="helptext">{$form.f.creditos.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.curso.labelTag}:</strong></th>
+	<td>{if $form.f.curso.errors}{$form.f.curso.fieldErrors}{/if}
+	{$form.f.curso|safe}<br />
+	<span class="helptext">{$form.f.curso.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.taller.labelTag}:</strong></th>
+	<td>{if $form.f.taller.errors}{$form.f.taller.fieldErrors}{/if}
+	{$form.f.taller|safe}<br />
+	<span class="helptext">{$form.f.taller.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.laboratorio.labelTag}:</strong></th>
+	<td>{if $form.f.laboratorio.errors}{$form.f.laboratorio.fieldErrors}{/if}
+	{$form.f.laboratorio|safe}<br />
+	<span class="helptext">{$form.f.laboratorio.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.seminario.labelTag}:</strong></th>
+	<td>{if $form.f.seminario.errors}{$form.f.seminario.fieldErrors}{/if}
+	{$form.f.seminario|safe}<br />
+	<span class="helptext">{$form.f.seminario.help_text}</span>
+	</td></tr>
 <tr>
 <td>&nbsp;</td>
-<td><input type="submit" name="submit" value="Hecho" /></td>
+<td><input type="submit" name="submit" value="Actualizar materia" /></td>
 </tr>
 </table>
 </form>

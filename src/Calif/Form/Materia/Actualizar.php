@@ -25,18 +25,6 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 				'widget' => 'Gatuf_Form_Widget_SelectInput'
 		));
 		
-		$this->fields['clave'] = new Gatuf_Form_Field_Varchar(
-			array(
-				'required' => false,
-				'label' => 'Clave',
-				'initial' => $this->materia->clave,
-				'help_text' => 'La clave de la materia',
-				'widget_attrs' => array(
-					'readonly' => 'readonly',
-					'disabled' => 'disabled'
-				),
-		));
-		
 		$this->fields['descripcion'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,

@@ -212,7 +212,7 @@ class Calif_Views_Materia {
 	public function verEval ($request, $match) {
 		$materia =  new Calif_Materia ();
 		
-		if (false === ($materia->getMateria($match[1]))) {
+		if (false === ($materia->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -270,7 +270,7 @@ class Calif_Views_Materia {
 			$form = new Calif_Form_Materia_Agregar (null, $extra);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/edit-materia.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/agregar-materia.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
@@ -280,10 +280,8 @@ class Calif_Views_Materia {
 	public function actualizarMateria ($request, $match) {
 		$title = 'Actualizar materia';
 		
-		$extra = array ();
-		
 		$materia = new Calif_Materia ();
-		if (false === ($materia->getMateria ($match[1]))) {
+		if (false === ($materia->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		/* Verificar que la materia esté en mayúsculas */
@@ -293,7 +291,7 @@ class Calif_Views_Materia {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		$extra['materia'] = $materia;
+		$extra = array ('materia' => $materia);
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Materia_Actualizar ($request->POST, $extra);
 			
@@ -309,6 +307,7 @@ class Calif_Views_Materia {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/edit-materia.html',
 		                                         array ('page_title' => $title,
+		                                                'materia' => $materia,
 		                                                'form' => $form),
 		                                         $request);
 	}

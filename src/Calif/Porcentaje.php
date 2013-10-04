@@ -27,6 +27,11 @@ class Calif_Porcentaje extends Gatuf_Model {
 			       'blank' => false,
 			       'model' => 'Calif_Evaluacion',
 			),
+			'grupo' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			),
 			'porcentaje' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Integer',
@@ -68,5 +73,10 @@ class Calif_Porcentaje extends Gatuf_Model {
 			return 0;
 		}
 		return (int) $rs[0]['sum'];
+	}
+	
+	public function preSave ($create = false) {
+		$eval = new Calif_Evaluacion ($this->evaluacion);
+		$this->grupo = $eval->grupo;
 	}
 }
