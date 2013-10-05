@@ -4,17 +4,21 @@
 <ul style="list-style-type: none;">
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Materia::actualizarMateria', array ($materia.clave)}">Editar</a></li>
 </ul>
 {foreach $grupos as $grupo}
-<p>En la modalidad de {$grupo.descripcion}, la materia tiene las siguientes formas de evaluación:</p>
-{if $evals[$grupo.id]}
-<ul>{foreach $evals[$grupo.id] as $eval}
-<li>{$porcentajes[$eval.id].porcentaje}% - {$eval.descripcion}</li>
-{/foreach}</ul>
-<p>El total para {$grupo.descripcion} es de {$sumas[$grupo.id]}</p>
-{if $disponibles[$grupo.id]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $grupo.id)}">agregar una nueva forma de evaluación</a> a {$grupo.descripcion}</p>{/if}
+{if $porcentajes[$grupo.id]}
+	<p>En la modalidad de {$grupo.descripcion}, la materia tiene las siguientes formas de evaluación:</p>
+	<ul>{foreach $porcentajes[$grupo.id] as $porcentaje}
+		<li>{$porcentaje.porcentaje}% - {$evals[$porcentaje.evaluacion].descripcion}</li>
+	{/foreach}</ul>
+	<p>El total para {$grupo.descripcion} es de {$sumas[$grupo.id]}</p>
+	{if $disponibles[$grupo.id]}<p>También puede <a href="{url 'Calif_Views_Materia::agregarEval', array ($materia.clave, $grupo.id)}">agregar una nueva forma de evaluación</a> a {$grupo.descripcion}</p>{/if}
 {else}
-<p>Su materia no contiene formas de evaluación en el modo {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $grupo.id)}">agregar una forma de evaluación</a></p>
+	{if $disponibles[$grupo.id]}<p>Su materia no contiene formas de evaluación en el modo {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Materia::agregarEval', array($materia.clave, $grupo.id)}">agregar una forma de evaluación</a></p>
+	{else}
+		<p>No existen formas de evaluacion para {$grupo.descripcion}</p>
+	{/if}
 {/if}
 {/foreach}
 {/block}

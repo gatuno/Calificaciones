@@ -5,11 +5,11 @@ class Calif_Form_Materia_AgregarEval extends Gatuf_Form {
 	
 	public function initFields($extra=array()) {
 		$choices = array ();
-		foreach ($extra['evals'] as $eval) {
+		$this->materia = $extra['materia'];
+		
+		foreach ($this->materia->getNotEvals ($extra['gp']) as $eval) {
 			$choices [$eval->descripcion] = $eval->id;
 		}
-		
-		$this->materia = $extra['materia'];
 		
 		$this->fields['eval'] = new Gatuf_Form_Field_Varchar(
 			array(
@@ -38,16 +38,13 @@ class Calif_Form_Materia_AgregarEval extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$ponderacion = $this->cleaned_data['porcentaje'];
-		$id_eval = $this->cleaned_data['eval'];
 		$evaluacion = new Calif_Evaluacion ();
-		$evaluacion->getEval ($id_eval);
+		$evaluacion->get ($this->cleaned_data['eval']);
 		
 		$porcentaje = new Calif_Porcentaje ();
-		$porcentaje->materia = $this->materia->clave;
-		$porcentaje->porcentaje = $ponderacion;
-		$porcentaje->grupo = $evaluacion->grupo;
-		$porcentaje->evaluacion = $evaluacion->id;
+		$porcentaje->materia = $this->materia;
+		$porcentaje->porcentaje = $this->cleaned_data['porcentaje'];
+		$porcentaje->evaluacion = $evaluacion;
 		
 		$porcentaje->create ();
 		

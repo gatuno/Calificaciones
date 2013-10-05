@@ -58,6 +58,7 @@ class Calif_Porcentaje extends Gatuf_Model {
 			       'is_null' => 1,
 			),
 		);
+		$this->default_order = 'evaluacion ASC';
 	}
 	
 	public function getGroupSum ($materia, $grupo) {

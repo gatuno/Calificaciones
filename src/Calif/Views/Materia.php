@@ -223,21 +223,23 @@ class Calif_Views_Materia {
 		}
 		
 		$grupos = Gatuf::factory ('Calif_GrupoEvaluacion')->getList ();
-		$sql = new Gatuf_SQL ('materia=%s', $materia->clave);
-		$ps = Gatuf::factory ('Calif_Porcentaje')->getList (array ('filter' => $sql->gen ()));
-		$porcentajes = array ();
-		foreach ($ps as $p) {
-			$porcentajes[$p->evaluacion] = $p;
-		}
 		
-		$evals = array ();
+		$porcentajes = array ();
 		$disponibles = array ();
 		$sumas = array ();
 		
 		foreach ($grupos as $gp) {
-			$evals[$gp->id] = $materia->getEvals ($gp->id);
+			$sql = new Gatuf_SQL ('grupo=%s', $gp->id);
+			$porcentajes[$gp->id] = $materia->get_calif_porcentaje_list (array ('filter' => $sql->gen()));
+			if ($porcentajes[$gp->id]->count () == 0) $porcentajes[$gp->id] = array ();
 			$sumas[$gp->id] = Gatuf::factory ('Calif_Porcentaje')->getGroupSum ($materia->clave, $gp->id);
 			$disponibles[$gp->id] = $materia->getNotEvals ($gp->id, true);
+		}
+		
+		$evals = array ();
+		
+		foreach (Gatuf::factory ('Calif_Evaluacion')->getList () as $eval) {
+			$evals[$eval->id] = $eval;
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-eval.html',
@@ -316,8 +318,15 @@ class Calif_Views_Materia {
 	public function agregarEval ($request, $match) {
 		$extra = array ();
 		
+		/* Verificar que el grupo de evaluación exista */
+		$grupo_eval = new Calif_GrupoEvaluacion  ();
+		
+		if (false === ($grupo_eval->get ($match[2]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
 		$materia = new Calif_Materia ();
-		if (false === ($materia->getMateria ($match[1]))) {
+		if (false === ($materia->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		/* Verificar que la materia esté en mayúsculas */
@@ -327,23 +336,16 @@ class Calif_Views_Materia {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		/* Verificar que el grupo de evaluación exista */
-		$grupo_eval = new Calif_GrupoEvaluacion  ();
-		
-		if (false === ($grupo_eval->getGrupoEval ($match[2]))) {
-			throw new Gatuf_HTTP_Error404 ();
-		}
-		
-		$disponibles = $materia->getNotEvals ($grupo_eval->id);
+		$disponibles = $materia->getNotEvals ($grupo_eval->id, true);
 		
 		if (count ($disponibles) == 0) {
 			/* TODO: Lanzar un lindo mensaje de error */
-			throw new Exception ('La materia no tiene formas de evaluacion disponibles para este grupo');
+			throw new Gatuf_HTTP_Error404 ();
 		}
 		
 		$title = 'Agregar evaluación a la materia "' . $materia->descripcion .'", para '.$grupo_eval->descripcion;
 		
-		$extra = array ('evals' => $disponibles, 'materia' => $materia);
+		$extra = array ('gp' => $grupo_eval->id, 'materia' => $materia);
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Materia_AgregarEval ($request->POST, $extra);
 			

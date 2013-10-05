@@ -78,6 +78,33 @@ class Calif_Materia extends Gatuf_Model {
 		);
 	}
 	
+	public function getNotEvals ($grupo = null, $count = false) {
+		$porcentajes = $this->get_calif_porcentaje_list ();
+
+		$ids = array ();
+
+		foreach ($porcentajes as $p) {
+			$ids[] = $p->evaluacion;
+		}
+
+		if (count ($ids) == 0) {
+			if (!is_null ($grupo)) {
+				$where = 'grupo='.$grupo;
+			} else {
+				$where = '';
+			}
+			return Gatuf::factory ('Calif_Evaluacion')->getList (array ('count' => $count, 'filter' => $where));
+		}
+
+		$where = 'id NOT IN ('.join(', ', $ids).')';
+
+		if (!is_null ($grupo)) {
+			$where .= ' AND grupo='.$grupo;
+		}
+
+		return Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $where, 'count' => $count));
+	}
+
 	public function displaylinkedclave ($extra) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
 	}
