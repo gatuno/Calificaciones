@@ -5,11 +5,11 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 class Calif_Views_Evaluacion {
 	public function index ($request, $match) {
 		$evals = array ();
-		$grupos_evals = Gatuf::factory('Calif_Evaluacion')->getGruposEvals ();
+		$grupos_evals = Gatuf::factory('Calif_GrupoEvaluacion')->getList ();
 		
-		foreach ($grupos_evals as $grupo => $desc) {
-			$sql_filter = new Gatuf_SQL ('grupo=%s', $grupo);
-			$evals [$grupo] = Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $sql_filter->gen()));
+		foreach ($grupos_evals as $grupo) {
+			$evals [$grupo->id] = $grupo->get_calif_evaluacion_list ();
+			if ($evals [$grupo->id]->count () == 0) $evals [$grupo->id] = array ();
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/index.html',
@@ -22,10 +22,8 @@ class Calif_Views_Evaluacion {
 	public function agregarEval ($request, $match) {
 		$title = 'Nueva evaluacion';
 		
-		$extra = array ();
-		
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Evaluacion_Agregar ($request->POST, $extra);
+			$form = new Calif_Form_Evaluacion_Agregar ($request->POST);
 			
 			if ($form->isValid()) {
 				$evaluacion = $form->save ();
@@ -34,10 +32,10 @@ class Calif_Views_Evaluacion {
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Evaluacion_Agregar (null, $extra);
+			$form = new Calif_Form_Evaluacion_Agregar (null);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/edit-eval.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/agregar-eval.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);

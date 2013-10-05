@@ -3,17 +3,17 @@
 class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 	public function initFields($extra=array()) {
 		/* Recuperar todos los grupos de evaluación */
-		$gruposeval = Gatuf::factory ('Calif_Evaluacion')->getGruposEvals ();
+		$grupos = Gatuf::factory ('Calif_GrupoEvaluacion')->getList ();
 		
 		$choices = array ();
-		foreach ($gruposeval as $key => $descrip) {
-			$choices [$descrip] = $key;
+		foreach ($grupos as $grupo) {
+			$choices [$grupo->descripcion] = $grupo->id;
 		}
 		
 		$this->fields['grupoeval'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,
-				'label' => 'Grupo Evaluacion',
+				'label' => 'Grupo de evaluacion',
 				'initial' => '',
 				'help_text' => 'En que modalidad aplica la evaluación',
 				'widget_attrs' => array (
@@ -41,12 +41,14 @@ class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
+		$grupo = new Calif_GrupoEvaluacion ($this->cleaned_data['grupoeval']);
+		
 		$evaluacion = new Calif_Evaluacion ();
 		
-		$evaluacion->grupo = $this->cleaned_data['grupoeval'];
+		$evaluacion->grupo = $grupo;
 		$evaluacion->descripcion = $this->cleaned_data['descripcion'];
 		
-		$evaluacion->create();
+		if ($commit) $evaluacion->create();
 		
 		return $evaluacion;
 	}
