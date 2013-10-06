@@ -9,8 +9,8 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		
 		$this->user = $extra['user'];
 		
-		if ($max_nrc < 80000) $max_nrc = 80001;
-		$this->fields['nrc'] = new Gatuf_Form_Field_Varchar(
+		if ($max_nrc < 80000) $max_nrc = 80000;
+		$this->fields['nrc'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => false,
 				'label' => 'NRC',
@@ -28,11 +28,11 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$carreras = $this->user->returnCoord ();
 		$carrera_model = new Calif_Carrera ();
 		foreach ($carreras as $carrera) {
-			$carrera_model->getCarrera (substr ($carrera, 18));
+			$carrera_model->get (substr ($carrera, 18));
 			
 			$choices[$carrera_model->descripcion] = array ();
 			
-			foreach ($carrera_model->getMateriasList (array ('order' => 'descripcion ASC')) as $m) {
+			foreach ($carrera_model->get_catalogo_list (array ('order' => 'descripcion ASC')) as $m) {
 				$choices[$carrera_model->descripcion][$m->descripcion] = $m->clave;
 			}
 		}
@@ -65,7 +65,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$choices = array ();
 		$choices["Staff Staff Staff"] = 1111111;
 		
-		$this->fields['maestro'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['maestro'] = new Gatuf_Form_Field_Integer (
 			array(
 				'required' => false,
 				'label' => 'Maestro',
@@ -85,7 +85,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		if ($nrc == '') {
 			$max_nrc = Gatuf::factory ('Calif_Seccion')->maxNrc ();
 		
-			if ($max_nrc < 80000) $max_nrc = 80001;
+			if ($max_nrc < 80000) $nrc = 80000;
 		}
 		
 		/* Verificar que este nrc no esté duplicado */
@@ -105,15 +105,14 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 	public function clean_maestro () {
 		/* Verificar que nuestro amigo staff exista */
 		$maestro = new Calif_Maestro ();
-		if (false === ($maestro->getMaestro ('1111111'))) {
+		if (false === ($maestro->get ('1111111'))) {
 			$maestro->codigo = 1111111;
 			$maestro->nombre = 'Staff';
 			$maestro->apellido = 'Staff Staff';
 			$maestro->correo = '--invalido--';
 			
 			$maestro->create ();
-			$maestro->active = false;
-			$maestro->updateSession ();
+			//$maestro->active = false;
 		}
 		
 		return 1111111;
@@ -124,11 +123,8 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$materia = $this->cleaned_data['materia'];
 		
 		$materia_model = new Calif_Materia ();
-		if (false === ($materia_model->getMateria ($materia))) {
-			throw new Exception ('No debería pasar. Condición de carrera. Por favor llame al administrador');
-		}
-		
-		$carreras = $materia_model->getCarrerasList ();
+		$materia_model->get ($materia);
+		$carreras = $materia_model->get_carreras_list ();
 		
 		$permiso = false;
 		foreach ($carreras as $carrera) {
@@ -170,11 +166,13 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$seccion = new Calif_Seccion ();
 		
 		$seccion->nrc = $this->cleaned_data['nrc'];
-		$seccion->materia = $this->cleaned_data['materia'];
+		$materia = new Calif_Materia ($this->cleaned_data['materia']);
+		$seccion->materia = $materia;
 		$seccion->seccion = $this->cleaned_data['seccion'];
-		$seccion->maestro = $this->cleaned_data['maestro'];
+		$maestro = new Calif_Maestro ($this->cleaned_data['maestro']);
+		$seccion->maestro = $maestro;
 		
-		$seccion->create();
+		if ($commit) $seccion->create();
 		
 		return $seccion;
 	}

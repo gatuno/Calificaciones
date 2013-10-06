@@ -39,6 +39,7 @@ class Calif_Seccion extends Gatuf_Model {
 			       'blank' => false,
 			       'model' => 'Calif_Carrera',
 			       'is_null' => true,
+			       'default' => null,
 			),
 		);
 		

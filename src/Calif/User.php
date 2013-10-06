@@ -165,7 +165,7 @@ class Calif_User extends Gatuf_Model {
 	function hasPerm ($perm, $obj = null) {
 		if ($this->isAnonymous ()) return false;
 		if (!$this->active) return false;
-		if ($this->admin) return true;
+		if ($this->administrator) return true;
 		$perms = $this->getAllPermissions ();
 		
 		if (in_array ($perm, $perms)) return true;
@@ -211,7 +211,7 @@ class Calif_User extends Gatuf_Model {
 	
 	function isCoord () {
 		if (!$this->active) return false;
-		if ($this->admin) return true;
+		if ($this->administrator) return true;
 		
 		$perms = $this->getAllPermissions ();
 		

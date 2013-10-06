@@ -13,6 +13,7 @@ class Calif_Views_Seccion {
 		
 		/* Enlaces extras */
 		$pag = new Gatuf_Paginator ($seccion);
+		$pag->model_view = 'paginador';
 		
 		$pag->action = array ('Calif_Views_Seccion::index');
 		$pag->summary = 'Lista de secciones';
@@ -162,7 +163,7 @@ class Calif_Views_Seccion {
 			$extra['materia'] = $materia->clave;
 		}
 		
-		if ($request->user->admin) {
+		if ($request->user->administrator) {
 			/* Formulario completo para los administradores, o la otra condición */
 			if ($request->method == 'POST') {
 				$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
@@ -193,7 +194,7 @@ class Calif_Views_Seccion {
 			}
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/edit-seccion.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/agregar-seccion.html',
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);

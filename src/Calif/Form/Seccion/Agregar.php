@@ -2,13 +2,13 @@
 
 class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 	public function initFields($extra=array()) {
-		$this->fields['nrc'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['nrc'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => true,
 				'label' => 'NRC',
 				'initial' => '',
 				'help_text' => 'El Nrc del grupo',
-				'max_length' => 5,
+				'max' => 99999,
 				'widget_attrs' => array(
 					'maxlength' => 5,
 				),
@@ -17,9 +17,8 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		$materia = '';
 		if (isset ($extra['materia'])) $materia = $extra['materia'];
 		
-		$todaslasmaterias = Gatuf::factory ('Calif_Materia')->getList ();
 		$choices = array ();
-		foreach ($todaslasmaterias as $m) {
+		foreach (Gatuf::factory ('Calif_Materia')->getList () as $m) {
 			$choices [$m->clave . ' - ' . $m->descripcion] = $m->clave;
 		}
 		
@@ -51,10 +50,10 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		                    array ('order' => array ('Apellido ASC', 'Nombre ASC')));
 		$choices = array ();
 		foreach ($todoslosmaestros as $m) {
-			$choices[$m->apellido . ' ' . $m->nombre] = $m->codigo;
+			$choices[$m->apellido.' '.$m->nombre] = $m->codigo;
 		}
 		
-		$this->fields['maestro'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['maestro'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => true,
 				'label' => 'Maestro',
@@ -70,12 +69,8 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 	public function clean_nrc () {
 		$nrc = $this->cleaned_data ['nrc'];
 		
-		if (!preg_match ("/^\d+$/", $nrc)) {
-			throw new Gatuf_Form_Invalid ('El nrc debe ser numérico');
-		}
-		
 		/* Verificar que este nrc no esté duplicado */
-		$sql = new Gatuf_SQL('nrc=%s', array($nrc));
+		$sql = new Gatuf_SQL('nrc=%s', $nrc);
         $l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));
         if ($l > 0) {
             throw new Gatuf_Form_Invalid('Este NRC ya existe');
@@ -117,11 +112,15 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		$seccion = new Calif_Seccion ();
 		
 		$seccion->nrc = $this->cleaned_data['nrc'];
-		$seccion->materia = $this->cleaned_data['materia'];
-		$seccion->seccion = $this->cleaned_data['seccion'];
-		$seccion->maestro = $this->cleaned_data['maestro'];
 		
-		$seccion->create();
+		$materia = new Calif_Materia ($this->cleaned_data['materia']);
+		$seccion->materia = $materia;
+		$seccion->seccion = $this->cleaned_data['seccion'];
+		
+		$maestro = new Calif_Maestro ($this->cleaned_data['maestro']);
+		$seccion->maestro = $maestro;
+		
+		if ($commit) $seccion->create();
 		
 		return $seccion;
 	}

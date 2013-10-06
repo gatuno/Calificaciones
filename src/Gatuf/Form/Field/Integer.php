@@ -48,7 +48,7 @@ class Gatuf_Form_Field_Integer extends Gatuf_Form_Field {
                             }
                          }
                     } else {
-                        if ($value == $options) {
+                        if ($value == $val) {
                             $found = true;
                             break;
                         }
