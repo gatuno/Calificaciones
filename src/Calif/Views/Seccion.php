@@ -45,20 +45,17 @@ class Calif_Views_Seccion {
 		
 		$seccion =  new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$materia = new Calif_Materia ();
-		$materia->getMateria ($seccion->materia);
+		$materia = new Calif_Materia ($seccion->materia);
+		$maestro = new Calif_Maestro ($seccion->maestro);
 		
-		$maestro = new Calif_Maestro ();
-		$maestro->getMaestro ($seccion->maestro);
+		$horarios = $seccion->get_calif_horario_list ();
 		
-		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
-		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
-		
-		$alumnos = $seccion->getAlumnosList ();
+		$alumnos = $seccion->get_grupos_list (array ('order' => 'apellido ASC, nombre ASC'));
+		if (count ($alumnos) == 0) $alumnos = array ();
 		
 		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->id][Porcentajes->evaluacion]=Evaluaciones->descripcion
 		$todas_evaluaciones = array ();
@@ -67,79 +64,65 @@ class Calif_Views_Seccion {
 			$todas_evaluaciones[$e->id] = $e;
 		}
 		
-		$evaluacion = array ();
-		$grupo_evals = array ();
-		$promedios = array ();
-		$promedios_eval = array();
-		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $geval) {
-			$sql = new Gatuf_SQL ('materia=%s AND grupo=%s', array($materia->clave, $geval->id));
-			$temp_eval = Gatuf::factory('Calif_Porcentaje')->getList(array ('filter' => $sql->gen()));
+		$porcentajes = array ();
+		$grupo_evals = (array) Gatuf::factory('Calif_GrupoEvaluacion')->getList();
+		foreach ($grupo_evals as $key => $geval) {
+			$sql = new Gatuf_SQL ('grupo=%s', array($geval->id));
+			$porcentajes[$geval->id] = (array) $materia->get_calif_porcentaje_list (array ('filter' => $sql->gen()));
 		
-			if (count ($temp_eval) != 0) {
-				$grupo_evals[$geval->id] = $geval;
-				foreach($temp_eval as $t_eval) {
-					$evaluacion[$geval->id][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
+			if (count ($porcentajes[$geval->id]) == 0) {
+				unset ($grupo_evals[$key]);
+			}
+		}
+		
+		if (count ($grupo_evals) != 0) {
+			// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
+			$array_eval = array(-1 => 'NP', -2 => 'SD');
+			$calificacion = array();
+			$promedios = array ();
+			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
+			$where = $sql->gen ();
+		
+			foreach ($alumnos as $alumno) {
+				foreach ($alumno->get_calif_calificacion_list(array ('filter' => $where)) as $t_calif) {
+					if (array_key_exists($t_calif->valor , $array_eval)) {
+						$t_calif->valor = $array_eval[$t_calif->valor];
+					} else if($t_calif->valor) {
+						$t_calif->valor .='%';
+					}
+					$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
+				}
+				foreach ($grupo_evals as $geval) {
+					$promedios[$alumno->codigo][$geval->id] = 0;//$t_calif->getPromedio ($geval->id);
 				}
 			}
-		}
 		
-		// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
-		$array_eval = array(-1 => 'NP', -2 => 'SD');
-		$calificacion = array();
-		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
-		$temp_calif = Gatuf::factory('Calif_Calificacion')->getList(array('filter'=> $sql->gen()));
-
-		foreach ($temp_calif as $t_calif) {
-			if (array_key_exists($t_calif->valor , $array_eval)) {
-				$t_calif->valor = $array_eval[$t_calif->valor];
-			} else if($t_calif->valor) {
-				$t_calif->valor .='%';
-			}
-			$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
-			
-			foreach ($grupo_evals as $id => $gp) {
-				$promedios[$t_calif->alumno][$id] = $t_calif->getPromedio ($id);
-			}
-		}
-		
-		// LLenar arreglo con los promedios de la
-		foreach($evaluacion as $key => $eval) {
+			// LLenar arreglo con los promedios de la
+			/*$promedios_eval = array();
+			foreach($evaluacion as $key => $eval) {
 				foreach($eval as $ev => $e) {
 					if($promedios_eval[$key][$ev] = $temp_calif[0]->getPromedioEval ($ev)){
 						$promedios_eval[$key][$ev] .= '%'; 
 					}
 				}
-			}
-		
-		//Form Choise Evaluaciones
-		$extra = array ("eval" =>$evaluacion);
-		
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Evaluacion_Evaluar ($request->POST, $extra);
-			
-			if ($form->isValid()) {
-				$eval_form = $form->save ();
-				
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::evaluar', array ('nrc' => $seccion->nrc, 'evaluacion' => $eval_form ));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
+			}*/
 		} else {
-			$form = new Calif_Form_Evaluacion_Evaluar (null, $extra);
+			$grupo_evals = array ();
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/ver-seccion.html',
-		                                          array ('seccion' => $seccion,
-		                                                 'evaluacion' => $evaluacion,
-		                                                 'grupo_evals' => $grupo_evals,
-		                                                 'calificacion' => $calificacion,
-		                                                 'page_title' => $title,
+		                                          array ('page_title' => $title,
+		                                                 'seccion' => $seccion,
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
 		                                                 'horarios' => $horarios,
+		                                                 'alumnos' => $alumnos,
+		                                                 'evals' => $todas_evaluaciones,
+		                                                 'porcentajes' => $porcentajes,
+		                                                 'grupo_evals' => $grupo_evals,
+		                                                 'calificacion' => $calificacion,
 		                                                 'promedios' => $promedios,
-		                                                 'promedios_eval' => $promedios_eval,
-		                                                 'form' => $form,
-		                                                 'alumnos' => $alumnos),
+		                                                 /*'promedios_eval' => $promedios_eval,*/),
 		                                          $request);
 	}
 	
@@ -295,7 +278,7 @@ class Calif_Views_Seccion {
 		$materia = new Calif_Materia ();
 		$materia->getMateria ($seccion->materia);
 		
-		$carreras = $materia->getCarrerasList ();
+		$carreras = $materia->get_carreras_list ();
 		
 		$permiso = false;
 		

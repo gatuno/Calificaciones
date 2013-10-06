@@ -11,7 +11,7 @@ $m['Calif_Materia'] = array ('relate_to' => array ('Calif_Departamento'),
 $m['Calif_Porcentaje'] = array ('relate_to' => array ('Calif_Materia', 'Calif_Evaluacion'));
 $m['Calif_Salon'] = array ('relate_to' => array ('Calif_Edificio'));
 $m['Calif_Seccion'] = array ('relate_to' => array ('Calif_Materia', 'Calif_Maestro', 'Calif_Carrera'));
-
+$m['Calif_Calificacion'] = array ('relate_to' => array ('Calif_Seccion', 'Calif_Alumno', 'Calif_Evaluacion'));
 /* Conexión de señales aquí */
 
 return $m;

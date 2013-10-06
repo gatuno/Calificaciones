@@ -5,13 +5,13 @@
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
-{if $user.isCoord}
+{if $user.isCoord()}
 	<h3>Oferta académica</h3>
 	{if $seccion.asignacion}
 		{coordperm 'puede_liberar', $user, $seccion.asignacion}
 			<p>La sección está pedida para {$seccion.asignacion}.{if $puede_liberar}<a href="{url 'Calif_Views_Seccion::liberarNrc', array ($seccion.nrc)}">Liberar esta sección</a>.{/if}</p>
 	{else}
-		{foreach $materia.getCarrerasList as $carrera}
+		{foreach $materia.get_carreras_list as $carrera}
 			{coordperm 'puede', $user, $carrera.clave}
 			{if $puede}
 				<p><a href="{url 'Calif_Views_Seccion::reclamarNrc', array ($seccion.nrc, $carrera.clave)}">Reclamar sección para {$carrera.clave}</a></p>
@@ -40,48 +40,42 @@
 {/if}
 <h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-{if $alumnos && $evaluacion}
+{if $alumnos && $grupo_evals}
 <div id="Evals_tabs">
-	<ul>{foreach $evaluacion as $id_geval => $eval}
-		<li><a href="#{$grupo_evals[$id_geval].descripcion}">{$grupo_evals[$id_geval].descripcion}</a></li>
+	<ul>{foreach $grupo_evals as $geval}
+		<li><a href="#{$geval.descripcion}">{$geval.descripcion}</a></li>
 	{/foreach}</ul>
-	{foreach $evaluacion as $id_geval => $eval}
-	<table id="{$grupo_evals[$id_geval].descripcion}" border="1">
+	{foreach $grupo_evals as $geval}<div id="{$geval.descripcion}">
+	<table border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th>
-		{foreach $eval as $e}
-				<th>{$e}</th>
+		{foreach $porcentajes[$geval.id] as $p}
+				<th>{$evals[$p.evaluacion].descripcion}</th>
 		{/foreach}
-		<th>Promedio</th>
-		<th></th>
-		</tr></thead>
-		<tbody>
-		{foreach $alumnos as $alumno}
-			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td>
-			{foreach $eval as $key => $e}
-				<td>{$calificacion[$alumno.codigo][$key] }</td>
+		<th>Promedio</th><th></th></tr></thead>
+		<tbody>{foreach $alumnos as $alumno}
+			<tr><td>{$alumno.apellido} {$alumno.nombre}</td><td>{$alumno.codigo}</td>
+			{foreach $porcentajes[$geval.id] as $p}
+				<td>{$calificacion[$alumno.codigo][$p.evaluacion] }</td>
 			{/foreach}
-			<td>{$promedios[$alumno.codigo][$id_geval]}</td>
+			<td>{$promedios[$alumno.codigo][$geval.id]}</td>
 			<td><a href="{url 'Calif_Views_Alumno::evaluar', array ($alumno->codigo, $seccion->nrc, $id_geval)}"><img class="icon" src="{media '/img/eval.png'}" alt="Evaluar" /></a></td>
 			</tr>
 		{/foreach}
 		<tr><th colspan='2' >Promedio</th>
-		{foreach $promedios_eval[$id_geval] as $pe}
-				<td>{$pe}</td>
-		{/foreach}		
+		foreach $promedios_eval[$id_geval] as $pe
+				<td>$pe</td>
+		/foreach
 		</tr>
 		</tbody>
 	</table>
-	{/foreach}
-<form method="post" action=".">
-{$form.render_table}
-<input type="submit" name="submit" value="Evaluar" />
+	</div>{/foreach}
 </div>
 {else}
 	{if $alumnos}
 		<table border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th></tr></thead>
 		<tbody>{foreach $alumnos as $alumno}
-			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td></tr>
+			<tr><td>{$alumno.apellido} {$alumno.nombre}</td><td>{$alumno.codigo}</td></tr>
 		{/foreach}</tbody>
 		</table>
 	{else}

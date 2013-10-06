@@ -523,7 +523,7 @@ class Gatuf_Model {
 			}
 			$m->_a['views'][$p['view'].'__manytomany__']['join'] .= 
 				' LEFT JOIN '.$this->_con->pfx.$table.' ON '
-				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.$this->_con->pfx.$m->_a['table'].'.'.$this->primary_key;
+				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.$this->_con->pfx.$m->_a['table'].'.'.$m->primary_key;
 
 			$m->_a['views'][$p['view'].'__manytomany__']['where'] = $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).'='.$this->_con->esc ($this->_data[$this->primary_key]);
 			$p['view'] = $p['view'].'__manytomany__';
