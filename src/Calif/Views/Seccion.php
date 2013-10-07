@@ -74,12 +74,11 @@ class Calif_Views_Seccion {
 				unset ($grupo_evals[$key]);
 			}
 		}
-		
+		$calificacion = array();
+		$promedios = array ();
 		if (count ($grupo_evals) != 0) {
 			// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
 			$array_eval = array(-1 => 'NP', -2 => 'SD');
-			$calificacion = array();
-			$promedios = array ();
 			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 			$where = $sql->gen ();
 		
@@ -132,20 +131,6 @@ class Calif_Views_Seccion {
 		
 		$extra = array ();
 		
-		if (isset ($match[1])) {
-			$materia = new Calif_Materia ();
-			if (false === ($materia->getMateria($match[1]))) {
-				throw new Gatuf_HTTP_Error404();
-			}
-		
-			$nueva_clave = mb_strtoupper ($match[1]);
-			if ($match[1] != $nueva_clave) {
-				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::agregarNrcConMateria', array ($nueva_clave));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-			$extra['materia'] = $materia->clave;
-		}
-		
 		if ($request->user->administrator) {
 			/* Formulario completo para los administradores, o la otra condición */
 			if ($request->method == 'POST') {
@@ -158,6 +143,14 @@ class Calif_Views_Seccion {
 					return new Gatuf_HTTP_Response_Redirect ($url);
 				}
 			} else {
+				if (isset ($request->REQUEST['materia'])) {
+					$materia = new Calif_Materia ();
+					if (false === ($materia->get($request->REQUEST['materia']))) {
+						$extra['materia'] = '';
+					} else {
+						$extra['materia'] = $materia->clave;
+					}
+				}
 				$form = new Calif_Form_Seccion_Agregar (null, $extra);
 			}
 		} else {
@@ -173,6 +166,14 @@ class Calif_Views_Seccion {
 					return new Gatuf_HTTP_Response_Redirect ($url);
 				}
 			} else {
+				if (isset ($request->REQUEST['materia'])) {
+					$materia = new Calif_Materia ();
+					if (false === ($materia->get($request->REQUEST['materia']))) {
+						$extra['materia'] = '';
+					} else {
+						$extra['materia'] = $materia->clave;
+					}
+				}
 				$form = new Calif_Form_Seccion_AgregarMini (null, $extra);
 			}
 		}
@@ -181,11 +182,6 @@ class Calif_Views_Seccion {
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
-	}
-	
-	public $agregarNrcConMateria_precond = array ('Calif_Precondition::coordinadorRequired');
-	public function agregarNrcConMateria ($request, $match) {
-		return $this->agregarNrc ($request, $match);
 	}
 	
 	public $actualizarNrc_precond = array ('Gatuf_Precondition::adminRequired');

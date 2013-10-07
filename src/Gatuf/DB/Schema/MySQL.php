@@ -100,7 +100,7 @@ class Gatuf_DB_Schema_MySQL {
 				    if ($subfield->type != 'sequence') {
 				        $fk = true;
 				        $field = $subfield;
-				        $val = $submodel->_a['cols'][$submodel->primary_key];
+				        $val = array_merge ($submodel->_a['cols'][$submodel->primary_key], $val);
 				    }
 				}
 				$_tmp = $this->process_mapping ($field->type, $val);
@@ -162,7 +162,7 @@ class Gatuf_DB_Schema_MySQL {
 			}
 			if ($val['type'] == 'unique') {
 			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
-				    sprintf('CREATE UNIQUE `%s` ON `%s` (%s);',
+				    sprintf('CREATE UNIQUE INDEX `%s` ON `%s` (%s);',
 						    $idx, $this->con->pfx.$model->_a['table'],
 						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
 			} else {

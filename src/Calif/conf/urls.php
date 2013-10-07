@@ -252,13 +252,6 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/add/([a-zA-Z]+\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'agregarNrcConMateria',
-);
-
-$ctl[] = array (
 	'regex' => '#^/seccion/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

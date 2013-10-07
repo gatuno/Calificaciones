@@ -24,6 +24,6 @@
 	{$calendario.render}
 {/if}
 <h2>Lista de secciones de {$materia.clave}</h2>
-<p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrcConMateria', array ($materia.clave)}">agregar una nueva sección</a> a esta materia</p>
+<p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrc', array (), array ('materia' => $materia.clave)}">agregar una nueva sección</a> a esta materia</p>
 {$paginador.render}
 {/block}
