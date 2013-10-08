@@ -97,19 +97,35 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	    .'LEFT JOIN '.$materia_tabla.' ON '.$seccion_tabla.'.materia = '.$materia_tabla.'.clave'."\n"
 	    .'LEFT JOIN '.$maestro_tabla.' ON '.$seccion_tabla.'.maestro = '.$maestro_tabla.'.codigo';
 	$db->execute ($sql);
+	
+	/* Vista de horarios */
+	$horario_tabla = Gatuf::factory ('Calif_Horario')->getSqlTable ();
+	$salon_tabla = Gatuf::factory ('Calif_Salon')->getSqlTable ();
+	
+	$sql = 'CREATE VIEW '.$db->pfx.'horarios_view AS '."\n"
+	     .'SELECT '.$horario_tabla.'.*, '.$salon_tabla.'.aula AS salon_aula, '.$salon_tabla.'.edificio AS salon_edificio,'."\n"
+	     .$seccion_tabla.'.maestro AS seccion_maestro, '.$seccion_tabla.'.asignacion AS seccion_asignacion, '.$carrera_tabla.'.color as seccion_asignacion_color'."\n"
+	     .'FROM '.$horario_tabla."\n"
+	     .'LEFT JOIN '.$salon_tabla.' ON '.$horario_tabla.'.salon = '.$salon_tabla.'.id'."\n"
+	     .'LEFT JOIN '.$seccion_tabla.' ON '.$horario_tabla.'.nrc = '.$seccion_tabla.'.nrc'."\n"
+	     .'LEFT JOIN '.$carrera_tabla.' ON '.$seccion_tabla.'.asignacion = '.$carrera_tabla.'.clave';
+	$db->execute ($sql);
+
 }
 
 function Calif_Migrations_Install_1Vistas_teardown ($params = null) {
 	$db = Gatuf::db ();
 	
-	$sql = 'DROP VIEW '.$db->pfx.'alumnos_view';
-	$db->execute ($sql);
+	$views = array ('alumnos_view',
+	                'materias_view',
+	                'secciones_view',
+	                'horarios_view');
 	
-	$sql = 'DROP VIEW '.$db->pfx.'materias_view';
-	$db->execute ($sql);
-	
-	$sql = 'DROP VIEW '.$db->pfx.'secciones_view';
-	$db->execute ($sql);
+	foreach ($views as $view) {
+		$sql = 'DROP VIEW '.$db->pfx.$view;
+		
+		$db->execute ($sql);
+	}
 }
 
 function Calif_Migrations_Install_2GruposEval_setup ($params = null) {
