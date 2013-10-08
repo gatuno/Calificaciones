@@ -175,8 +175,7 @@ class Calif_Views_Materia {
 		$salon_model = new Calif_Salon ();
 		
 		foreach ($secciones as $seccion) {
-			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
-			$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+			$horas = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
 			
 			foreach ($horas as $hora) {
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
@@ -184,10 +183,10 @@ class Calif_Views_Materia {
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
 				$dia_semana = strtotime ('next Monday');
 				
-				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 					if ($hora->$dia) {
-						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
-										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin),
+						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).$hora->inicio,
+										             'end' => date('Y-m-d ', $dia_semana).$hora->fin,
 										             'title' => $hora->salon_edificio.' '.$hora->salon_aula,
 										             'content' => $cadena_desc,
 										             'url' => $url, 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));

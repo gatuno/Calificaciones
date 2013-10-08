@@ -50,8 +50,9 @@ class Calif_Form_Salon_Agregar extends Gatuf_Form {
 		$aula = $this->cleaned_data['aula'];
 		$edificio = $this->cleaned_data['edificio'];
 
-		$salon = new Calif_Salon ();
-		if (false !== $salon->getSalon ($edificio, $aula)) {
+		$sql = new Gatuf_SQL ('aula=%s AND edificio=%s', array ($aula, $edificio));
+		$count = Gatuf::factory ('Calif_Salon')->getList (array ('filter' => $sql->gen (), 'count' => true));
+		if ($count > 0) {
 			/* Este salon ya existe */
 			throw new Gatuf_Form_Invalid ('Este salon ya existe');
 		}
@@ -65,7 +66,8 @@ class Calif_Form_Salon_Agregar extends Gatuf_Form {
 		}
 		
 		$salon = new Calif_Salon ();
-		$salon->edificio = $this->cleaned_data['edificio'];
+		$edificio = new Calif_Edificio ($this->cleaned_data['edificio']);
+		$salon->edificio = $edificio;
 		$salon->aula = $this->cleaned_data['aula'];
 		$salon->cupo = $this->cleaned_data['cupo'];
 

@@ -20,13 +20,13 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 				'help_text' => 'La hora de final. Puede ser del tipo 17:00 o formato Siiau 1700',
 		));
 		
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
-			$this->fields[$dia] = new Gatuf_Form_Field_Boolean (
+		foreach (array ('l' => 'Lunes', 'm' => 'Martes', 'i' => 'Miércoles', 'j' => 'Jueves', 'v' => 'Viernes', 's' => 'Sábado') as $key => $dia) {
+			$this->fields[$key] = new Gatuf_Form_Field_Boolean (
 				array (
 					'required' => true,
 					'label' => $dia,
 					'initial' => '',
-					'help_text' => 'Buscar dias libre en '.$dia,
+					'help_text' => 'Buscar dias libre en '.mb_strtolower ($dia),
 					'widget' => 'Gatuf_Form_Widget_CheckboxInput',
 			));
 		}
@@ -56,7 +56,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 	
 	function clean () {
 		$activo = false;
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+		foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 			if ($this->cleaned_data[$dia]) {
 				$activo = true;
 				$this->semana[] = $dia;

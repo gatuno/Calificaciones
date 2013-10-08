@@ -40,7 +40,7 @@ class Calif_Views_Horario {
 				}
 				$sql_dias = new Gatuf_SQL (implode (' OR ', $ors));
 				$sql->SAnd ($sql_dias);
-				$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen (), 'view' => 'paginador'));
 				
 				/* Recorrer estas horas */
 				foreach ($horas_salon as $hora_en_salon) {
@@ -156,16 +156,14 @@ class Calif_Views_Horario {
 				}
 				$sql_dias = new Gatuf_SQL (implode (' OR ', $ors));
 				$sql->SAnd ($sql_dias);
-				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen (), 'view' => 'paginador'));
 				
 				/* Recorrer estas horas */
-				foreach ($horas as $hora) {
-					if ($hora->id == $horario->id) continue;
-					if (($horario->hora_inicio >= $hora->hora_inicio && $horario->hora_fin < $hora->hora_fin) ||
-						($horario->hora_fin > $hora->hora_inicio && $horario->hora_fin <= $hora->hora_fin) ||
-						($horario->hora_inicio <= $hora->hora_inicio && $horario->hora_fin >= $hora->hora_fin)) {
+				foreach ($horas_salon as $hora_en_salon) {
+					if ($hora_en_salon->id == $horario->id) continue;
+					if (Calif_Horario::chocan ($horario, $hora_en_salon)) {
 						/* Choque, este salon está ocupado en la hora recién agregada */
-						$request->user->setMessage (2, 'La hora actualizada al nrc '.$horario->nrc.' colisiona en el salon');
+						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $horario->salon), $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
 						break;
 					}
 				}

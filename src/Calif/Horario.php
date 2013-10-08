@@ -68,7 +68,7 @@ class Calif_Horario extends Gatuf_Model {
 	
 	public static function chocan ($a, $b) {
 		$coincide = false;
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+		foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 			if ($a->$dia && $b->$dia) {
 				$coincide = true;
 				break;
@@ -77,9 +77,14 @@ class Calif_Horario extends Gatuf_Model {
 		
 		if (!$coincide) return false;
 		
-		if (($a->hora_inicio >= $b->hora_inicio && $a->hora_fin < $b->hora_fin) ||
-			($a->hora_fin > $b->hora_inicio && $a->hora_fin <= $b->hora_fin) ||
-			($a->hora_inicio <= $b->hora_inicio && $a->hora_fin >= $b->hora_fin)) {
+		$a_inicio = strtotime ($a->inicio);
+		$a_fin = strtotime ($a->fin);
+		$b_inicio = strtotime ($b->inicio);
+		$b_fin = strtotime ($b->fin);
+		
+		if (($a_inicio >= $b_inicio && $a_fin < $b_fin) ||
+			($a_fin > $b_inicio && $a_fin <= $b_fin) ||
+			($a_inicio <= $b_inicio && $a_fin >= $b_fin)) {
 			return true;
 		}
 		

@@ -39,12 +39,11 @@ class Calif_Views_Salon {
 		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
 		$salon = new Calif_Salon ();
 		
-		if (false === ($salon->getSalonById ($match[1]))) {
+		if (false === ($salon->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$sql = new Gatuf_SQL ('salon=%s', $salon->id);
-		$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+		$horas_salon = $salon->get_calif_horario_list ();
 		
 		$calendar = new Gatuf_Calendar ();
 		$calendar->events = array ();
@@ -53,14 +52,14 @@ class Calif_Views_Salon {
 		
 		$nrc = new Calif_Seccion ();
 		foreach ($horas_salon as $horario) {
-			$nrc->getNrc ($horario->nrc);
+			$nrc->get ($horario->nrc);
 			$cadena_desc = $nrc->materia . ' ' . $nrc->seccion.'<br />';
 			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $nrc->nrc);
 			$dia_semana = strtotime ('next Monday');
-			foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+			foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 				if ($horario->$dia) {
-					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-							                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_fin),
+					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).$horario->inicio,
+							                     'end' => date('Y-m-d ', $dia_semana).$horario->fin,
 							                     'title' => $horario->nrc,
 							                     'content' => $cadena_desc,
 							                     'url' => $url, 'color' => '');
@@ -94,7 +93,7 @@ class Calif_Views_Salon {
 			$form = new Calif_Form_Salon_Agregar (null, $extra);
 		}
 
-		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/edit-salon.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/agregar-salon.html',
 		                                         array('page_title' => $title,
 		                                               'form' => $form,),
                                                  $request);
@@ -105,12 +104,13 @@ class Calif_Views_Salon {
 		
 		$salon = new Calif_Salon ();
 		
-		if (false === ($salon->getSalonById ($match[1]))) {
+		if (false === ($salon->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$extra = array ();
-		$extra['salon'] = $salon;
+		$extra = array ('salon' => $salon);
+		
+		$edificio = new Calif_Edificio ($salon->edificio);
 		
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Salon_Actualizar ($request->POST, $extra);
@@ -127,6 +127,8 @@ class Calif_Views_Salon {
 
 		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/edit-salon.html',
 		                                         array('page_title' => $title,
+		                                               'edificio' => $edificio,
+		                                               'salon' => $salon,
 		                                               'form' => $form,),
                                                  $request);
 	}
