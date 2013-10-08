@@ -202,7 +202,7 @@ class Calif_User extends Gatuf_Model {
 		$messages = new ArrayObject ();
 		$ms = $this->get_gatuf_message_list();
 		foreach ($ms as $m) {
-			$messages[] = $m;
+			$messages[] = array ('message' => $m->message, 'type' => $m->type);
 			$m->delete ();
 		}
 		

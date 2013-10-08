@@ -33,7 +33,7 @@ class Gatuf_Template_Tag_Messages extends Gatuf_Template_Tag
             if (count($messages) > 0) {
                 echo '<div class="user-messages">'."\n";
                 foreach ($messages as $m) {
-                    switch ($m->type) {
+                    switch ($m['type']) {
                         case 1:
                             $clase = "info";
                             break;
@@ -44,7 +44,7 @@ class Gatuf_Template_Tag_Messages extends Gatuf_Template_Tag
                             $clase = "error";
                             break;
                     }
-                    echo '<div class="'.$clase.'"><p>'.$m.'</p></div>';
+                    echo '<div class="'.$clase.'"><p>'.$m['message'].'</p></div>';
                 }
                 echo '</div>';
             }

@@ -261,20 +261,19 @@ class Calif_Views_Seccion {
 	public function reclamarNrc ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc ($match[1]))) {
+		if (false === ($seccion->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 		
 		$carrera_a_reclamar = new Calif_Carrera ();
 		
-		if (false === ($carrera_a_reclamar->getCarrera ($match[2]))) {
+		if (false === ($carrera_a_reclamar->get ($match[2]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
 		/* Verificar que la materia pertenezca a la carrera */
-		$materia = new Calif_Materia ();
-		$materia->getMateria ($seccion->materia);
+		$materia = new Calif_Materia ($seccion->materia);
 		
 		$carreras = $materia->get_carreras_list ();
 		
@@ -302,7 +301,7 @@ class Calif_Views_Seccion {
 		}
 		
 		/* Ahora, intentar asignar el nrc */
-		$seccion->asignacion = $carrera_a_reclamar->clave;
+		$seccion->asignacion = $carrera_a_reclamar;
 		
 		if ($seccion->updateAsignacion () === true) {
 			$request->user->setMessage (1, 'La sección '.$seccion->nrc.' ha sido marcada para la carrera '.$carrera_a_reclamar->clave);
@@ -317,7 +316,7 @@ class Calif_Views_Seccion {
 	public function liberarNrc ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc ($match[1]))) {
+		if (false === ($seccion->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);

@@ -54,6 +54,32 @@ class Calif_Seccion extends Gatuf_Model {
 		);
 	}
 	
+	 function updateAsignacion () {
+		$req = sprintf ('UPDATE %s SET asignacion = %s WHERE nrc=%s AND asignacion IS NULL', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->asignacion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		$req = sprintf ('SELECT asignacion FROM %s WHERE nrc = %s', $this->getSqlTable (), $this->nrc);
+		
+		if (false === ($rs = $this->_con->select($req))) {
+			throw new Exception($this->_con->getError());
+		}
+		
+		if ($rs[0]['asignacion'] != $this->asignacion) {
+			return false;
+		}
+		return true;
+	}
+	
+	 function liberarAsignacion () {
+	 	$this->asignacion = null;
+		$req = sprintf ('UPDATE %s SET asignacion = NULL WHERE nrc=%s', $this->getSqlTable (), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
+		
+		$this->_con->execute($req);
+		
+		return true;
+	}
+	
 	function maxNrc () {
 		$req = sprintf ('SELECT MAX(nrc) AS max_nrc FROM %s', $this->getSqlTable ());
 		
