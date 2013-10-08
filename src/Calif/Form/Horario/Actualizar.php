@@ -41,7 +41,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => 'Hora inicio',
-				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_inicio, false),
+				'initial' => date('H:i', strtotime($this->hora->inicio)),
 				'help_text' => 'La hora de inicio. Puede ser del tipo 17:00 o formato Siiau 1700',
 		));
 		
@@ -49,17 +49,17 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => 'Hora fin',
-				'initial' => Calif_Utils_displayHoraSiiau ($this->hora->hora_fin, false),
+				'initial' => date('H:i', strtotime($this->hora->fin)),
 				'help_text' => 'La hora de final. Puede ser del tipo 17:00 o formato Siiau 1700. Recuerde que las clases terminan en el minuto 55',
 		));
 		
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
-			$this->fields[$dia] = new Gatuf_Form_Field_Boolean (
+		foreach (array ('l' => 'Lunes', 'm' => 'Martes', 'i' => 'Miércoles', 'j' => 'Jueves', 'v' => 'Viernes', 's' => 'Sábado') as $key => $dia) {
+			$this->fields[$key] = new Gatuf_Form_Field_Boolean (
 				array (
 					'required' => true,
 					'label' => $dia,
-					'initial' => $this->hora->$dia,
-					'help_text' => 'Active la casilla para una clase en '.$dia,
+					'initial' => $this->hora->$key,
+					'help_text' => 'Active la casilla para una clase en '.mb_strtolower ($dia),
 					'widget' => 'Gatuf_Form_Widget_CheckboxInput',
 			));
 		}
@@ -68,7 +68,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 	public function clean () {
 		/* Verificar que por lo menos tenga un día activo */
 		$activo = false;
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+		foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 			if ($this->cleaned_data[$dia]) $activo = true;
 		}
 		
@@ -89,11 +89,12 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$this->hora->hora_inicio = Gatuf_DB_HoraSiiauFromDb ($this->cleaned_data['horainicio']);
-		$this->hora->hora_fin = Gatuf_DB_HoraSiiauFromDb ($this->cleaned_data['horafin']);
-		$this->hora->salon = $this->cleaned_data['salon'];
+		$this->hora->inicio = $this->cleaned_data['horainicio'];
+		$this->hora->fin = $this->cleaned_data['horafin'];
+		$salon = new Calif_Salon ($this->cleaned_data['salon']);
+		$this->hora->salon = $salon;
         
-        foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+        foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
         	$this->hora->$dia = $this->cleaned_data[$dia];
         }
         

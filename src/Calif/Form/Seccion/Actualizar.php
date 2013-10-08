@@ -97,7 +97,8 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$this->seccion->maestro = $this->cleaned_data['maestro'];
+		$maestro = new Calif_Maestro ($this->cleaned_data['maestro']);
+		$this->seccion->maestro = $maestro;
 		$this->seccion->seccion = $this->cleaned_data['seccion'];
 		
 		$this->seccion->update();

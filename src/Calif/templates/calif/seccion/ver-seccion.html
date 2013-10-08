@@ -26,14 +26,14 @@
 	<thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th><th>Acciones</th></tr></thead>
 	<tbody>
 	{foreach $horarios as $hora}
-		<tr><td>{$hora.hora_inicio}</td>
-		<td>{$hora.hora_fin}</td>
+		<tr><td>{$hora.inicio}</td>
+		<td>{$hora.fin}</td>
 		<td>{$hora.displayDias()}</td>
 		<td>{$hora.salon_edificio}</td>
 		<td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$hora.salon_aula}</a></td>
 		<td>
-		<a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a>
 		<a href="{url 'Calif_Views_Horario::actualizarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/document-properties.png'}" alt="Editar" /></a>
+		<a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a>
 		</td></tr>
 	{/foreach}
 	</tbody></table>

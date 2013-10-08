@@ -52,7 +52,7 @@ class Calif_Views_Seccion {
 		$materia = new Calif_Materia ($seccion->materia);
 		$maestro = new Calif_Maestro ($seccion->maestro);
 		
-		$horarios = $seccion->get_calif_horario_list ();
+		$horarios = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
 		
 		$alumnos = $seccion->get_grupos_list (array ('order' => 'apellido ASC, nombre ASC'));
 		if (count ($alumnos) == 0) $alumnos = array ();
@@ -190,7 +190,7 @@ class Calif_Views_Seccion {
 		
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -221,17 +221,19 @@ class Calif_Views_Seccion {
 		
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$materia = new Calif_Materia ();
-		$materia->getMateria ($seccion->materia);
+		$materia = new Calif_Materia ($seccion->materia);
 		
 		if ($request->method == 'POST') {
 			
 			/* Eliminar todos los alumnos de este grupo */
-			$seccion->clearAlumnos ();
+			$related = $seccion->get_grupos_list();
+			foreach ($related as $rel) {
+				$seccion->delAssoc($rel);
+			}
 			
 			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 			

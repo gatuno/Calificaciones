@@ -45,14 +45,20 @@ class Calif_Horario extends Gatuf_Model {
 				'default' => false,
 			);
 		};
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => 'horarios_view.*',
+				'from' => 'horarios_view',
+				'props' => array ('salon_aula', 'salon_edificio', 'seccion_maestro', 'seccion_asignacion', 'seccion_asignacion_color'),
+			),
+		);
 	}
 	
 	function displayDias () {
 		$cadena = '';
-		$letra = array ('L', 'M', 'I', 'J', 'V', 'S');
-		foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $index => $dia) {
+		foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 			if ($this->$dia) {
-				$cadena .= $letra[$index];
+				$cadena .= mb_strtoupper ($dia);
 			} else {
 				$cadena .= '.';
 			}

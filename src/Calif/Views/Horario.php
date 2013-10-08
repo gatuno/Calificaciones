@@ -8,11 +8,11 @@ class Calif_Views_Horario {
 	public function agregarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc ($match[1]))) {
+		if (false === ($seccion->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->admin) { // || !el otro permiso
+		if (!$request->user->administrator) { // || !el otro permiso
 			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
 				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
@@ -33,7 +33,7 @@ class Calif_Views_Horario {
 				 * otro salon */
 				$sql = new Gatuf_SQL ('salon=%s', $horario->salon);
 				$ors = array ();
-				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+				foreach (array ('l', 'm', 'i', 'j', 'v', 's', 'd') as $dia) {
 					if ($horario->$dia) {
 						$ors[] = $dia.'=1';
 					}
@@ -57,7 +57,7 @@ class Calif_Views_Horario {
 		} else {
 			$form = new Calif_Form_Horario_Agregar (null, $extra);
 		}
-		return Gatuf_Shortcuts_RenderToResponse ('calif/horario/edit-horario.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/horario/agregar-horario.html',
 		                                         array ('page_title' => $title,
 		                                                'seccion' => $seccion,
 		                                                'form' => $form),
@@ -71,11 +71,11 @@ class Calif_Views_Horario {
 		
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->admin) { // || !el otro permiso
+		if (!$request->user->administrator) { // || !el otro permiso
 			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
 				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
@@ -85,7 +85,7 @@ class Calif_Views_Horario {
 		
 		$hora = new Calif_Horario ();
 		
-		if (false === ($hora->getHorario ($match[2]))) {
+		if (false === ($hora->get ($match[2]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -94,7 +94,7 @@ class Calif_Views_Horario {
 		}
 		
 		$salon = new Calif_Salon ();
-		$salon->getSalonById ($hora->salon);
+		$salon->get ($hora->salon);
 		
 		if ($request->method == 'POST') {
 			/* Adelante, eliminar esta hora */
@@ -116,11 +116,11 @@ class Calif_Views_Horario {
 	public function actualizarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->admin) { // || !el otro permiso
+		if (!$request->user->administrator) { // || !el otro permiso
 			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
 				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
@@ -130,7 +130,7 @@ class Calif_Views_Horario {
 		
 		$hora = new Calif_Horario ();
 		
-		if (false === ($hora->getHorario ($match[2]))) {
+		if (false === ($hora->get ($match[2]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -149,7 +149,7 @@ class Calif_Views_Horario {
 				
 				$sql = new Gatuf_SQL ('salon=%s', $horario->salon);
 				$ors = array ();
-				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+				foreach (array ('l', 'm', 'i', 'j', 'v', 's', 'd') as $dia) {
 					if ($horario->$dia) {
 						$ors[] = $dia.'=1';
 					}

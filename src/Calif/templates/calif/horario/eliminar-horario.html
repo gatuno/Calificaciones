@@ -7,8 +7,8 @@
 <thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th></tr></thead>
 <tbody>
 <tr>
-<td>{$horario.hora_inicio}</td>
-<td>{$horario.hora_fin}</td>
+<td>{$horario.inicio}</td>
+<td>{$horario.fin}</td>
 <td>{$horario.displayDias()}</td>
 <td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}">{$salon.edificio}</a></td>
 <td><a href="{url 'Calif_Views_Salon::verSalon', array ($horario->salon)}">{$salon.aula}</a></td>

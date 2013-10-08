@@ -55,7 +55,7 @@ class Gatuf_Precondition {
         if (true !== $res) {
             return $res;
         }
-        if ($request->user->admin) {
+        if ($request->user->administrator) {
             return true;
         }
         return new Gatuf_HTTP_Response_Forbidden($request);

@@ -133,6 +133,15 @@ function Calif_Utils_displayHoraSiiau ($val, $fix55 = true) {
 	return sprintf ('%02s:%02s', $parte_horas, $parte_minutos);
 }
 
+function Calif_Utils_horaFromSiiau ($val) {
+	settype ($val, 'integer');
+	
+	$parte_minutos = $val % 100;
+	$parte_horas = ($val - $parte_minutos) / 100;
+	
+	return $parte_horas.':'.$parte_minutos;
+}
+
 function Calif_Utils_detectarColumnas ($cabecera) {
 	$indices = array ();
 	
