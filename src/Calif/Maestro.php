@@ -31,13 +31,21 @@ class Calif_Maestro extends Gatuf_Model {
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';
+		
+		$this->_a['views'] = array (
+			'maestros_departamentos' => array (
+				'select' => 'maestros_departamentos.*',
+				'from' => 'maestros_departamentos',
+				'props' => array ('departamento'),
+			),
+		);
 	}
 	
 	function displaylinkedcodigo ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->codigo)).'">'.$this->codigo.'</a>';
 	}
 	
-	function displaylinkedmaestro_departamento ($extra=null) {
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('HorarioPorDepartamento', array ($this->codigo, $this->maestro_departamento)).'">Imprimir Horario</a>';
+	function displaylinkeddepartamento ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('HorarioPorDepartamento', array ($this->codigo, $this->departamento)).'">Imprimir Horario</a>';
 	}
 }

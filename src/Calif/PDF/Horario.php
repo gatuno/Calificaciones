@@ -68,7 +68,7 @@ class Calif_PDF_Horario extends External_FPDF {
 		$w = array (10, 14, 44, 9, 6, 12, 12, 9, 9, 4, 4, 4, 4, 4, 4, 14, 14);
 		$headers = array ('NRC', 'CLAVE', 'MATERIA', 'SEC', 'CR', 'EDIF', 'AULA', 'INI', 'TER', 'L', 'M', 'I', 'J', 'V', 'S', 'DEL', 'AL');
 		
-		$dias = array ('lunes' => 'L', 'martes' => 'M', 'miercoles' => 'I', 'jueves' => 'J', 'viernes' => 'V', 'sabado' => 'S');
+		$dias = array ('l', 'm', 'i', 'j', 'v', 's');
 		$this->SetFont ('courier', 'B', 12);
 		$this->SetY(0);
 		$this->Ln(151);
@@ -104,13 +104,13 @@ class Calif_PDF_Horario extends External_FPDF {
 				$this->Cell ($w[4], 8, '', 1, 0, 'L'); /* FIXME: Cŕeditos aquí */
 				$this->Cell ($w[5], 8, $hora->salon_edificio, 1, 0, 'C');
 				$this->Cell ($w[6], 8, $hora->salon_aula == 'A050' ? '' : $hora->salon_aula, 1, 0, 'C');
-				$this->Cell ($w[7], 8, $hora->hora_inicio, 1, 0, 'C');
-				$this->Cell ($w[8], 8, $hora->hora_fin, 1, 0, 'C');
+				$this->Cell ($w[7], 8, date('H:i', strtotime($hora->inicio)), 1, 0, 'C');
+				$this->Cell ($w[8], 8, date('H:i', strtotime($hora->fin)), 1, 0, 'C');
 				
 				$g = 9;
-				foreach ($dias as $key => $value) {
-					if ($hora->$key) {
-						$this->Cell ($w[$g], 8, $value, 1, 0, 'C');
+				foreach ($dias as $value) {
+					if ($hora->$value) {
+						$this->Cell ($w[$g], 8, mb_strtoupper ($value), 1, 0, 'C');
 					} else {
 						$this->Cell ($w[$g], 8, '', 1, 0, 'C');
 					}

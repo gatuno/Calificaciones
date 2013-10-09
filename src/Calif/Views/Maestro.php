@@ -34,24 +34,25 @@ class Calif_Views_Maestro {
 	public function porDepartamento ($request, $match) {
 		$departamento = new Calif_Departamento ();
 		
-		if (false === ($departamento->getDepartamento ($match[1]))) {
+		if (false === ($departamento->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
 		$maestro_model = new Calif_Maestro ();
-		$maestro_model->tabla = $maestro_model->special_tabla;
 		
-		$sql = new Gatuf_SQL ('maestro_departamento=%s', $departamento->clave);
+		$sql = new Gatuf_SQL ('departamento=%s', $departamento->clave);
 		
 		$pag = new Gatuf_Paginator ($maestro_model);
+		$pag->model_view = 'maestros_departamentos';
 		$pag->forced_where = $sql;
+		
 		$pag->action = array ('Calif_Views_Maestro::porDepartamento', $departamento->clave);
 		$pag->summary = 'Lista de maestros';
 		$list_display = array (
 			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
-			array ('maestro_departamento', 'Gatuf_Paginator_FKLink', 'Horario'),
+			array ('departamento', 'Gatuf_Paginator_FKLink', 'Horario'),
 		);
 		
 		$pag->items_per_page = 50;
@@ -73,19 +74,15 @@ class Calif_Views_Maestro {
 	public function verMaestro ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		
-		if (false === ($maestro->getMaestro ($match[1]))) {
+		if (false === ($maestro->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$maestro->getSession();
-		$sql = new Gatuf_SQL ('maestro=%s', $maestro->codigo);
-		
-		$grupos = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen ()));
+		$grupos = $maestro->get_calif_seccion_list ();
 		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
 		} else {
-			Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
 			$horario_maestro = new Gatuf_Calendar ();
 			$horario_maestro->events = array ();
 			$horario_maestro->opts['conflicts'] = true;
@@ -93,8 +90,7 @@ class Calif_Views_Maestro {
 			
 			$salon_model = new Calif_Salon ();
 			foreach ($grupos as $grupo) {
-				$sql = new Gatuf_SQL ('nrc=%s', $grupo->nrc);
-				$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
+				$horas = $grupo->get_calif_horario_list ();
 				
 				foreach ($horas as $hora) {
 					$cadena_desc = $grupo->materia . ' ' . $grupo->seccion.'<br />';
@@ -102,10 +98,10 @@ class Calif_Views_Maestro {
 					$dia_semana = strtotime ('next Monday');
 					
 					$salon_model->getSalonById ($hora->salon);
-					foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 						if ($hora->$dia) {
-							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_inicio),
-											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($hora->hora_fin),
+							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).$hora->inicio,
+											             'end' => date('Y-m-d ', $dia_semana).$hora->fin,
 											             'title' => $salon_model->edificio.' '.$salon_model->aula,
 											             'content' => $cadena_desc,
 											             'url' => $url, 'color' => '');
@@ -126,12 +122,8 @@ class Calif_Views_Maestro {
 	
 	public $agregarMaestro_precond = array ('Gatuf_Precondition::loginRequired');
 	public function agregarMaestro ($request, $match) {
-		$title = 'Nuevo profesor';
-		
-		$extra = array ();
-		
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Maestro_Agregar ($request->POST, $extra);
+			$form = new Calif_Form_Maestro_Agregar ($request->POST);
 			
 			if ($form->isValid()) {
 				$maestro = $form->save ();
@@ -140,11 +132,11 @@ class Calif_Views_Maestro {
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Maestro_Agregar (null, $extra);
+			$form = new Calif_Form_Maestro_Agregar (null);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/edit-maestro.html',
-		                                         array ('page_title' => $title,
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/agregar-maestro.html',
+		                                         array ('page_title' => 'Nuevo profesor',
 		                                                'form' => $form),
 		                                         $request);
 	}
@@ -153,7 +145,7 @@ class Calif_Views_Maestro {
 	public function actualizarMaestro ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		
-		if (false === $maestro->getMaestro ($match[1])) {
+		if (false === $maestro->get ($match[1])) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -173,7 +165,8 @@ class Calif_Views_Maestro {
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/edit-maestro.html',
-		                                         array ('page_title' => 'Actualizar maestro',
+		                                         array ('page_title' => 'Actualizar profesor',
+		                                                'maestro' => $maestro,
 		                                                'form' => $form),
 		                                         $request);
 	}
@@ -181,31 +174,30 @@ class Calif_Views_Maestro {
 	public function verHorario ($request, $match, $params = array ()) {
 		$maestro = new Calif_Maestro ();
 		
-		if (false === $maestro->getMaestro ($match[1])) {
+		if (false === $maestro->get ($match[1])) {
 			throw new Gatuf_HTTP_Error404();
 		}
-		
-		$sql = new Gatuf_SQL ('maestro=%s', $maestro->codigo);
 		
 		if (!isset ($params['general'])) {
 			$departamento = new Calif_Departamento ();
 			
-			if (false === $departamento->getDepartamento ($match[2])) {
+			if (false === $departamento->get ($match[2])) {
 				throw new Gatuf_HTTP_Error404();
 			}
 			
-			$sql->Q('materia_departamento=%s', $departamento->clave);
+			$sql = new Gatuf_SQL ('materia_departamento=%s', $departamento->clave);
+			$where = $sql->gen ();
 		} else {
 			$departamento = null;
+			$where = null;
 		}
 		
-		$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen ()));
+		$secciones = $maestro->get_calif_seccion_list (array ('filter' => $where, 'view' => 'paginador'));
 		
 		$horarios = array ();
 		$total_horarios = 0;
 		foreach ($secciones as $seccion) {
-			$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
-			$horarios[$seccion->nrc] = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+			$horarios[$seccion->nrc] = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
 			$total_horarios += count ($horarios[$seccion->nrc]);
 		}
 		

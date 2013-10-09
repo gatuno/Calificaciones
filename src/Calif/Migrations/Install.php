@@ -110,7 +110,16 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	     .'LEFT JOIN '.$seccion_tabla.' ON '.$horario_tabla.'.nrc = '.$seccion_tabla.'.nrc'."\n"
 	     .'LEFT JOIN '.$carrera_tabla.' ON '.$seccion_tabla.'.asignacion = '.$carrera_tabla.'.clave';
 	$db->execute ($sql);
-
+	
+	/* Vista Maestros-Departamentos */
+	
+	$sql = 'CREATE VIEW '.$db->pfx.'maestros_departamentos AS '."\n"
+	     .'SELECT '.$maestro_tabla.'.*, '.$materia_departamento.'.departamento as departamento'."\n"
+	     .'FROM '.$maestro_tabla."\n"
+	     .'INNER JOIN '.$seccion_tabla.' ON '.$seccion_tabla.'.maestro = '.$maestro_tabla.'.codigo'."\n"
+	     .'LEFT JOIN '.$materia_departamento.' ON '.$seccion_tabla.'.materia = '.$materia_departamento.'.clave'."\n"
+	     .'GROUP BY '.$maestro_tabla.'.codigo,'.$materia_departamento.'.departamento'."\n";
+	$db->execute ($sql);
 }
 
 function Calif_Migrations_Install_1Vistas_teardown ($params = null) {
@@ -119,7 +128,8 @@ function Calif_Migrations_Install_1Vistas_teardown ($params = null) {
 	$views = array ('alumnos_view',
 	                'materias_view',
 	                'secciones_view',
-	                'horarios_view');
+	                'horarios_view',
+	                'maestros_departamentos');
 	
 	foreach ($views as $view) {
 		$sql = 'DROP VIEW '.$db->pfx.$view;

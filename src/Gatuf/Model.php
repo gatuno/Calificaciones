@@ -222,10 +222,6 @@ class Gatuf_Model {
 		return $this->_con->pfx.$this->_a['table'];
 	}
 	
-	function getSqlViewTable () {
-		return $this->_con->pfx.($this->tabla_view == '' ? $this->tabla : $this->tabla_view);
-	}
-	
 	/**
 	 * Overloading of the get method.
 	 *
