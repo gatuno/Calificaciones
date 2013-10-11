@@ -57,6 +57,9 @@ class Calif_Views_Seccion {
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 		
+		//Arreglar Pedir solo usuarios capaces de tomar materia ( en base a su carrera ) y evitar usuarios que ya la cursaron
+		$all_alumnos = Gatuf::factory('Calif_Alumno')->getList();
+		
 		$alumnos = $seccion->getAlumnosList ();
 		
 		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->id][Porcentajes->evaluacion]=Evaluaciones->descripcion
@@ -116,6 +119,7 @@ class Calif_Views_Seccion {
 		                                                 'horarios' => $horarios,
 		                                                 'promedios' => $promedios,
 		                                                 'promedios_eval' => $promedios_eval,
+		                                                 'all_alumnos' => $all_alumnos, //Alternativa Para Matricualar Alumnos
 		                                                 'alumnos' => $alumnos),
 		                                          $request);
 	}
