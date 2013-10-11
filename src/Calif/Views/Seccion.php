@@ -57,9 +57,6 @@ class Calif_Views_Seccion {
 		$sql = new Gatuf_SQL ('nrc=%s', $seccion->nrc);
 		$horarios = Gatuf::factory('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 		
-		//Arreglar Pedir solo usuarios capaces de tomar materia ( en base a su carrera ) y evitar usuarios que ya la cursaron
-		$all_alumnos = Gatuf::factory('Calif_Alumno')->getList();
-		
 		$alumnos = $seccion->getAlumnosList ();
 		
 		// Llenar arreglo $evaluacion[Grupos_Evaluaciones->id][Porcentajes->evaluacion]=Evaluaciones->descripcion
@@ -119,13 +116,7 @@ class Calif_Views_Seccion {
 		                                                 'horarios' => $horarios,
 		                                                 'promedios' => $promedios,
 		                                                 'promedios_eval' => $promedios_eval,
-<<<<<<< HEAD
-		                                                 'all_alumnos' => $all_alumnos, //Alternativa Para Matricualar Alumnos
 		                                                 'alumnos' => $alumnos),
-=======
-		                                                 'alumnos' => $alumnos,
-		                                                 'all_alumnos' => $all_alumnos),
->>>>>>> d88ce8d1877ab5903fc9f5e72d4a03f3c59f34bf
 		                                          $request);
 	}
 	
@@ -339,6 +330,29 @@ class Calif_Views_Seccion {
 		}
 		
 		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function matricular ($request, $match){
+		$seccion =  new Calif_Seccion ();
+		if (false === ($seccion->getNrc($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		$title = 'Matricular Alumno a Seccion '.$seccion->nrc;
+		$extra = array ('nrc' => $seccion);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Matricular ($request->POST, $extra);
+			if ($form->isValid ()) {
+				$form->save ();
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Matricular (null, $extra);
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/matricular.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function evaluar ($request, $match){
