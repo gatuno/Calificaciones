@@ -119,8 +119,13 @@ class Calif_Views_Seccion {
 		                                                 'horarios' => $horarios,
 		                                                 'promedios' => $promedios,
 		                                                 'promedios_eval' => $promedios_eval,
+<<<<<<< HEAD
 		                                                 'all_alumnos' => $all_alumnos, //Alternativa Para Matricualar Alumnos
 		                                                 'alumnos' => $alumnos),
+=======
+		                                                 'alumnos' => $alumnos,
+		                                                 'all_alumnos' => $all_alumnos),
+>>>>>>> d88ce8d1877ab5903fc9f5e72d4a03f3c59f34bf
 		                                          $request);
 	}
 	
