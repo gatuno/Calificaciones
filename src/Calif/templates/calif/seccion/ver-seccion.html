@@ -40,12 +40,12 @@
 {/if}
 <h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-<!-- Arreglar Cambiar Alunmos de la Seccion por Alumnos que no pertenecen ha seccion, limitar a maximo 20 usuarios mostrados en lista -->
+<!-- Arreglar limitar a maximo 20 usuarios mostrados en lista -->
 Matricular nuevo Alumno
 <input type="text" name="srch" id="srch" list="datalist1" />
 <datalist id="datalist1" rows='3'>
-{foreach $alumnos as $alumno}
-  <option value="{$alumno.codigo}">
+{foreach $all_alumnos as $al}
+  <option value="{$al.codigo}">
  {/foreach}
 </datalist>
 
