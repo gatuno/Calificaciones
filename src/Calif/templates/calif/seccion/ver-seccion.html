@@ -40,6 +40,15 @@
 {/if}
 <h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
+<!-- Arreglar Cambiar Alunmos de la Seccion por Alumnos que no pertenecen ha seccion, limitar a maximo 20 usuarios mostrados en lista -->
+Matricular nuevo Alumno
+<input type="text" name="srch" id="srch" list="datalist1" />
+<datalist id="datalist1" rows='3'>
+{foreach $alumnos as $alumno}
+  <option value="{$alumno.codigo}">
+ {/foreach}
+</datalist>
+
 {if $alumnos && $evaluacion}
 <div id="Evals_tabs">
 	<ul>{foreach $evaluacion as $id_geval => $eval}

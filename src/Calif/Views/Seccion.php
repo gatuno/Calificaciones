@@ -82,7 +82,7 @@ class Calif_Views_Seccion {
 				foreach($temp_eval as $t_eval) {
 					$evaluacion[$geval->id][$t_eval->evaluacion] = $todas_evaluaciones[$t_eval->evaluacion]->descripcion;
 					if($promedios_eval[$geval->id][$t_eval->evaluacion] = $temp_calif[0]->getPromedioEval ($t_eval->evaluacion)){
-						$promedios_eval[$key][$ev] .= '%'; 
+						$promedios_eval[$geval->id][$t_eval->evaluacion] .= '%'; 
 					}
 				}
 			}
