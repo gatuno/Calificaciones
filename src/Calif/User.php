@@ -209,6 +209,15 @@ class Calif_User extends Gatuf_Model {
 		return $messages;
 	}
 	
+	function restore () {
+		$where = 'codigo='.Gatuf_DB_IdentityToDb ($this->login, $this->_con);
+		if ($this->type == 'm') {
+			$this->extra = Gatuf::factory ('Calif_Maestro')->getOne ($where);
+		} else if ($this->type == 'a') {
+			$this->extra = Gatuf::factory ('Calif_Alumno')->getOne ($where);
+		}
+	}
+	
 	function isCoord () {
 		if (!$this->active) return false;
 		if ($this->administrator) return true;

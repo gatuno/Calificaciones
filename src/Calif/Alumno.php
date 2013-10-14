@@ -55,6 +55,11 @@ class Calif_Alumno extends Gatuf_Model {
 		);
 	}
 	
+	function getUser () {
+		$sql = new Gatuf_SQL ('login=%s', $this->codigo);
+		$this->user = Gatuf::factory ('Calif_User')->getOne (array ('filter' => $sql->gen ()));
+	}
+	
 	public function displaycarrera ($extra=null) {
 		return '<abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr>';
 	}

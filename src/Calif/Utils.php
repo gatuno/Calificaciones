@@ -161,6 +161,7 @@ function Calif_Utils_dontmove ($field) {
 }
 
 function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificios = array ()) {
+	/* FIXME: Optimizar este código */
 	if (count ($edificios) != 0) {
 		$sql = new Gatuf_SQL ('edificio IN ('.implode (',', array_fill (0, count ($edificios), '%s')).')', $edificios);
 		$where = $sql->gen ();
@@ -176,18 +177,22 @@ function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificio
 		$libres[$salon->id] = $salon;
 	}
 	
+	$horario_model = new Calif_Horario ();
+	$horario_model->inicio = $bus_inicio;
+	$horario_model->fin = $bus_fin;
+	
 	foreach ($semana as $dia) {
 		$sql = new Gatuf_SQL (sprintf ('%s=1', $dia));
+		$horario_model->$dia = true;
 		$horarios_en_dia = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen ()));
 	
 		foreach ($horarios_en_dia as $hora) {
-			if (($bus_inicio >= $hora->hora_inicio && $bus_inicio < $hora->hora_fin) ||
-			    ($bus_fin > $hora->hora_inicio && $bus_fin <= $hora->hora_fin) ||
-			    ($bus_inicio <= $hora->hora_inicio && $bus_fin >= $hora->hora_fin)) {
+			if (Calif_Horario::chocan ($horario_model, $hora)) {
 				/* Choque, este salon está ocupado a la hora solicitada */
 				if (isset ($libres[$hora->salon])) unset ($libres[$hora->salon]);
 			}
 		}
+		$horario_model->$dia = false;
 	}
 	
 	return $libres;

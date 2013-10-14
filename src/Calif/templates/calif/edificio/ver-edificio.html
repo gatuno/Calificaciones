@@ -5,10 +5,10 @@
 {if $salones}
 	<div id="salones_tabs"><ul>
 	{foreach $salones as $salon}
-		<li><a href="#{$salon.id}">{$salon.aula}</a></li>
+		<li><a href="#salon_{$salon.id}">{$salon.aula}</a></li>
 	{/foreach}</ul>
 	{foreach $salones as $salon}
-		<div id="{$salon.id}">
+		<div id="salon_{$salon.id}">
 		{if $calendarios[$salon.id]}
 			{$calendarios[$salon.id].render}
 		{else}

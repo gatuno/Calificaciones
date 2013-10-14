@@ -78,7 +78,8 @@ class Calif_Views_Maestro {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$grupos = $maestro->get_calif_seccion_list ();
+		$maestro->getUser ();
+		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
 		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
@@ -97,7 +98,7 @@ class Calif_Views_Maestro {
 					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
 					$dia_semana = strtotime ('next Monday');
 					
-					$salon_model->getSalonById ($hora->salon);
+					$salon_model->get ($hora->salon);
 					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 						if ($hora->$dia) {
 							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).$hora->inicio,
@@ -149,6 +150,7 @@ class Calif_Views_Maestro {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
+		$maestro->getUser ();
 		$extra = array ('maestro' => $maestro);
 		
 		if ($request->method == 'POST') {

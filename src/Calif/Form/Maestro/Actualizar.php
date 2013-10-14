@@ -5,20 +5,6 @@ class Calif_Form_Maestro_Actualizar extends Gatuf_Form {
 	
 	public function initFields ($extra = array ()) {
 		$this->maestro = $extra['maestro'];
-		$this->fields['codigo'] = new Gatuf_Form_Field_Integer (
-			array (
-				'required' => false,
-				'label' => 'Código',
-				'initial' => $this->maestro->codigo,
-				'help_text' => 'El código del maestro de 7 caracteres',
-				'min' => 1000000,
-				'max' => 9999999,
-				'widget_attrs' => array (
-					'maxlength' => 7,
-					'size' => 12,
-					'readonly' => 'readonly',
-				),
-		));
 		
 		$this->fields['nombre'] = new Gatuf_Form_Field_Varchar (
 			array (
@@ -52,7 +38,7 @@ class Calif_Form_Maestro_Actualizar extends Gatuf_Form {
 			array (
 				'required' => true,
 				'label' => 'Correo',
-				'initial' => $this->maestro->correo,
+				'initial' => $this->maestro->user->email,
 				'help_text' => 'Un correo',
 		));
 	}
@@ -64,10 +50,12 @@ class Calif_Form_Maestro_Actualizar extends Gatuf_Form {
 		
 		$this->maestro->nombre = $this->cleaned_data['nombre'];
 		$this->maestro->apellido = $this->cleaned_data['apellido'];
-		$this->maestro->correo = $this->cleaned_data['correo'];
+		$this->maestro->user->email = $this->cleaned_data['correo'];
 		
-		$this->maestro->update();
-		
+		if ($commit) {
+			$this->maestro->update();
+			$this->maestro->user->update ();
+		}
 		return $this->maestro;
 	}
 }

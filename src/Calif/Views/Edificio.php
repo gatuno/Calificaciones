@@ -36,7 +36,7 @@ class Calif_Views_Edificio {
 		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
 		$edificio = new Calif_Edificio ();
 		
-		if (false === $edificio->getEdificio ($match[1])) {
+		if (false === $edificio->get ($match[1])) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -47,14 +47,12 @@ class Calif_Views_Edificio {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
-		$sql = new Gatuf_SQL ('edificio=%s', $edificio->clave);
-		
-		$salones = Gatuf::factory('Calif_Salon')->getList (array ('filter' => $sql->gen ()));
+		$salones = $edificio->get_calif_salon_list ();
 		
 		$super_calendarios = array ();
 		foreach ($salones as $salon) {
 			$sql = new Gatuf_SQL ('salon=%s', $salon->id);
-			$horas_salon = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
+			$horas_salon = $salon->get_calif_horario_list ();
 			
 			if (count ($horas_salon) == 0) {
 				$super_calendarios[$salon->id] = null;
@@ -67,15 +65,15 @@ class Calif_Views_Edificio {
 			
 			$nrc = new Calif_Seccion ();
 			foreach ($horas_salon as $horario) {
-				$nrc->getNrc ($horario->nrc);
+				$nrc->get ($horario->nrc);
 				$cadena_desc = $nrc->materia . ' ' . $nrc->seccion.'<br />';
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $nrc->nrc);
 				$dia_semana = strtotime ('next Monday');
 				$calendar->opts['start-day'] = date('Y-m-d', $dia_semana);
-				foreach (array ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado') as $dia) {
+				foreach (array ('l', 'm', 'i', 'v', 's') as $dia) {
 					if ($horario->$dia) {
-						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_inicio),
-								                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHoraSiiau ($horario->hora_fin),
+						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).$horario->inicio,
+								                     'end' => date('Y-m-d ', $dia_semana).$horario->fin,
 								                     'title' => $horario->nrc,
 								                     'content' => $cadena_desc,
 								                     'url' => $url, 'color' => '');

@@ -93,14 +93,24 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		}
 		
 		$alumno = new Calif_Alumno ();
+		$user = new Calif_User ();
+		
 		$carrera = new Calif_Carrera ($this->cleaned_data['carrera']);
 		$alumno->codigo = $this->cleaned_data['codigo'];
 		$alumno->nombre = $this->cleaned_data['nombre'];
 		$alumno->apellido = $this->cleaned_data['apellido'];
 		$alumno->carrera = $carrera;
 		
-		$alumno->create();
+		$user->login = $this->cleaned_data['codigo'];
+		$user->email = $this->cleaned_data['correo'];
+		$user->type = 'a';
+		$user->administrator = false;
+		$alumno->user = $user;
 		
+		if ($commit) {
+			$alumno->create();
+			$user->create ();
+		}
 		return $alumno;
 	}
 }

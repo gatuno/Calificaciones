@@ -71,13 +71,22 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		}
 		
 		$maestro = new Calif_Maestro ();
+		$user = new Calif_User ();
 		
 		$maestro->codigo = $this->cleaned_data['codigo'];
 		$maestro->nombre = $this->cleaned_data['nombre'];
 		$maestro->apellido = $this->cleaned_data['apellido'];
-		$maestro->correo = $this->cleaned_data['correo'];
+		$user->login = $this->cleaned_data['codigo'];
+		$user->email = $this->cleaned_data['correo'];
+		$user->type = 'm';
+		$user->administrator = false;
 		
-		$maestro->create();
+		$maestro->user = $user;
+		
+		if ($commit) {
+			$maestro->create();
+			$user->create ();
+		}
 		
 		return $maestro;
 	}

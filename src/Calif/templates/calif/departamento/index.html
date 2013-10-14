@@ -5,7 +5,7 @@
 	<tbody>
 	{foreach $departamentos as $departamento}
 		<tr>
-		<td>{$departamento.departamento}</td>
+		<td>{$departamento.descripcion}</td>
 		<td><a href="{url 'Calif_Views_Maestro::porDepartamento', array ($departamento.clave)}">{$maestros[$departamento.clave]} maestros</a></td>
 		<td><a href="{url 'Calif_Views_Materia::porDepartamento', array ($departamento.clave)}">{$materias[$departamento.clave]} materias</a></td>
 		</tr>

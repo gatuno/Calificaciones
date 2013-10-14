@@ -114,11 +114,11 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	/* Vista Maestros-Departamentos */
 	
 	$sql = 'CREATE VIEW '.$db->pfx.'maestros_departamentos AS '."\n"
-	     .'SELECT '.$maestro_tabla.'.*, '.$materia_departamento.'.departamento as departamento'."\n"
+	     .'SELECT '.$maestro_tabla.'.*, '.$materia_tabla.'.departamento as departamento'."\n"
 	     .'FROM '.$maestro_tabla."\n"
 	     .'INNER JOIN '.$seccion_tabla.' ON '.$seccion_tabla.'.maestro = '.$maestro_tabla.'.codigo'."\n"
-	     .'LEFT JOIN '.$materia_departamento.' ON '.$seccion_tabla.'.materia = '.$materia_departamento.'.clave'."\n"
-	     .'GROUP BY '.$maestro_tabla.'.codigo,'.$materia_departamento.'.departamento'."\n";
+	     .'LEFT JOIN '.$materia_tabla.' ON '.$seccion_tabla.'.materia = '.$materia_tabla.'.clave'."\n"
+	     .'GROUP BY '.$maestro_tabla.'.codigo,'.$materia_tabla.'.departamento'."\n";
 	$db->execute ($sql);
 }
 

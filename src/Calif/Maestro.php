@@ -41,6 +41,11 @@ class Calif_Maestro extends Gatuf_Model {
 		);
 	}
 	
+	function getUser () {
+		$sql = new Gatuf_SQL ('login=%s', $this->codigo);
+		$this->user = Gatuf::factory ('Calif_User')->getOne (array ('filter' => $sql->gen ()));
+	}
+	
 	function displaylinkedcodigo ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->codigo)).'">'.$this->codigo.'</a>';
 	}
