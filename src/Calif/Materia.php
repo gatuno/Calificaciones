@@ -71,8 +71,8 @@ class Calif_Materia extends Gatuf_Model {
 		
 		$this->_a['views'] = array (
 			'paginador' => array (
-				'select' => 'materias_view.*',
-				'from' => 'materias_view',
+				'select' => $this->_con->pfx.'materias_view.*',
+				'from' => $this->_con->pfx.'materias_view',
 				'props' => array ('departamento_desc'),
 			),
 		);

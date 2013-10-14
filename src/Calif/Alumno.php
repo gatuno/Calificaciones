@@ -48,8 +48,8 @@ class Calif_Alumno extends Gatuf_Model {
 		
 		$this->_a['views'] = array (
 			'paginador' => array (
-				'select' => 'alumnos_view.*',
-				'from' => 'alumnos_view',
+				'select' => $this->_con->pfx.'alumnos_view.*',
+				'from' => $this->_con->pfx.'alumnos_view',
 				'props' => array ('carrera_desc'),
 			),
 		);

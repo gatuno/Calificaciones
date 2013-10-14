@@ -34,8 +34,8 @@ class Calif_Maestro extends Gatuf_Model {
 		
 		$this->_a['views'] = array (
 			'maestros_departamentos' => array (
-				'select' => 'maestros_departamentos.*',
-				'from' => 'maestros_departamentos',
+				'select' => $this->_con->pfx.'maestros_departamentos.*',
+				'from' => $this->_con->pfx.'maestros_departamentos',
 				'props' => array ('departamento'),
 			),
 		);

@@ -47,8 +47,8 @@ class Calif_Horario extends Gatuf_Model {
 		};
 		$this->_a['views'] = array (
 			'paginador' => array (
-				'select' => 'horarios_view.*',
-				'from' => 'horarios_view',
+				'select' => $this->_con->pfx.'horarios_view.*',
+				'from' => $this->_con->pfx.'horarios_view',
 				'props' => array ('salon_aula', 'salon_edificio', 'seccion_maestro', 'seccion_asignacion', 'seccion_asignacion_color'),
 			),
 		);

@@ -330,7 +330,7 @@ class Gatuf_DB_Schema_MySQL {
 			if ($field->type == 'foreignkey') {
 				// Add the foreignkey constraints
 				$referto = new $val['model']();
-				$constraints[] = $alter_tbl.' DROP CONSTRAINT '.$this->getShortenedFKeyName($table.'_'.$col.'_fkey');
+				$constraints[] = $alter_tbl.' DROP FOREIGN KEY '.$this->getShortenedFKeyName($table.'_'.$col.'_fkey');
 			}
 		}
 
@@ -341,8 +341,8 @@ class Gatuf_DB_Schema_MySQL {
 			sort($hay);
 			$table = $this->con->pfx.$hay[0].'_'.$hay[1].'_assoc';
 			$alter_tbl = 'ALTER TABLE '.$table;
-			$constraints[] = $alter_tbl.' DROP CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey1');
-			$constraints[] = $alter_tbl.' DROP CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey2');
+			$constraints[] = $alter_tbl.' DROP FOREIGN KEY '.$this->getShortenedFKeyName($table.'_fkey1');
+			$constraints[] = $alter_tbl.' DROP FOREIGN KEY '.$this->getShortenedFKeyName($table.'_fkey2');
 		}
 		return $constraints;
 	}

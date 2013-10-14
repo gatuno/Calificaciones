@@ -26,6 +26,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 		$schema->model = new $model ();
 		$schema->createConstraints ();
 	}
+	Calif_Migrations_Install_Triggers_setup ();
 	
 	Calif_Migrations_Install_1Vistas_setup ();
 	Calif_Migrations_Install_2GruposEval_setup ();
@@ -51,6 +52,7 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	                 );
 	
 	Calif_Migrations_Install_1Vistas_teardown ();
+	Calif_Migrations_Install_Triggers_teardown ();
 	
 	$db = Gatuf::db ();
 	$schema = new Gatuf_DB_Schema ($db);
@@ -63,6 +65,63 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	foreach ($models as $model) {
 		$schema->model = new $model ();
 		$schema->dropTables ();
+	}
+}
+
+function Calif_Migrations_Install_Triggers_setup ($params = null) {
+	$db = Gatuf::db ();
+	
+	$hay = array (strtolower ('Calif_Alumno'), strtolower('Calif_Seccion'));
+	sort ($hay);
+	$t_asso = $db->pfx.$hay[0].'_'.$hay[1].'_assoc';
+	
+	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
+	$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
+	$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
+	
+	$sql = 'CREATE TRIGGER '.$db->pfx.'insert_alumno AFTER INSERT ON '.$t_asso."\n"
+	    .'FOR EACH ROW BEGIN'."\n"
+	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
+	    .'SELECT NEW.calif_seccion_nrc, NEW.calif_alumno_codigo, P.evaluacion, NULL FROM '.$seccion_tabla.' AS S'."\n"
+	    .'INNER JOIN '.$porcentaje_tabla.' AS P ON S.materia = P.materia WHERE S.nrc = NEW.calif_seccion_nrc;'."\n"
+	    .'END';
+	$db->execute ($sql);
+	
+	$sql = 'CREATE TRIGGER '.$db->pfx.'delete_alumno AFTER DELETE ON '.$t_asso."\n"
+	    .' FOR EACH ROW BEGIN'."\n"
+	    .'DELETE FROM '.$calificacion_tabla.' WHERE Alumno = OLD.calif_alumno_codigo AND Nrc = OLD.calif_seccion_nrc;'."\n"
+	    .'END';
+	$db->execute ($sql);
+	
+	$sql = 'CREATE TRIGGER '.$db->pfx.'insert_evaluacion AFTER INSERT ON '.$porcentaje_tabla."\n"
+	    .' FOR EACH ROW BEGIN'."\n"
+	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
+	    .'SELECT G.calif_seccion_nrc, G.calif_alumno_codigo, NEW.evaluacion, NULL'."\n"
+	    .'FROM '.$t_asso.' AS G'."\n"
+	    .'INNER JOIN '.$seccion_tabla.' AS S ON G.calif_seccion_nrc = S.nrc'."\n"
+	    .'WHERE S.materia = NEW.materia;'."\n"
+	    .'END';
+	$db->execute ($sql);
+	
+	$sql = 'CREATE TRIGGER '.$db->pfx.'delete_evaluacion AFTER DELETE ON '.$porcentaje_tabla."\n"
+	    .' FOR EACH ROW BEGIN'."\n"
+	    .'DELETE C FROM '.$calificacion_tabla.' AS C, '.$seccion_tabla.' AS S WHERE C.nrc = S.nrc'."\n"
+	    .'AND S.materia = OLD.materia AND C.evaluacion = OLD.evaluacion;'."\n"
+	    .'END';
+	$db->execute ($sql);
+}
+
+function Calif_Migrations_Install_Triggers_teardown ($params = null) {
+	$db = Gatuf::db ();
+	$triggers = array ('insert_alumno',
+	                   'delete_alumno',
+	                   'insert_evaluacion',
+	                   'delete_evaluacion');
+	
+	foreach ($triggers as $trigger) {
+		$sql = 'DROP TRIGGER '.$db->pfx.$trigger;
+		
+		$db->execute ($sql);
 	}
 }
 
