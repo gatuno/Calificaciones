@@ -11,7 +11,7 @@ class Calif_Views_Alumno {
 		$pag->action = array ('Calif_Views_Alumno::index');
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
-			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
+			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
 			array ('carrera', 'Gatuf_Paginator_FKLink', 'Carrera'),
@@ -56,6 +56,21 @@ class Calif_Views_Alumno {
 		                                         array ('page_title' => $title,
 		                                                'form' => $form),
 		                                         $request);
+	}
+	
+		public function verAlumno ($request, $match) {
+		$alumno = new Calif_Alumno ();
+		if (false === ($alumno->getAlumno ($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$secciones = $alumno->getSeccionesList();
+
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-alumno.html',
+		                                         array('page_title' => 'Perfil público de Alumno',
+		                                               'alumno' => $alumno,
+                                                       'secciones' => $secciones),
+                                                 $request);
 	}
 	
 	public function evaluar ($request, $match){

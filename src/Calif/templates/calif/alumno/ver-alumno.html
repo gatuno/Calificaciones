@@ -1,0 +1,37 @@
+{extends 'calif/base.html'}
+{block body}
+<table class="form" summary="">
+<tr>
+<th style="text-align: right">
+	{if $user.codigo == $alumno.codigo}
+	<a href="http://gravatar.com/emails/" title="Cambie su imagen en gravatar.com">
+	{else}
+    <a href="http://www.gravatar.com/avatar/{$alumno.correo|md5}.jpg?s=400">
+    {/if}
+    <img src="http://www.gravatar.com/avatar/{$alumno.correo|md5}.jpg?s=60" alt=" " />
+    </a>
+</th>
+{if $user.codigo == $alumno.codigo}
+	<td>Yo</td>
+{else}
+	<td>{$alumno.apellido} {$alumno.nombre}</td>
+{/if}
+</tr>
+<tr>
+<th>Última vez visto:</th>
+<td>{$alumno.last_login|dateago}</td>
+</tr>
+</table>
+<h2>Secciones del Alumno</h2>
+{if $secciones}
+<table>
+<thead><tr><th>NRC</th><th>Materia</th><th>Sección</th></tr></thead>
+<tbody>
+{foreach $secciones as $s}
+	<tr><td>{$s.nrc}</td><td>{$s.materia}</td><td>{$s.seccion}</td></tr>
+{/foreach}
+</tbody></table>
+{else}
+<p>Este Alumno no tiene secciones activas</p>
+{/if}
+{/block}
