@@ -12,6 +12,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Porcentaje',
+	                 'Calif_Promedio',
 	                 'Calif_Salon',
 	                 'Calif_Seccion',
 	                 );
@@ -47,6 +48,7 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Porcentaje',
+	                 'Calif_Promedio',
 	                 'Calif_Salon',
 	                 'Calif_Seccion',
 	                 );
@@ -78,18 +80,39 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
 	$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
 	$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
+	$promedio_tabla = Gatuf::factory ('Calif_Promedio')->getSqlTable ();
 	
 	$sql = 'CREATE TRIGGER '.$db->pfx.'insert_alumno AFTER INSERT ON '.$t_asso."\n"
 	    .'FOR EACH ROW BEGIN'."\n"
 	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
 	    .'SELECT NEW.calif_seccion_nrc, NEW.calif_alumno_codigo, P.evaluacion, NULL FROM '.$seccion_tabla.' AS S'."\n"
 	    .'INNER JOIN '.$porcentaje_tabla.' AS P ON S.materia = P.materia WHERE S.nrc = NEW.calif_seccion_nrc;'."\n"
+	    .'UPDATE '.$promedio_tabla.' AS PP'."\n"
+	    .'INNER JOIN ('."\n"
+	    .'SELECT evaluacion,'."\n"
+	    .'AVG (GREATEST (COALESCE (valor, 0), 0)) AS promedio'."\n"
+	    .'FROM '.$calificacion_tabla."\n"
+	    .'GROUP BY evaluacion'."\n"
+	    .') AS sub'."\n"
+	    .'ON PP.evaluacion = sub.evaluacion'."\n"
+	    .'SET PP.promedio = sub.promedio'."\n"
+	    .'WHERE PP.nrc = NEW.calif_seccion_nrc;'."\n"
 	    .'END';
 	$db->execute ($sql);
 	
 	$sql = 'CREATE TRIGGER '.$db->pfx.'delete_alumno AFTER DELETE ON '.$t_asso."\n"
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'DELETE FROM '.$calificacion_tabla.' WHERE Alumno = OLD.calif_alumno_codigo AND Nrc = OLD.calif_seccion_nrc;'."\n"
+	    .'UPDATE '.$promedio_tabla.' AS PP'."\n"
+	    .'INNER JOIN ('."\n"
+	    .'SELECT evaluacion,'."\n"
+	    .'AVG (GREATEST (COALESCE (valor, 0), 0)) AS promedio'."\n"
+	    .'FROM '.$calificacion_tabla."\n"
+	    .'GROUP BY evaluacion'."\n"
+	    .') AS sub'."\n"
+	    .'ON PP.evaluacion = sub.evaluacion'."\n"
+	    .'SET PP.promedio = sub.promedio'."\n"
+	    .'WHERE PP.nrc = OLD.calif_seccion_nrc;'."\n"
 	    .'END';
 	$db->execute ($sql);
 	
@@ -100,6 +123,10 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .'FROM '.$t_asso.' AS G'."\n"
 	    .'INNER JOIN '.$seccion_tabla.' AS S ON G.calif_seccion_nrc = S.nrc'."\n"
 	    .'WHERE S.materia = NEW.materia;'."\n"
+	    .'INSERT INTO '.$promedio_tabla.' (nrc, evaluacion, promedio)'."\n"
+	    .'SELECT S.nrc, NEW.evaluacion, 0.0'."\n"
+	    .'FROM '.$seccion_tabla.' AS S'."\n"
+	    .'WHERE S.materia = NEW.materia;'."\n"
 	    .'END';
 	$db->execute ($sql);
 	
@@ -107,6 +134,16 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'DELETE C FROM '.$calificacion_tabla.' AS C, '.$seccion_tabla.' AS S WHERE C.nrc = S.nrc'."\n"
 	    .'AND S.materia = OLD.materia AND C.evaluacion = OLD.evaluacion;'."\n"
+	    .'DELETE P FROM '.$promedio_tabla.' AS P, '.$seccion_tabla.' AS S'."\n"
+	    .'WHERE P.nrc = S.nrc AND S.materia = OLD.materia AND P.evaluacion = OLD.evaluacion;'."\n"
+	    .'END';
+	$db->execute ($sql);
+	
+	$sql = 'CREATE TRIGGER '.$db->pfx.'update_promedios AFTER UPDATE ON '.$calificacion_tabla."\n"
+	    .' FOR EACH ROW BEGIN'."\n"
+	    .'UPDATE '.$promedio_tabla.' as P'."\n"
+	    .'SET P.promedio = (SELECT AVG(GREATEST(COALESCE(C.valor,0),0)) FROM '.$calificacion_tabla.' as C WHERE C.evaluacion = NEW.evaluacion AND nrc = NEW.nrc)'."\n"
+	    .'WHERE P.nrc = NEW.nrc and P.evaluacion = NEW.evaluacion;'."\n"
 	    .'END';
 	$db->execute ($sql);
 }

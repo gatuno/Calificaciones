@@ -76,6 +76,7 @@ class Calif_Views_Seccion {
 		}
 		$calificacion = array();
 		$promedios = array ();
+		$promedios_eval = array();
 		if (count ($grupo_evals) != 0) {
 			// Llenar Arreglo $calificacion[calificaciones->alumno][calificaciones->evaluacion]=calificaciones->valor; 
 			$array_eval = array(-1 => 'NP', -2 => 'SD');
@@ -83,6 +84,8 @@ class Calif_Views_Seccion {
 			$where = $sql->gen ();
 		
 			foreach ($alumnos as $alumno) {
+				$calificacion[$alumno->codigo] = array ();
+				$promedios[$alumno->codigo] = array ();
 				foreach ($alumno->get_calif_calificacion_list(array ('filter' => $where)) as $t_calif) {
 					if (array_key_exists($t_calif->valor , $array_eval)) {
 						$t_calif->valor = $array_eval[$t_calif->valor];
@@ -97,14 +100,14 @@ class Calif_Views_Seccion {
 			}
 		
 			// LLenar arreglo con los promedios de la
-			/*$promedios_eval = array();
-			foreach($evaluacion as $key => $eval) {
-				foreach($eval as $ev => $e) {
-					if($promedios_eval[$key][$ev] = $temp_calif[0]->getPromedioEval ($ev)){
-						$promedios_eval[$key][$ev] .= '%'; 
-					}
+			$promedio_model = new Calif_Promedio ();
+			
+			foreach ($grupo_evals as $geval) {
+				foreach ($porcentajes[$geval->id] as $eval) {
+					$promedio_model->getPromedioEval ($seccion->nrc, $eval->evaluacion);
+					$promedios_eval[$eval->evaluacion] = $promedio_model->promedio;
 				}
-			}*/
+			}
 		} else {
 			$grupo_evals = array ();
 		}
@@ -121,7 +124,8 @@ class Calif_Views_Seccion {
 		                                                 'grupo_evals' => $grupo_evals,
 		                                                 'calificacion' => $calificacion,
 		                                                 'promedios' => $promedios,
-		                                                 /*'promedios_eval' => $promedios_eval,*/),
+		                                                 'promedios_eval' => $promedios_eval,
+		                                                 ),
 		                                          $request);
 	}
 	

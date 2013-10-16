@@ -62,9 +62,9 @@
 			</tr>
 		{/foreach}
 		<tr><th colspan='2' >Promedio</th>
-		foreach $promedios_eval[$id_geval] as $pe
-				<td>$pe</td>
-		/foreach
+		{foreach $porcentajes[$geval.id] as $p}
+				<td>{$promedios_eval[$p.evaluacion]}</td>
+		{/foreach}
 		</tr>
 		</tbody>
 	</table>
