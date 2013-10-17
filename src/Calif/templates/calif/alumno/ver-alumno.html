@@ -24,20 +24,24 @@
 </table>
 <h2>Calificaciones del Alumno</h2>
 {if $calificaciones}
-<div id="Calificacion_tabs">
+<div id="Calificacion_tabs" style="float:left">
 	<ul>{foreach $calificaciones as $nrc => $calif}
-		<li><a href="#{$nrc}">{$nrc}</a></li>
+		<li><a href="#{$nrc}">{$seccion[$nrc]->materia}</a></li>
 	{/foreach}</ul>
 	{foreach $calificaciones as $nrc => $calif}
-		<div id="{$nrc}">
+		<div id="{$nrc}" >
+		<div>
+		<h3>Materia : {$seccion[$nrc]->materia_desc}</h3>
+		Maestro : {$seccion[$nrc]->maestro_nombre} {$seccion[$nrc]->maestro_apellido}</div>
 		{foreach $calif as $grupo => $cal}
-			<h2>{$grupo}</h2>
-			<table id="{$grupo}" border="1">
+			<table id="{$grupo}" border="1" style="float:left;margin:10px">
+			<caption><h4>{$grupo}</h4></caption>
 			<thead><tr><th>Evaluacion</th><th>Promedio</th></tr></thead>
 			<tbody>
 			{foreach $cal as $eval => $c}
 				<tr><th>{$eval} </th><td>{$c}</td></tr>
 			{/foreach}
+			<tr><th>Promedio </th><th>{$promedio[$nrc][$grupo]}</th></tr>
 			</tbody>
 			</table>
 		{/foreach}
