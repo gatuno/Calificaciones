@@ -58,18 +58,39 @@ class Calif_Views_Alumno {
 		                                         $request);
 	}
 	
+	
 		public function verAlumno ($request, $match) {
 		$alumno = new Calif_Alumno ();
-		if (false === ($alumno->getAlumno ($match[1]))) {
+		$calificaciones = array ();
+		$evaluaciones = array ();
+		
+		if (false === ($alumno->getAlumno ($match[1] ) ) ) {
 			throw new Gatuf_HTTP_Error404();
 		}
-		
-		$secciones = $alumno->getSeccionesList();
+		foreach ($alumno->getSeccionesList() as $sec){
+			$seccion[$sec->nrc] = $sec->materia;
+		}
 
+		foreach (Gatuf::factory('Calif_GrupoEvaluacion')->getList() as $g){
+			$grupos[$g->id] = $g->descripcion;
+		}
+		foreach (Gatuf::factory('Calif_Evaluacion')->getList() as $e){
+			$evaluaciones[$e->id] = $e;
+		}		
+		
+		$array_eval = array(-1 => 'NP', -2 => 'SD');
+		$sql = new Gatuf_SQL ('alumno=%s', $alumno->codigo);
+		foreach( Gatuf::factory('Calif_Calificacion')->getList( array( 'filter'=> $sql->gen() ) ) as $calif){
+		if ($calif->valor){
+			$valor = (array_key_exists($calif->valor , $array_eval)) ? $array_eval[$calif->valor] : $calif->valor.='%';
+		}
+		$calificaciones[$seccion[$calif->nrc]][$grupos[$evaluaciones[$calif->evaluacion]->grupo]][$evaluaciones[$calif->evaluacion]->descripcion] = ($calif->valor) ? $valor : NULL;
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-alumno.html',
 		                                         array('page_title' => 'Perfil público de Alumno',
 		                                               'alumno' => $alumno,
-                                                       'secciones' => $secciones),
+		                                               'calificaciones' => $calificaciones),
                                                  $request);
 	}
 	
