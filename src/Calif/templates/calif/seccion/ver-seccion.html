@@ -83,7 +83,7 @@
 		<table border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th></tr></thead>
 		<tbody>{foreach $alumnos as $alumno}
-			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td>{$alumno.codigo}</td></tr>
+			<tr><td>{$alumno.nombre} {$alumno.apellido}</td><td><a href="{url 'Calif_Views_Alumno::verAlumno', array ($alumno->codigo)}">{$alumno.codigo}</a></td></tr>
 		{/foreach}</tbody>
 		</table>
 	{else}
