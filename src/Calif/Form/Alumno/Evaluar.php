@@ -24,10 +24,10 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 		$calif_model = new Calif_Calificacion ();
 		
 		foreach ($this->lista_porcentajes as $p) {
-			$eval_model->getEval ($p->evaluacion);
+			$eval_model->get ($p->evaluacion);
 			
 			$sql = $cadena_sql_base.sprintf (' AND evaluacion=%s', $p->evaluacion);
-			$calif_model->getCalif ($sql);
+			$calif_model->getOne (array ('filter' => $sql));
 			
 			$valor = $calif_model->valor;
 			if (array_key_exists($valor , $this->array_eval)) {
@@ -67,7 +67,7 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 			if (preg_match ('/^(\d+)%$/', $calificacion, $submatch)) {
 				/* Es un porcentaje */
 				if ($submatch[1] > 100) {
-					$eval_model->getEval ($p->evaluacion);
+					$eval_model->get ($p->evaluacion);
 					throw new Gatuf_Form_Invalid ('El porcentaje en la calificacion "'.$eval_model->descripcion.'" es inválida');
 				}
 				$this->cleaned_data['calif_'.$eval] = $submatch[1];
@@ -82,7 +82,7 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 				continue;
 			}
 			
-			$eval_model->getEval ($p->evaluacion);
+			$eval_model->get ($p->evaluacion);
 			throw new Gatuf_Form_Invalid ('La calificacion en '.$eval_model->descripcion.' es inválida');
 		}
 		
@@ -96,9 +96,8 @@ class Calif_Form_Alumno_Evaluar extends Gatuf_Form {
 		$calificacion = new Calif_Calificacion();
 		
 		foreach ($this->lista_porcentajes as $p){
-			$calificacion->nrc = $this->nrc->nrc;
-			$calificacion->alumno = $this->alumno->codigo;
-			$calificacion->evaluacion = $p->evaluacion;
+			$sql = new Gatuf_SQL ('nrc=%s AND alumno=%s AND evaluacion=%s', array ($this->nrc->nrc, $this->alumno->codigo, $p->evaluacion));
+			$calificacion->getOne (array ('filter' => $sql->gen ()));
 			$calificacion->valor = $this->cleaned_data['calif_'.$p->evaluacion];
 			$calificacion->update();
 		}

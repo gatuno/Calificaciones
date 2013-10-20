@@ -50,11 +50,23 @@ class Calif_Calificacion extends Gatuf_Model {
 		);
 	}
 		
-	public function getPromedio ($grupo_eval) {
-		$req = sprintf ('SELECT C.alumno, C.nrc, P.grupo, SUM(GREATEST (IFNULL(C.valor,0),0) * P.porcentaje / 100) AS suma FROM %s AS C INNER JOIN %s AS S ON C.nrc = S.nrc INNER JOIN %s AS P ON S.materia = P.materia AND C.evaluacion = P.evaluacion WHERE C.Alumno = %s AND C.nrc = %s AND P.grupo = %s GROUP BY P.grupo', $this->getSqlTable (), Gatuf::factory ('Calif_Seccion')->getSqlTable (), Gatuf::factory('Calif_Porcentaje')->getSqlTable (), Gatuf_DB_IdentityToDb ($this->alumno, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con), Gatuf_DB_IntegerToDb ($grupo_eval, $this->_con));
+	public static function getPromedio ($alumno, $nrc, $grupo_eval) {
+		static $calificacion_tabla = null;
+		static $seccion_tabla = null;
+		static $porcentaje_tabla = null;
+		static $db = null;
 		
-		if (false === ($rs = $this->_con->select ($req))) {
-			throw new Exception($this->_con->getError());
+		if ($db === null) {
+			$db = Gatuf::db ();
+			$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
+			$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
+			$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
+		}
+		
+		$req = sprintf ('SELECT C.alumno, C.nrc, P.grupo, SUM(GREATEST (COALESCE(C.valor,0),0) * P.porcentaje / 100) AS suma FROM %s AS C INNER JOIN %s AS S ON C.nrc = S.nrc INNER JOIN %s AS P ON S.materia = P.materia AND C.evaluacion = P.evaluacion WHERE C.Alumno = %s AND C.nrc = %s AND P.grupo = %s GROUP BY P.grupo', $calificacion_tabla, $seccion_tabla, $porcentaje_tabla, Gatuf_DB_IdentityToDb ($alumno, $db), Gatuf_DB_IntegerToDb ($nrc, $db), Gatuf_DB_IntegerToDb ($grupo_eval, $db));
+		
+		if (false === ($rs = $db->select ($req))) {
+			throw new Exception($db->getError());
 		}
 		
 		if (count ($rs) == 0) {

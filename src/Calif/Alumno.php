@@ -67,4 +67,8 @@ class Calif_Alumno extends Gatuf_Model {
 	public function displaylinkedcarrera ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Carrera::verCarrera', array ($this->carrera)).'"><abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr></a>';
 	}
+	
+	public function displaylinkedcodigo ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::verAlumno', array ($this->codigo)).'"><abbr title="'.$this->codigo.'">'.$this->codigo.'</abbr></a>';
+	}
 }

@@ -314,6 +314,13 @@ $ctl[] = array (
 	'method' => 'evaluar'
 );
 
+$ctl[] = array (
+	'regex' => '#^/seccion/(\d+)/matricular/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'matricular'
+);
+
 /* Los salones */
 $ctl[] = array (
 	'regex' => '#^/salones/$#',

@@ -95,7 +95,7 @@ class Calif_Views_Seccion {
 					$calificacion[$t_calif->alumno][$t_calif->evaluacion] = $t_calif->valor;
 				}
 				foreach ($grupo_evals as $geval) {
-					$promedios[$alumno->codigo][$geval->id] = 0;//$t_calif->getPromedio ($geval->id);
+					$promedios[$alumno->codigo][$geval->id] = Calif_Calificacion::getPromedio ($alumno->codigo, $seccion->nrc, $geval->id);
 				}
 			}
 		
@@ -105,7 +105,7 @@ class Calif_Views_Seccion {
 			foreach ($grupo_evals as $geval) {
 				foreach ($porcentajes[$geval->id] as $eval) {
 					$promedio_model->getPromedioEval ($seccion->nrc, $eval->evaluacion);
-					$promedios_eval[$eval->evaluacion] = $promedio_model->promedio;
+					$promedios_eval[$eval->evaluacion] = $promedio_model->promedio.'%';
 				}
 			}
 		} else {
@@ -337,6 +337,29 @@ class Calif_Views_Seccion {
 		}
 		
 		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function matricular ($request, $match){
+		$seccion =  new Calif_Seccion ();
+		if (false === ($seccion->get($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		$title = 'Matricular Alumno a Seccion '.$seccion->nrc;
+		$extra = array ('nrc' => $seccion);
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Matricular ($request->POST, $extra);
+			if ($form->isValid ()) {
+				$form->save ();
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Matricular (null, $extra);
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/matricular.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function evaluar ($request, $match){

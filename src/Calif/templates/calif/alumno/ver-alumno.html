@@ -1,0 +1,76 @@
+{extends 'calif/base.html'}
+{block body}
+<table class="form" summary="">
+<tr>
+<th style="text-align: right">
+	{if $user.login == $alumno.codigo}
+	<a href="http://gravatar.com/emails/" title="Cambie su imagen en gravatar.com">
+	{else}
+    <a href="http://www.gravatar.com/avatar/{$alumno.user.email|md5}.jpg?s=400">
+    {/if}
+    <img src="http://www.gravatar.com/avatar/{$alumno.user.email|md5}.jpg?s=60" alt=" " />
+    </a>
+</th>
+{if $user.login == $alumno.codigo}
+	<td>Yo</td>
+{else}
+	<td>{$alumno.apellido} {$alumno.nombre}</td>
+{/if}
+</tr>
+<tr>
+<th>Última vez visto:</th>
+<td>{$alumno.user.last_login|dateago}</td>
+</tr>
+</table>
+<h2>Calificaciones del Alumno</h2>
+{if $secciones}{foreach $secciones as $seccion}
+	<h3>{$seccion.materia_desc} - {$seccion.seccion}</h3>
+	<p>Nrc: {$seccion.nrc}</p>
+	<p>Porfesor: {$seccion.maestro_nombre} {$seccion.maestro_apellido}</p>
+	<div id="tabs_{$seccion.nrc}">
+	{if $porcentajes[$seccion.nrc]}
+		<ul>{foreach $porcentajes[$seccion.nrc] as $grupo => $evals}
+			<li><a href="#t_{$seccion.nrc}_{$grupos[$grupo].id}">
+			{$grupos[$grupo].descripcion}</a></li>
+		{/foreach}</ul>
+		{foreach $porcentajes[$seccion.nrc] as $grupo => $evals}
+		<div id="t_{$seccion.nrc}_{$grupos[$grupo].id}">
+			<table border="1">
+			<thead>
+				<tr><th>Alumno</th>
+				{foreach $evals as $eval}
+					<th>{$evaluaciones[$eval.evaluacion].descripcion}</th>
+				{/foreach}
+				<th>Total (puntos)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>{$alumno.nombre} {$alumno.apellido}</td>
+				{foreach $evals as $eval}
+					<td>{$calificaciones[$seccion.nrc][$eval.evaluacion]}</td>
+				{/foreach}
+				<td>{$promedios[$seccion.nrc][$grupo]}</td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+		{/foreach}
+	{else}
+		<p>No hay formas de evaluacion</p>
+	{/if}
+	</div>
+{/foreach}
+{else}
+	<p>Este alumno no tiene grupos activos</p>
+{/if}
+{/block}{block javascript}{literal}
+<script type="text/javascript">
+$(document).ready(function() {
+{/literal}
+{foreach $secciones as $seccion}
+	$('#tabs_{$seccion.nrc}').tabs();
+{/foreach}
+{literal}
+});
+</script>
+{/literal}{/block}
