@@ -1,6 +1,5 @@
 {extends 'calif/base.html'}
 {block body}
-<h1>{$materia.clave} - {$materia.descripcion}</h1>
 <ul style="list-style-type: none;">
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>

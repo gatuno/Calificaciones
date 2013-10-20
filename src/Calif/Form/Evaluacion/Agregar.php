@@ -10,11 +10,15 @@ class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 			$choices [$grupo->descripcion] = $grupo->id;
 		}
 		
-		$this->fields['grupoeval'] = new Gatuf_Form_Field_Varchar(
+		$initial = 0;
+		if (isset ($extra['grupo'])) {
+			$initial = (int) $extra['grupo'];
+		}
+		$this->fields['grupoeval'] = new Gatuf_Form_Field_Integer (
 			array(
 				'required' => true,
 				'label' => 'Grupo de evaluacion',
-				'initial' => '',
+				'initial' => $initial,
 				'help_text' => 'En que modalidad aplica la evaluación',
 				'widget_attrs' => array (
 					'choices' => $choices,
@@ -22,7 +26,7 @@ class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 		));
 		
-		$this->fields['descripcion'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['descripcion'] = new Gatuf_Form_Field_Varchar (
 			array(
 				'required' => true,
 				'label' => 'Evaluacion',
@@ -33,6 +37,14 @@ class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 					'maxlength' => 100,
 					'size' => 30,
 				),
+		));
+		
+		$this->fields['maestro'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'Subida por el profesor',
+				'initial' => false,
+				'help_text' => 'Indica si esta forma de evaluación es subida por el profesor',
 		));
 	}
 	
@@ -47,6 +59,7 @@ class Calif_Form_Evaluacion_Agregar extends Gatuf_Form {
 		
 		$evaluacion->grupo = $grupo;
 		$evaluacion->descripcion = $this->cleaned_data['descripcion'];
+		$evaluacion->maestro = $this->cleaned_data['maestro'];
 		
 		if ($commit) $evaluacion->create();
 		

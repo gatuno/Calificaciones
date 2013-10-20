@@ -10,8 +10,9 @@
 				<li>{$eval.descripcion}</li>
 			{/foreach}
 			</ul>
+			<p>Puede <a href="{url 'Calif_Views_Evaluacion::agregarEval', array (), array ('grupo' => $grupo.id)}">agregar otra forma de evaluación</a> para {$grupo.descripcion}.</p>
 		{else}
-			<p>Su sistema no contiene formas de evaluación para {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación</a></p>
+			<p>Su sistema no contiene formas de evaluación para {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval', array (), array ('grupo' => $grupo.id)}">agregar una forma de evaluación</a></p>
 		{/if}
 	{/foreach}
 {else}

@@ -20,7 +20,7 @@ class Calif_Edificio extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Varchar',
 			       'blank' => false,
-			       'size' => 10,
+			       'size' => 100,
 			),
 		);
 		

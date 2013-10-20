@@ -136,6 +136,8 @@ class Calif_Views_Materia {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
+		$title = $materia->clave.' '.$materia->descripcion;
+		
 		/* Listar las secciones de esta materia */
 		$seccion = new Calif_Seccion ();
 		
@@ -199,7 +201,7 @@ class Calif_Views_Materia {
 		$carreras = $materia->get_carreras_list ();
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
-		                                         array('page_title' => 'Ver materia',
+		                                         array('page_title' => $title,
 		                                               'materia' => $materia,
 		                                               'departamento' => $materia->get_departamento (),
 		                                               'calendario' => $calendario_materia,

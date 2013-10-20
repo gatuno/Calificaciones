@@ -20,10 +20,15 @@ class Calif_Views_Evaluacion {
 	}
 	
 	public function agregarEval ($request, $match) {
-		$title = 'Nueva evaluacion';
+		$title = 'Nueva evaluación';
+		
+		$extra = array ();
+		if (isset ($request->REQUEST['grupo']) && $request->REQUEST['grupo'] != '') {
+			$extra['grupo'] = $request->REQUEST['grupo'];
+		}
 		
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Evaluacion_Agregar ($request->POST);
+			$form = new Calif_Form_Evaluacion_Agregar ($request->POST, $extra);
 			
 			if ($form->isValid()) {
 				$evaluacion = $form->save ();
@@ -32,11 +37,45 @@ class Calif_Views_Evaluacion {
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Evaluacion_Agregar (null);
+			$form = new Calif_Form_Evaluacion_Agregar (null, $extra);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/agregar-eval.html',
 		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
+	
+	public function actualizarEval ($request, $match) {
+		$title = 'Actualizar evaluación';
+		$evaluacion = new Calif_Evaluacion ();
+		
+		if (false === ($evaluacion->get ($match [1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$grupo = new Calif_GrupoEvaluacion ($evaluacion->grupo);
+		
+		$extra = array ('evaluacion' => $evaluacion);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Evaluacion_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$evaluacion = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Evaluacion::verEval', array ($evaluacion->id));
+				
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Evaluacion_Actualizar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/evaluacion/edit-eval.html',
+		                                         array ('page_title' => $title,
+		                                                'grupo' => $grupo,
+		                                                'evaluacion' => $evaluacion,
 		                                                'form' => $form),
 		                                         $request);
 	}
