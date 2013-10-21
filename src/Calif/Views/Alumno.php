@@ -213,7 +213,7 @@ class Calif_Views_Alumno {
 		$pag->action = array ('Calif_Views_Alumno::porCarrera', $carrera->clave);
 		$pag->summary = 'Lista de los alumnos';
 		$list_display = array (
-			array ('codigo', 'Gatuf_Paginator_DisplayVal', 'Código'),
+			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
 			array ('carrera', 'Gatuf_Paginator_FKExtra', 'Carrera'),
