@@ -12,7 +12,7 @@ class Gatuf_Model {
 	public $default_order = '';
 	public $primary_key = 'id';
 	
-	protected $_data = array();
+	public $_data = array();
 	
 	protected $_fk = array();
 	

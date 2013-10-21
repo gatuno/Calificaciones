@@ -94,6 +94,20 @@ class Calif_User extends Gatuf_Model {
 		Gatuf_Signal::send ('Gatuf_User::preDelete', 'Gatuf_User', $params);
 	}
 	
+	function maxID () {
+		$req = sprintf ('SELECT MAX(id) as max FROM %s', $this->getSqlTable ());
+		
+		if (false === ($rs = $this->_con->select ($req))) {
+			throw new Exception($this->_con->getError ());
+		}
+		
+		if (count ($rs) == 0) {
+			return 1;
+		}
+		
+		return $rs[0]['max'] + 10;
+	}
+	
 	function setPassword ($password) {
 		$salt = Gatuf_Utils::getRandomString(5);
 		$this->password = 'sha1:'.$salt.':'.sha1($salt.$password);

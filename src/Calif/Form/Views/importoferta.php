@@ -80,23 +80,31 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 	
 		$con = &Gatuf::db();
 		
-		$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
+		/* Borrar los grupos y por ende las calificaciones */
+		$hay = array(strtolower('Calif_Alumno'), strtolower('Calif_Seccion'));
+		sort($hay);
+		$grupos_tabla = $con->pfx.$hay[0].'_'.$hay[1].'_assoc';
+		
+		$req = sprintf ('TRUNCATE TABLE %s', $grupos_tabla);
 		$con->execute ($req);
 		
-		$seccion_model = new Calif_Seccion ();
-		$req = sprintf ('TRUNCATE TABLE Grupos'); /* FIXME: prefijo de la tabla */
-		$con->execute ($req);
-	
-		$maestro = new Calif_Maestro ();
+		$maestro_model = new Calif_Maestro ();
+		$usuario_model = new Calif_User ();
 		
 		/* Asegurarnos que exista nuestro amigo Staff */
-		if (false === $maestro->getMaestro ('1111111')) {
-			$maestro->codigo = '1111111';
-			$maestro->nombre = 'Staff';
-			$maestro->apellido = 'Staff Staff';
-			$maestro->correo = '';
+		if (false === $maestro_model->get ('1111111')) {
+			$maestro_model->codigo = '1111111';
+			$maestro_model->nombre = 'Staff';
+			$maestro_model->apellido = 'Staff Staff';
+			
+			$usuario_model->login = '1111111';
+			$usuario_model->active = false;
+			$usuario_model->type = 'm';
+			$usuario_model->administrator = false;
+			$usuario_model->email = '';
 		
-			$maestro->create ();
+			$maestro_model->create ();
+			$usuario_model->create ();
 		}
 		
 		/* Detectar cabeceras */
@@ -202,53 +210,136 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			}
 		}
 		
+		$departamento = new Calif_Departamento ();
+		if (false === ($departamento->get (0))) {
+			$departamento->clave = 0;
+			$departamento->descripcion = 'Sin departamento';
+		}
+		
 		if ($this->cleaned_data['materias']) {
 			$materia_model = new Calif_Materia ();
+			$materia_ram = new Calif_Materia ();
+			
+			$materia_ram->_a['table'] = 'ram_'.$materia_model->_a['table'];
+			$temp_tabla = $materia_ram->getSqlTable ();
+			
+			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$materia_model->getSqlTable();
+			$con->execute ($sql);
+			
+			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+			$con->execute ($sql);
+			
 			foreach ($materias as $clave => $descripcion) {
-				if ($materia_model->getMateria ($clave) === false) {
-					$materia_model->clave = $clave;
-					$materia_model->descripcion = $descripcion;
-					$materia_model->departamento = 0;
+				if ($materia_model->get ($clave) === false) {
+					$materia_ram->clave = $clave;
+					$materia_ram->descripcion = $descripcion;
+					$materia_ram->_data['departamento'] = 0;
 					
-					$materia_model->create ();
+					$materia_ram->create ();
 				}
 			}
+			
+			$sql = 'INSERT INTO '.$materia_model->getSqlTable ().' SELECT * FROM '.$temp_tabla;
+			$con->execute ($sql);
+			
+			$sql = 'DROP TABLE '.$temp_tabla;
+			$con->execute ($sql);
 		}
 		
 		if ($this->cleaned_data['maestros']) {
-			$maestro_model = new Calif_Maestro ();
-			foreach ($maestros as $codigo => $value) {
-				if ($maestro_model->getMaestro ($codigo) === false) {
-					$maestro_model->codigo = $codigo;
-					$maestro_model->nombre = $value[0];
-					$maestro_model->apellido = $value[1];
-					$maestro_model->correo = '';
+			$maestro_ram = new Calif_Maestro ();
+			$usuario_ram = new Calif_User ();
 			
-					$maestro_model->create ();
+			/* Crear temporal de maestros */
+			$maestro_ram->_a['table'] = 'ram_'.$maestro_model->_a['table'];
+			$temp_tabla = $maestro_ram->getSqlTable ();
+			
+			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$maestro_model->getSqlTable ();
+			$con->execute ($sql);
+			
+			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+			$con->execute ($sql);
+			
+			/* Crear temporal de usuarios */
+			$usuario_ram->_a['table'] = 'ram_'.$usuario_model->_a['table'];
+			$temp_tabla_u = $usuario_ram->getSqlTable ();
+			
+			$sql = 'CREATE TABLE '.$temp_tabla_u.' LIKE '.$usuario_model->getSqlTable ();
+			$con->execute ($sql);
+			
+			$sql = 'ALTER TABLE '.$temp_tabla_u.' ENGINE=MEMORY';
+			$con->execute ($sql);
+			
+			$maxid = $usuario_model->maxID ();
+			$sql = 'ALTER TABLE '.$temp_tabla_u.' AUTO_INCREMENT = '.$maxid;
+			$con->execute ($sql);
+			
+			foreach ($maestros as $codigo => $value) {
+				if ($maestro_model->get ($codigo) === false) {
+					$maestro_ram->codigo = $codigo;
+					$maestro_ram->nombre = $value[0];
+					$maestro_ram->apellido = $value[1];
+			
+					$maestro_ram->create ();
+				}
+				$sql = new Gatuf_SQL ('login=%s', $codigo);
+				
+				if ($usuario_model->getList (array ('count' => true, 'filter' => $sql->gen ())) == 0) {
+					$usuario_ram->login = $codigo;
+					$usuario_ram->password = '12345'; /* Generar aleatoria y enviar por correo */
+					$usuario_ram->email = '';
+					$usuario_ram->type = 'm';
+					$usuario_ram->administrator = false;
+					
+					$usuario_ram->create ();
 				}
 			}
+			
+			/* Copiar y destruir la tabla de maestros */
+			$sql = 'INSERT INTO '.$maestro_model->getSqlTable ().' SELECT * FROM '.$temp_tabla;
+			$con->execute ($sql);
+			
+			$sql = 'DROP TABLE '.$temp_tabla;
+			$con->execute ($sql);
+			
+			/* Copiar y destruir la tabla de usuarios */
+			$sql = 'INSERT INTO '.$usuario_model->getSqlTable ().' SELECT * FROM '.$temp_tabla_u;
+			$con->execute ($sql);
+			
+			$sql = 'DROP TABLE '.$temp_tabla_u;
+			$con->execute ($sql);
 		}
 		
 		$seccion_model = new Calif_Seccion ();
 		
 		if ($this->cleaned_data['nrcs'] || $this->cleaned_data['maestrosnrc'] || $this->cleaned_data['horarios']) {
+			$seccion_ram = new Calif_Seccion ();
+			
+			$seccion_ram->_a['table'] = 'ram_'.$seccion_model->_a['table'];
+			$temp_tabla = $seccion_ram->getSqlTable ();
+			
+			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$seccion_model->getSqlTable();
+			$con->execute ($sql);
+			
+			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+			$con->execute ($sql);
+			
 			foreach ($secciones as $nrc => $value) {
-				if ($seccion_model->getNrc ($nrc) === false) {
+				if ($seccion_model->get ($nrc) === false) {
 					if ($this->cleaned_data['nrcs']) {
 						/* El NRC no existe, crearlo */
-						$seccion_model->nrc = $nrc;
-						$seccion_model->materia = $value[0];
-						$seccion_model->seccion = $value[1];
-						$seccion_model->maestro = $value[2];
-					
-						$seccion_model->create ();
+						$seccion_ram->nrc = $nrc;
+						$seccion_ram->_data['materia'] = $value[0];
+						$seccion_ram->seccion = $value[1];
+						$seccion_ram->_data['maestro'] = $value[2];
+						
+						$seccion_ram->create ();
 					} /* Si el nrc no existe, no importa */
 				} else {
 					if ($this->cleaned_data['horarios'] || $this->cleaned_data['destruirnrcs']) {
 						/* Se solicitó destruir el nrc, hay que eliminar todos sus horarios */
-						$sql = new Gatuf_SQL ('nrc=%s', $seccion_model->nrc);
-						$horas = Gatuf::factory ('Calif_Horario')->getList (array ('filter' => $sql->gen()));
-				
+						$horas = $seccion_model->get_calif_horario_list ();
+						
 						foreach ($horas as $hora) {
 							$hora->delete ();
 						}
@@ -257,19 +348,25 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 						/* Y recrearlo */
 						$seccion_model->delete ();
 						
-						$seccion_model->nrc = $nrc;
-						$seccion_model->materia = $value[0];
-						$seccion_model->seccion = $value[1];
-						$seccion_model->maestro = $value[2];
+						$seccion_ram->nrc = $nrc;
+						$seccion_ram->_data['materia'] = $value[0];
+						$seccion_ram->seccion = $value[1];
+						$seccion_ram->_data['maestro'] = $value[2];
 					
-						$seccion_model->create ();
+						$seccion_ram->create ();
 					} else if ($this->cleaned_data['maestrosnrc']) {
 						/* El nrc ya existe, pero hay que actualizar el maestro */
-						$seccion_model->maestro = $value[2];
+						$seccion_model->_data['maestro'] = $value[2];
 						$seccion_model->update ();
 					}
 				}
 			}
+			/* Copiar y destruir la tabla de seccion */
+			$sql = 'INSERT INTO '.$seccion_model->getSqlTable ().' SELECT * FROM '.$temp_tabla;
+			$con->execute ($sql);
+			
+			$sql = 'DROP TABLE '.$temp_tabla;
+			$con->execute ($sql);
 		}
 		
 		if ($this->cleaned_data['salones']) {
@@ -277,7 +374,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$edificio_model = new Calif_Edificio ();
 			ksort ($salones);
 			foreach ($salones as $edificio => &$aulas) {
-				if (false === $edificio_model->getEdificio ($edificio)) {
+				if (false === $edificio_model->get ($edificio)) {
 					/* Si el edificio no existe, también crearlo */
 					$edificio_model->clave = $edificio;
 					$edificio_model->descripcion = 'Edificio '.$edificio;
@@ -287,7 +384,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				/* Y luego crear las aulas */
 				foreach ($aulas as $aula => &$cupo) {
 					if ($salon_model->getSalon ($edificio, $aula) === false) {
-						$salon_model->edificio = $edificio;
+						$salon_model->_data['edificio'] = $edificio;
 						$salon_model->aula = $aula;
 						$salon_model->cupo = $cupo;
 				
@@ -304,7 +401,17 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			/* Descartar las cabeceras */
 			$linea = fgetcsv ($archivo, 600, ',', '"');
 			
+			$horario_ram = new Calif_Horario ();
 			$horario_model = new Calif_Horario ();
+			
+			$horario_ram->_a['table'] = 'ram_'.$horario_ram->_a['table'];
+			$temp_tabla = $horario_ram->getSqlTable ();
+			
+			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$horario_model->getSqlTable();
+			$con->execute ($sql);
+			
+			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+			$con->execute ($sql);
 			
 			/* Segunda pasada, crear los horarios */
 			while (($linea = fgetcsv ($archivo, 600, ',', '"')) !== FALSE) {
@@ -321,21 +428,24 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					$linea[$cabecera['fin']] = '455';
 				}
 				
-				if ($seccion_model->getNrc ($linea[$cabecera['nrc']]) === false) continue;
+				if ($seccion_model->get ($linea[$cabecera['nrc']]) === false) continue;
 				
-				$horario_model->nrc = $linea[$cabecera['nrc']];
-				$horario_model->hora_inicio = $linea[$cabecera['ini']];
-				$horario_model->hora_fin = $linea[$cabecera['fin']];
-				$horario_model->salon = $salones[$linea[$cabecera['edif']]][$linea[$cabecera['aula']]];
-				$horario_model->lunes = $linea[$cabecera['l']];
-				$horario_model->martes = $linea[$cabecera['m']];
-				$horario_model->miercoles = $linea[$cabecera['i']];
-				$horario_model->jueves = $linea[$cabecera['j']];
-				$horario_model->viernes = $linea[$cabecera['v']];
-				$horario_model->sabado = $linea[$cabecera['s']];
-				/* FIXME: Insertar en una tabla RAM para ganar velocidad */
-				$horario_model->create ();
+				$horario_ram->_data['nrc'] = $linea[$cabecera['nrc']];
+				$horario_ram->inicio = Calif_Utils_horaFromSiiau ($linea[$cabecera['ini']]);
+				$horario_ram->fin = Calif_Utils_horaFromSiiau ($linea[$cabecera['fin']]);
+				$horario_ram->_data['salon'] = $salones[$linea[$cabecera['edif']]][$linea[$cabecera['aula']]];
+				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
+					$horario_ram->$dia = $linea[$cabecera[$dia]];
+				}
+				
+				$horario_ram->create ();
 			}
+			
+			$sql = 'INSERT INTO '.$horario_model->getSqlTable ().' SELECT * FROM '.$temp_tabla;
+			$con->execute ($sql);
+			
+			$sql = 'DROP TABLE '.$temp_tabla;
+			$con->execute ($sql);
 		}
 		
 		fclose ($archivo);

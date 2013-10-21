@@ -48,9 +48,11 @@ class Calif_Salon extends Gatuf_Model {
 		if (count ($rs) == 0) {
 			return false;
 		}
-		foreach ($rs[0] as $col => $val) {
-			$this->$col = $val;
+		$this->_reset ();
+		foreach ($this->_a['cols'] as $col => $val) {
+			if (isset($rs[0][$col])) $this->_data[$col] = $this->_fromDb($rs[0][$col], $col);
 		}
+		$this->restore ();
 		return true;
 	}
 	
