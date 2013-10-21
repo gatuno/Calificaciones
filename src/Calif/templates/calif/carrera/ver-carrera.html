@@ -1,0 +1,9 @@
+{extends 'calif/base.html'}
+{block body}
+<p><a href="{url 'Calif_Views_Alumno::porCarrera', $carrera.clave}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Ver alumnos" />Ver alumnos</a></p>
+<p><a href="{url 'Calif_Views_Materia::porCarrera', $carrera.clave}">Ver materias de esta carrera</a></p>
+<p><a href="{url 'Calif_Views_Carrera::actualizarCarrera', $carrera.clave}">Actualizar carrera</a></p>
+<p>Clave: {$carrera.clave}</p>
+<p>Descripcion: {$carrera.descripcion}</p>
+<p>Color: <span style="border-style: solid solid none; display: inline-block; border-color: rgb(212, 212, 212) rgb(212, 212, 212) -moz-use-text-color; border-width: 1px 1px medium; height: 30px; width: 100px; background-color: #{$color};">&nbsp;</span></p>
+{/block}

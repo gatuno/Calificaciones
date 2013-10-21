@@ -1,5 +1,6 @@
 {extends 'calif/base.html'}
 {block body}
+<p><a href="{url 'Calif_Views_Carrera::agregarCarrera'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Crear carrera" />Agregar nueva carrera</a></p>
 {if $carreras}
 <ol>
 {foreach $carreras as $carrera}
@@ -8,5 +9,7 @@
 </li>
 {/foreach}
 </ol>
+{else}
+<p>No hay carreras registradas</p>
 {/if}
 {/block}
