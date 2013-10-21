@@ -27,6 +27,25 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 					'size' => 30,
 				),
 		));
+		
+		$this->fields['color'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Color',
+				'help_text' => 'Un color para identificar a la carrera',
+				'widget' => 'Gatuf_Form_Widget_ColorPicker',
+				'initial' => '#FFFFFF',
+		));
+	}
+	
+	public function clean_color () {
+		$color = $this->cleaned_data['color'];
+		
+		if (!preg_match ('/^#[\dA-Fa-f]{6}$/', $color)) {
+			throw new Gatuf_Form_Invalid ('Color inválido');
+		}
+		
+		return hexdec (substr ($color, 1));
 	}
 	
 	public function clean_clave () {
@@ -54,6 +73,7 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
         
         $carrera->clave = $this->cleaned_data['clave'];
         $carrera->descripcion = $this->cleaned_data['descripcion'];
+        $carrera->color = $this->cleaned_data['color'];
         
         $carrera->create();
         
