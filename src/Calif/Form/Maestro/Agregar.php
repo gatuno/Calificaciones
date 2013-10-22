@@ -7,7 +7,7 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Código',
 				'initial' => '',
-				'help_text' => 'El código del maestro de 7 caracteres',
+				'help_text' => 'El código del profesor de 7 caracteres',
 				'min' => 1000000,
 				'max' => 9999999,
 				'widget_attrs' => array (
@@ -21,7 +21,7 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Nombre',
 				'initial' => '',
-				'help_text' => 'El nombre o nombres del maestro',
+				'help_text' => 'El nombre o nombres del profesor',
 				'max_length' => 50,
 				'min_length' => 5,
 				'widget_attrs' => array (
@@ -35,7 +35,7 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Apellido',
 				'initial' => '',
-				'help_text' => 'Los apellidos del maestro',
+				'help_text' => 'Los apellidos del profesor',
 				'max_length' => 100,
 				'min_length' => 5,
 				'widget_attrs' => array (
@@ -59,7 +59,7 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		$l = Gatuf::factory('Calif_Maestro')->getList(array ('filter' => $sql->gen(), 'count' => true));
 		
 		if ($l > 0) {
-			throw new Gatuf_Form_Invalid (sprintf ('El código \'<a href="%s">%s</a>\' del maestro especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Maestro::verMaestro', array ($codigo)), $codigo));
+			throw new Gatuf_Form_Invalid (sprintf ('El código \'<a href="%s">%s</a>\' del profesor especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Maestro::verMaestro', array ($codigo)), $codigo));
 		}
 		
 		return $codigo;

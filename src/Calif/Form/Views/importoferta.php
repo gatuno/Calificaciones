@@ -37,16 +37,16 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		));
 		
 		$this->fields['maestros'] = new Gatuf_Form_Field_Boolean (
-			array ('label' => 'Importar maestros',
-				'help_text' => 'Si se deben importar los nombres y códigos de los maestros.',
+			array ('label' => 'Importar profesores',
+				'help_text' => 'Si se deben importar los nombres y códigos de los Profesores.',
 				'required' => true,
 				'initial' => true,
 				'widget' => 'Gatuf_Form_Widget_CheckboxInput'
 		));
 		
 		$this->fields['maestrosnrc'] = new Gatuf_Form_Field_Boolean (
-			array ('label' => 'Importar maestros asignados a NRC',
-				'help_text' => 'Se asignarán maestros a los NRC ya existentes. No se crearán NRCs a menos que active la casilla de crear NRCs. En caso contrario se asignará Staff a los maestros. Implica importar los maestros.',
+			array ('label' => 'Importar profesores asignados a NRC',
+				'help_text' => 'Se asignarán profesores a los NRC ya existentes. No se crearán NRCs a menos que active la casilla de crear NRCs. En caso contrario se asignará Staff a los profesores. Implica importar los profesores.',
 				'required' => true,
 				'initial' => true,
 				'widget' => 'Gatuf_Form_Widget_CheckboxInput'
@@ -126,7 +126,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		/* Verificar que existan los campos necesarios */
 		if ($this->cleaned_data['maestros']) {
 			if (!isset ($cabecera['profesor'])) {
-				throw new Exception ('Se solicitó importar maestros, pero el archivo no contiene profesores');
+				throw new Exception ('Se solicitó importar profesores, pero el archivo no contiene profesores');
 			}
 		}
 		
@@ -264,7 +264,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 					
 						$seccion_model->create ();
 					} else if ($this->cleaned_data['maestrosnrc']) {
-						/* El nrc ya existe, pero hay que actualizar el maestro */
+						/* El nrc ya existe, pero hay que actualizar el profesor */
 						$seccion_model->maestro = $value[2];
 						$seccion_model->update ();
 					}

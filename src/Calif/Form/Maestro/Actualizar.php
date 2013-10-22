@@ -11,7 +11,7 @@ class Calif_Form_Maestro_Actualizar extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Nombre',
 				'initial' => $this->maestro->nombre,
-				'help_text' => 'El nombre o nombres del maestro',
+				'help_text' => 'El nombre o nombres del profesor',
 				'max_length' => 50,
 				'min_length' => 5,
 				'widget_attrs' => array (
@@ -25,7 +25,7 @@ class Calif_Form_Maestro_Actualizar extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Apellido',
 				'initial' => $this->maestro->apellido,
-				'help_text' => 'Los apellidos del maestro',
+				'help_text' => 'Los apellidos del profesor',
 				'max_length' => 100,
 				'min_length' => 5,
 				'widget_attrs' => array (
