@@ -16,14 +16,12 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 		$sql = new Gatuf_SQL ('evaluacion=%s AND nrc=%s', array ($this->modo_eval, $this->nrc->nrc));
 		$cadena_sql_base = $sql->gen();
 		
-		$this->alumnos = $this->nrc->getAlumnosList ();
+		$this->alumnos = $this->nrc->get_grupos_list();
 		$calif_model = new Calif_Calificacion ();
 		
 		foreach ($this->alumnos as $a) {
-			
 			$sql = $cadena_sql_base.sprintf (' AND alumno=%s', $a->codigo);
-			$calif_model->getCalif ($sql);
-			
+			$calif_model->getOne($sql);
 			$valor = $calif_model->valor;
 			if (array_key_exists($valor , $this->array_eval)) {
 					$valor = $this->array_eval[$valor];
@@ -89,9 +87,8 @@ class Calif_Form_Seccion_Evaluar extends Gatuf_Form {
 		$calificacion = new Calif_Calificacion();
 		
 		foreach($this->alumnos as $alumno){
-				$calificacion->nrc = $this->nrc->nrc;
-				$calificacion->alumno = $alumno->codigo;
-				$calificacion->evaluacion = $this->modo_eval;
+				$sql = new Gatuf_SQL ('nrc=%s AND alumno=%s AND evaluacion=%s', array ($this->nrc->nrc, $alumno->codigo, $this->modo_eval));
+			   $calificacion->getOne (array ('filter' => $sql->gen ()));
 				$calificacion->valor = $this->cleaned_data['calif_'.$alumno->codigo];
 				$calificacion->update();
 			}
