@@ -32,6 +32,9 @@ class Gatuf_Form_Field_Float extends Gatuf_Form_Field {
         if (in_array($value, $this->empty_values)) {
             $value = '';
         }
+        
+        if ($value == '') return $value;
+        
         if (!is_numeric($value)) {
             throw new Gatuf_Form_Invalid('Enter a number.');
         }
