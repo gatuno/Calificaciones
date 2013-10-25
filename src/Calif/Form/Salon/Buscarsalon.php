@@ -78,7 +78,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 	function save ($commit=true) {
 		Gatuf::loadFunction ('Calif_Utils_buscarSalonVacio');
 		
-		$libres = Calif_Utils_buscarSalonVacio ($this->semana, Gatuf_DB_HoraSiiauFromDb ($this->cleaned_data['horainicio']), Gatuf_DB_HoraSiiauFromDb($this->cleaned_data['horafin']), $this->cleaned_data['edificios']);
+		$libres = Calif_Utils_buscarSalonVacio ($this->semana, $this->cleaned_data['horainicio'], $this->cleaned_data['horafin'], $this->cleaned_data['edificios']);
 		
 		return $libres;
 	}

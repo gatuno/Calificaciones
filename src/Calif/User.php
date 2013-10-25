@@ -165,7 +165,7 @@ class Calif_User extends Gatuf_Model {
 		
 		if (count ($ids) > 0) {
 			$gperm = new Gatuf_Permission ();
-			$f_name = strtolower (Gatuf::config ('gatuf_custom_group', 'Gatuf_Grupo')).'_id';
+			$f_name = strtolower (Gatuf::config ('gatuf_custom_group', 'Gatuf_Group')).'_id';
 			$perms = array_merge ($perms, (array) $gperm->getList (array ('filter' => $f_name.' IN ('.join(', ', $ids).')', 'view' => 'join_group')));
 		}
 		foreach ($perms as $perm) {

@@ -36,7 +36,7 @@ class Calif_Views_Salon {
 	}
 	
 	public function verSalon ($request, $match) {
-		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		$salon = new Calif_Salon ();
 		
 		if (false === ($salon->get ($match[1]))) {
@@ -58,8 +58,8 @@ class Calif_Views_Salon {
 			$dia_semana = strtotime ('next Monday');
 			foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 				if ($horario->$dia) {
-					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).$horario->inicio,
-							                     'end' => date('Y-m-d ', $dia_semana).$horario->fin,
+					$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->inicio),
+							                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->fin),
 							                     'title' => $horario->nrc,
 							                     'content' => $cadena_desc,
 							                     'url' => $url, 'color' => '');
@@ -141,12 +141,16 @@ class Calif_Views_Salon {
 			
 			if ($form->isValid ()) {
 				$libres = $form->save ();
-				
+				$semana = array ();
+				$dias = array ('l' => 'lunes', 'm' => 'martes', 'i' => 'miércoles', 'j' => 'jueves', 'v' => 'viernes', 's' => 'sábado');
+				foreach ($form->semana as $dia) {
+					$semana[] = $dias[$dia];
+				}
 				return Gatuf_Shortcuts_RenderToResponse ('calif/salon/reporte-vacios.html',
 		                                         array ('page_title' => $title,
 		                                         'bus_inicio' => $form->cleaned_data['horainicio'],
 		                                         'bus_fin' => $form->cleaned_data['horafin'],
-		                                         'semana' => implode (',', $form->semana),
+		                                         'semana' => implode (',', $semana),
 		                                         'salones' => $libres),
 		                                         $request);
 			}

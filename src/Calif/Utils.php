@@ -120,17 +120,17 @@ function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
 	$salones [$edificio][$aula] = $cupo;
 }
 
-function Calif_Utils_displayHoraSiiau ($val, $fix55 = true) {
-	settype ($val, 'integer');
+function Calif_Utils_displayHora ($val) {
+	$explote = explode (':', $val);
+	$minuto = (int) $explote[1];
+	$hora = (int) $explote[0];
 	
-	if ($fix55 && $val % 100 == 55) {
-		$val += 45;
+	if ($minuto > 50) {
+		$minuto = 0;
+		$hora++;
 	}
 	
-	$parte_minutos = $val % 100;
-	$parte_horas = ($val - $parte_minutos) / 100;
-	
-	return sprintf ('%02s:%02s', $parte_horas, $parte_minutos);
+	return sprintf ('%02s:%02s', $hora, $minuto);
 }
 
 function Calif_Utils_horaFromSiiau ($val) {
@@ -166,7 +166,7 @@ function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificio
 		$sql = new Gatuf_SQL ('edificio IN ('.implode (',', array_fill (0, count ($edificios), '%s')).')', $edificios);
 		$where = $sql->gen ();
 	} else {
-		$where = '';
+		$where = null;
 	}
 	$salones = Gatuf::factory('Calif_Salon')->getList (array ('order' => array ('edificio ASC', 'aula ASC'), 'filter' => $where));
 	

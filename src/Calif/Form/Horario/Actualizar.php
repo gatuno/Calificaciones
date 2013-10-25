@@ -10,7 +10,7 @@ class Calif_Form_Horario_Actualizar extends Gatuf_Form {
 		$this->nrc = $extra['seccion'];
 		$this->hora = $extra['horario'];
 		
-		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		
 		/* Preparar la lista de salones a elegir */
 		$edificios = Gatuf::factory('Calif_Edificio')->getList ();

@@ -33,7 +33,7 @@ class Calif_Views_Edificio {
 	}
 	
 	public function verEdificio ($request, $match) {
-		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		$edificio = new Calif_Edificio ();
 		
 		if (false === $edificio->get ($match[1])) {
@@ -72,8 +72,8 @@ class Calif_Views_Edificio {
 				$calendar->opts['start-day'] = date('Y-m-d', $dia_semana);
 				foreach (array ('l', 'm', 'i', 'v', 's') as $dia) {
 					if ($horario->$dia) {
-						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).$horario->inicio,
-								                     'end' => date('Y-m-d ', $dia_semana).$horario->fin,
+						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->inicio),
+								                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->fin),
 								                     'title' => $horario->nrc,
 								                     'content' => $cadena_desc,
 								                     'url' => $url, 'color' => '');

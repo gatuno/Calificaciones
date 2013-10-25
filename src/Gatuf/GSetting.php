@@ -1,16 +1,57 @@
 <?php
 
 class Gatuf_GSetting extends Gatuf_Model {
-	public $id, $vkey, $value;
-	public $datacache;
-	public $application;
-	protected $_application;
+	public $_model = __CLASS__;
+	public $datacache = null;
+	public $f = null;
+	protected $_project = null;
 	
-	function __construct ($application = null) {
-		$this->_getConnection ();
-		$this->tabla = 'gsettings';
+	function init () {
+		$this->_a['table'] = 'gsettings';
+		$this->_a['model'] = __CLASS__;
 		
-		if (!is_null ($application)) $this->setProject ($application);
+		$this->primary_key = 'id';
+		
+		$this->_a['cols'] = array (
+			'id' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Sequence',
+			       'blank' => true,
+			),
+			'application' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'size' => 150,
+			       'blank' => false,
+			),
+			'vkey' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Varchar',
+			       'size' => 50,
+			       'blank' => false,
+			),
+			'value' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Text',
+			       'blank' => false,
+			),
+		);
+		
+		$this->_a['idx'] = array (
+			'project_vkey_idx' =>
+			array (
+			       'col' => 'application, vkey',
+			       'type' => 'unique',
+			),
+			'application_idx' =>
+			array (
+			       'col' => 'application',
+			       'type' => 'index',
+			),
+		);
+		
+		/* FIXME: Ver si esto se va a usar o no
+		$this->f = new IDF_Config_DataProxy () */
 	}
 	
 	function setProject ($application) {
@@ -56,20 +97,5 @@ class Gatuf_GSetting extends Gatuf_Model {
 		if ($initcache) {
 			$this->initCache ();
 		}
-	}
-	
-	function delete () {
-		$req = sprintf ('DELETE FROM %s WHERE id=%s', $this->getSqlTable (), $this->id);
-		$this->_con->execute ($req);
-		return true;
-	}
-	
-	function create () {
-		$req = sprintf ('INSERT INTO %s (application, vkey, value) VALUES (%s, %s, %s)', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->application, $this->_con), Gatuf_DB_IdentityToDb ($this->vkey, $this->_con), Gatuf_DB_IdentityToDb ($this->value, $this->_con));
-		$this->_con->execute ($req);
-		
-		$this->id = $this->_con->getLastId ();
-		
-		return true;
 	}
 }

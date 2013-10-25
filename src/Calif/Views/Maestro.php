@@ -72,6 +72,7 @@ class Calif_Views_Maestro {
 	}
 	
 	public function verMaestro ($request, $match) {
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		$maestro = new Calif_Maestro ();
 		
 		if (false === ($maestro->get ($match[1]))) {
@@ -101,8 +102,8 @@ class Calif_Views_Maestro {
 					$salon_model->get ($hora->salon);
 					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 						if ($hora->$dia) {
-							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).$hora->inicio,
-											             'end' => date('Y-m-d ', $dia_semana).$hora->fin,
+							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->inicio),
+											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->fin),
 											             'title' => $salon_model->edificio.' '.$salon_model->aula,
 											             'content' => $cadena_desc,
 											             'url' => $url, 'color' => '');

@@ -167,7 +167,7 @@ class Calif_Views_Materia {
 		$pag->setFromRequest ($request);
 		
 		/* Recuperar todos las secciones de esta materia */
-		Gatuf::loadFunction ('Calif_Utils_displayHoraSiiau');
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		$calendario_materia = new Gatuf_Calendar ();
 		$calendario_materia->events = array ();
 		$calendario_materia->opts['conflicts'] = false;
@@ -187,8 +187,8 @@ class Calif_Views_Materia {
 				
 				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 					if ($hora->$dia) {
-						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).$hora->inicio,
-										             'end' => date('Y-m-d ', $dia_semana).$hora->fin,
+						$calendario_materia->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora($hora->inicio),
+										             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora($hora->fin),
 										             'title' => $hora->salon_edificio.' '.$hora->salon_aula,
 										             'content' => $cadena_desc,
 										             'url' => $url, 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
