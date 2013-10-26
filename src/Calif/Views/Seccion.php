@@ -370,7 +370,7 @@ class Calif_Views_Seccion {
 		$modo_eval = $match[2];
 		$seccion =  new Calif_Seccion ();
 		
-		if (false === ($seccion->getNrc($match[1]))) {
+		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
@@ -379,7 +379,7 @@ class Calif_Views_Seccion {
 		$porcentaje= $porcentaje[0]->porcentaje;
 		
 		$eval_model = new Calif_Evaluacion ();
-		$eval_model->getEval ($modo_eval);
+		$eval_model->get ($modo_eval);
 		
 		$title = 'Evaluacion de '.$eval_model->descripcion.' Para la seccion '.$seccion->nrc.' Evaluando sobre '.$porcentaje.' puntos';
 		

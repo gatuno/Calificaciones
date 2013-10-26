@@ -68,7 +68,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		$this->fields['maestro'] = new Gatuf_Form_Field_Integer (
 			array(
 				'required' => false,
-				'label' => 'Maestro',
+				'label' => 'Profesor',
 				'initial' => 1111111,
 				'help_text' => 'Este valor será asignado por su jefe de departamento',
 				'widget_attrs' => array(

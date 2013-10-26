@@ -44,9 +44,9 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 		$this->fields['maestro'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,
-				'label' => 'Maestro',
+				'label' => 'Profesor',
 				'initial' => $this->seccion->maestro,
-				'help_text' => 'El maestro de este grupo',
+				'help_text' => 'El profesor de este grupo',
 				'widget_attrs' => array(
 					'choices' => $choices,
 				),

@@ -50,7 +50,7 @@
 	<table border="1">
 		<thead><tr><th>Alumno</th><th>Codigo</th>
 		{foreach $porcentajes[$geval.id] as $p}
-				<th>{$evals[$p.evaluacion].descripcion}</th>
+			<th><a href="{url 'Calif_Views_Seccion::evaluar', array ($seccion->nrc, $p.evaluacion)}">{$evals[$p.evaluacion].descripcion}</th>
 		{/foreach}
 		<th>Total (puntos)</th><th></th></tr></thead>
 		<tbody>{foreach $alumnos as $alumno}

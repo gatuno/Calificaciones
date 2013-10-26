@@ -56,9 +56,9 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		$this->fields['maestro'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => true,
-				'label' => 'Maestro',
+				'label' => 'Profesor',
 				'initial' => '',
-				'help_text' => 'El maestro de este grupo',
+				'help_text' => 'El profesor de este grupo',
 				'widget_attrs' => array(
 					'choices' => $choices,
 				),
