@@ -24,6 +24,13 @@
 		<th>Nombramiento:</th>
 		<td>{$nombramiento.descripcion}</td>
 	</tr>
+	{if $maestro.tiempo != null}
+		{if $maestro.tiempo == 't'}
+			<tr><td></td><td>Tiempo completo</td></tr>
+		{else}
+			<tr><td></td><td>Medio tiempo</td></tr>
+		{/if}
+	{/if}
 	<tr>
 		<th>Última vez visto:</th>
 		<td>{$maestro.user.last_login|dateago}</td>

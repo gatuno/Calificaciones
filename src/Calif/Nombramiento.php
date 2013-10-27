@@ -27,12 +27,6 @@ class Calif_Nombramiento extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Integer',
 			       'blank' => false,
 			),
-			'tiempo_completo' =>
-			array (
-			       'type' => 'Gatuf_DB_Field_Boolean',
-			       'blank' => false,
-			       'default' => false,
-			),
 		);
 	}
 }

@@ -8,11 +8,9 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		
 		$choices_nombramientos = array ();
 		foreach (Gatuf::factory ('Calif_Nombramiento')->getList () as $nomb) {
+			if ($nomb->clave == '1003H' || $nomb->clave == '1004H') continue;
 			$choices_nombramientos[$nomb->descripcion] = $nomb->clave;
 		}
-		
-		if (isset ($choices_nombramientos['1003H'])) unset ($choices_nombramientos['1003H']);
-		if (isset ($choices_nombramientos['1004H'])) unset ($choices_nombramientos['1004H']);
 		
 		$this->fields['codigo'] = new Gatuf_Form_Field_Integer (
 			array (
@@ -94,6 +92,17 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 					'choices' => $choices_nombramientos,
 				),
 		));
+		
+		$this->fields['tiempo'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Tiempo completo',
+				'initial' => 'a',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array(
+					'choices' => $choices_tiempo,
+				),
+		));
 	}
 	
 	public function clean_codigo () {
@@ -106,6 +115,20 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		}
 		
 		return $codigo;
+	}
+	
+	public function clean () {
+		$nombramiento = $this->cleaned_data['nombramiento'];
+		$tiempo = $this->cleaned_data['tiempo'];
+		
+		if ($nombramiento == '1001H' || $nombramiento == '1002H') {
+			if ($tiempo != 'a') {
+				throw new Gatuf_Form_Invalid ('Un maestro de asignatura no puede ser de tiempo completo o medio tiempo');
+			}
+			$this->cleaned_data['tiempo'] = null;
+		}
+		
+		return $this->cleaned_data;
 	}
 	
 	public function save ($commit = true) {

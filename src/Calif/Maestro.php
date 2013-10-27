@@ -47,6 +47,14 @@ class Calif_Maestro extends Gatuf_Model {
 			       'blank' => false,
 			       'model' => 'Calif_Nombramiento',
 			),
+			'tiempo' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'size' => 1,
+			       'default' => null, /* Tiempo Completo, Medio tiempo */
+			       'is_null' => true,
+			),
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';
