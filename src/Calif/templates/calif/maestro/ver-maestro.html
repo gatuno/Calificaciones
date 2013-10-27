@@ -2,26 +2,32 @@
 {block body}
 <p><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Cambiar la información</a> de este profesor</a>
 <table class="form" summary="">
-<tr>
-<th style="text-align: right">
+	<tr>
+		<th style="text-align: right">
+		{if $user.login == $maestro.codigo}
+		<a href="http://gravatar.com/emails/" title="Cambie su imagen en gravatar.com">
+		{else}
+		<a href="http://www.gravatar.com/avatar/{$maestro.user.email|md5}.jpg?s=400">
+		{/if}<img src="http://www.gravatar.com/avatar/{$maestro.user.email|md5}.jpg?s=60" alt=" " /></a>
+		</th>
 	{if $user.login == $maestro.codigo}
-	<a href="http://gravatar.com/emails/" title="Cambie su imagen en gravatar.com">
+		<td>Yo</td>
 	{else}
-    <a href="http://www.gravatar.com/avatar/{$maestro.user.email|md5}.jpg?s=400">
-    {/if}
-    <img src="http://www.gravatar.com/avatar/{$maestro.user.email|md5}.jpg?s=60" alt=" " />
-    </a>
-</th>
-{if $user.login == $maestro.codigo}
-	<td>Yo</td>
-{else}
-	<td>{$maestro.apellido} {$maestro.nombre}</td>
-{/if}
-</tr>
-<tr>
-<th>Última vez visto:</th>
-<td>{$maestro.user.last_login|dateago}</td>
-</tr>
+		<td>{$maestro.apellido} {$maestro.nombre}</td>
+	{/if}
+	</tr>
+	<tr>
+		<th>Código:</th>
+		<td>{$maestro.codigo}</td>
+	</tr>
+	<tr>
+		<th>Nombramiento:</th>
+		<td>{$nombramiento.descripcion}</td>
+	</tr>
+	<tr>
+		<th>Última vez visto:</th>
+		<td>{$maestro.user.last_login|dateago}</td>
+	</tr>
 </table>
 <h2>Grupos del profesor</h2>
 {if $grupos}

@@ -27,7 +27,26 @@ class Calif_Maestro extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 100,
 			),
-			/* TODO: Falta grado y sexo */
+			'sexo' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'default' => 'M',
+			       'size' => 1,
+			),
+			'grado' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Char',
+			       'blank' => false,
+			       'default' => 'L',
+			       'size' => 1,
+			),
+			'nombramiento' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Calif_Nombramiento',
+			),
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';

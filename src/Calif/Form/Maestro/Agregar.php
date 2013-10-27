@@ -2,6 +2,18 @@
 
 class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 	public function initFields ($extra = array ()) {
+		/* Preparar catalogos */
+		$choices_grados = array ('Lic.' => 'L', 'Ing.' => 'I', 'Mtro./Mtra' => 'M', 'Dr./Dra.' => 'D');
+		$choices_sex = array ('Masculino' => 'M', 'Femenino' => 'F');
+		
+		$choices_nombramientos = array ();
+		foreach (Gatuf::factory ('Calif_Nombramiento')->getList () as $nomb) {
+			$choices_nombramientos[$nomb->descripcion] = $nomb->clave;
+		}
+		
+		if (isset ($choices_nombramientos['1003H'])) unset ($choices_nombramientos['1003H']);
+		if (isset ($choices_nombramientos['1004H'])) unset ($choices_nombramientos['1004H']);
+		
 		$this->fields['codigo'] = new Gatuf_Form_Field_Integer (
 			array (
 				'required' => true,
@@ -23,7 +35,6 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'initial' => '',
 				'help_text' => 'El nombre o nombres del profesor',
 				'max_length' => 50,
-				'min_length' => 5,
 				'widget_attrs' => array (
 					'maxlength' => 50,
 					'size' => 30,
@@ -37,10 +48,31 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'initial' => '',
 				'help_text' => 'Los apellidos del profesor',
 				'max_length' => 100,
-				'min_length' => 5,
 				'widget_attrs' => array (
 					'maxlength' => 100,
 					'size' => 30,
+				),
+		));
+		
+		$this->fields['sexo'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Sexo',
+				'initial' => '',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array(
+					'choices' => $choices_sex
+				),
+		));
+		
+		$this->fields['grado'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Grado de estudios',
+				'initial' => '',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array(
+					'choices' => $choices_grados
 				),
 		));
 		
@@ -51,6 +83,17 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 				'initial' => '',
 				'help_text' => 'Un correo',
 		));
+		
+		$this->fields['nombramiento'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Nombramiento',
+				'initial' => '1001H',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array(
+					'choices' => $choices_nombramientos,
+				),
+		));
 	}
 	
 	public function clean_codigo () {
@@ -59,7 +102,7 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		$l = Gatuf::factory('Calif_Maestro')->getList(array ('filter' => $sql->gen(), 'count' => true));
 		
 		if ($l > 0) {
-			throw new Gatuf_Form_Invalid (sprintf ('El código \'<a href="%s">%s</a>\' del profesor especificado ya existe', Gatuf_HTTP_URL_urlForView('Calif_Views_Maestro::verMaestro', array ($codigo)), $codigo));
+			throw new Gatuf_Form_Invalid (sprintf ('El código "%s" del profesor especificado ya existe', $codigo));
 		}
 		
 		return $codigo;
@@ -73,9 +116,8 @@ class Calif_Form_Maestro_Agregar extends Gatuf_Form {
 		$maestro = new Calif_Maestro ();
 		$user = new Calif_User ();
 		
-		$maestro->codigo = $this->cleaned_data['codigo'];
-		$maestro->nombre = $this->cleaned_data['nombre'];
-		$maestro->apellido = $this->cleaned_data['apellido'];
+		$maestro->setFromFormData ($this->cleaned_data);
+		
 		$user->login = $this->cleaned_data['codigo'];
 		$user->email = $this->cleaned_data['correo'];
 		$user->type = 'm';

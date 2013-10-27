@@ -80,10 +80,12 @@ class Calif_Views_Maestro {
 		}
 		
 		$maestro->getUser ();
+		$nombramiento = new Calif_Nombramiento ($maestro->nombramiento);
 		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
 		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
+			$grupos = array ();
 		} else {
 			$horario_maestro = new Gatuf_Calendar ();
 			$horario_maestro->events = array ();
@@ -117,6 +119,7 @@ class Calif_Views_Maestro {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-maestro.html',
 		                                         array('page_title' => 'Perfil público',
 		                                               'maestro' => $maestro,
+		                                               'nombramiento' => $nombramiento,
 		                                               'calendario' => $horario_maestro,
                                                        'grupos' => $grupos),
                                                  $request);
