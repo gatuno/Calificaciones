@@ -87,6 +87,24 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 				'initial' => false,
 				'help_text' => '¿La materia es un seminario?'
 		));
+		
+		$this->fields['teoria'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => 'Horas teoria',
+				'initial' => 0,
+				'help_text' => 'La cantidad de horas teoria de esta materia',
+				'min' => 0,
+		));
+		
+		$this->fields['practica'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => 'Horas práctica',
+				'initial' => 0,
+				'help_text' => 'La cantidad de horas práctica de esta materia',
+				'min' => 0,
+		));
 	}
 	
 	public function clean_clave () {
@@ -96,7 +114,7 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid('La clave de la materia deben ser de 1 a 4 letras seguidas de números.');
 		}
 		
-		$sql = new Gatuf_SQL('Clave=%s', array($clave));
+		$sql = new Gatuf_SQL('clave=%s', array($clave));
         $l = Gatuf::factory('Calif_Materia')->getList(array('filter'=>$sql->gen(),'count' => true));
         if ($l > 0) {
             throw new Gatuf_Form_Invalid('Esta materia ya existe');
@@ -110,18 +128,9 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$departamento = new Calif_Departamento ($this->cleaned_data['departamento']);
 		$materia = new Calif_Materia ();
 		
-		$materia->clave = $this->cleaned_data['clave'];
-		$materia->descripcion = $this->cleaned_data['descripcion'];
-		$materia->departamento = $departamento;
-		$materia->creditos = $this->cleaned_data['creditos'];
-		$materia->curso = $this->cleaned_data['curso'];
-		$materia->taller = $this->cleaned_data['taller'];
-		$materia->laboratorio = $this->cleaned_data['laboratorio'];
-		$materia->seminario = $this->cleaned_data['seminario'];
-		
+		$materia->setFromFormData ($this->cleaned_data);
 		if ($commit) $materia->create();
 		
 		return $materia;

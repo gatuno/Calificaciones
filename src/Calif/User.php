@@ -65,6 +65,8 @@ class Calif_User extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Datetime',
 			       'blank' => true,
 			       'editable' => false,
+			       'is_null' => true,
+			       'default' => null,
 			),
 			'type' =>
 			array (

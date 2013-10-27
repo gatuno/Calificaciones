@@ -65,6 +65,18 @@ class Calif_Materia extends Gatuf_Model {
 			       'model' => 'Calif_Carrera',
 			       'relate_name' => 'catalogo',
 			),
+			'teoria' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0,
+			),
+			'practica' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Integer',
+			       'blank' => false,
+			       'default' => 0,
+			),
 		);
 		
 		$this->default_order = 'clave ASC, descripcion ASC';

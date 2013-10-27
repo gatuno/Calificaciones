@@ -48,6 +48,16 @@
 	{$form.f.seminario|safe}<br />
 	<span class="helptext">{$form.f.seminario.help_text}</span>
 	</td></tr>
+	<tr><th><strong>{$form.f.teoria.labelTag}:</strong></th>
+	<td>{if $form.f.teoria.errors}{$form.f.teoria.fieldErrors}{/if}
+	{$form.f.teoria|safe}<br />
+	<span class="helptext">{$form.f.teoria.help_text}</span>
+	</td></tr>
+	<tr><th><strong>{$form.f.practica.labelTag}:</strong></th>
+	<td>{if $form.f.practica.errors}{$form.f.practica.fieldErrors}{/if}
+	{$form.f.practica|safe}<br />
+	<span class="helptext">{$form.f.practica.help_text}</span>
+	</td></tr>
 <tr>
 <td>&nbsp;</td>
 <td><input type="submit" name="submit" value="Actualizar materia" /></td>

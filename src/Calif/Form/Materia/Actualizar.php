@@ -78,6 +78,24 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 				'initial' => $this->materia->seminario,
 				'help_text' => '¿La materia es un seminario?'
 		));
+		
+		$this->fields['teoria'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => 'Horas teoria',
+				'initial' => $this->materia->teoria,
+				'help_text' => 'La cantidad de horas teoria de esta materia',
+				'min' => 0,
+		));
+		
+		$this->fields['practica'] = new Gatuf_Form_Field_Integer (
+			array (
+				'required' => true,
+				'label' => 'Horas práctica',
+				'initial' => $this->materia->practica,
+				'help_text' => 'La cantidad de horas práctica de esta materia',
+				'min' => 0,
+		));
 	}
 	
 	public function save ($commit=true) {
@@ -85,16 +103,7 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
-		$departamento = new Calif_Departamento ($this->cleaned_data['departamento']);
-		
-		$this->materia->descripcion = $this->cleaned_data['descripcion'];
-		$this->materia->departamento = $departamento;
-		$this->materia->creditos = $this->cleaned_data['creditos'];
-		$this->materia->curso = $this->cleaned_data['curso'];
-		$this->materia->taller = $this->cleaned_data['taller'];
-		$this->materia->laboratorio = $this->cleaned_data['laboratorio'];
-		$this->materia->seminario = $this->cleaned_data['seminario'];
-		
+		$this->materia->setFromFormData ($this->cleaned_data);
 		$this->materia->update();
 		
 		return $this->materia;

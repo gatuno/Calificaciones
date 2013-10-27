@@ -199,6 +199,7 @@ class Calif_Views_Materia {
 		}
 		
 		$carreras = $materia->get_carreras_list ();
+		if ($carreras->count () == 0) $carreras = array ();
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
 		                                         array('page_title' => $title,

@@ -6,8 +6,9 @@
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::actualizarMateria', array ($materia.clave)}">Editar</a></li>
 </ul>
 <h2>Detalles</h2>
-<p>Departamento: {$departamento.descripcion}. FIXME Poner enlace hacia el departamento.
+<p>Departamento: <a href="{url 'Calif_Views_Materia::porDepartamento', array ($departamento.clave)}">{$departamento.descripcion}</a>.</p>
 <p>Créditos: {$materia.creditos}</p>
+<p>Horas teoría: {$materia.teoria}, Horas práctica: {$materia.practica}</p>
 {if $carreras}
 	<p>La materia es tomada por:
 	<ul>
