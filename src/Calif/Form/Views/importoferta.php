@@ -179,7 +179,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			}
 			
 			if ($this->cleaned_data['materias']) {
-				Calif_Utils_agregar_materia ($materias, $linea[$cabecera['clave']], $linea[$cabecera['materia']]);
+				Calif_Utils_agregar_materia ($materias, $linea[$cabecera['clave']], $linea[$cabecera['materia']], $linea[$cabecera['departamento']], $linea[$cabecera['cred']]);
 			}
 			
 			if ($this->cleaned_data['maestros']) {
@@ -216,10 +216,12 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$departamento->descripcion = 'Sin departamento';
 		}
 		
+		/* Crear todas las materias */
 		if ($this->cleaned_data['materias']) {
 			$materia_model = new Calif_Materia ();
 			$materia_ram = new Calif_Materia ();
 			
+			/* Crear un modelo conectado a una tabla ram, para agilizar las inserciones */
 			$materia_ram->_a['table'] = 'ram_'.$materia_model->_a['table'];
 			$temp_tabla = $materia_ram->getSqlTable ();
 			
@@ -229,16 +231,16 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
 			$con->execute ($sql);
 			
-			foreach ($materias as $clave => $descripcion) {
+			/* Si la materia no existe en la tabla real, insertarlo en la de ram */
+			foreach ($materias as $clave => $data) {
 				if ($materia_model->get ($clave) === false) {
-					$materia_ram->clave = $clave;
-					$materia_ram->descripcion = $descripcion;
-					$materia_ram->_data['departamento'] = 0;
+					$materia_ram->setFromFormData ($data);
 					
 					$materia_ram->create ();
 				}
 			}
 			
+			/* Copiar todo lo insertado en ram sobre la tabla real */
 			$sql = 'INSERT INTO '.$materia_model->getSqlTable ().' SELECT * FROM '.$temp_tabla;
 			$con->execute ($sql);
 			
@@ -246,6 +248,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$con->execute ($sql);
 		}
 		
+		/* Crear todos los maestros */
 		if ($this->cleaned_data['maestros']) {
 			$maestro_ram = new Calif_Maestro ();
 			$usuario_ram = new Calif_User ();
@@ -324,14 +327,11 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
 			$con->execute ($sql);
 			
-			foreach ($secciones as $nrc => $value) {
+			foreach ($secciones as $nrc => $data) {
 				if ($seccion_model->get ($nrc) === false) {
 					if ($this->cleaned_data['nrcs']) {
 						/* El NRC no existe, crearlo */
-						$seccion_ram->nrc = $nrc;
-						$seccion_ram->_data['materia'] = $value[0];
-						$seccion_ram->seccion = $value[1];
-						$seccion_ram->_data['maestro'] = $value[2];
+						$seccion_ram->setFromFormData ($data);
 						
 						$seccion_ram->create ();
 					} /* Si el nrc no existe, no importa */
@@ -348,15 +348,12 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 						/* Y recrearlo */
 						$seccion_model->delete ();
 						
-						$seccion_ram->nrc = $nrc;
-						$seccion_ram->_data['materia'] = $value[0];
-						$seccion_ram->seccion = $value[1];
-						$seccion_ram->_data['maestro'] = $value[2];
+						$seccion_ram->setFromFormData ($data);
 					
 						$seccion_ram->create ();
 					} else if ($this->cleaned_data['maestrosnrc']) {
 						/* El nrc ya existe, pero hay que actualizar el maestro */
-						$seccion_model->_data['maestro'] = $value[2];
+						$seccion_model->setFromFormData (array ('maestro' => $data['maestro']));
 						$seccion_model->update ();
 					}
 				}
@@ -384,9 +381,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				/* Y luego crear las aulas */
 				foreach ($aulas as $aula => &$cupo) {
 					if ($salon_model->getSalon ($edificio, $aula) === false) {
-						$salon_model->_data['edificio'] = $edificio;
-						$salon_model->aula = $aula;
-						$salon_model->cupo = $cupo;
+						$salon_model->setFromFormData (array ('edificio' => $edificio, 'aula' => $aula, 'cupo' => $cupo));
 				
 						$salon_model->create ();
 					}
@@ -430,10 +425,10 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 				
 				if ($seccion_model->get ($linea[$cabecera['nrc']]) === false) continue;
 				
-				$horario_ram->_data['nrc'] = $linea[$cabecera['nrc']];
+				$horario_ram->setFromFormData (array ('nrc' => $linea[$cabecera['nrc']],
+					'salon' => $salones[$linea[$cabecera['edif']]][$linea[$cabecera['aula']]]));
 				$horario_ram->inicio = Calif_Utils_horaFromSiiau ($linea[$cabecera['ini']]);
 				$horario_ram->fin = Calif_Utils_horaFromSiiau ($linea[$cabecera['fin']]);
-				$horario_ram->_data['salon'] = $salones[$linea[$cabecera['edif']]][$linea[$cabecera['aula']]];
 				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 					$horario_ram->$dia = $linea[$cabecera[$dia]];
 				}

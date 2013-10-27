@@ -12,7 +12,7 @@ class Gatuf_Model {
 	public $default_order = '';
 	public $primary_key = 'id';
 	
-	public $_data = array();
+	protected $_data = array();
 	
 	protected $_fk = array();
 	
@@ -745,6 +745,12 @@ class Gatuf_Model {
 	public function postSave ($create=false) {}
 	
 	public function preDelete () {}
+	
+	function setFromFormData ($cleaned_values) {
+		foreach ($cleaned_values as $key=>$val) {
+			$this->_data[$key] = $val;
+		}
+	}
 	
 	function _toDb ($val, $col) {
 		$m = $this->_con->type_cast[$this->_a['cols'][$col]['type']][1];

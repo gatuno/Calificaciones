@@ -3,12 +3,33 @@ function Calif_Utils_arreglar_n ($cadena) {
 	return str_replace ('~', 'ñ', $cadena);
 }
 
-function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion) {
+function Calif_Utils_map_departamento ($depa) {
+	static $departamentos = array ("DEPTO. DE CIENCIAS COMPUTACIONALES" => 1500,
+		"DEPTO. DE ELECTRONICA" => 1510,
+		"DEPTO. DE FARMACOBIOLOGIA" => 1360,
+		"DEPTO. DE FISICA" => 1370,
+		"DEPTO. DE INGENIERIA CIVIL Y TOPOGRAFIA" => 1420,
+		"DEPTO. DE INGENIERIA DE PROYECTOS" => 1460,
+		"DEPTO. DE INGENIERIA INDUSTRIAL" => 1440,
+		"DEPTO. DE INGENIERIA MECANICA ELECTRICA" => 1450,
+		"DEPTO. DE INGENIERIA QUIMICA" => 1470,
+		"DEPTO. DE MADERA CELULOSA Y PAPEL" => 1480,
+		"DEPTO. DE MATEMATICAS" => 1390,
+		"DEPTO. DE QUIMICA" => 1400,
+	);
+	$depa = trim ($depa, ' ');
+	if (isset ($departamentos[$depa])) return $departamentos[$depa];
+	return 0;
+}
+
+function Calif_Utils_agregar_materia (&$materias, $clave, $descripcion, $departamento = "", $creditos = 0) {
 	$clave = strtoupper ($clave);
 	
 	if (isset ($materias [$clave])) return;
 	
-	$materias [$clave] = ucwords (strtolower (Calif_Utils_arreglar_n ($descripcion)));
+	$desc = ucwords (strtolower (Calif_Utils_arreglar_n ($descripcion)));
+	$depa_num = Calif_Utils_map_departamento ($departamento);
+	$materias [$clave] = array ('clave' => $clave, 'descripcion' => $desc, 'departamento' => $depa_num, 'creditos' => $creditos);
 }
 
 function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
@@ -100,14 +121,14 @@ function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $ca
 		$carreras [$carrera] = 'Una carrera con clave ' . $carrera;
 	}
 	
-	$alumnos [$codigo] = array (0 => $nombre, 1 => $apellido, 2 => $carrera);
+	$alumnos [$codigo] = array ('codigo' => $codigo, 'nombre' => $nombre, 'apellido' => $apellido, 'carrera' => $carrera);
 }
 
 function Calif_Utils_agregar_seccion (&$secciones, $nrc, $materia, $seccion, $maestro) {
 	settype ($nrc, 'string');
 	if (isset ($secciones [$nrc])) return;
 	
-	$secciones [$nrc] = array (0 => $materia, 1 => $seccion, 2 => $maestro);
+	$secciones [$nrc] = array ('nrc' => $nrc, 'materia' => $materia, 'seccion' => $seccion, 'maestro' => $maestro);
 }
 
 function Calif_Utils_agregar_salon (&$salones, $edificio, $aula, $cupo) {
