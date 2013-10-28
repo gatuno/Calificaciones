@@ -41,11 +41,19 @@ class Calif_Maestro extends Gatuf_Model {
 			       'default' => 'L',
 			       'size' => 1,
 			),
+			'asignatura' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Calif_Nombramiento',
+			),
 			'nombramiento' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
 			       'model' => 'Calif_Nombramiento',
+			       'default' => null,
+			       'is_null' => true,
 			),
 			'tiempo' =>
 			array (

@@ -80,7 +80,12 @@ class Calif_Views_Maestro {
 		}
 		
 		$maestro->getUser ();
-		$nombramiento = new Calif_Nombramiento ($maestro->nombramiento);
+		if ($maestro->nombramiento !== null) {
+			$nombramiento = new Calif_Nombramiento ($maestro->nombramiento);
+		} else {
+			$nombramiento = null;
+		}
+		$asignatura = new Calif_Nombramiento ($maestro->asignatura);
 		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
 		
 		if (count ($grupos) == 0) {
@@ -120,6 +125,7 @@ class Calif_Views_Maestro {
 		                                         array('page_title' => 'Perfil público',
 		                                               'maestro' => $maestro,
 		                                               'nombramiento' => $nombramiento,
+		                                               'asignatura' => $asignatura,
 		                                               'calendario' => $horario_maestro,
                                                        'grupos' => $grupos),
                                                  $request);

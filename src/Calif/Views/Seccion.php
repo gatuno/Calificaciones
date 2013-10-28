@@ -53,6 +53,7 @@ class Calif_Views_Seccion {
 		$maestro = new Calif_Maestro ($seccion->maestro);
 		
 		$horarios = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
+		$puestos = $seccion->get_calif_numeropuesto_list ();
 		
 		$alumnos = $seccion->get_grupos_list (array ('order' => 'apellido ASC, nombre ASC'));
 		if (count ($alumnos) == 0) $alumnos = array ();
@@ -125,6 +126,7 @@ class Calif_Views_Seccion {
 		                                                 'calificacion' => $calificacion,
 		                                                 'promedios' => $promedios,
 		                                                 'promedios_eval' => $promedios_eval,
+		                                                 'puestos' => $puestos,
 		                                                 ),
 		                                          $request);
 	}

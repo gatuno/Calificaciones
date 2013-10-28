@@ -128,7 +128,7 @@ class Calif_Seccion extends Gatuf_Model {
 				$puesto->horas = $materia->teoria;
 				
 				/* Tratar de determinar si cae en su tiempo completo o no */
-				if ($maestro->nombramiento != '1001H' && $maestro->nombramiento != '1002H') {
+				if ($maestro->nombramiento !== null) {
 					/* Cargar a su tiempo completo */
 					/* TODO: Hacer un mejor intento por determinar su carga */
 					$puesto->carga = 't';
@@ -152,7 +152,7 @@ class Calif_Seccion extends Gatuf_Model {
 				$puesto->horas = $materia->practica;
 				
 				/* Tratar de determinar si cae en su tiempo completo o no */
-				if ($maestro->nombramiento != '1001H' && $maestro->nombramiento != '1002H') {
+				if ($maestro->nombramiento !== null) {
 					/* Cargar a su tiempo completo */
 					/* TODO: Hacer un mejor intento por determinar su carga */
 					$puesto->carga = 't';

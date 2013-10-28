@@ -21,9 +21,15 @@
 		<td>{$maestro.codigo}</td>
 	</tr>
 	<tr>
+		<th>Categoría Asignatura:</th>
+		<td>{$asignatura.descripcion}</td>
+	</tr>
+	{if $nombramiento != null}
+	<tr>
 		<th>Nombramiento:</th>
 		<td>{$nombramiento.descripcion}</td>
 	</tr>
+	{/if}
 	{if $maestro.tiempo != null}
 		{if $maestro.tiempo == 't'}
 			<tr><td></td><td>Tiempo completo</td></tr>
