@@ -13,6 +13,7 @@ $m['Calif_Salon'] = array ('relate_to' => array ('Calif_Edificio'));
 $m['Calif_Seccion'] = array ('relate_to' => array ('Calif_Materia', 'Calif_Maestro', 'Calif_Carrera'));
 $m['Calif_Calificacion'] = array ('relate_to' => array ('Calif_Seccion', 'Calif_Alumno', 'Calif_Evaluacion'));
 $m['Calif_Maestro'] = array ('relate_to' => array ('Calif_Nombramiento'));
+$m['Calif_NumeroPuesto'] = array ('relate_to' => array ('Calif_Seccion'));
 /* Conexión de señales aquí */
 
 return $m;

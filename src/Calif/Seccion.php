@@ -110,6 +110,62 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
+	function preSave ($create = false) {
+		if ($create) {
+			/* Si el NRC se está creando, crear sus números de puesto */
+			$materia = new Calif_Materia ($this->materia);
+			$maestro = new Calif_Maestro ($this->maestro);
+			
+			if ($materia->teoria > 0) {
+				/* Crear un número de puesto para las horas de teoria */
+				$puesto = new Calif_NumeroPuesto ();
+				$numero = $puesto->maxPuesto ();
+				
+				if ($numero < 99000) $numero = 99000;
+				$puesto->numero = $numero + 1;
+				$puesto->nrc = $this;
+				$puesto->tipo = 't';
+				$puesto->horas = $materia->teoria;
+				
+				/* Tratar de determinar si cae en su tiempo completo o no */
+				if ($maestro->nombramiento != '1001H' && $maestro->nombramiento != '1002H') {
+					/* Cargar a su tiempo completo */
+					/* TODO: Hacer un mejor intento por determinar su carga */
+					$puesto->carga = 't';
+				} else {
+					/* Es profesor de asignatura, no nos queda más que cargarla a su asignatura */
+					$puesto->carga = 'a';
+				}
+				
+				$puesto->create ();
+			}
+			
+			if ($materia->practica > 0) {
+				/* Crear un número de puesto para las horas de teoria */
+				$puesto = new Calif_NumeroPuesto ();
+				$numero = $puesto->maxPuesto ();
+				
+				if ($numero < 99000) $numero = 99000;
+				$puesto->numero = $numero + 1;
+				$puesto->nrc = $this;
+				$puesto->tipo = 'p';
+				$puesto->horas = $materia->practica;
+				
+				/* Tratar de determinar si cae en su tiempo completo o no */
+				if ($maestro->nombramiento != '1001H' && $maestro->nombramiento != '1002H') {
+					/* Cargar a su tiempo completo */
+					/* TODO: Hacer un mejor intento por determinar su carga */
+					$puesto->carga = 't';
+				} else {
+					/* Es profesor de asignatura, no nos queda más que cargarla a su asignatura */
+					$puesto->carga = 'a';
+				}
+				
+				$puesto->create ();
+			}
+		}
+	}
+	
 	public function displaylinkedseccion ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($this->nrc)).'">'.$this->seccion.'</a>';
 	}

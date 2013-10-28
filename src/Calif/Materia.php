@@ -116,7 +116,67 @@ class Calif_Materia extends Gatuf_Model {
 
 		return Gatuf::factory ('Calif_Evaluacion')->getList (array ('filter' => $where, 'count' => $count));
 	}
-
+	
+	public function preSave ($create = false) {
+		if (!$create) {
+			/* Cuando se actualice, verificar las horas teoria y práctica */
+			$nrcs = $this->get_calif_seccion_list ();
+			
+			$sql_teoria = new Gatuf_SQL ('tipo=%s', 't');
+			$sql_practica = new Gatuf_SQL ('tipo=%s', 'p');
+			$where_t = $sql_teoria->gen ();
+			$where_p = $sql_practica->gen ();
+			
+			$puesto_model = new Calif_NumeroPuesto ();
+			
+			foreach ($nrcs as $nrc) {
+				$puesto = $nrc->get_calif_numeropuesto_list (array ('filter' => $where_t));
+				
+				if ($puesto->count () == 0 && $this->teoria > 0) {
+					$numero = $puesto_model->maxPuesto ();
+					
+					if ($numero < 99000) $numero = 99000;
+					$puesto_model->numero = $numero + 1;
+					$puesto_model->nrc = $nrc;
+					$puesto_model->tipo = 't';
+					$puesto_model->horas = $this->teoria;
+					$puesto_model->carga = 'a';
+					
+					$puesto_model->create ();
+				} else if ($puesto->count () != 0) {
+					if ($this->teoria == 0) {
+						$puesto[0]->delete ();
+					} else if ($this->teoria != $puesto[0]->horas) {
+						$puesto[0]->horas = $this->teoria;
+						$puesto[0]->update ();
+					}
+				}
+				
+				$puesto = $nrc->get_calif_numeropuesto_list (array ('filter' => $where_p));
+				
+				if ($puesto->count () == 0 && $this->practica > 0) {
+					$numero = $puesto_model->maxPuesto ();
+					
+					if ($numero < 99000) $numero = 99000;
+					$puesto_model->numero = $numero + 1;
+					$puesto_model->nrc = $nrc;
+					$puesto_model->tipo = 'p';
+					$puesto_model->horas = $this->practica;
+					$puesto_model->carga = 'a';
+					
+					$puesto_model->create ();
+				} else if ($puesto->count () != 0) {
+					if ($this->practica == 0) {
+						$puesto[0]->delete ();
+					} else if ($this->practica != $puesto[0]->horas) {
+						$puesto[0]->horas = $this->practica;
+						$puesto[0]->update ();
+					}
+				}
+			}
+		}
+	}
+	
 	public function displaylinkedclave ($extra) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($this->clave)).'">'.$this->clave.'</a>';
 	}
