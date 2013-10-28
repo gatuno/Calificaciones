@@ -188,7 +188,7 @@ debug('PHP include path: '.get_include_path());
 if ($what['un-install']) {
     $apps = array();
     if ($what['all']) {
-        $apps = Gatuf::f('installed_apps');
+        $apps = Gatuf::config('installed_apps');
     } else {
         $apps = array($what['app']);
     }

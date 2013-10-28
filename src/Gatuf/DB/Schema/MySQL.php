@@ -108,7 +108,7 @@ class Gatuf_DB_Schema_MySQL {
 				if (empty($val['is_null'])) {
 					$sql .= ' NOT NULL';
 				}
-				if (isset($val['default']) && !$fk) {
+				if (array_key_exists('default', $val) && !$fk) {
 					$sql .= ' default ';
 					$sql .= $model->_toDb($val['default'], $col);
 				} elseif ($field->type != 'sequence' && !$fk) {

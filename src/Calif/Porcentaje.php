@@ -42,20 +42,21 @@ class Calif_Porcentaje extends Gatuf_Model {
 			array (
 			       'type' => 'Gatuf_DB_Field_Boolean',
 			       'blank' => true,
-			       'is_null' => 1,
 			       'default' => 1,
 			),
 			'apertura' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Datetime',
 			       'blank' => true,
-			       'is_null' => 1,
+			       'is_null' => true,
+			       'default' => null,
 			),
 			'cierre' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Datetime',
 			       'blank' => true,
-			       'is_null' => 1,
+			       'is_null' => true,
+			       'default' => null,
 			),
 		);
 		$this->default_order = 'evaluacion ASC';
