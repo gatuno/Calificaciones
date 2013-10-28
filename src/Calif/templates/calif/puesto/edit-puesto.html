@@ -1,0 +1,40 @@
+{extends 'calif/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+<p>El formulario contiene algunos errores:</p>
+{if $form.get_top_errors}
+{$form.render_top_errors}
+{/if}
+</div>
+{/if}
+<form method="post" action=".">
+<table>
+	<tr><th><strong>NRC:</strong></th>
+		<td>{$seccion.nrc}</td>
+	</tr>
+	<tr><th><strong>Materia:</strong></th>
+		<td>{$materia.descripcion} ({$materia.clave})</td>
+	</tr>
+	<tr><th><strong>Seccion:</strong></th>
+		<td>{$seccion.seccion}</td>
+	</tr>
+	<tr><th><strong>Profesor:</strong></th>
+		<td>{$maestro.nombre} {$maestro.apellido}</td>
+	</tr>
+	<tr><th><strong>Horas:</strong></th>
+		<td>{$puesto.horas} hora(s) de {if $puesto.tipo == 't'}teoría{else}práctica{/if}</td>
+	</tr>
+	<tr><th><strong>{$form.f.carga.labelTag}:</strong></th>
+		<td>{if $form.f.carga.errors}{$form.f.carga.fieldErrors}{/if}
+		{$form.f.carga|safe}<br />
+		<span class="helptext">{$form.f.carga.help_text}</span></td>
+	</tr>
+	
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" name="submit" value="Actualizar puesto" /></td>
+	</tr>
+</table>
+</form>
+{/block}

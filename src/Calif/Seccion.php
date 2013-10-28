@@ -110,7 +110,7 @@ class Calif_Seccion extends Gatuf_Model {
 		return true;
 	}
 	
-	function preSave ($create = false) {
+	function postSave ($create = false) {
 		if ($create) {
 			/* Si el NRC se está creando, crear sus números de puesto */
 			$materia = new Calif_Materia ($this->materia);

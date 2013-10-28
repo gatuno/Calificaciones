@@ -9,6 +9,8 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 		$this->_a['model'] = __CLASS__;
 		$this->primary_key = 'numero';
 		
+		$this->default_order = 'tipo ASC';
+		
 		$this->_a['cols'] = array (
 			'numero' =>
 			array (

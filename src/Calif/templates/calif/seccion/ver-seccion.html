@@ -1,7 +1,6 @@
 {extends 'calif/base.html'}
 {block body}
 <h1>NRC {$seccion.nrc}</h1>
-
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>. <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
@@ -18,6 +17,21 @@
 			{/if}
 		{/foreach}
 	{/if}
+{/if}
+{if $user.administrator}
+	<h3>Números de puesto</h3>
+	<table border="1">
+	<thead><tr><th>Número de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
+	<tbody>
+	{foreach $puestos as $puesto}
+		<tr><td><a href="{url 'Calif_Views_Puestos::actualizarPuesto', $puesto.numero}">{$puesto.numero}</a></td>
+		<td>{if $puesto.tipo == 't'}Teoria{else}Practica{/if}</td>
+		<td>{$puesto.horas}</td>
+		<td>{if $puesto.carga == 'a'}Asignatura (1001H ó 1002H){elseif $puesto.carga == 't'}Sobre su tiempo completo/medio tiempo (1003H){elseif $puesto.carga == 'h'}Honorífica (1004H){/if}</td>
+		</tr>
+	{/foreach}
+	</tbody>
+	</table>
 {/if}
 <h2>Horarios de la sección</h2>
 <p>Puede <a href="{url 'Calif_Views_Horario::agregarHora', array ($seccion.nrc)}">agregar una nueva hora</a> a esta sección</p>

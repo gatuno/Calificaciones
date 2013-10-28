@@ -446,4 +446,12 @@ $ctl[] = array (
 	'method' => 'index',
 );
 
+/* Número de Puestos */
+$ctl[] = array (
+	'regex' => '#^/puesto/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Puestos',
+	'method' => 'actualizarPuesto',
+);
+
 return $ctl;
