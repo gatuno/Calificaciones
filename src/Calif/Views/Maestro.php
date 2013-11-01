@@ -88,6 +88,8 @@ class Calif_Views_Maestro {
 		$asignatura = new Calif_Nombramiento ($maestro->asignatura);
 		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
 		
+		$carga = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
+		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
 			$grupos = array ();
@@ -127,6 +129,7 @@ class Calif_Views_Maestro {
 		                                               'nombramiento' => $nombramiento,
 		                                               'asignatura' => $asignatura,
 		                                               'calendario' => $horario_maestro,
+		                                               'carga' => $carga,
                                                        'grupos' => $grupos),
                                                  $request);
 	}

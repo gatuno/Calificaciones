@@ -112,57 +112,8 @@ class Calif_Seccion extends Gatuf_Model {
 	
 	function postSave ($create = false) {
 		if ($create) {
-			/* Si el NRC se está creando, crear sus números de puesto */
-			$materia = new Calif_Materia ($this->materia);
-			$maestro = new Calif_Maestro ($this->maestro);
-			
-			if ($materia->teoria > 0) {
-				/* Crear un número de puesto para las horas de teoria */
-				$puesto = new Calif_NumeroPuesto ();
-				$numero = $puesto->maxPuesto ();
-				
-				if ($numero < 99000) $numero = 99000;
-				$puesto->numero = $numero + 1;
-				$puesto->nrc = $this;
-				$puesto->tipo = 't';
-				$puesto->horas = $materia->teoria;
-				
-				/* Tratar de determinar si cae en su tiempo completo o no */
-				if ($maestro->nombramiento !== null) {
-					/* Cargar a su tiempo completo */
-					/* TODO: Hacer un mejor intento por determinar su carga */
-					$puesto->carga = 't';
-				} else {
-					/* Es profesor de asignatura, no nos queda más que cargarla a su asignatura */
-					$puesto->carga = 'a';
-				}
-				
-				$puesto->create ();
-			}
-			
-			if ($materia->practica > 0) {
-				/* Crear un número de puesto para las horas de teoria */
-				$puesto = new Calif_NumeroPuesto ();
-				$numero = $puesto->maxPuesto ();
-				
-				if ($numero < 99000) $numero = 99000;
-				$puesto->numero = $numero + 1;
-				$puesto->nrc = $this;
-				$puesto->tipo = 'p';
-				$puesto->horas = $materia->practica;
-				
-				/* Tratar de determinar si cae en su tiempo completo o no */
-				if ($maestro->nombramiento !== null) {
-					/* Cargar a su tiempo completo */
-					/* TODO: Hacer un mejor intento por determinar su carga */
-					$puesto->carga = 't';
-				} else {
-					/* Es profesor de asignatura, no nos queda más que cargarla a su asignatura */
-					$puesto->carga = 'a';
-				}
-				
-				$puesto->create ();
-			}
+			$params = array ('nrc' => $this);
+			Gatuf_Signal::send ('Calif_Seccion::created', 'Calif_Seccion', $params);
 		}
 	}
 	

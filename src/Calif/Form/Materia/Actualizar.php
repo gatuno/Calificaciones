@@ -103,6 +103,16 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 			throw new Exception('Cannot save the model from an invalid form.');
 		}
 		
+		foreach (array ('teoria', 'practica') as $hora) {
+			
+			if ($this->materia->$hora != $this->cleaned_data[$hora]) {
+				/* Disparar la señal */
+				$this->materia->$hora = $this->cleaned_data[$hora];
+				$params = array ('materia' => $this->materia, 'tipo' => $hora);
+				
+				Gatuf_Signal::send ('Calif_Materia::horasUpdated', 'Calif_Form_Materia_Actualizar', $params);
+			}
+		}
 		$this->materia->setFromFormData ($this->cleaned_data);
 		$this->materia->update();
 		

@@ -14,6 +14,9 @@ $m['Calif_Seccion'] = array ('relate_to' => array ('Calif_Materia', 'Calif_Maest
 $m['Calif_Calificacion'] = array ('relate_to' => array ('Calif_Seccion', 'Calif_Alumno', 'Calif_Evaluacion'));
 $m['Calif_Maestro'] = array ('relate_to' => array ('Calif_Nombramiento'));
 $m['Calif_NumeroPuesto'] = array ('relate_to' => array ('Calif_Seccion'));
-/* Conexión de señales aquí */
 
+/* Conexión de señales aquí */
+Gatuf_Signal::connect('Calif_Seccion::created', array ('Calif_NumeroPuesto', 'nrc_creado'));
+Gatuf_Signal::connect('Calif_Seccion::maestroUpdated', array ('Calif_NumeroPuesto', 'maestro_cambiado'));
+Gatuf_Signal::connect('Calif_Materia::horasUpdated', array ('Calif_NumeroPuesto', 'materia_horas_actualizado'));
 return $m;

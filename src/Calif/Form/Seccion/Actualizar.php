@@ -98,9 +98,13 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 		}
 		
 		$maestro = new Calif_Maestro ($this->cleaned_data['maestro']);
-		$this->seccion->maestro = $maestro;
-		$this->seccion->seccion = $this->cleaned_data['seccion'];
+		if ($maestro->codigo != $this->seccion->maestro) {
+			$this->seccion->maestro = $maestro;
+			$params = array ('nrc' => $this->seccion);
+			Gatuf_Signal::send ('Calif_Seccion::maestroUpdated', 'Calif_Form_Seccion_Actualizar', $params);
+		}
 		
+		$this->seccion->seccion = $this->cleaned_data['seccion'];
 		$this->seccion->update();
 		
 		if ((int) $this->seccion->nrc != (int) $this->cleaned_data['nrc']) {

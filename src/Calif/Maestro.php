@@ -81,6 +81,69 @@ class Calif_Maestro extends Gatuf_Model {
 		$this->user = Gatuf::factory ('Calif_User')->getOne (array ('filter' => $sql->gen ()));
 	}
 	
+	function maxTiempoCompleto () {
+		if ($this->nombramiento === null) {
+			return 0;
+		}
+		
+		if (substr ($this->nombramiento, 0, 2) == '30') {
+			/* Los técnicos académicos no tienen carga */
+			return 0;
+		}
+		if (substr ($this->nombramiento, 0, 2) == '20') {
+			$nom = new Calif_Nombramiento ($this->nombramiento);
+			if ($this->tiempo == 't') {
+				return $nom->horas;
+			} else {
+				return ($nom->horas / 2);
+			}
+		}
+	}
+	
+	function maxAsignatura () {
+		if ($this->nombramiento === null) {
+			return 48;
+		}
+		
+		$nom = new Calif_Nombramiento ($this->nombramiento);
+		if (substr ($this->nombramiento, 0, 2) == '30') {
+			if ($this->tiempo == 't') {
+				return (48 - $nom->horas);
+			} else {
+				return (48 - ($nom->horas / 2));
+			}
+		}
+		if (substr ($this->nombramiento, 0, 2) == '20') {
+			$nom = new Calif_Nombramiento ($this->nombramiento);
+			if ($this->tiempo == 't') {
+				return (48 - $nom->horas);
+			} else {
+				return (48 - ($nom->horas / 2));
+			}
+		}
+	}
+	
+	function getCarga ($tipo = 't') {
+		/* SELECT carga, SUM(horas) FROM `numero_puestos` LEFT JOIN secciones ON secciones.nrc = numero_puestos.nrc WHERE maestro = 9528369 GROUP BY carga */
+		$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
+		
+		$view = array ('join' => 'NATURAL JOIN '.$seccion_tabla, 'group' => 'carga', 'select' => 'carga, SUM(horas) AS horas');
+		$numero_puesto = new Calif_NumeroPuesto ();
+		$numero_puesto->_a['views']['carga'] = $view;
+		
+		$sql = new Gatuf_SQL ('carga=%s AND maestro=%s', array ($tipo, $this->codigo));
+		
+		$num = $numero_puesto->getList (array ('filter' => $sql->gen (), 'view' => 'carga'));
+		
+		if (count ($num) == 0) {
+			$numero_puesto->carga = $tipo;
+			$numero_puesto->horas = 0;
+			return $numero_puesto;
+		}
+		
+		return $num[0];
+	}
+	
 	function displaylinkedcodigo ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->codigo)).'">'.$this->codigo.'</a>';
 	}
