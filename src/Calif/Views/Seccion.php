@@ -159,6 +159,11 @@ class Calif_Views_Seccion {
 				}
 				$form = new Calif_Form_Seccion_Agregar (null, $extra);
 			}
+			
+			return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/agregar-seccion.html',
+			                                         array ('page_title' => $title,
+			                                                'form' => $form),
+			                                         $request);
 		} else {
 			/* El caso de los coordinadores */
 			$extra['user'] = $request->user;
@@ -182,12 +187,12 @@ class Calif_Views_Seccion {
 				}
 				$form = new Calif_Form_Seccion_AgregarMini (null, $extra);
 			}
+			
+			return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/agregar-mini.html',
+			                                         array ('page_title' => $title,
+			                                                'form' => $form),
+			                                         $request);
 		}
-		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/agregar-seccion.html',
-		                                         array ('page_title' => $title,
-		                                                'form' => $form),
-		                                         $request);
 	}
 	
 	public $actualizarNrc_precond = array ('Gatuf_Precondition::adminRequired');

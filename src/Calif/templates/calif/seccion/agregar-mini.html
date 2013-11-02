@@ -1,0 +1,39 @@
+{extends 'calif/base.html'}
+{block body}
+{if $form.errors}
+<div class="errors">
+<p>El formulario contiene algunos errores:</p>
+{if $form.get_top_errors}
+{$form.render_top_errors}
+{/if}
+</div>
+{/if}
+<form method="post" action=".">
+<table>
+	<tbody>
+		<tr>
+			<th><strong>NRC:</strong></th>
+			<td>-- Generado automáticamente --</td>
+		</tr>
+		<tr><th><strong>{$form.f.materia.labelTag}:</strong></th>
+			<td>{if $form.f.materia.errors}{$form.f.materia.fieldErrors}{/if}
+		{$form.f.materia|safe}<br />
+			<span class="helptext">{$form.f.materia.help_text}</span>
+			</td>
+		</tr>
+		<tr>
+			<th><strong>Sección:</strong></th>
+			<td>-- Generado automáticamente --</td>
+		</tr>
+		<tr>
+			<th><strong>Maestro:</strong></th>
+			<td>-- Establecido por su jefe de departamento --</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type="submit" name="submit" value="Nueva seccion" /></td>
+		</tr>
+	</tbody>
+</table>
+</form>
+{/block}
