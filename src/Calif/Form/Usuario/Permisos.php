@@ -1,6 +1,6 @@
 <?php
 
-class Calif_Form_Permisos_Editar extends Gatuf_Form {
+class Calif_Form_Usuario_Permisos extends Gatuf_Form {
 
 	public function initFields($extra=array()) {
 	$usuario = $extra[' usuario'];

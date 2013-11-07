@@ -1,6 +1,6 @@
 <?php
 
-class Calif_Form_Grupo_Crear extends Gatuf_Form {
+class Calif_Form_Grupo_Editar extends Gatuf_Form {
 
 	public function initFields($extra=array()) {
 	$grupo = extra['grupo'];
