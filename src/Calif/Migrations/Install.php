@@ -157,7 +157,8 @@ function Calif_Migrations_Install_Triggers_teardown ($params = null) {
 	$triggers = array ('insert_alumno',
 	                   'delete_alumno',
 	                   'insert_evaluacion',
-	                   'delete_evaluacion');
+	                   'delete_evaluacion',
+	                   'update_promedios');
 	
 	foreach ($triggers as $trigger) {
 		$sql = 'DROP TRIGGER '.$db->pfx.$trigger;

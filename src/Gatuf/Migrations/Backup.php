@@ -36,14 +36,10 @@ function Gatuf_Migrations_Backup_run($folder, $name=null)
     $models = array('Gatuf_DB_SchemaInfo',
                     'Gatuf_Session',
                     Gatuf::f('gatuf_custom_user','Gatuf_User'),
-                    /*Gatuf::f('gatuf_custom_group','Gatuf_Group'),*/
+                    Gatuf::f('gatuf_custom_group','Gatuf_Group'),
                     'Gatuf_Message',
-                    /*'Gatuf_Permission',
-                    'Gatuf_RowPermission',
-                    'Gatuf_Search_Word',
-                    'Gatuf_Search_Occ', 
-                    'Gatuf_Search_Stats', 
-                    'Gatuf_Queue',*/
+                    'Gatuf_Permission',
+                    'Gatuf_GSetting',
                     );
     $db = Gatuf::db();
     // Now, for each table, we dump the content in json, this is a
@@ -71,14 +67,10 @@ function Gatuf_Migrations_Backup_restore($folder, $name)
     $models = array('Gatuf_DB_SchemaInfo',
                     'Gatuf_Session',
                     Gatuf::f('gatuf_custom_user','Gatuf_User'),
-                    /*Gatuf::f('gatuf_custom_group','Gatuf_Group'),*/
+                    Gatuf::f('gatuf_custom_group','Gatuf_Group'),
                     'Gatuf_Message',
-                    /*'Gatuf_Permission',
-                    'Gatuf_RowPermission',
-                    'Gatuf_Search_Word',
-                    'Gatuf_Search_Occ', 
-                    'Gatuf_Search_Stats', 
-                    'Gatuf_Queue',*/
+                    'Gatuf_Permission',
+                    'Gatuf_GSetting',
                     );
     $db = Gatuf::db();
     $schema = new Gatuf_DB_Schema($db);

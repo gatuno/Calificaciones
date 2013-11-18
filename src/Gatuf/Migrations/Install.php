@@ -35,6 +35,7 @@ function Gatuf_Migrations_Install_setup($params=null)
                     Gatuf::config('gatuf_custom_group','Gatuf_Group'),
                     'Gatuf_Message',
                     'Gatuf_Permission',
+                    'Gatuf_GSetting',
                     );
     $db = Gatuf::db();
     $schema = new Gatuf_DB_Schema($db);
@@ -52,6 +53,7 @@ function Gatuf_Migrations_Install_teardown($params=null)
                     Gatuf::config('gatuf_custom_group','Gatuf_Group'),
                     'Gatuf_Message',
                     'Gatuf_Permission',
+                    'Gatuf_GSetting',
                     );
     $models = array_reverse ($models);
     $db = Gatuf::db();
