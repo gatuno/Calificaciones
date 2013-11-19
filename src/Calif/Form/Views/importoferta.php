@@ -408,6 +408,10 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
 			$con->execute ($sql);
 			
+			$maxid = $horario_model->maxID ();
+			$sql = 'ALTER TABLE '.$temp_tabla.' AUTO_INCREMENT = '.$maxid;
+			$con->execute ($sql);
+			
 			/* Segunda pasada, crear los horarios */
 			while (($linea = fgetcsv ($archivo, 600, ',', '"')) !== FALSE) {
 				if (is_null ($linea[0])) continue;

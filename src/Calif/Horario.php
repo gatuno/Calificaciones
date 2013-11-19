@@ -90,4 +90,18 @@ class Calif_Horario extends Gatuf_Model {
 		
 		return false;
 	}
+	
+	function maxID () {
+		$req = sprintf ('SELECT MAX(id) as max FROM %s', $this->getSqlTable ());
+		
+		if (false === ($rs = $this->_con->select ($req))) {
+			throw new Exception($this->_con->getError ());
+		}
+		
+		if (count ($rs) == 0) {
+			return 1;
+		}
+		
+		return $rs[0]['max'] + 10;
+	}
 }

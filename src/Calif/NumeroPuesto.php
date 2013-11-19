@@ -186,9 +186,9 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 				$tiempo_c = $maestro->maxTiempoCompleto () - $maestro->getCarga('t')->horas;
 				$tiempo_a = $maestro->maxAsignatura () - $maestro->getCarga ('a')->horas;
 				
-				if ($tiempo_c >= $puesto->horas) {
+				if ($tiempo_c >= $puesto_model->horas) {
 					$puesto->carga = 't';
-				} else if ($tiempo_a >= $puesto->horas) {
+				} else if ($tiempo_a >= $puesto_model->horas) {
 					$puesto->carga = 'a';
 				} else {
 					$puesto->carga = 'h';
