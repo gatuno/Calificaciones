@@ -3,7 +3,6 @@
 Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Materia {
-	
 	public function index ($request, $match) {
 		/* Listar las materias aquí */
 		

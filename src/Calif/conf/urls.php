@@ -266,6 +266,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'porDepartamento',
+);
+
+$ctl[] = array (
 	'regex' => '#^/seccion/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

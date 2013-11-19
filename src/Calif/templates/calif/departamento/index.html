@@ -1,13 +1,14 @@
 {extends 'calif/base.html'}
 {block body}
 {if $departamentos}
-	<table><thead><tr><th>Departamento</th><th>Profesores</th><th>Materias</th></tr></thead>
+	<table><thead><tr><th>Departamento</th><th>Profesores</th><th>Materias</th><th>Secciones</th></tr></thead>
 	<tbody>
 	{foreach $departamentos as $departamento}
 		<tr>
 		<td>{$departamento.descripcion}</td>
-		<td><a href="{url 'Calif_Views_Maestro::porDepartamento', array ($departamento.clave)}">{$maestros[$departamento.clave]} profesores</a></td>
-		<td><a href="{url 'Calif_Views_Materia::porDepartamento', array ($departamento.clave)}">{$materias[$departamento.clave]} materias</a></td>
+		<td><a href="{url 'Calif_Views_Maestro::porDepartamento', array ($departamento.clave)}">{$maestros[$departamento.clave]} profesor(es)</a></td>
+		<td><a href="{url 'Calif_Views_Materia::porDepartamento', array ($departamento.clave)}">{$materias[$departamento.clave]} materia(s)</a></td>
+		<td><a href="{url 'Calif_Views_Seccion::porDepartamento', array ($departamento.clave)}">{$secciones[$departamento.clave]} seccion(es)</a></td>
 		</tr>
 	{/foreach}
 	</tbody>

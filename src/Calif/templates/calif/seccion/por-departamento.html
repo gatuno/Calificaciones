@@ -1,0 +1,6 @@
+{extends 'calif/base.html'}
+{block body}
+<p><a href="{url 'Calif_Views_Seccion::agregarNrc'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar seccion" />Agregar una nueva sección</a></p>
+<p>Lista de materias del {$departamento.descripcion}</p>
+{$paginador.render}
+{/block}
