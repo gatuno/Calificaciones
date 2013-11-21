@@ -3,6 +3,7 @@ Gatuf::loadFunction ('Gatuf_Shortcuts_RenderToResponse');
 Gatuf::loadFunction ('Gatuf_HTTP_URL_urlForView');
 
 class Calif_Views_Puestos {
+	public $actualizarPuesto_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarPuesto ($request, $match) {
 		$puesto = new Calif_NumeroPuesto ();
 		

@@ -19,6 +19,7 @@ class Calif_Views_Evaluacion {
                                                  $request);
 	}
 	
+	public $agregarEval_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarEval ($request, $match) {
 		$title = 'Nueva evaluación';
 		
@@ -46,6 +47,7 @@ class Calif_Views_Evaluacion {
 		                                         $request);
 	}
 	
+	public $actualizarEval_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarEval ($request, $match) {
 		$title = 'Actualizar evaluación';
 		$evaluacion = new Calif_Evaluacion ();

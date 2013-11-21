@@ -16,6 +16,10 @@ class Calif_Middleware_NoAlumnos {
 			return false;
 		}
 		
+		if (preg_match('#^/password#', $request->query)) {
+			return false;
+		}
+		
 		if (!isset($request->user) or $request->user->isAnonymous()) {
 			return new Gatuf_HTTP_Response_RedirectToLogin($request);
 		}
@@ -23,7 +27,7 @@ class Calif_Middleware_NoAlumnos {
 			return new Gatuf_HTTP_Response_Forbidden($request);
 		}
 		
-		if (is_a ($request->user, 'Calif_Alumno')) {
+		if ($request->user->type == 'a') {
 			return new Gatuf_HTTP_Response_Forbidden($request);
 		}
 		return false;

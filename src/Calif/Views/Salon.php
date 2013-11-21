@@ -74,7 +74,8 @@ class Calif_Views_Salon {
                                                        'calendar' => $calendar),
                                                  $request);
 	}
-
+	
+	public $agregarSalon_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarSalon ($request, $match) {
 		$title = 'Nuevo salon';
 
@@ -99,6 +100,7 @@ class Calif_Views_Salon {
                                                  $request);
 	}
 	
+	public $actualizarSalon_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarSalon ($request, $match) {
 		$title = 'Actualizar un salon';
 		

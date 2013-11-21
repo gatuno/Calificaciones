@@ -65,7 +65,7 @@ class Calif_Views {
 		return new Gatuf_HTTP_Response_Redirect ($success_url);
 	}
 	
-	public $import_siiau_precond = array ('Gatuf_Precondition::loginRequired');
+	public $import_siiau_precond = array ('Gatuf_Precondition::adminRequired');
 	function import_siiau ($request, $match) {
 		$extra = array ();
 		
@@ -86,7 +86,7 @@ class Calif_Views {
 		                                         $request);
 	}
 	
-	public $import_oferta_precond = array ('Gatuf_Precondition::loginRequired');
+	public $import_oferta_precond = array ('Gatuf_Precondition::adminRequired');
 	function import_oferta ($request, $match) {
 		$extra = array ();
 		
@@ -232,7 +232,7 @@ class Calif_Views {
 		
 		$email_id = Calif_Form_PasswordInputKey::checkKeyHash($key);
 		if (false == $email_id) {
-			$url = Gatuf_HTTP_URL_urlForView ('Gatuf_Views::passwordRecoveryInputKey');
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views::passwordRecoveryInputCode');
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		$user = new Calif_User ($email_id[1]);
@@ -247,9 +247,9 @@ class Calif_Views {
 				$request->session->setData('login_time', gmdate('Y-m-d H:i:s'));
 				$user->last_login = gmdate('Y-m-d H:i:s');
 				$user->update ();
-				/* Establecer un mensaje
-				$request->user->setMessage(); */
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::index');
+				/* Establecer un mensaje */
+				$request->user->setMessage(1, 'Bienvenido de nuevo');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views::index');
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {

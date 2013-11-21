@@ -134,7 +134,7 @@ class Calif_Views_Maestro {
                                                  $request);
 	}
 	
-	public $agregarMaestro_precond = array ('Gatuf_Precondition::loginRequired');
+	public $agregarMaestro_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarMaestro ($request, $match) {
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Maestro_Agregar ($request->POST);
@@ -155,7 +155,7 @@ class Calif_Views_Maestro {
 		                                         $request);
 	}
 	
-	public $actualizarMaestro_precond = array ('Gatuf_Precondition::loginRequired');
+	public $actualizarMaestro_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarMaestro ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		

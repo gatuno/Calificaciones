@@ -39,7 +39,7 @@ class Calif_Views_Carrera {
 		                                         $request);
 	}
 	
-	public $agregarCarrera_precond = array ('Gatuf_Precondition::loginRequired');
+	public $agregarCarrera_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarCarrera ($request, $match) {
 		$title = 'Crear carrera';
 		$extra = array ();
@@ -60,7 +60,7 @@ class Calif_Views_Carrera {
 		                                         $request);
 	}
 	
-	public $actualizarCarrera_precond = array ('Gatuf_Precondition::loginRequired');
+	public $actualizarCarrera_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarCarrera ($request, $match) {
 		$title = 'Actualizar carrera';
 		$extra = array ();

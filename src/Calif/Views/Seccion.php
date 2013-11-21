@@ -386,6 +386,7 @@ class Calif_Views_Seccion {
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
+	public $matricular_precond = array ('Gatuf_Precondition::adminRequired');
 	public function matricular ($request, $match){
 		$seccion =  new Calif_Seccion ();
 		if (false === ($seccion->get($match[1]))) {
