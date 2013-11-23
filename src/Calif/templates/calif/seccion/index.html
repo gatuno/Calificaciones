@@ -1,5 +1,14 @@
 {extends 'calif/base.html'}
 {block body}
 <p><a href="{url 'Calif_Views_Seccion::agregarNrc'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar seccion" />Agregar una nueva sección</a></p>
+{if $user.isCoord()}
+	<h3>Oferta académica</h3>
+	<p>Ver oferta para:
+	<table><tr>
+	{foreach $carreras_coordinadas as $carrera}
+		<td><a href="{url 'Calif_Views_Reportes_Oferta::porCarrera', $carrera}">{$carrera}</a></td>
+	{/foreach}
+	</tr></table></p>
+{/if}
 {$paginador.render}
 {/block}

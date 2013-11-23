@@ -33,8 +33,17 @@ class Calif_Views_Seccion {
 		
 		$pag->setFromRequest ($request);
 		
+		$carreras = array ();
+		
+		if ($request->user->isCoord()) {
+			foreach ($request->user->returnCoord () as $perm) {
+				$carreras[] = substr ($perm, 18);
+			}
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
 		                                          array ('paginador' => $pag,
+		                                                 'carreras_coordinadas' => $carreras,
 		                                                 'page_title' => 'Secciones'),
 		                                          $request);
 	}

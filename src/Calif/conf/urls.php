@@ -461,4 +461,18 @@ $ctl[] = array (
 	'method' => 'actualizarPuesto',
 );
 
+$ctl[] = array (
+	'regex' => '#^/reporte/oferta/carrera/([A-Za-z]{3,5})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Reportes_Oferta',
+	'method' => 'porCarrera',
+);
+
+$ctl[] = array (
+	'regex' => '#^/reporte/oferta/carrera/([A-Za-z]{3,5})/ODS/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Reportes_Oferta',
+	'method' => 'descargaCarreraODS',
+);
+
 return $ctl;

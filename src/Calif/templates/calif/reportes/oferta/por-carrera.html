@@ -1,0 +1,7 @@
+{extends 'calif/base.html'}
+{block body}
+<p><a href="{url 'Calif_Views_Reportes_Oferta::descargaCarreraODS', $carrera.clave}">Descargar reporte como ODS</a></p>
+<p>Lista de secciones solicitadas por la carrera {$carrera.descripcion}</p>
+<p>Total de secciones: {$total}</p>
+{$paginador.render}
+{/block}
