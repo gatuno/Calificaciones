@@ -17,6 +17,34 @@
 	{/if}
 	</tr>
 	<tr>
+		<th>Grado:</th>
+		{if $maestro.sexo == 'M'}
+			{if $maestro.grado == 'L'}
+				<td>Licenciado</td>
+			{elseif $maestro.grado == 'I'}
+				<td>Ingeniero</td>
+			{elseif $maestro.grado == 'M'}
+				<td>Maestro</td>
+			{elseif $maestro.grado == 'D'}
+				<td>Doctor</td>
+			{else}
+				<td>Desconocido</td>
+			{/if}
+		{else}
+		{if $maestro.grado == 'L'}
+				<td>Licenciada</td>
+			{elseif $maestro.grado == 'I'}
+				<td>Ingeniera</td>
+			{elseif $maestro.grado == 'M'}
+				<td>Maestra</td>
+			{elseif $maestro.grado == 'D'}
+				<td>Doctora</td>
+			{else}
+				<td>Desconocida</td>
+			{/if}
+		{/if}
+	</tr>
+	<tr>
 		<th>Código:</th>
 		<td>{$maestro.codigo}</td>
 	</tr>
