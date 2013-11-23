@@ -39,6 +39,7 @@ class Calif_Views_Seccion {
 			foreach ($request->user->returnCoord () as $perm) {
 				$carreras[] = substr ($perm, 18);
 			}
+			if ($request->user->administrator) $carreras[] = 'DIVEC';
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
