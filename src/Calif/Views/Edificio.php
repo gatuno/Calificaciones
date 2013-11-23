@@ -70,7 +70,7 @@ class Calif_Views_Edificio {
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $nrc->nrc);
 				$dia_semana = strtotime ('next Monday');
 				$calendar->opts['start-day'] = date('Y-m-d', $dia_semana);
-				foreach (array ('l', 'm', 'i', 'v', 's') as $dia) {
+				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 					if ($horario->$dia) {
 						$calendar->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->inicio),
 								                     'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($horario->fin),

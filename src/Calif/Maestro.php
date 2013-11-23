@@ -109,17 +109,17 @@ class Calif_Maestro extends Gatuf_Model {
 		$nom = new Calif_Nombramiento ($this->nombramiento);
 		if (substr ($this->nombramiento, 0, 2) == '30') {
 			if ($this->tiempo == 't') {
-				return (48 - $nom->horas);
+				return 8;
 			} else {
-				return (48 - ($nom->horas / 2));
+				return 28;
 			}
 		}
 		if (substr ($this->nombramiento, 0, 2) == '20') {
 			$nom = new Calif_Nombramiento ($this->nombramiento);
 			if ($this->tiempo == 't') {
-				return (48 - $nom->horas);
+				return 8;
 			} else {
-				return (48 - ($nom->horas / 2));
+				return 28;
 			}
 		}
 	}

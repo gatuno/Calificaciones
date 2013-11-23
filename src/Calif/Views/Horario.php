@@ -17,6 +17,10 @@ class Calif_Views_Horario {
 				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 				return new Gatuf_HTTP_Response_Redirect ($url);
+			} else if ($seccion->nrc < 80000) {
+				$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
+				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		}
 		

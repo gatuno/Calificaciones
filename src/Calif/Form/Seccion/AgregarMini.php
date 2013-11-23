@@ -83,10 +83,10 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		
 		/* Verificar que nuestro amigo staff exista */
 		$maestro = new Calif_Maestro ();
-		if (false === ($maestro->get ('1111111'))) {
-			$maestro->codigo = 1111111;
-			$maestro->nombre = 'Staff';
-			$maestro->apellido = 'Staff Staff';
+		if (false === ($maestro->get ('2222222'))) {
+			$maestro->codigo = 2222222;
+			$maestro->nombre = '(Sin profesor)';
+			$maestro->apellido = 'Sin profesor';
 			$maestro->correo = '--invalido--';
 			
 			$maestro->create ();
