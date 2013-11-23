@@ -1,12 +1,13 @@
 <?php
 
-class ODS {
+class Gatuf_ODS {
 	public $nombre;
 	public $meta;
 	public $hojas;
 	private $max_col;
 	private $max_row;
 	private $auto_sytles;
+	private $merged_cells;
 	
 	public function __construct () {
 		/* Inicializar algunos atributos meta */
@@ -18,6 +19,7 @@ class ODS {
 		              'meta:editing-cycles' => 1);
 		$this->max_col = array ();
 		$this->max_row = array ();
+		$this->merged_cells = array ();
 		
 		$this->auto_styles = array (
 			'number:text-style' => array (
@@ -29,13 +31,40 @@ class ODS {
 				'style:family' => 'table-cell',
 				'style:data-style-name' => 'CELTEXT'
 			),
+			/*'style:style' => array (
+				'style:name' => 'merged-centrado',
+				'style:family' => 'table-cell',
+				'style:table-cell-properties' => array (
+					'style:text-align-source' => 'fix',
+					'style:repeat-content' => 'false',
+					'style:vertical-align' => 'middle',
+				),
+				'style:paragraph-properties' => array (
+					'fo:text-align' => 'center',
+				),
+			),*/
 		);
+	}
+	
+	private function createTag ($dom, $tag, $attrs) {
+		$tag_vacia = $dom->createElement ($tag);
+		
+		foreach ($attrs as $key => $value) {
+			if (is_array ($value)) {
+				$subtag = $this->createTag ($dom, $key, $value);
+				$tag_vacia->appendChild ($subtag);
+			} else {
+				$tag_vacia->setAttribute ($key, $value);
+			}
+		}
+		return $tag_vacia;
 	}
 	
 	public function addNewSheet ($sheet_name) {
 		if (!isset ($this->hojas[$sheet_name])) $this->hojas[$sheet_name] = array ();
 		$this->max_col[$sheet_name] = 1;
 		$this->max_row[$sheet_name] = 1;
+		$this->merged_cells[$sheet_name] = array ();
 	}
 	
 	public function addStringCell ($sheet, $row, $col, $string) {
@@ -48,6 +77,21 @@ class ODS {
 		if (!isset ($this->hojas[$sheet][$row])) $this->hojas[$sheet][$row] = array ();
 		
 		$this->hojas[$sheet][$row][$col] = array ('office:value-type' => 'string', 'table:style-name' => 'cel', 'value' => $string);
+	}
+	
+	public function addMergedStringCell ($sheet, $row, $col, $string, $span_cols, $span_rows) {
+		$this->addStringCell ($sheet, $row, $col, $string);
+		/*$this->hojas[$sheet][$row][$col]['table:style-name'] = 'merged-centrado';*/
+		
+		if ($span_cols == 1 && $span_rows == 1) return;
+		$span = $row.':'.$col;
+		
+		$this->merged_cells[$sheet][$span] = array ('col' => $span_cols, 'row' => $span_rows);
+		for ($g = $row; $g < $span_rows - 1; $g++) {
+			for ($h = $col; $h < $span_cols - 1; $h++) {
+				$this->hojas[$sheet][$row][$col] = array ('covered' => true);
+			}
+		}
 	}
 	
 	public function addPercentageCell ($sheet, $row, $col, $percentage) {
@@ -171,26 +215,8 @@ class ODS {
 		$raiz->appendChild ($etiqueta_fuentes);
 		
 		/* Estilos automáticos */
-		$etiqueta_estilos_automaticos = $dom_contenido->createElement ('office:automatic-styles');
+		$etiqueta_estilos_automaticos = $this->createTag ($dom_contenido, 'office:automatic-styles', $this->auto_styles);
 		$raiz->appendChild ($etiqueta_estilos_automaticos);
-		
-		foreach ($this->auto_styles as $auto_style => $attrs) {
-			$tag_vacia = $dom_contenido->createElement ($auto_style);
-			$etiqueta_estilos_automaticos->appendChild ($tag_vacia);
-			
-			foreach ($attrs as $key => $value) {
-				if (is_array ($value)) {
-					$subelement = $dom_contenido->createElement ($key);
-					$tag_vacia->appendChild ($subelement);
-					
-					foreach ($value as $subkey => $subvalue) {
-						$subelement->setAttribute ($subkey, $subvalue);
-					}
-				} else {
-					$tag_vacia->setAttribute ($key, $value);
-				}
-			}
-		}
 		
 		$tag_vacia = $dom_contenido->createElement ('office:body');
 		$raiz->appendChild ($tag_vacia);
@@ -235,22 +261,31 @@ class ODS {
 							$celda->setAttribute ('table:number-columns-repeated', $numero_columna - $repeat_col);
 						}
 					}
+					if (isset ($datos_celda['covered'])) {
+						$celda = $dom_contenido->createElement ('table:table-cell');
+						$row->appendChild ($celda);
+					} else {
+						/* Crear la celda correspondiente */
+						$celda = $dom_contenido->createElement ('table:table-cell');
+						$row->appendChild ($celda);
 					
-					/* Crear la celda correspondiente */
-					$celda = $dom_contenido->createElement ('table:table-cell');
-					$row->appendChild ($celda);
+						if (isset ($datos_celda['value'])) {
+							$value = $datos_celda['value'];
+							$text_p = $dom_contenido->createElement ('text:p', $value);
+							$celda->appendChild ($text_p);
+							unset ($datos_celda['value']);
+						}
 					
-					if (isset ($datos_celda['value'])) {
-						$value = $datos_celda['value'];
-						$text_p = $dom_contenido->createElement ('text:p', $value);
-						$celda->appendChild ($text_p);
-						unset ($datos_celda['value']);
+						foreach ($datos_celda as $attr => $attr_value) {
+							$celda->setAttribute ($attr, $attr_value);
+						}
+					
+						$span = $numero_fila.':'.$numero_columna;
+						if (isset ($this->merged_cells[$nombre_hoja][$span])) {
+							$celda->setAttribute ('table:number-columns-spanned', $this->merged_cells[$nombre_hoja][$span]['col']);
+							$celda->setAttribute ('table:number-rows-spanned', $this->merged_cells[$nombre_hoja][$span]['row']);
+						}
 					}
-					
-					foreach ($datos_celda as $attr => $attr_value) {
-						$celda->setAttribute ($attr, $attr_value);
-					}
-					
 					$repeat_col = $numero_columna + 1;
 				} /* Fin FOR de celdas */
 				
@@ -293,19 +328,14 @@ class ODS {
 		$raiz->setAttribute ('grddl:transformation', 'http://docs.oasis-open.org/office/1.2/xslt/odf2rdf.xsl');
 		$raiz->setAttribute ('office:version', '1.2');
 		
-		$meta = $dom_meta->createElement ('office:meta');
+		$meta = $this->createTag ($dom_meta, 'office:meta', $this->meta);
 		$raiz->appendChild ($meta);
-		
-		foreach ($this->meta as $key => $value) {
-			$tag_meta = $dom_meta->createElement ($key, $value);
-			$meta->appendChild ($tag_meta);
-		}
 		
 		return $dom_meta;
 	}
 	
 	public function construir_paquete () {
-		$tmp_dir = '/tmp'.DIRECTORY_SEPARATOR; /* FIXME: Usar un directorio temporal */
+		$tmp_dir = Gatuf::config ('tmp_folder').DIRECTORY_SEPARATOR;
 		
 		$zip = new ZipArchive ();
 		
@@ -333,28 +363,3 @@ class ODS {
 		$zip->close ();
 	}
 }
-
-$hoja_ods = new ODS ();
-$hoja_ods->addNewSheet ('Hoja 1');
-$hoja_ods->addStringCell ('Hoja 1', 1, 1, 'ABC A1');
-$hoja_ods->addStringCell ('Hoja 1', 2, 2, 'B2');
-$hoja_ods->addStringCell ('Hoja 1', 4, 2, 'B4');
-$hoja_ods->addStringCell ('Hoja 1', 7, 2, 'B7');
-$hoja_ods->addStringCell ('Hoja 1', 6, 3, 'C6');
-$hoja_ods->addStringCell ('Hoja 1', 4, 4, 'D4');
-$hoja_ods->addStringCell ('Hoja 1', 5, 4, 'D5');
-$hoja_ods->addStringCell ('Hoja 1', 6, 4, 'D6');
-$hoja_ods->addStringCell ('Hoja 1', 7, 4, 'D7');
-$hoja_ods->addStringCell ('Hoja 1', 8, 4, 'D8');
-$hoja_ods->addStringCell ('Hoja 1', 6, 5, 'E6');
-$hoja_ods->addStringCell ('Hoja 1', 7, 6, 'F7');
-$hoja_ods->addStringCell ('Hoja 1', 3, 7, 'G3');
-$hoja_ods->addStringCell ('Hoja 1', 10, 8, 'H10');
-$hoja_ods->addStringCell ('Hoja 1', 14, 1, 'A14');
-$hoja_ods->construir_paquete ();
-header ('Content-Disposition: attachment; filename=prueba.ods');
-header ('Content-Type: application/vnd.oasis.opendocument.spreadsheet');
-$fp = fopen ($hoja_ods->nombre, 'rb');
-fpassthru ($fp);
-fclose ($fp);
-?>
