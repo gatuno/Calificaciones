@@ -136,4 +136,9 @@ class Calif_Seccion extends Gatuf_Model {
 	public function displaylinkedmaestro_apellido ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$this->maestro_apellido.' '.$this->maestro_nombre.' ('.$this->maestro.')</a>';
 	}
+	
+	public function displayasignacion ($extra = null) {
+		if ($this->asignacion == null) return "Ninguno";
+		return $this->asignacion;
+	}
 }

@@ -153,12 +153,16 @@ class Calif_Views_Materia {
 			array ('maestro', 'Gatuf_Paginator_FKLink', 'Maestro'),
 		);
 		
+		if ($request->user->isCoord ()) {
+			$list_display[] = array ('asignacion', 'Gatuf_Paginator_FKExtra', 'Asignacion');
+		}
+		
 		$pag->items_per_page = 30;
 		$pag->no_results_text = 'No se encontraron secciones';
 		$pag->max_number_pages = 5;
 		$pag->configure ($list_display,
 			array ('nrc', 'materia', 'seccion', 'maestro'),
-			array ('nrc', 'materia', 'seccion', 'maestro')
+			array ('nrc', 'materia', 'seccion', 'maestro', 'asignacion')
 		);
 		
 		$sql_filter = new Gatuf_SQL ('materia=%s', $materia->clave);
