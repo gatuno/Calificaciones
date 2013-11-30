@@ -144,24 +144,28 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
-	'regex' => '#^/alumno/(\w\d{8})/$#',
+	'regex' => '#^/alumno/#',
 	'base' => $base,
-	'model' => 'Calif_Views_Alumno',
-	'method' => 'verAlumno',
-);
-
-$ctl[] = array(
-	'regex' => '#^/alumno/(\w\d{8})/update/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Alumno',
-	'method' => 'actualizarAlumno',
-);
-
-$ctl[] = array (
-	'regex' => '#^/alumno/(\w\d{8})/evaluar/(\d+)/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Alumno',
-	'method' => 'evaluar',
+	'sub' => array (
+		array(
+			'regex' => '#^(\w\d{8})/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Alumno',
+			'method' => 'verAlumno',
+		),
+		array(
+			'regex' => '#^(\w\d{8})/update/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Alumno',
+			'method' => 'actualizarAlumno',
+		),
+		array (
+			'regex' => '#^(\w\d{8})/evaluar/(\d+)/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Alumno',
+			'method' => 'evaluar',
+		)
+	)
 );
 
 /* Algunas materias */
@@ -194,31 +198,34 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/materia/([a-zA-Z]+\d+)/$#',
+	'regex' => '#^/materia/#',
 	'base' => $base,
-	'model' => 'Calif_Views_Materia',
-	'method' => 'verMateria',
-);
-
-$ctl[] = array (
-	'regex' => '#^/materia/([a-zA-Z]+\d+)/evals/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Materia',
-	'method' => 'verEval',
-);
-
-$ctl[] = array (
-	'regex' => '#^/materia/([a-zA-Z]+\d+)/update/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Materia',
-	'method' => 'actualizarMateria',
-);
-
-$ctl[] = array (
-	'regex' => '#^/materia/([a-zA-Z]+\d+)/addeval/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Materia',
-	'method' => 'agregarEval',
+	'sub' => array (
+		array (
+			'regex' => '#^([a-zA-Z]+\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Materia',
+			'method' => 'verMateria',
+		),
+		array (
+			'regex' => '#^([a-zA-Z]+\d+)/evals/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Materia',
+			'method' => 'verEval',
+		),
+		array (
+			'regex' => '#^([a-zA-Z]+\d+)/update/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Materia',
+			'method' => 'actualizarMateria',
+		),
+		array (
+			'regex' => '#^([a-zA-Z]+\d+)/addeval/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Materia',
+			'method' => 'agregarEval',
+		)
+	)
 );
 
 /* Las evaluaciones */
@@ -273,73 +280,70 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/$#',
+	'regex' => '#^/seccion/#',
 	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'verNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/update/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'actualizarNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/delete/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'eliminarNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/timeadd/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Horario',
-	'method' => 'agregarHora',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/timedel/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Horario',
-	'method' => 'eliminarHora',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/timeupdate/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Horario',
-	'method' => 'actualizarHora',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/reclamar/([A-Za-z]{3,5})/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'reclamarNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/liberar/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'liberarNrc',
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/evaluar/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'evaluar'
-);
-
-$ctl[] = array (
-	'regex' => '#^/seccion/(\d+)/matricular/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Seccion',
-	'method' => 'matricular'
+	'sub' => array (
+		array (
+			'regex' => '#^(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'verNrc',
+		),
+		array (
+			'regex' => '#^(\d+)/update/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'actualizarNrc',
+		),
+		array (
+			'regex' => '#^(\d+)/delete/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'eliminarNrc',
+		),
+		array (
+			'regex' => '#^(\d+)/timeadd/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Horario',
+			'method' => 'agregarHora',
+		),
+		array (
+			'regex' => '#^(\d+)/timedel/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Horario',
+			'method' => 'eliminarHora',
+		),
+		array (
+			'regex' => '#^(\d+)/timeupdate/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Horario',
+			'method' => 'actualizarHora',
+		),
+		array (
+			'regex' => '#^(\d+)/reclamar/([A-Za-z]{3,5})/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'reclamarNrc',
+		),
+		array (
+			'regex' => '#^(\d+)/liberar/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'liberarNrc',
+		),
+		array (
+			'regex' => '#^(\d+)/evaluar/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'evaluar'
+		),
+		array (
+			'regex' => '#^(\d+)/matricular/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Seccion',
+			'method' => 'matricular'
+		)
+	)
 );
 
 /* Los salones */
@@ -401,33 +405,48 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/maestro/(\d+)/$#',
+	'regex' => '#^/maestro/#',
 	'base' => $base,
-	'model' => 'Calif_Views_Maestro',
-	'method' => 'verMaestro',
-);
-
-$ctl[] = array (
-	'regex' => '#^/maestro/(\d+)/update/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Maestro',
-	'method' => 'actualizarMaestro',
-);
-
-$ctl[] = array (
-	'regex' => '#^/maestro/(\d+)/horario/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Maestro',
-	'method' => 'verHorario',
-	'params' => array ('general' => 1),
-);
-
-$ctl[] = array (
-	'regex' => '#^/maestro/(\d+)/horario/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Maestro',
-	'method' => 'verHorario',
-	'name' => 'HorarioPorDepartamento',
+	'sub' => array (
+		array (
+			'regex' => '#^(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'verMaestro',
+		),
+		array (
+			'regex' => '#^(\d+)/update/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'actualizarMaestro',
+		),
+		array (
+			'regex' => '#^(\d+)/horario/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'verHorario',
+		),
+		array (
+			'regex' => '#^(\d+)/horario/PDF/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'verHorarioPDF',
+			'params' => array ('general' => 1),
+		),
+		array (
+			'regex' => '#^(\d+)/horario/(\d+)/PDF/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'verHorarioPDF',
+			'name' => 'verHorarioPorDepartamentoPDF',
+		),
+		array (
+			'regex' => '#^(\d+)/carga/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'verCarga',
+		)
+	)
 );
 
 /* Edificios */
@@ -462,17 +481,47 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/reporte/oferta/carrera/([A-Za-z]{3,5})/$#',
+	'regex' => '#^/reportes/$#',
 	'base' => $base,
-	'model' => 'Calif_Views_Reportes_Oferta',
-	'method' => 'porCarrera',
+	'model' => 'Calif_Views_Reportes',
+	'method' => 'index',
 );
 
 $ctl[] = array (
-	'regex' => '#^/reporte/oferta/carrera/([A-Za-z]{3,5})/ODS/$#',
+	'regex' => '#^/reporte/oferta/#',
 	'base' => $base,
-	'model' => 'Calif_Views_Reportes_Oferta',
-	'method' => 'descargaCarreraODS',
+	'sub' => array (
+		array (
+			'regex' => '#^carrera/([A-Za-z]{3,5})/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'porCarrera',
+		),
+		array (
+			'regex' => '#^carrera/([A-Za-z]{3,5})/ODS/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'descargaCarreraODS',
+		),
+		array (
+			'regex' => '#^departamento/no/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'seleccionarNoPorDepartamento',
+		),
+		array (
+			'regex' => '#^departamento/no/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'noPorDepartamento',
+		),
+		array (
+			'regex' => '#^departamento/no/(\d+)/ODS/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'descargaNoPorDepartamentoODS',
+		)
+	)
 );
 
 return $ctl;
