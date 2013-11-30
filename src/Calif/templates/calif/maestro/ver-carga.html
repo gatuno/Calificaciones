@@ -1,0 +1,54 @@
+{extends 'calif/maestro/base.html'}
+{block body_maestro}
+<h2>Carga horaria</h2>
+<table border="1"><tbody>
+	{if $maestro.nombramiento != null}
+	{assign $color = '#FFFFFF'}
+	{if $totales['t'].horas > $maestro.maxTiempoCompleto ()}{assign $color = '#FFE428'}{/if}
+	{if $totales['t'].horas < $maestro.maxTiempoCompleto ()}{assign $color = '#FF0000'}{/if}
+	<tr><td>Carga en tiempo completo</td><td>{$totales['t'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxTiempoCompleto ()}</td></tr>
+	{/if}
+	{assign $color = '#FFFFFF'}
+	{if $totales['a'].horas > $maestro.maxAsignatura ()}{assign $color = '#FFE428'}{/if}
+	<tr><td>Carga en asignaturas</td><td>{$totales['a'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxAsignatura ()}</td></tr>
+	<tr><td>Carga en honorifico</td><td colspan="2">{$totales['h'].horas}</td></tr>
+</tbody></table>
+<h2>Desglose de horas</h2>
+<table border="1">
+<thead><tr><th>NRC</th><th>Materia</th><th>Sección</th><th>Numero de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
+<tbody>
+	{foreach $grupos as $g}
+		<tr>
+		{assign $span = 1}
+		{if count($puestos[$g.nrc]) > 1}{assign $span = $puestos[$g.nrc].count()}{/if}
+		<td rowspan="{$span}">{$g.nrc}</td>
+		<td rowspan="{$span}">{$g.materia}</td>
+		<td rowspan="{$span}">{$g.seccion}</td>
+		{assign $h = 0}
+		{if $puestos[$g.nrc]}
+			{foreach $puestos[$g.nrc] as $p}
+				{assign $h++}
+				<td>{$p.numero}</td>
+				{if $p.tipo == 't'}
+					<td>Teoría</td>
+				{else}
+					<td>Práctica</td>
+				{/if}
+				<td>{$p.horas}</td>
+				{if $p.carga == 'a'}
+					<td>Asignatura</td>
+				{elseif $p.carga == 't'}
+					<td>Tiempo completo/medio tiempo</td>
+				{elseif $p.carga == 'h'}
+					<td>Honorifica</td>
+				{/if}
+				</tr>
+				{if $h != count($puestos[$g.nrc])}<tr>{/if}
+			{/foreach}
+		{else}
+			<td colspan="4">No hay numeros de puesto</td></tr>
+		{/if}
+	{/foreach}
+</tbody>
+</table>
+{/block}

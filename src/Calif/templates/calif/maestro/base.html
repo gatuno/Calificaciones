@@ -1,0 +1,14 @@
+{extends 'calif/base.html'}
+{block body}
+<ul style="list-style-type: none;">
+<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">Perfil</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::verHorario', array ($maestro.codigo)}">Horario y grupos</a></li>
+{if $user.administrator}
+<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::verCarga', array ($maestro.codigo)}">Carga horaria</a></li>
+{/if}
+{if $user.administrator}<!-- Actualizar con el permiso correspondiente -->
+<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Actualizar</a></li>
+{/if}
+</ul>
+{block body_maestro}{/block}
+{/block}

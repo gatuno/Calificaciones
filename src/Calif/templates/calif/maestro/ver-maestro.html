@@ -1,6 +1,6 @@
-{extends 'calif/base.html'}
-{block body}
-<p><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Cambiar la información</a> de este profesor</p>
+{extends 'calif/maestro/base.html'}
+{block body_maestro}
+<h2>Perfil público</h2>
 <table class="form" summary="">
 	<tr>
 		<th style="text-align: right">
@@ -70,37 +70,4 @@
 		<td>{$maestro.user.last_login|dateago}</td>
 	</tr>
 </table>
-{if $user.administrator}
-<h3>Carga horaria</h3>
-<table border="1"><tbody>
-	{if $maestro.nombramiento != null}
-	{assign $color = '#FFFFFF'}
-	{if $carga['t'].horas > $maestro.maxTiempoCompleto ()}{assign $color = '#FFE428'}{/if}
-	{if $carga['t'].horas < $maestro.maxTiempoCompleto ()}{assign $color = '#FF0000'}{/if}
-	<tr><td>Carga en tiempo completo</td><td>{$carga['t'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxTiempoCompleto ()}</td></tr>
-	{/if}
-	{assign $color = '#FFFFFF'}
-	{if $carga['a'].horas > $maestro.maxAsignatura ()}{assign $color = '#FFE428'}{/if}
-	<tr><td>Carga en asignaturas</td><td>{$carga['a'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxAsignatura ()}</td></tr>
-	<tr><td>Carga en honorifico</td><td colspan="2">{$carga['h'].horas}</td></tr>
-</tbody></table>
-{/if}
-<h2>Grupos del profesor</h2>
-{if $grupos}
-	<table><thead><tr><th>NRC</th><th>Materia</th><th>Sección</th></tr></thead>
-	<tbody>
-	{foreach $grupos as $g}
-		<tr><td>{$g.displaylinkednrc()|safe}</td><td>{$g.displaylinkedmateria()|safe}</td><td>{$g.displaylinkedseccion()|safe}</td></tr>
-	{/foreach}
-	</tbody></table>
-{else}
-	<p>Este profesor no tiene grupos activos</p>
-{/if}
-<h2>Horario del profesor</h2>
-{if $calendario}
-	<p>Vista para <a href="{url 'Calif_Views_Maestro::verHorario', array ($maestro.codigo)}">impresión</a></p>
-	{$calendario.render()}
-{else}
-	<p>Este profesor no tiene grupos activos</p>
-{/if}
 {/block}

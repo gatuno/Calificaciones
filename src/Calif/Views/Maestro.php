@@ -72,7 +72,6 @@ class Calif_Views_Maestro {
 	}
 	
 	public function verMaestro ($request, $match) {
-		Gatuf::loadFunction ('Calif_Utils_displayHora');
 		$maestro = new Calif_Maestro ();
 		
 		if (false === ($maestro->get ($match[1]))) {
@@ -86,9 +85,33 @@ class Calif_Views_Maestro {
 			$nombramiento = null;
 		}
 		$asignatura = new Calif_Nombramiento ($maestro->asignatura);
-		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
+		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
 		
-		$carga = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-maestro.html',
+		                                         array('page_title' => $title,
+		                                               'maestro' => $maestro,
+		                                               'nombramiento' => $nombramiento,
+		                                               'asignatura' => $asignatura),
+                                                 $request);
+	}
+	
+	public function verHorario ($request, $match) {
+		Gatuf::loadFunction ('Calif_Utils_displayHora');
+		$maestro = new Calif_Maestro ();
+		
+		if (false === ($maestro->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$maestro->getUser ();
+		
+		$depas = array ();
+		$sql = new Gatuf_SQL ('codigo=%s', $maestro->codigo);
+		
+		foreach (Gatuf::factory ('Calif_Maestro')->getList (array ('view' => 'maestros_departamentos', 'filter' => $sql->gen ())) as $d) {
+			$depas[] = Gatuf::factory ('Calif_Departamento', $d->departamento);
+		}
+		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
 		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
@@ -99,23 +122,20 @@ class Calif_Views_Maestro {
 			$horario_maestro->opts['conflicts'] = true;
 			$horario_maestro->opts['conflict-color'] = '#FFE428';
 			
-			$salon_model = new Calif_Salon ();
 			foreach ($grupos as $grupo) {
-				$horas = $grupo->get_calif_horario_list ();
+				$horas = $grupo->get_calif_horario_list (array ('view' => 'paginador'));
 				
 				foreach ($horas as $hora) {
-					$cadena_desc = $grupo->materia . ' ' . $grupo->seccion.'<br />';
-					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
+					$cadena_desc = $grupo->materia.' '.$grupo->seccion;
 					$dia_semana = strtotime ('next Monday');
 					
-					$salon_model->get ($hora->salon);
 					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
 						if ($hora->$dia) {
 							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->inicio),
 											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->fin),
-											             'title' => $salon_model->edificio.' '.$salon_model->aula,
-											             'content' => $cadena_desc,
-											             'url' => $url, 'color' => '');
+											             'content' => $hora->salon_edificio.' '.$hora->salon_aula.'<br />'.$cadena_desc,
+											             'title' => '',
+											             'url' => '.', 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
 						}
 						$dia_semana = $dia_semana + 86400;
 					}
@@ -123,14 +143,54 @@ class Calif_Views_Maestro {
 			}
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-maestro.html',
-		                                         array('page_title' => 'Perfil público',
+		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-horario.html',
+		                                         array('page_title' => $title,
+		                                               'maestro' => $maestro,
+		                                               'calendario' => $horario_maestro,
+		                                               'departamentos' => $depas,
+                                                       'grupos' => $grupos),
+                                                 $request);
+	}
+	
+	public function verCarga ($request, $match) {
+		$maestro = new Calif_Maestro ();
+		
+		if (false === ($maestro->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$maestro->getUser ();
+		if ($maestro->nombramiento !== null) {
+			$nombramiento = new Calif_Nombramiento ($maestro->nombramiento);
+		} else {
+			$nombramiento = null;
+		}
+		$asignatura = new Calif_Nombramiento ($maestro->asignatura);
+		
+		$totales = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
+		
+		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
+		
+		$puestos = array ();
+		
+		foreach ($grupos as $grupo) {
+			$nps = $grupo->get_calif_numeropuesto_list ();
+			
+			if ($nps->count () == 0) $puestos[$grupo->nrc] = array ();
+			else $puestos[$grupo->nrc] = $nps;
+		}
+		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-carga.html',
+		                                         array('page_title' => $title,
 		                                               'maestro' => $maestro,
 		                                               'nombramiento' => $nombramiento,
 		                                               'asignatura' => $asignatura,
-		                                               'calendario' => $horario_maestro,
-		                                               'carga' => $carga,
-                                                       'grupos' => $grupos),
+		                                               'totales' => $totales,
+		                                               'grupos' => $grupos,
+		                                               'puestos' => $puestos),
                                                  $request);
 	}
 	
@@ -186,7 +246,7 @@ class Calif_Views_Maestro {
 		                                         $request);
 	}
 	
-	public function verHorario ($request, $match, $params = array ()) {
+	public function verHorarioPDF ($request, $match, $params = array ()) {
 		$maestro = new Calif_Maestro ();
 		
 		if (false === $maestro->get ($match[1])) {

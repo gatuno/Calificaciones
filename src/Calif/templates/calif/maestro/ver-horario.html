@@ -1,0 +1,31 @@
+{extends 'calif/maestro/base.html'}
+{block body_maestro}
+<h2>Horario del profesor</h2>
+{if $calendario}
+	<p>Vista para <a href="{url 'Calif_Views_Maestro::verHorarioPDF', array ($maestro.codigo)}">impresión</a></p>
+	<p>Departamentos a los que pertenece:
+	<ul>{foreach $departamentos as $d}
+		<li>{$d.descripcion}. Vista para <a href="{url 'verHorarioPorDepartamentoPDF', array ($maestro.codigo, $d.clave)}">impresión</a></li>
+	{/foreach}</ul>
+	{$calendario.render()}
+{else}
+	<p>Este profesor no tiene grupos activos</p>
+{/if}
+<h2>Grupos del profesor</h2>
+{if $grupos}
+	{if $user.administrator}
+	<table><thead><tr><th>NRC</th><th>Materia</th><th>Sección</th><th>Asignación</th></tr></thead>
+	{else}
+	<table><thead><tr><th>NRC</th><th>Materia</th><th>Sección</th></tr></thead>
+	{/if}
+	<tbody>
+	{foreach $grupos as $g}
+		<tr><td>{$g.displaylinkednrc()|safe}</td><td>{$g.displaylinkedmateria()|safe}</td><td>{$g.displaylinkedseccion()|safe}</td>
+		{if $user.administrator}<td>{$g.displayasignacion()}</td>{/if}
+		</tr>
+	{/foreach}
+	</tbody></table>
+{else}
+	<p>Este profesor no tiene grupos activos</p>
+{/if}
+{/block}
