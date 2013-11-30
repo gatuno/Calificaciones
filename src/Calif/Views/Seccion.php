@@ -91,13 +91,13 @@ class Calif_Views_Seccion {
 	}
 	
 	public function verNrc ($request, $match) {
-		$title = 'Ver NRC';
-		
 		$seccion =  new Calif_Seccion ();
 		
 		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
 		}
+		
+		$title = 'NRC '.$seccion->nrc;
 		
 		$materia = new Calif_Materia ($seccion->materia);
 		$maestro = new Calif_Maestro ($seccion->maestro);
