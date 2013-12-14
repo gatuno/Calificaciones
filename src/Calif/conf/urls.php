@@ -520,6 +520,24 @@ $ctl[] = array (
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Oferta',
 			'method' => 'descargaNoPorDepartamentoODS',
+		),
+		array (
+			'regex' => '#^departamento/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'seleccionarPorDepartamento',
+		),
+		array (
+			'regex' => '#^departamento/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'porDepartamento',
+		),
+		array (
+			'regex' => '#^departamento/(\d+)/ODS/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'descargaPorDepartamentoODS',
 		)
 	)
 );

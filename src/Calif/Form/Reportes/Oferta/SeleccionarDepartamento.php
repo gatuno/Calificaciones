@@ -1,6 +1,6 @@
 <?php
 
-class Calif_Form_Reportes_Oferta_SeleccionarNoPorDepartamento extends Gatuf_Form {
+class Calif_Form_Reportes_Oferta_SeleccionarDepartamento extends Gatuf_Form {
 	public function initFields ($extra = array ()) {
 		$choices = array ();
 		

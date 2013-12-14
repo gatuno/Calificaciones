@@ -203,7 +203,7 @@ class Calif_Views_Reportes_Oferta {
 	
 	public function seleccionarNoPorDepartamento ($request, $match) {
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Reportes_Oferta_SeleccionarNoPorDepartamento ($request->POST);
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento ($request->POST);
 			
 			if ($form->isValid ()) {
 				$departamento = $form->save ();
@@ -212,10 +212,10 @@ class Calif_Views_Reportes_Oferta {
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Reportes_Oferta_SeleccionarNoPorDepartamento (null);
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento (null);
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/seleccionar-no-por-departamento.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/seleccionar-departamento.html',
 		                                          array ('form' => $form,
 		                                                 'page_title' => 'Reporte de secciones no solicitadas'),
 		                                          $request);
@@ -349,5 +349,148 @@ class Calif_Views_Reportes_Oferta {
 		$libro_ods->construir_paquete ();
 		
 		return new Gatuf_HTTP_Response_File ($libro_ods->nombre, 'Oferta-no-'.$departamento->clave.'.ods', 'application/vnd.oasis.opendocument.spreadsheet', true);
+	}
+	
+	public function seleccionarPorDepartamento ($request, $match) {
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento ($request->POST);
+			
+			if ($form->isValid ()) {
+				$departamento = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Reportes_Oferta::porDepartamento', array ($departamento->clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento (null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/seleccionar-departamento.html',
+		                                          array ('form' => $form,
+		                                                 'page_title' => 'Reporte de secciones por departamento'),
+		                                          $request);
+	}
+	
+	public function porDepartamento ($request, $match) {
+		$departamento = new Calif_Departamento ();
+		
+		if (false === ($departamento->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$sql = new Gatuf_SQL ('materia_departamento = %s', $departamento->clave);
+		
+		$pag = new Gatuf_Paginator (Gatuf::factory ('Calif_Seccion'));
+		$pag->model_view = 'paginador';
+		$pag->forced_where = $sql;
+		
+		$pag->action = array ('Calif_Views_Reportes_Oferta::porDepartamento', $departamento->clave);
+		$pag->summary = sprintf ('Lista de secciones para el departamento "%s"', $departamento->descripcion);
+		$list_display = array (
+			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
+			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
+			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
+			array ('maestro_apellido', 'Gatuf_Paginator_FKLink', 'Maestro'),
+		);
+		
+		$pag->items_per_page = 30;
+		$pag->no_results_text = 'No se solicitaron secciones';
+		$pag->max_number_pages = 5;
+		$pag->configure ($list_display,
+			array ('nrc', 'materia', 'seccion', 'materia_desc', 'maestro_nombre', 'maestro_apellido'),
+			array ('nrc', 'materia', 'seccion', 'maestro_apellido')
+		);
+		
+		$pag->setFromRequest ($request);
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/por-departamento.html',
+		                                          array ('paginador' => $pag,
+		                                                 'departamento' => $departamento,
+		                                                 'page_title' => 'Secciones para '.$departamento->descripcion),
+		                                          $request);
+	}
+	
+	public function descargaPorDepartamentoODS ($request, $match) {
+		$departamento = new Calif_Departamento ();
+		
+		if (false === ($departamento->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$sql = new Gatuf_SQL ('materia_departamento = %s', $departamento->clave);
+		
+		$libro_ods = new Gatuf_ODS ();
+		
+		$libro_ods->addNewSheet ('Principal');
+		$libro_ods->addStringCell ('Principal', 1, 1, 'NRC');
+		$libro_ods->addStringCell ('Principal', 1, 2, 'Clave de la materia');
+		$libro_ods->addStringCell ('Principal', 1, 3, 'Descripcion');
+		$libro_ods->addStringCell ('Principal', 1, 4, 'Seccion');
+		$libro_ods->addStringCell ('Principal', 1, 5, 'Apellido del profesor');
+		$libro_ods->addStringCell ('Principal', 1, 6, 'Nombre del profesor');
+		$libro_ods->addStringCell ('Principal', 1, 7, 'Codigo del profesor');
+		$libro_ods->addStringCell ('Principal', 1, 8, 'Tipo');
+		$libro_ods->addStringCell ('Principal', 1, 9, 'Horas');
+		$libro_ods->addStringCell ('Principal', 1, 10, 'Cargo sobre');
+		
+		
+		/* Generar el reporte */
+		$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => $sql->gen (), 'view' => 'paginador'));
+		
+		$g = 2;
+		foreach ($secciones as $seccion) {
+			$puestos = $seccion->get_calif_numeropuesto_list ();
+			$cant_nps = count ($puestos);
+			$departamento = new Calif_Departamento ($seccion->materia_departamento);
+			
+			if ($cant_nps == 0) {
+				/* Imprimir, pero sin horas */
+				$libro_ods->addStringCell ('Principal', $g, 1, $seccion->nrc);
+				$libro_ods->addStringCell ('Principal', $g, 2, $seccion->materia);
+				$libro_ods->addStringCell ('Principal', $g, 3, $seccion->materia_desc);
+				$libro_ods->addStringCell ('Principal', $g, 4, $seccion->seccion);
+				$libro_ods->addStringCell ('Principal', $g, 5, $seccion->maestro_apellido);
+				$libro_ods->addStringCell ('Principal', $g, 6, $seccion->maestro_nombre);
+				$libro_ods->addStringCell ('Principal', $g, 7, $seccion->maestro);
+				
+				for ($h = 8; $h < 11; $h++) {
+					$libro_ods->addStringCell ('Principal', $g, $h, 'N/A');
+				}
+				
+				$g++;
+			} else {
+				foreach ($puestos as $np) {
+					/* Recuperar sus horas, e imprimirlas */
+					$libro_ods->addStringCell ('Principal', $g, 1, $seccion->nrc);
+					$libro_ods->addStringCell ('Principal', $g, 2, $seccion->materia);
+					$libro_ods->addStringCell ('Principal', $g, 3, $seccion->materia_desc);
+					$libro_ods->addStringCell ('Principal', $g, 4, $seccion->seccion);
+					$libro_ods->addStringCell ('Principal', $g, 5, $seccion->maestro_apellido);
+					$libro_ods->addStringCell ('Principal', $g, 6, $seccion->maestro_nombre);
+					$libro_ods->addStringCell ('Principal', $g, 7, $seccion->maestro);
+					
+					if ($np->tipo == 't') {
+						$libro_ods->addStringCell ('Principal', $g, 8, 'Teoría');
+					} else if ($np->tipo == 'p') {
+						$libro_ods->addStringCell ('Principal', $g, 8, 'Practica');
+					}
+					
+					$libro_ods->addStringCell ('Principal', $g, 9, $np->horas);
+					
+					if ($np->carga == 'a') {
+						$libro_ods->addStringCell ('Principal', $g, 10, 'Asignatura');
+					} else if ($np->carga == 't') {
+						$libro_ods->addStringCell ('Principal', $g, 10, 'Tiempo completo/Medio tiempo');
+					} else if ($np->carga == 'h') {
+						$libro_ods->addStringCell ('Principal', $g, 10, 'Honorifica');
+					}
+					$g++;
+				}
+			}
+		}
+		
+		$libro_ods->construir_paquete ();
+		
+		return new Gatuf_HTTP_Response_File ($libro_ods->nombre, 'Oferta-'.$departamento->clave.'.ods', 'application/vnd.oasis.opendocument.spreadsheet', true);
 	}
 }
