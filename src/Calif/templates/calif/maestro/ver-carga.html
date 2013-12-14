@@ -6,6 +6,7 @@
 	{assign $color = '#FFFFFF'}
 	{if $totales['t'].horas > $maestro.maxTiempoCompleto ()}{assign $color = '#FFE428'}{/if}
 	{if $totales['t'].horas < $maestro.maxTiempoCompleto ()}{assign $color = '#FF0000'}{/if}
+	{if $totales['t'].horas + 1 == $maestro.maxTiempoCompleto ()}{assign $color = '#FF7475'}{/if}
 	<tr><td>Carga en tiempo completo</td><td>{$totales['t'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxTiempoCompleto ()}</td></tr>
 	{/if}
 	{assign $color = '#FFFFFF'}

@@ -538,6 +538,18 @@ $ctl[] = array (
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Oferta',
 			'method' => 'descargaPorDepartamentoODS',
+		),
+		array (
+			'regex' => '#^maestros/carga/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Maestro',
+			'method' => 'cargaHoraria',
+		),
+		array (
+			'regex' => '#^maestros/carga/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Maestro',
+			'method' => 'cargaHorariaPorDepartamento',
 		)
 	)
 );

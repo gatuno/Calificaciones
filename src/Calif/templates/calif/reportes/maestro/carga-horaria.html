@@ -1,0 +1,35 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Cargas horarias de los maestros para el departamento {$departamento.descripcion}</p>
+<p>Clave de colores:
+<table border="1">
+<thead><tr><th>Color</th><th>Significado</th></tr></thead>
+<tbody>
+	<tr><td style="background-color:#FFFFFF">Blanco</td><td>Correcto</td></tr>
+	<tr><td style="background-color:#FF7475">Rosa</td><td>Le falta 1 hora</td></tr>
+	<tr><td style="background-color:#FF0000">Rojo</td><td>Falta más de 1 hora a su tiempo completo</td></tr>
+	<tr><td style="background-color:#FFE428">Amarillo</td><td>Pasado de horas</td></tr>
+</tbody>
+</table></p>
+
+<table border="1">
+	<thead><tr><th>Código</th><th>Apellido</th><th>Nombre</th><th>Nombramiento</th><th>Máx. horas TC</th><th>Horas TC</th><th>Máx. horas Asig.</th><th>Horas Asig.</th><th>Horas honorificas</th></tr></thead>
+	<tbody>
+	{foreach $maestros as $maestro}
+	<tr><td><a href="{url 'Calif_Views_Maestro::verCarga', $maestro.codigo}">{$maestro.codigo}</a>
+	<td>{$maestro.apellido}</td><td>{$maestro.nombre}</td><td>
+	{if $maestro.nombramiento}{$nombramientos[$maestro.nombramiento].descripcion}{else}{$nombramientos[$maestro.asignatura].descripcion}{/if}
+	{assign $color = '#FFFFFF'}
+	{if $cargas[$maestro.codigo]['T'].horas > $cargas[$maestro.codigo]['maxT']}{assign $color = '#FFE428'}{/if}
+	{if $cargas[$maestro.codigo]['T'].horas < $cargas[$maestro.codigo]['maxT']}{assign $color = '#FF0000'}{/if}
+	{if $cargas[$maestro.codigo]['T'].horas + 1 == $cargas[$maestro.codigo]['maxT']}{assign $color = '#FF7475'}{/if}
+	</td><td>Max: {$cargas[$maestro.codigo]['maxT']}</td><td style="background-color:{$color}">{$cargas[$maestro.codigo]['T'].horas}</td>
+	
+	{assign $color = '#FFFFFF'}
+	{if $cargas[$maestro.codigo]['A'].horas > $cargas[$maestro.codigo]['maxA']}{assign $color = '#FFE428'}{/if}
+	<td>Max: {$cargas[$maestro.codigo]['maxA']}</td><td style="background-color:{$color}">{$cargas[$maestro.codigo]['A'].horas}</td>
+	<td>{$cargas[$maestro.codigo]['H'].horas}</td></tr>
+	{/foreach}
+	</tbody>
+</table>
+{/block}

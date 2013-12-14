@@ -3,7 +3,6 @@
 Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Edificio {
-	
 	public function index($request, $match) {
 		$edificio = new Calif_Edificio ();
 		
