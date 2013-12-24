@@ -43,7 +43,24 @@ class Gatuf_Precondition {
         }
         return true;
     }
-
+    
+    /**
+     * Check if the user is admin or staff.
+     *
+     * @param Pluf_HTTP_Request
+     * @return mixed
+     */
+    static public function staffRequired($request) {
+        $res = Gatuf_Precondition::loginRequired($request);
+        if (true !== $res) {
+            return $res;
+        }
+        if ($request->user->administrator or $request->user->staff) {
+            return true;
+        }
+        return new Gatuf_HTTP_Response_Forbidden($request);
+    }
+    
     /**
      * Check if the user is administrator..
      *

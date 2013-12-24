@@ -134,6 +134,7 @@ class Gatuf_Template_Compiler {
                                     'amedia' => 'Gatuf_Template_Tag_RmediaUrl',
                                     'aperm' => 'Gatuf_Template_Tag_APerm',
                                     'getmsgs' => 'Gatuf_Template_Tag_Messages',
+                                    'mailhide' => 'Gatuf_Template_Tag_MailHide',
                                     );
     /**
      * During compilation, all the tags are created once so to query

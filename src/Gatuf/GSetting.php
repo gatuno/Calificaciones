@@ -4,7 +4,7 @@ class Gatuf_GSetting extends Gatuf_Model {
 	public $_model = __CLASS__;
 	public $datacache = null;
 	public $f = null;
-	protected $_project = null;
+	protected $_application = null;
 	
 	function init () {
 		$this->_a['table'] = 'gsettings';
@@ -54,7 +54,7 @@ class Gatuf_GSetting extends Gatuf_Model {
 		$this->f = new IDF_Config_DataProxy () */
 	}
 	
-	function setProject ($application) {
+	function setApp ($application) {
 		$this->datacache = null;
 		$this->_application = $application;
 	}
