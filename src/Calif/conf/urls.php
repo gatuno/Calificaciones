@@ -540,6 +540,12 @@ $ctl[] = array (
 			'method' => 'descargaPorDepartamentoODS',
 		),
 		array (
+			'regex' => '#^departamento/(\d+)/horarios/ODS/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'descargaPorDepartamentoHorasODS',
+		),
+		array (
 			'regex' => '#^maestros/carga/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Maestro',

@@ -1,6 +1,7 @@
 {extends 'calif/base.html'}
 {block body}
-<p><a href="{url 'Calif_Views_Reportes_Oferta::descargaPorDepartamentoODS', $departamento.clave}">Descargar reporte como ODS</a></p>
+<p><a href="{url 'Calif_Views_Reportes_Oferta::descargaPorDepartamentoODS', $departamento.clave}">Descargar reporte para recursos humanos como ODS</a></p>
+<p><a href="{url 'Calif_Views_Reportes_Oferta::descargaPorDepartamentoHorasODS', $departamento.clave}">Descargar reporte con horarios como ODS</a></p>
 <p>Lista de secciones para el departamento {$departamento.descripcion}</p>
 {$paginador.render}
 {/block}
