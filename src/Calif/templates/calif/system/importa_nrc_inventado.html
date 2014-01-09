@@ -1,0 +1,18 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Esta utilería le permite corregir esos horribles nrcs inventados en su sistema, ideal para proyectar su oferta académica</p>
+{if $form.errors}
+<div class="errors">
+<p>El formulario contiene algunos errores:</p>
+</div>
+{/if}
+<form method="post" enctype="multipart/form-data" action=".">
+<table>
+	{$form.render_table}
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Actualizar nrc inventados" /></td>
+	</tr>
+</table>
+</form>
+{/block}

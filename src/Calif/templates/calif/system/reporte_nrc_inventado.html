@@ -1,0 +1,15 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Actualización exitosa.</p>
+<p>Cantidad de secciones cambiadas: {$cambiados|count}</p>
+<p>Cantidad de secciones aún con NRC inventados {$inventados|count}</p>
+<h2>Detalles</h2>
+<h3>Secciones actualizadas</h3>
+<ul>{foreach $cambiados as $cambio}
+	<li>{$cambio}</li>
+{/foreach}</ul>
+<h3>Secciones aún inventados</h3>
+<ul>{foreach $inventados as $inventado}
+	<li>Nrc: {$inventado.nrc}, materia {$inventado.materia}, sección {$inventado.seccion}</li>
+{/foreach}</ul>
+{/block}

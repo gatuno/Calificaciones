@@ -22,6 +22,9 @@
 		<li><a href="{url 'Calif_Views_Departamento::index'}">Departamentos</a></li>
 		<li><a href="{url 'Calif_Views_Evaluacion::index'}">Evaluaciones</a></li>
 		<li><a href="{url 'Calif_Views_Reportes::index'}">Reportes</a></li>
+		{if $user.administrator}
+			<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>
+		{/if}
 	</ul>
 	<!-- Esta es la información del usuario -->
 	<div class="userinfo">{if !$user.isAnonymous()}

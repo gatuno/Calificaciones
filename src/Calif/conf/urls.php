@@ -70,6 +70,20 @@ $ctl[] = array (
 	'method' => 'sobre_oferta',
 );
 
+$ctl[] = array (
+	'regex' => '#^/sistema/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/sistema/importar_inventados/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'importarNrcInventado',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',
