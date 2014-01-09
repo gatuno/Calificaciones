@@ -84,6 +84,13 @@ $ctl[] = array (
 	'method' => 'importarNrcInventado',
 );
 
+$ctl[] = array (
+	'regex' => '#^/sistema/auditoria/severa/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'auditoriaSevera',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',

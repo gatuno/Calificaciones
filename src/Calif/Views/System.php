@@ -16,8 +16,8 @@ class Calif_Views_System {
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_System_SubirArchivo (array_merge ($request->POST, $request->FILES));
 			
-			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_System::importarNrcInventado');
 			if ($form->isValid ()) {
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_System::importarNrcInventado');
 				$ruta = $form->save ();
 				
 				if (($archivo = fopen ($ruta, "r")) === false) {
@@ -96,6 +96,198 @@ class Calif_Views_System {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/system/importa_nrc_inventado.html',
 		                                          array ('page_title' => 'Importar nrc inventados',
+		                                                 'form' => $form),
+		                                          $request);
+	}
+	
+	public $auditoriaSevera_precond = array ('Gatuf_Precondition::adminRequired');
+	public function auditoriaSevera ($request, $match) {
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_System_AuditoriaSevera (array_merge ($request->POST, $request->FILES));
+			
+			if ($form->isValid ()) {
+				$data = $form->save ();
+				
+				/* Intentar abrir y procesar el archivo */
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_System::auditoriaSevera');
+				
+				if (($archivo = fopen ($data['archivo'], "r")) === false) {
+					$request->user->setMessage (3, 'Hubo un error con la subida de archivos');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				/* Detectar cabeceras */
+				$linea = fgetcsv ($archivo, 600, ',', '"');
+				
+				if ($linea === false || is_null ($linea)) {
+					$request->user->setMessage (3, 'No hay cabecera, o es una linea vacia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$cabecera = Calif_Utils_detectarColumnas ($linea);
+				
+				if (!isset ($cabecera['nrc'])) {
+					/* Se requiere una columna de NRC */
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de nrc');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['secc'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de sección');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['clave'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de materia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['departamento'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de departamento');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['profesor'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de profesor');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['ini']) ||
+				    !isset ($cabecera['fin']) ||
+				    !isset ($cabecera['l']) ||
+				    !isset ($cabecera['m']) ||
+				    !isset ($cabecera['i']) ||
+				    !isset ($cabecera['j']) ||
+				    !isset ($cabecera['v']) ||
+				    !isset ($cabecera['s']) ||
+				    !isset ($cabecera['edif']) ||
+				    !isset ($cabecera['aula'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene alguna de las columnas necesarias para definir sus horarios');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$con = &Gatuf::db();
+				
+				$seccion_siiau = new Calif_Seccion ();
+				$seccion_siiau->_a['table'] = 'ram_'.$seccion_siiau->_a['table'];
+				$temp_tabla = $seccion_siiau->getSqlTable ();
+				
+				$sql = 'DROP TABLE IF EXISTS '.$temp_tabla;
+				$con->execute ($sql);
+				
+				$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.Gatuf::factory('Calif_Seccion')->getSqlTable ();
+				$con->execute ($sql);
+				
+				$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+				$con->execute ($sql);
+				
+				$horario_siiau = new Calif_Horario ();
+				$horario_siiau->_a['table'] = 'ram_'.$horario_siiau->_a['table'];
+				$temp_tabla = $horario_siiau->getSqlTable ();
+				
+				$sql = 'DROP TABLE IF EXISTS '.$temp_tabla;
+				$con->execute ($sql);
+				
+				$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.Gatuf::factory('Calif_Horario')->getSqlTable ();
+				$con->execute ($sql);
+				
+				$sql = 'ALTER TABLE '.$temp_tabla.' ENGINE=MEMORY';
+				$con->execute ($sql);
+				
+				$salon_model = new Calif_Salon ();
+				$edificio_model = new Calif_Edificio ();
+				
+				/* Primera pasada, llenar las tablas */
+				while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+					if (is_null ($linea[0])) continue;
+					if ($linea[$cabecera['nrc']] === '') {
+						$request->user->setMessage (3, 'Nrc vacio');
+						return new Gatuf_HTTP_Redirect ($url);
+					}
+					
+					$depa_num = Calif_Utils_map_departamento ($linea[$cabecera['departamento']]);
+					if ($data['dep'] != -1 && $depa_num != $data['dep']) continue;
+					
+					$nrc = $linea[$cabecera['nrc']];
+					$materia = $linea[$cabecera['clave']];
+					$seccion = $linea[$cabecera['secc']];
+					$profesor = $linea[$cabecera['profesor']];
+					$profesor = trim (strstr ($profesor, '('), '() ');
+					if ($profesor == '') $profesor = '2222222';
+					
+					if ($seccion_siiau->get ($nrc) === false) {
+						$seccion_siiau->setFromFormData (array ('nrc' => $nrc, 'materia' => $materia, 'seccion' => $seccion, 'maestro' => $profesor));
+						$seccion_siiau->create (true);
+					}
+					$edificio = $linea[$cabecera['edif']];
+					if ($edificio == '') $edificio = 'DNONE';
+					$aula = $linea[$cabecera['aula']];
+					if ($aula == '') $aula = 'A999';
+					$hora_inicio = $linea[$cabecera['ini']];
+					if ($hora_inicio == '') $hora_inicio = '300';
+					$hora_fin = $linea[$cabecera['fin']];
+					if ($hora_fin == '') $hora_fin = '455';
+					
+					if ($salon_model->getSalon ($edificio, $aula) === false) {
+						if ($edificio_model->get ($edificio) === false) {
+							$edificio_model->clave = $edificio;
+							$edificio_model->descripcion = 'Edificio '.$edificio;
+							$edificio_model->create ();
+						}
+						
+						$salon_model->setFromFormData (array ('edificio' => $edificio, 'aula' => $aula, 'cupo' => 24));
+						$salon_model->create ();
+					}
+					
+					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
+						$horario_siiau->$dia = $linea[$cabecera[$dia]];
+					}
+					$horario_siiau->setFromFormData (array ('nrc' => $seccion_siiau->nrc, 'inicio' => Calif_Utils_horaFromSiiau ($hora_inicio), 'fin' => Calif_Utils_horaFromSiiau ($hora_fin), 'salon' => $salon_model->id));
+					
+					$horario_siiau->create ();
+				}
+				
+				fclose ($archivo);
+				/* Ya está procesado todo, ahora hacer la auditoria */
+				$sql = new Gatuf_SQL();
+				if ($data['dep'] != -1) {
+					$sql->Q ('materia_departamento=%s', $data['dep']);
+				}
+				
+				$no_en_siiau = array ();
+				$no_en_sistema = array ();
+				$errores = array ();
+				
+				$secciones = Gatuf::factory ('Calif_Seccion')->getList (array ('view' => 'paginador', 'filter' => $sql->gen (), 'order' => 'materia ASC, seccion ASC'));
+				
+				foreach ($secciones as $a_auditar) {
+					if ($seccion_siiau->get ($a_auditar->nrc) === false) {
+						/* No existe en siiau */
+						$no_en_siiau[] = $a_auditar;
+						continue;
+					}
+					
+					if ($seccion_siiau->materia != $a_auditar->materia || $seccion_siiau->seccion != $a_auditar->seccion || $seccion_siiau->maestro != $a_auditar->maestro) {
+						$errores[] = array ($a_auditar, clone ($seccion_siiau));
+					}
+				}
+				
+				
+				$seccion_model = new Calif_Seccion ();
+				foreach ($seccion_siiau->getList (array ('order' => 'materia ASC, seccion ASC')) as $a_auditar) {
+					if ($seccion_model->get ($a_auditar->nrc) === false) {
+						$no_en_sistema [] = $a_auditar;
+					}
+				}
+				
+				return Gatuf_Shortcuts_RenderToResponse ('calif/system/reporte_auditoria_severa.html',
+				                                          array ('page_title' => 'Reporte de Auditoria Severa',
+				                                                 'no_en_siiau' => $no_en_siiau,
+				                                                 'no_en_sistema' => $no_en_sistema,
+				                                                 'errores' => $errores),
+				                                          $request);
+			}
+		} else {
+			$form = new Calif_Form_System_AuditoriaSevera (null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/system/auditoria_severa.html',
+		                                          array ('page_title' => 'Auditoria Severa',
 		                                                 'form' => $form),
 		                                          $request);
 	}

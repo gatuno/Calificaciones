@@ -1,0 +1,27 @@
+{extends 'calif/base.html'}
+{block body}
+<h3>Secciones en el sistema, pero no Siiau</h3>
+<ul>{foreach $no_en_siiau as $siiau}
+	<li>NRC: {$siiau.nrc}, Materia: {$siiau.get_materia}, Sección: {$siiau.seccion}. Asignada a {if $siiau.asignacion == null}<i>Nadie</i>{else}{$siiau.get_asignacion}{/if} {if count ($siiau.get_calif_horario_list) > 0}<b>Tiene horarios</b>{/if}</li>
+{/foreach}</ul>
+<h3>Secciones en Siiau, pero no el sistema</h3>
+<ul>{foreach $no_en_sistema as $sistema}
+	<li>NRC: {$sistema.nrc}, Materia: {$sistema.get_materia}, Sección: {$sistema.seccion}.</li>
+{/foreach}</ul>
+<h3>Secciones con errores</h3>
+<ul>{foreach $errores as $error}
+	<li>NRC: {$error[0].nrc}<br />
+		<ul>
+		{if $error[0].maestro != $error[1].maestro}
+			<li>Los maestros difieren, en el sistema dice: {$error[0].get_maestro}, en siiau está {$error[1].get_maestro}</li>
+		{/if}
+		{if $error[0].materia != $error[1].materia}
+			<li>Las materias difieren, en el sistema dice: {$error[0].get_materia}, en siiau está {$error[1].get_materia}</li>
+		{/if}
+		{if $error[0].seccion != $error[1].seccion}
+			<li>Las seccion difiere, en el sistema dice: {$error[0].seccion}, en siiau es la seccion: {$error[1].seccion}</li>
+		{/if}
+		</ul>
+	</li>
+{/foreach}</ul>
+{/block}

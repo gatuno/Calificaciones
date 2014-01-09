@@ -1,0 +1,18 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Esta utilería encontrará todos sus <s>horrores</s> errores en su oferta y planeación acdémica.</p>
+{if $form.errors}
+<div class="errors">
+<p>El formulario contiene algunos errores:</p>
+</div>
+{/if}
+<form method="post" enctype="multipart/form-data" action=".">
+<table>
+	{$form.render_table}
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Auditoria severa" /></td>
+	</tr>
+</table>
+</form>
+{/block}

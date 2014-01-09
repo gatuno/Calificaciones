@@ -152,4 +152,8 @@ class Calif_Maestro extends Gatuf_Model {
 	function displaylinkeddepartamento ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('verHorarioPorDepartamentoPDF', array ($this->codigo, $this->departamento)).'">Imprimir Horario</a>';
 	}
+	
+	function __toString () {
+		return $this->apellido.' '.$this->nombre.' ('.$this->codigo.')';
+	}
 }

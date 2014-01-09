@@ -52,4 +52,8 @@ class Calif_Carrera extends Gatuf_Model {
 			$p->delete ();
 		}
 	}
+	
+	function __toString () {
+		return $this->descripcion.' ('.$this->clave.')';
+	}
 }
