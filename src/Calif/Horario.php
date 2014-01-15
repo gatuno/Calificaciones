@@ -104,4 +104,9 @@ class Calif_Horario extends Gatuf_Model {
 		
 		return $rs[0]['max'] + 10;
 	}
+	
+	function hash () {
+		$aula = $this->get_salon ();
+		return $this->displayDias ().'-'.$this->inicio.'-'.$this->fin.'-'.$aula->edificio.'-'.$aula->aula;
+	}
 }

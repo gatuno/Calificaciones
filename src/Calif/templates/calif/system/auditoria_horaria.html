@@ -1,0 +1,18 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Esta herramienta analiza todos los <s>horrores</s> errores en horarios y salones.</p>
+{if $form.errors}
+<div class="errors">
+<p>El formulario contiene algunos errores:</p>
+</div>
+{/if}
+<form method="post" enctype="multipart/form-data" action=".">
+<table>
+	{$form.render_table}
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Auditoria horaria" /></td>
+	</tr>
+</table>
+</form>
+{/block}

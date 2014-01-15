@@ -89,6 +89,24 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_System',
 	'method' => 'auditoriaSevera',
+	'name' => 'auditoriaSeveraDepartamento',
+	'params' => array ('car' => false),
+);
+
+$ctl[] = array (
+	'regex' => '#^/sistema/auditoria/severa/carrera/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'auditoriaSevera',
+	'name' => 'auditoriaSeveraCarrera',
+	'params' => array ('car' => true),
+);
+
+$ctl[] = array (
+	'regex' => '#^/sistema/auditoria/horaria/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'auditoriaHoraria',
 );
 
 /* Recuperación de contraseñas */

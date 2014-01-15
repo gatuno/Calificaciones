@@ -4,13 +4,15 @@
 <ul>{foreach $no_en_siiau as $siiau}
 	<li>NRC: {$siiau.nrc}, Materia: {$siiau.get_materia}, Sección: {$siiau.seccion}. Asignada a {if $siiau.asignacion == null}<i>Nadie</i>{else}{$siiau.get_asignacion}{/if} {if count ($siiau.get_calif_horario_list) > 0}<b>Tiene horarios</b>{/if}</li>
 {/foreach}</ul>
+{if $no_en_sistema}
 <h3>Secciones en Siiau, pero no el sistema</h3>
 <ul>{foreach $no_en_sistema as $sistema}
 	<li>NRC: {$sistema.nrc}, Materia: {$sistema.get_materia}, Sección: {$sistema.seccion}.</li>
 {/foreach}</ul>
+{/if}
 <h3>Secciones con errores</h3>
 <ul>{foreach $errores as $error}
-	<li>NRC: {$error[0].nrc}<br />
+	<li>NRC: {$error[0].nrc}, materia: {$error[0].get_materia}, sección: {$error[0].seccion}<br />
 		<ul>
 		{if $error[0].maestro != $error[1].maestro}
 			<li>Los maestros difieren, en el sistema dice: {$error[0].get_maestro}, en siiau está {$error[1].get_maestro}</li>
