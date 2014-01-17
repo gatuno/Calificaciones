@@ -161,6 +161,20 @@ class Calif_Views_Maestro {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
+		$oficio = $request->session->getData ('numero_oficio', 1);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_EstablecerOficio ($request->POST, array ('numero' => $oficio));
+			
+			if ($form->isValid ()) {
+				$oficio = $form->save ();
+				
+				$request->session->setData ('numero_oficio', $oficio);
+			}
+		} else {
+			$form = new Calif_Form_EstablecerOficio (null, array ('numero' => $oficio));
+		}
+		
 		$maestro->getUser ();
 		if ($maestro->nombramiento !== null) {
 			$nombramiento = new Calif_Nombramiento ($maestro->nombramiento);
@@ -183,6 +197,13 @@ class Calif_Views_Maestro {
 		}
 		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
 		
+		$depas = array ();
+		$sql = new Gatuf_SQL ('codigo=%s', $maestro->codigo);
+		
+		foreach (Gatuf::factory ('Calif_Maestro')->getList (array ('view' => 'maestros_departamentos', 'filter' => $sql->gen ())) as $d) {
+			$depas[] = Gatuf::factory ('Calif_Departamento', $d->departamento);
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/ver-carga.html',
 		                                         array('page_title' => $title,
 		                                               'maestro' => $maestro,
@@ -190,7 +211,9 @@ class Calif_Views_Maestro {
 		                                               'asignatura' => $asignatura,
 		                                               'totales' => $totales,
 		                                               'grupos' => $grupos,
-		                                               'puestos' => $puestos),
+		                                               'puestos' => $puestos,
+		                                               'form' => $form,
+		                                               'departamentos' => $depas),
                                                  $request);
 	}
 	
@@ -296,6 +319,38 @@ class Calif_Views_Maestro {
 		}
  		
 		$nombre_pdf .= '.pdf';
+		$pdf->Output ('/tmp/'.$nombre_pdf, 'F');
+		
+		return new Gatuf_HTTP_Response_File ('/tmp/'.$nombre_pdf, $nombre_pdf, 'application/pdf', true);
+	}
+	
+	public function constanciaCargaHoraria ($request, $match) {
+		$maestro = new Calif_Maestro ();
+		if (false === $maestro->get ($match[1])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$departamento = new Calif_Departamento ();
+		
+		if (false === $departamento->get ($match[2])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$oficio = $request->session->getData ('numero_oficio', 1);
+		
+		$pdf = new Calif_PDF_CargaHoraria ('P', 'mm', 'Letter');
+		$pdf->profesor = $maestro;
+		$pdf->departamento = $departamento;
+		$pdf->oficio = $oficio;
+		
+		$pdf->renderBase ();
+		
+		$pdf->Close ();
+		
+		$oficio++;
+		$request->session->setData ('numero_oficio', $oficio);
+		
+		$nombre_pdf = 'carga_horaria_'.$maestro->codigo.'_'.$departamento->clave.'.pdf';
 		$pdf->Output ('/tmp/'.$nombre_pdf, 'F');
 		
 		return new Gatuf_HTTP_Response_File ('/tmp/'.$nombre_pdf, $nombre_pdf, 'application/pdf', true);

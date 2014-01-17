@@ -14,6 +14,22 @@
 	<tr><td>Carga en asignaturas</td><td>{$totales['a'].horas}</td><td style="background-color:{$color}">Max: {$maestro.maxAsignatura ()}</td></tr>
 	<tr><td>Carga en honorifico</td><td colspan="2">{$totales['h'].horas}</td></tr>
 </tbody></table>
+{if $user.administrator}
+<h2>Constancia de carga horaria</h2>
+{if $form.errors}
+	<div class="px-message-error">
+	<p>Hay algunos errores en el formulario:</p>
+	{if $form.f.numero.errors}{$form.f.numero.fieldErrors}{/if}
+	</div>
+{/if}
+<form method="post" action=".">
+<p>{$form.f.numero.labelTag}: {$form.f.numero|unsafe} <input type="submit" value="Cambiar numero de oficio" /></p>
+</form>
+<p>Imprimir para:
+<ul>{foreach $departamentos as $d}
+	<li><a href="{url 'Calif_Views_Maestro::constanciaCargaHoraria', array ($maestro.codigo, $d.clave)}">{$d.descripcion}</a></li>
+{/foreach}</ul>
+{/if}
 <h2>Desglose de horas</h2>
 <table border="1">
 <thead><tr><th>NRC</th><th>Materia</th><th>Sección</th><th>Numero de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>

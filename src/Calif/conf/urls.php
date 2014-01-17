@@ -484,6 +484,12 @@ $ctl[] = array (
 			'base' => $base,
 			'model' => 'Calif_Views_Maestro',
 			'method' => 'verCarga',
+		),
+		array (
+			'regex' => '#^(\d+)/carga/constancia/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'constanciaCargaHoraria',
 		)
 	)
 );
