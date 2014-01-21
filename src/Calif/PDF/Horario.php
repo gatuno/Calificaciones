@@ -60,7 +60,7 @@ class Calif_PDF_Horario extends External_FPDF {
 		$this->SetY (0);
 		$this->Ln (127);
 		$this->SetFont ('times', '', 12);
-		$cadena = 'Por este conducto le hago llegar su horario de la(s) asignatura(s) que impartirá en este Departamento en el ciclo escolar 2013-B, con el objetivo de que realice la programación de su(s) curso(s) en las fechas establecidas y de acuerdo a su petición.';
+		$cadena = 'Por este conducto le hago llegar su horario de la(s) asignatura(s) que impartirá en este Departamento en el ciclo escolar 2014-A, con el objetivo de que realice la programación de su(s) curso(s) en las fechas establecidas y de acuerdo a su petición.';
 		$this->MultiCell (0, 5, $cadena, 0, 'L');
 	}
 	
@@ -103,7 +103,7 @@ class Calif_PDF_Horario extends External_FPDF {
 				}
 				$this->Cell ($w[4], 8, '', 1, 0, 'L'); /* FIXME: Cŕeditos aquí */
 				$this->Cell ($w[5], 8, $hora->salon_edificio, 1, 0, 'C');
-				$this->Cell ($w[6], 8, $hora->salon_aula == 'A050' ? '' : $hora->salon_aula, 1, 0, 'C');
+				$this->Cell ($w[6], 8, $hora->salon_aula == 'A999' ? '' : $hora->salon_aula, 1, 0, 'C');
 				$this->Cell ($w[7], 8, date('H:i', strtotime($hora->inicio)), 1, 0, 'C');
 				$this->Cell ($w[8], 8, date('H:i', strtotime($hora->fin)), 1, 0, 'C');
 				
@@ -124,9 +124,9 @@ class Calif_PDF_Horario extends External_FPDF {
 				$this->Cell ($w[16], 8, '', 1, 0, 'L');
 				
 				$this->SetXY ($x_del, $altura_y);
-				$this->MultiCell ($w[15], 4, "19-\nAUG-13", 0, 'L');
+				$this->MultiCell ($w[15], 4, "04-\nFEB-14", 0, 'L');
 				$this->SetXY ($x_al, $altura_y);
-				$this->MultiCell ($w[15], 4, "14-\nDEC-13", 0, 'L');
+				$this->MultiCell ($w[15], 4, "13-\nJUN-14", 0, 'L');
 				
 				$this->SetXY ($x_del, $altura_y);
 				$this->Cell ($w[15], 8, '', 1, 0, 'L');
