@@ -605,4 +605,12 @@ $ctl[] = array (
 	)
 );
 
+/* usuarios*/
+$ctl[] = array(
+	'regex' => '#^/permisos/([0-9]{6,10})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'permisos',
+);
+
 return $ctl;
