@@ -6,7 +6,7 @@ class Calif_Views_Usuario {
 	
 	public function index($request, $match) {
 	}
-	
+		
 	public function permisos ( $request, $match ){
 		$usuario = $match[1];
 		$extra = array();
@@ -17,6 +17,15 @@ class Calif_Views_Usuario {
 		                                         array('page_title' => 'Permisos'),
   		                                        $request);
                 }
+                if($user->type == 'a'){
+                	$tipo = 'Alumno ';
+                	$usr = new Calif_Alumno ();
+                }
+                else{
+                	$tipo = 'Maestro ';
+                 	$usr = new Calif_Maestro ();
+                 }
+		$usr->get ($usuario) ;
 		$permisos_usuario = $user->getAllPermissions();
 		if (count($permisos_usuario) == 0 )
 			$extra['perm'][]=null;
@@ -31,7 +40,8 @@ class Calif_Views_Usuario {
 		}
 		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
 		                                         array('page_title' => 'Permisos',
-		                                         	'usuario' => $usuario,
+		                                         	'usuario' => $usr,
+		                                         	'tipo' => $tipo,
                                                        'form' => $form),
                                                  $request);
 	}		

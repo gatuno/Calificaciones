@@ -1,5 +1,8 @@
 {extends 'calif/base.html'}
 {block body}
+{if $user.administrator}
+<a href="{url 'Calif_Views_Usuario::permisos', array ($alumno.codigo)}">Permisos</a>
+{/if}
 <table class="form" summary="">
 <tr>
 <th style="text-align: right">
