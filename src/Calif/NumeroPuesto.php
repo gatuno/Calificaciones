@@ -39,8 +39,10 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 			),
 			'horas' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Integer',
+			       'type' => 'Gatuf_DB_Field_Float',
 			       'blank' => false,
+			       'decimal_places' => 2,
+			       'max_digits' => 5,
 			),
 		);
 		

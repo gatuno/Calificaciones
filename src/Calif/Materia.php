@@ -67,15 +67,19 @@ class Calif_Materia extends Gatuf_Model {
 			),
 			'teoria' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Integer',
+			       'type' => 'Gatuf_DB_Field_Float',
 			       'blank' => false,
-			       'default' => 0,
+			       'default' => 0.0,
+			       'decimal_places' => 2,
+			       'max_digits' => 5,
 			),
 			'practica' =>
 			array (
-			       'type' => 'Gatuf_DB_Field_Integer',
+			       'type' => 'Gatuf_DB_Field_Float',
 			       'blank' => false,
-			       'default' => 0,
+			       'default' => 0.0,
+			       'decimal_places' => 2,
+			       'max_digits' => 5,
 			),
 		);
 		

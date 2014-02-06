@@ -88,22 +88,22 @@ class Calif_Form_Materia_Agregar extends Gatuf_Form {
 				'help_text' => '¿La materia es un seminario?'
 		));
 		
-		$this->fields['teoria'] = new Gatuf_Form_Field_Integer (
+		$this->fields['teoria'] = new Gatuf_Form_Field_Float (
 			array (
 				'required' => true,
 				'label' => 'Horas teoria',
 				'initial' => 0,
 				'help_text' => 'La cantidad de horas teoria de esta materia',
-				'min' => 0,
+				'min_value' => 0.0,
 		));
 		
-		$this->fields['practica'] = new Gatuf_Form_Field_Integer (
+		$this->fields['practica'] = new Gatuf_Form_Field_Float (
 			array (
 				'required' => true,
 				'label' => 'Horas práctica',
 				'initial' => 0,
 				'help_text' => 'La cantidad de horas práctica de esta materia',
-				'min' => 0,
+				'min_value' => 0.0,
 		));
 	}
 	
