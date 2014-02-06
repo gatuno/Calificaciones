@@ -7,11 +7,30 @@ class Calif_Views_Materia {
 		/* Listar las materias aquí */
 		
 		/* TODO: Posiblemente se ocupe la lista de academias */
-		$materia = new Calif_Materia ();
 		$filtro = array();
+		$materia = new Calif_Materia ();
+		
+		/* Verificar filtro de materias por carrera */
+		if( $car = $request->session->getData( 'filtro_materia_carrera', null ) ){
+		$carrera = new Calif_Carrera ();
+		$carrera->get ($car);
+		$filtro['c'] = 'Carrera de '.$carrera->descripcion;
+		$hay = array(strtolower($carrera->_a['model']), 
+						 strtolower($materia->_a['model']));
+		sort($hay);
+		$table = $hay[0].'_'.$hay[1].'_assoc';
+		
+		$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$carrera->_con->pfx.$table.' ON '
+				.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = '.$carrera->_con->pfx.$carrera->primary_key;
+		$key = $carrera->primary_key;
+		$materia->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
+		}
+		
 		$pag = new Gatuf_Paginator ($materia);
 		$pag->model_view = 'paginador';
 		$pag->action = array ('Calif_Views_Materia::index');
+		
+		/* Verificr filtro de materias por departamento */
 		if(is_numeric( $dep = $request->session->getData('filtro_materia_departamento',null) ) ){
 			$departamento = new Calif_Departamento ();
 			$departamento->get ($dep);
@@ -53,13 +72,14 @@ class Calif_Views_Materia {
 	}
 	
 	public function porDepartamento ($request, $match) {
-		$request->session->setData('filtro_materia_departamento',$match[1]);
 		$departamento = new Calif_Departamento ();
 		
 		if (false === ($departamento->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
-
+		
+		$request->session->setData('filtro_materia_departamento',$match[1]);
+		
             	 $url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::index');
 			return new Gatuf_HTTP_Response_Redirect ($url);
 	}
@@ -71,44 +91,11 @@ class Calif_Views_Materia {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$materia = new Calif_Materia ();
-		$hay = array(strtolower($carrera->_a['model']), 
-						 strtolower($materia->_a['model']));
-		sort($hay);
-		$table = $hay[0].'_'.$hay[1].'_assoc';
+		$request->session->setData('filtro_materia_carrera',$match[1]);
 		
-		$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$carrera->_con->pfx.$table.' ON '
-				.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = '.$carrera->_con->pfx.$carrera->primary_key;
-		$key = $carrera->primary_key;
-		$materia->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
-		
-		$pag = new Gatuf_Paginator ($materia);
-		$pag->model_view = 'paginador';
-		$pag->action = array ('Calif_Views_Materia::porCarrera', array ($carrera->clave));
-		$pag->summary = 'Lista de las materias';
-		
-		$list_display = array (
-			array ('clave', 'Gatuf_Paginator_FKLink', 'Clave'),
-			array ('descripcion', 'Gatuf_Paginator_DisplayVal', 'Materia'),
-			array ('departamento', 'Gatuf_Paginator_FKLink', 'Departamento'),
-		);
-		
-		$pag->items_per_page = 40;
-		$pag->no_results_text = 'No hay materias';
-		$pag->max_number_pages = 5;
-		$pag->configure ($list_display,
-			array ('clave', 'descripcion'),
-			array ('clave', 'descripcion')
-		);
-		
-		$pag->setFromRequest ($request);
-		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/por-carrera.html',
-		                                         array('page_title' => 'Materias',
-		                                               'carrera' => $carrera,
-                                                       'paginador' => $pag),
-                                                 $request);
-	}
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+		}
 	
 	public function verMateria ($request, $match) {
 		$materia =  new Calif_Materia ();
