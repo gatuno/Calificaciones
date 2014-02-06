@@ -9,6 +9,9 @@
 {if $user.administrator}<!-- Actualizar con el permiso correspondiente -->
 <li style="display: inline;"><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Actualizar</a></li>
 {/if}
+{if $user.administrator}
+<li style="display: inline;"><a href="{url 'Calif_Views_Usuario::permisos', array ($maestro.codigo)}">Permisos</a></li>
+{/if}
 </ul>
 {block body_maestro}{/block}
 {/block}
