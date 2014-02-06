@@ -237,6 +237,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materias/nofiltro/([cd])/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'eliminarFiltro',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materia/#',
 	'base' => $base,
 	'sub' => array (
