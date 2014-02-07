@@ -5,6 +5,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 	                 'Calif_Carrera',
 	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
+	                 'Calif_Division',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
@@ -36,6 +37,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 	Calif_Migrations_Install_3Departamentos_setup ();
 	Calif_Migrations_Install_4Carreras_setup ();
 	Calif_Migrations_Install_5Edificios_setup ();
+	Calif_Migrations_Install_6Divisiones_setup ();
 }
 
 function Calif_Migrations_Install_teardown ($params=null) {
@@ -43,6 +45,7 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	                 'Calif_Carrera',
 	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
+	                 'Calif_Division',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
@@ -343,3 +346,22 @@ function Calif_Migrations_Install_5Edificios_setup ($params = null) {
 		$edificio_model->create (true);
 	}
 }
+
+function Calif_Migrations_Install_6Divisiones_setup ($params = null) {
+	$division_model = new Calif_Division ();
+	
+	$divisiones = array (
+		'DIVEC' => array ('Electrónica y Computación', 'División de Electrónica y Computación'),
+		'DIVING' => array ('Ingenierías', 'División de Ingenierías'),
+		'DIVBASICAS' => array ('Ciencias Básicas', 'División de Ciencias Básicas')
+	);
+	
+	foreach ($divisiones as $abrev => $data) {
+		$division_model->abreviacion = $abrev;
+		$division_model->nombre = $data[0];
+		$division_model->descripcion = $data[1];
+		
+		$division_model->create (true);
+	}
+}
+
