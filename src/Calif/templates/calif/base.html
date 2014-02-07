@@ -25,11 +25,20 @@
 		{if $user.administrator}
 			<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>
 		{/if}
-		<li><a href="{media}/docs/manual.pdf" />Manual</li>
+		<li><a href="{media}/docs/manual.pdf">Manual</a></li>
 	</ul>
 	<!-- Esta es la información del usuario -->
-	<div class="userinfo">{if !$user.isAnonymous()}
-			<p><img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=30" alt=" " /> <strong>{$user.extra.nombre} {$user.extra.apellido}</strong> <a href="{url 'Calif_Views::logout'}"><img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>{else}
+	<div class="userinfo">
+	{if !$user.isAnonymous()}
+		<p><img src="http://www.gravatar.com/avatar/{$user.email|md5}.jpg?s=30" alt=" "/>
+		{if $user.type == 'm'}
+			<a href="{url 'Calif_Views_Maestro::verMaestro', array($user.login)}"><strong>{$user.extra.nombre} {$user.extra.apellido}</strong></a>
+		{/if}
+		{if $user.type == 'a'}
+			<a href="{url 'Calif_Views_Alumno::verAlumno', array($user.login)}"><strong>{$user.extra.nombre} {$user.extra.apellido}</strong></a>
+		{/if}
+		<a href="{url 'Calif_Views::logout'}"><img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>
+	{else}
 			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>{/if}
 	</div>{if $user and $user.id}
 	{getmsgs $user}{/if}
