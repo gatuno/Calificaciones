@@ -12,18 +12,18 @@ class Calif_Views_Materia {
 		
 		/* Verificar filtro de materias por carrera */
 		if( $car = $request->session->getData( 'filtro_materia_carrera', null ) ){
-		$carrera = new Calif_Carrera ();
-		$carrera->get ($car);
-		$filtro['c'] = 'Carrera de '.$carrera->descripcion;
-		$hay = array(strtolower($carrera->_a['model']), 
-						 strtolower($materia->_a['model']));
-		sort($hay);
-		$table = $hay[0].'_'.$hay[1].'_assoc';
+			$carrera = new Calif_Carrera ();
+			$carrera->get ($car);
+			$filtro['c'] = 'Carrera de '.$carrera->descripcion;
+			$hay = array(strtolower($carrera->_a['model']), 
+							 strtolower($materia->_a['model']));
+			sort($hay);
+			$table = $hay[0].'_'.$hay[1].'_assoc';
 		
-		$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$carrera->_con->pfx.$table.' ON '
-				.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = '.$carrera->_con->pfx.$carrera->primary_key;
-		$key = $carrera->primary_key;
-		$materia->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
+			$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$carrera->_con->pfx.$table.' ON '
+					.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = '.$carrera->_con->pfx.$carrera->primary_key;
+			$key = $carrera->primary_key;
+			$materia->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
 		}
 		
 		$pag = new Gatuf_Paginator ($materia);
@@ -31,7 +31,8 @@ class Calif_Views_Materia {
 		$pag->action = array ('Calif_Views_Materia::index');
 		
 		/* Verificr filtro de materias por departamento */
-		if(is_numeric( $dep = $request->session->getData('filtro_materia_departamento',null) ) ){
+		$dep = $request->session->getData('filtro_materia_departamento',null);
+		if( !is_null($dep) ){
 			$departamento = new Calif_Departamento ();
 			$departamento->get ($dep);
 			$filtro['d'] = $departamento->descripcion;
@@ -67,7 +68,9 @@ class Calif_Views_Materia {
 			$request->session->setData('filtro_materia_departamento',null);
 		if($match[1] == 'c')
 			$request->session->setData('filtro_materia_carrera',null);
+			
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::index');
+		
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
@@ -78,7 +81,7 @@ class Calif_Views_Materia {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$request->session->setData('filtro_materia_departamento',$match[1]);
+		$request->session->setData('filtro_materia_departamento',$departamento->clave);
 		
             	 $url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::index');
 			return new Gatuf_HTTP_Response_Redirect ($url);
