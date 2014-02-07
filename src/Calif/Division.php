@@ -35,4 +35,8 @@ class Calif_Division extends Gatuf_Model {
 		);
 		$this->default_order = '';
 	}
+	
+	function __toString () {
+		return $this->nombre.' ('.$this->abreviacion.')';
+	}
 }

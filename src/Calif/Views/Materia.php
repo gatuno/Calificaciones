@@ -107,9 +107,8 @@ class Calif_Views_Materia {
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
-	
 	public function verMateria ($request, $match) {
-		$materia =  new Calif_Materia ();
+		$materia = new Calif_Materia ();
 		
 		if (false === ($materia->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
@@ -341,6 +340,7 @@ class Calif_Views_Materia {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
 	public $agregarEval_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarEval ($request, $match) {
 		$extra = array ();

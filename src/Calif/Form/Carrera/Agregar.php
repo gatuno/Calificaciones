@@ -36,6 +36,24 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 				'widget' => 'Gatuf_Form_Widget_ColorPicker',
 				'initial' => '#FFFFFF',
 		));
+		
+		$choices = array ();
+		
+		$divisiones = Gatuf::factory ('Calif_Division')->getList ();
+		foreach ($divisiones as $division) {
+			$choices[$division->nombre] = $division->id;
+		}
+		
+		$this->fields['division'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'División',
+				'help_text' => 'La división a la que pertenece',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+		));
 	}
 	
 	public function clean_color () {
@@ -56,27 +74,25 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 		}
 		
 		$sql = new Gatuf_SQL('Clave=%s', array($clave));
-        $l = Gatuf::factory('Calif_Carrera')->getList(array('filter'=>$sql->gen(),'count' => true));
-        if ($l > 0) {
-            throw new Gatuf_Form_Invalid('Esta clave de carrera ya está en uso');
-        }
-        
-        return $clave;
+		$l = Gatuf::factory('Calif_Carrera')->getList(array('filter'=>$sql->gen(),'count' => true));
+		if ($l > 0) {
+			throw new Gatuf_Form_Invalid('Esta clave de carrera ya está en uso');
+		}
+		
+		return $clave;
 	}
 	
 	public function save ($commit=true) {
 		if (!$this->isValid()) {
-            throw new Exception('Cannot save the model from an invalid form.');
-        }
-        
-        $carrera = new Calif_Carrera ();
-        
-        $carrera->clave = $this->cleaned_data['clave'];
-        $carrera->descripcion = $this->cleaned_data['descripcion'];
-        $carrera->color = $this->cleaned_data['color'];
-        
-        $carrera->create();
-        
-        return $carrera;
+			throw new Exception('Cannot save the model from an invalid form.');
+		}
+		
+		$carrera = new Calif_Carrera ();
+		
+		$carrera->setFromFormData ($this->cleaned_data);
+		
+		$carrera->create();
+		
+		return $carrera;
 	}
 }

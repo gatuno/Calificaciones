@@ -5,11 +5,18 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 class Calif_Views_Carrera {
 	
 	public function index ($request, $match) {
-		# Listar las carreras aquí
-		$carreras = Gatuf::factory('Calif_Carrera')->getList();
+		# Listar las carreras aquí, por división
+		$divisiones = Gatuf::factory ('Calif_Division')->getList ();
+		
+		$carreras = array ();
+		foreach ($divisiones as $div) {
+			$sql = new Gatuf_SQL ('division=%s', $div->id);
+			$carreras [$div->id] = Gatuf::factory('Calif_Carrera')->getList(array ('filter' => $sql->gen ()));
+		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/index.html',
 		                                         array('page_title' => 'Carreras',
+		                                               'divisiones' => $divisiones,
 		                                               'carreras' => $carreras),
 		                                         $request);
 	}
@@ -30,12 +37,10 @@ class Calif_Views_Carrera {
 		
 		$color = str_pad (dechex ($carrera->color), 6, '0', STR_PAD_LEFT);
 		
-		$title = 'Carrera "'.$carrera->descripcion.'"';
-		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/carrera/ver-carrera.html',
 		                                         array ('carrera' => $carrera,
 		                                                'color' => $color,
-		                                                'page_title' => $title),
+		                                                'page_title' => $carrera->descripcion),
 		                                         $request);
 	}
 	
@@ -59,7 +64,6 @@ class Calif_Views_Carrera {
 		                                               'form' => $form),
 		                                         $request);
 	}
-	
 	
 	public $actualizarCarrera_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarCarrera ($request, $match) {
