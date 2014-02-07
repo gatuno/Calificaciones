@@ -28,6 +28,12 @@ class Calif_Carrera extends Gatuf_Model {
 			       'blank' => false,
 			       'default' => 0,
 			),
+			'division' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Calif_Division',
+			),
 		);
 		$this->default_order = 'clave ASC, descripcion ASC';
 	}
