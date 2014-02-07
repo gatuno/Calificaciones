@@ -107,6 +107,7 @@ class Calif_Views_Materia {
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
+	
 	public function verMateria ($request, $match) {
 		$materia =  new Calif_Materia ();
 		
@@ -242,7 +243,44 @@ class Calif_Views_Materia {
 		                                               'sumas' => $sumas),
 		                                         $request);
 	}
-	
+		
+	public $agregarCarrera_precond = array ('Gatuf_Precondition::adminRequired');	
+    public function Carrera ($request, $match) {
+		$title = 'Agregar Materia a una Carrera';
+		
+		$materia= new Calif_Materia();
+		if(($materia->get($match[1]))===false){
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$extra = array ();
+		if ($request->method == 'POST') {
+				$form = new Calif_Form_Materia_AgregarCarrera ($request->POST, $extra);
+				
+				if ($form->isValid()) {
+					$seccion = $form->save ();
+					
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($materia->clave));
+					return new Gatuf_HTTP_Response_Redirect ($url);
+				}
+			} else {
+				if (isset ($request->REQUEST['materia'])) {
+					$materia = new Calif_Materia ();
+					if (false === ($materia->get($request->REQUEST['materia']))) {
+						$extra['materia'] = '';
+					} else {
+						$extra['materia'] = $materia->clave;
+					}
+				}
+				$form = new Calif_Form_Materia_AgregarCarrera (null, $extra);
+			}
+			
+			return Gatuf_Shortcuts_RenderToResponse ('calif/materia/agregar-carrera.html',
+			                                         array ('page_title' => $title,
+			                                                'form' => $form),
+			                                         $request);
+		} 
+		
 	public $agregarMateria_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarMateria ($request, $match) {
 		$title = 'Nueva materia';
@@ -303,7 +341,6 @@ class Calif_Views_Materia {
 		                                                'form' => $form),
 		                                         $request);
 	}
-	
 	public $agregarEval_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarEval ($request, $match) {
 		$extra = array ();
