@@ -230,11 +230,20 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/materia/([A-Za-z]{3,5})/addcarrera/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Materia',
+	'method' => 'Carrera',
+);
+
+$ctl[] = array (
 	'regex' => '#^/materias/([A-Za-z]{3,5})/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Materia',
 	'method' => 'porCarrera',
 );
+
+
 
 $ctl[] = array (
 	'regex' => '#^/materias/nofiltro/([cd])/$#',
@@ -620,4 +629,10 @@ $ctl[] = array(
 	'method' => 'permisos',
 );
 
+$ctl[] = array (
+	'regex' => '#^/test/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Test',
+	'method' => 'test',
+);
 return $ctl;

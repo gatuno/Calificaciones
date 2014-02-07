@@ -60,6 +60,7 @@ class Calif_Views_Carrera {
 		                                         $request);
 	}
 	
+	
 	public $actualizarCarrera_precond = array ('Gatuf_Precondition::adminRequired');
 	public function actualizarCarrera ($request, $match) {
 		$title = 'Actualizar carrera';
