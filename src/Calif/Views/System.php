@@ -71,7 +71,7 @@ class Calif_Views_System {
 				fclose ($archivo);
 				
 				/* Empezar a buscar todos los nrcs inventados */
-				$inventados = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => 'nrc >= 80000'));
+				$inventados = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => 'nrc >= 95000'));
 				$log_cambiados = array ();
 				
 				foreach ($inventados as $inventado) {
@@ -83,7 +83,7 @@ class Calif_Views_System {
 				
 				unset ($secciones);
 				
-				$inventados = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => 'nrc >= 80000'));
+				$inventados = Gatuf::factory ('Calif_Seccion')->getList (array ('filter' => 'nrc >= 95000'));
 				return Gatuf_Shortcuts_RenderToResponse ('calif/system/reporte_nrc_inventado.html',
 				                                          array ('page_title' => 'Reporte de nrc inventados',
 				                                                 'inventados' => $inventados,
