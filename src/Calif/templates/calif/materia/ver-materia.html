@@ -19,7 +19,7 @@
 {else}
 	<p>La materia no es tomada por alguna carrera</p>
 {/if}
-<p>Puede <a href="{url 'Calif_Views_Materia::Carrera', array ($materia.clave)}">agregar una nueva carrera</a> a esta materia</p>
+<p>Puede <a href="{url 'Calif_Views_Materia::Carrera', array ($materia->clave)}">agregar una nueva carrera</a> a esta materia</p>
 {if $calendario.events}
 	<h2>Horas de la materia</h2>
 	{$calendario.render}

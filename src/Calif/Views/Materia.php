@@ -253,6 +253,7 @@ class Calif_Views_Materia {
 		}
 		
 		$extra = array ();
+		
 		if ($request->method == 'POST') {
 				$form = new Calif_Form_Materia_AgregarCarrera ($request->POST, $extra);
 				
@@ -271,12 +272,15 @@ class Calif_Views_Materia {
 						$extra['materia'] = $materia->clave;
 					}
 				}
+				
 				$form = new Calif_Form_Materia_AgregarCarrera (null, $extra);
 			}
 			
 			return Gatuf_Shortcuts_RenderToResponse ('calif/materia/agregar-carrera.html',
 			                                         array ('page_title' => $title,
-			                                                'form' => $form),
+			                                                'form' => $form, 
+															 'materia'>= $extra
+															 ),
 			                                         $request);
 		} 
 		

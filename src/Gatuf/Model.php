@@ -148,13 +148,13 @@ class Gatuf_Model {
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
 		sort($hay);
-		$pk = $model->primary_key;
 		$table = $hay[0].'_'.$hay[1].'_assoc';
 		$req = 'INSERT INTO '.$this->_con->pfx.$table."\n";
 		$req .= '('.$this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).', '
 			.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).') VALUES '."\n";
 		$req .= '('.$this->_toDb($this->_data[$this->primary_key], $this->primary_key).', ';
-		$req .= $this->_toDb($model->$pk, $model->primary_key).')';
+		$other_key = $model->primary_key;
+		$req .= $this->_toDb($model->$other_key, $model->primary_key).')';
 		$this->_con->execute($req);
 		return true;
 	}
@@ -169,10 +169,10 @@ class Gatuf_Model {
 		//check if ok to make the association
 		//current model has a many to many key with $model
 		//$model has a many to many key with current model
-		$pk = $model->primary_key;
+		$other_key = $model->primary_key;
 		if (!isset($this->_m['many'][$model->_a['model']])
 			or strlen($this->_data[$this->primary_key]) == 0
-			or strlen($model->$pk) == 0) {
+			or strlen($model->$other_key) == 0) {
 			return false;
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
@@ -180,7 +180,8 @@ class Gatuf_Model {
 		$table = $hay[0].'_'.$hay[1].'_assoc';
 		$req = 'DELETE FROM '.$this->_con->pfx.$table.' WHERE'."\n";
 		$req .= $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).' = '.$this->_toDb($this->_data[$this->primary_key], $this->primary_key);
-		$req .= ' AND '.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).' = '.$this->_toDb($model->$pk, $model->primary_key);
+		
+		$req .= ' AND '.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).' = '.$this->_toDb($model->$other_key, $model->primary_key);
 		$this->_con->execute($req);
 		return true;
 	}
