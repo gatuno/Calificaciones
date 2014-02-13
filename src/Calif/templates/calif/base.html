@@ -39,7 +39,7 @@
 		{/if}
 		<a href="{url 'Calif_Views::logout'}"><img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>
 	{else}
-			<p><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>{/if}
+			<p><a href="{url 'Calif_Views::login', array (), array ('_redirect_after' => $uri)}">Iniciar sesión</a></p>{/if}
 	</div>{if $user and $user.id}
 	{getmsgs $user}{/if}
 	<div class="body">
