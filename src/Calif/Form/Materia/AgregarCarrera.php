@@ -21,11 +21,9 @@ class Calif_Form_Materia_AgregarCarrera extends Gatuf_Form {
 				),
 				'widget' => 'Gatuf_Form_Widget_SelectInput'
 		));
-
-		
+				
 	}
-	
-	
+		
 	public function save ($commit=true) {
 		if (!$this->isValid()) {
 			throw new Exception('Cannot save the model from an invalid form.');
