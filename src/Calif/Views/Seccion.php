@@ -460,11 +460,26 @@ class Calif_Views_Seccion {
 	
 	public function errorHoras ($request, $match) {
 		Gatuf::loadFunction ('Calif_Utils_errorHoras');
-		$seccion = Calif_Utils_errorHoras();
-			
+		$errores = array();
+		foreach( Gatuf::factory ('Calif_Seccion')->getList() as $sec){
+			if( Calif_Utils_errorHoras($sec) ){
+				$errores[] = $sec->nrc; 
+				}
+		}
+		$i = 0;
+		$secciones = array();
+		foreach($errores as $secc){
+			$sec = new Calif_Seccion ($secc);
+			$secciones[$i]['nrc'] = $sec->nrc;
+			$secciones[$i]['seccion'] = $sec->seccion;
+			$secciones[$i]['materia'] = $sec->materia;
+			$secciones[$i]['maestro'] = $sec->maestro;
+			$secciones[$i]['asignacion'] = $sec->asignacion;
+			$i++;
+		}
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/error-horas.html',
-		                                          array ('secciones' => $seccion,
-		                                                 'page_title' => 'Secciones con Error'),
+		                                          array ('secciones' => $secciones,
+		                                                 'page_title' => 'Secciones con Errores'),
 				                                          $request);
 		}
 }

@@ -220,7 +220,6 @@ function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificio
 }
 
 function Calif_Utils_errorHoras( $seccion = false ){
-		if($seccion){
 			$horas = 0;
 			$materia = new Calif_Materia ($seccion->materia);
 			$horarios = $seccion->get_calif_horario_list ();
@@ -236,12 +235,4 @@ function Calif_Utils_errorHoras( $seccion = false ){
 			}
 			$error = (abs ( $horas - ($materia->teoria + $materia->practica ) ) )?true:false;
 			return $error;
-		}
-		$errores = array();
-		$secciones = Gatuf::factory ('Calif_Seccion')->getList();
-		foreach($secciones as $sec){
-			if( Calif_Utils_errorHoras($sec) )
-				$errores[] = $sec->nrc;
-		}
-		return $errores;
 }
