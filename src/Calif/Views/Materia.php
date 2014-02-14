@@ -252,24 +252,24 @@ class Calif_Views_Materia {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$extra = array ();
-		
+		//$extra = array ();
+		$extra = array ('materia' => $materia);
 		if ($request->method == 'POST') {
 				$form = new Calif_Form_Materia_AgregarCarrera ($request->POST, $extra);
 				
 				if ($form->isValid()) {
-					$seccion = $form->save ();
+					$materia = $form->save ();
 					
 					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Materia::verMateria', array ($materia->clave));
 					return new Gatuf_HTTP_Response_Redirect ($url);
 				}
-			} else {
-				if (isset ($request->REQUEST['materia'])) {
-					$materia = new Calif_Materia ();
-					if (false === ($materia->get($request->REQUEST['materia']))) {
-						$extra['materia'] = '';
-					} else {
-						$extra['materia'] = $materia->clave;
+		} else {
+			if (isset ($request->REQUEST['materia'])) {
+				$materia = new Calif_Materia ();
+				if (false === ($materia->get($request->REQUEST['materia']))) {
+				$extra['materia'] = '';
+				} else {
+					$extra['materia'] = $materia->clave;
 					}
 				}
 				
@@ -279,7 +279,7 @@ class Calif_Views_Materia {
 			return Gatuf_Shortcuts_RenderToResponse ('calif/materia/agregar-carrera.html',
 			                                         array ('page_title' => $title,
 			                                                'form' => $form, 
-															 'materia'>= $extra
+															 'materia'=> $materia
 															 ),
 			                                         $request);
 		} 

@@ -4,14 +4,23 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 	public function initFields($extra=array()) {
 		$this->fields['nrc'] = new Gatuf_Form_Field_Integer(
 			array(
-				'required' => true,
+				'required' => false,
 				'label' => 'NRC',
 				'initial' => '',
 				'help_text' => 'El Nrc del grupo',
 				'max' => 99999,
+				'min' => 0,
 				'widget_attrs' => array(
 					'maxlength' => 5,
 				),
+		));
+		
+		$this->fields['auto_nrc'] = new Gatuf_Form_Field_Boolean (
+			array (
+				'required' => true,
+				'label' => 'NRC automático',
+				'initial' => false,
+				'help_text' => 'Si el nrc debe ser generado automáticamente',
 		));
 		
 		$materia = '';
@@ -66,19 +75,6 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		));
 	}
 	
-	public function clean_nrc () {
-		$nrc = $this->cleaned_data ['nrc'];
-		
-		/* Verificar que este nrc no esté duplicado */
-		$sql = new Gatuf_SQL('nrc=%s', $nrc);
-        $l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));
-        if ($l > 0) {
-            throw new Gatuf_Form_Invalid('Este NRC ya existe');
-        }
-        
-        return $nrc;
-	}
-	
 	public function clean_seccion () {
 		$seccion = mb_strtoupper($this->cleaned_data['seccion']);
 		
@@ -89,8 +85,21 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		return $seccion;
 	}
 	
-	/* Verificar que la materia y la sección no estén duplicados */
 	public function clean () {
+		$auto = $this->cleaned_data ['auto_nrc'];
+		
+		if (!$auto) {
+			$nrc = $this->cleaned_data ['nrc'];
+		
+			/* Verificar que este nrc no esté duplicado */
+			$sql = new Gatuf_SQL('nrc=%s', $nrc);
+			$l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));
+			if ($l > 0) {
+				throw new Gatuf_Form_Invalid('El NRC especificado ya existe');
+			}
+		}
+		
+		/* Verificar que la materia y la sección no estén duplicados */
 		$materia = $this->cleaned_data['materia'];
 		$seccion = $this->cleaned_data['seccion'];
 		
@@ -111,7 +120,27 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		
 		$seccion = new Calif_Seccion ();
 		
-		$seccion->nrc = $this->cleaned_data['nrc'];
+		if ($this->cleaned_data['auto_nrc']) {
+			/* Generar un NRC */
+			$nrc = Gatuf::factory ('Calif_Seccion')->maxNrc () + 1;
+		
+			if ($nrc < 95000) $max_nrc = 95000;
+		
+			/* Verificar que este nrc no esté duplicado */
+			do {
+				$sql = new Gatuf_SQL('nrc=%s', array($nrc));
+				$l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));
+			
+				if ($l > 0) $nrc++;
+				if ($nrc > 99999) {
+					throw new Exception ('Imposible obtener un NRC inventado. Por favor llame al administrador');
+				}
+			} while ($l > 0);
+		} else {
+			$nrc = $this->cleaned_data['nrc'];
+		}
+		
+		$seccion->nrc = $nrc;
 		
 		$materia = new Calif_Materia ($this->cleaned_data['materia']);
 		$seccion->materia = $materia;

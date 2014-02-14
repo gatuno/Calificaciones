@@ -15,3 +15,27 @@
 </table>
 </form>
 {/block}
+{block javascript}
+<script type="text/javascript">
+{literal}
+//<![CDATA[
+	function on_change_auto () {
+		var opcion_auto = document.getElementById ('id_auto_nrc');
+		var campo_nrc = document.getElementById ('id_nrc');
+		
+		if (opcion_auto.checked) {
+			campo_nrc.disabled = true;
+			campo_nrc.value = '';
+		} else {
+			campo_nrc.disabled = false;
+		}
+	}
+	
+	var opcion_auto = document.getElementById ('id_auto_nrc');
+	opcion_auto.onchange = on_change_auto;
+	
+	on_change_auto ();
+// ]]>
+{/literal}
+</script>
+{/block}

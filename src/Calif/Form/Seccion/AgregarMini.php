@@ -65,7 +65,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		/* Generar un NRC */
 		$max_nrc = Gatuf::factory ('Calif_Seccion')->maxNrc () + 1;
 		
-		if ($max_nrc < 80000) $max_nrc = 80000;
+		if ($max_nrc < 95000) $max_nrc = 95000;
 		
 		/* Verificar que este nrc no esté duplicado */
 		do {
