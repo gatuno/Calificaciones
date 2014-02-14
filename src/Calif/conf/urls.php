@@ -332,6 +332,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/error/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'errorHoras',
+);
+
+$ctl[] = array (
 	'regex' => '#^/seccion/#',
 	'base' => $base,
 	'sub' => array (

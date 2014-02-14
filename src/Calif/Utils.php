@@ -218,3 +218,30 @@ function Calif_Utils_buscarSalonVacio ($semana, $bus_inicio, $bus_fin, $edificio
 	
 	return $libres;
 }
+
+function Calif_Utils_errorHoras( $seccion = false ){
+		if($seccion){
+			$horas = 0;
+			$materia = new Calif_Materia ($seccion->materia);
+			$horarios = $seccion->get_calif_horario_list ();
+			$materia = new Calif_Materia ($seccion->materia);
+			foreach($horarios as $h){
+				$dias = ($h->l + $h->m + $h->i + $h->j + $h->v + $h->s + $h->d );
+				$datetime1 = new DateTime( $h->inicio );
+				$datetime2 = new DateTime( $h->fin );
+				$interval = $datetime1->diff($datetime2);
+				if((int)$interval->format('%i') > 50 )
+					$horas += $dias;
+					$horas += (int)$interval->format('%h')*$dias;
+			}
+			$error = (abs ( $horas - ($materia->teoria + $materia->practica ) ) )?true:false;
+			return $error;
+		}
+		$errores = array();
+		$secciones = Gatuf::factory ('Calif_Seccion')->getList();
+		foreach($secciones as $sec){
+			if( Calif_Utils_errorHoras($sec) )
+				$errores[] = $sec->nrc;
+		}
+		return $errores;
+}

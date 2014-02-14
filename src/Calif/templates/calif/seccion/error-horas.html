@@ -1,0 +1,9 @@
+{extends 'calif/base.html'}
+{block body}
+	<h3>Las siguientes Secciones precentan diferencias en la relacion de horas</h3>
+	<p>
+	{foreach $secciones as $sec}
+		<a href="{url 'Calif_Views_Seccion::verNrc', $sec}"> |{$sec}| </a>
+	{/foreach}
+</p>
+{/block}

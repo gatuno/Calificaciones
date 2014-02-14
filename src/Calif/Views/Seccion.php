@@ -457,4 +457,14 @@ class Calif_Views_Seccion {
 		                                                'form' => $form),
 		                                         $request);
 	}
+	
+	public function errorHoras ($request, $match) {
+		Gatuf::loadFunction ('Calif_Utils_errorHoras');
+		$seccion = Calif_Utils_errorHoras();
+			
+		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/error-horas.html',
+		                                          array ('secciones' => $seccion,
+		                                                 'page_title' => 'Secciones con Error'),
+				                                          $request);
+		}
 }
