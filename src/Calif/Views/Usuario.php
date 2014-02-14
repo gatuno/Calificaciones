@@ -32,17 +32,38 @@ class Calif_Views_Usuario {
 		foreach($permisos_usuario as $p){
 			$extra['perm'][] = strstr($p, 'c');
 		}
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Usuario_Permisos ($request->POST, $extra);
-		}
-		else {
-			$form = new Calif_Form_Usuario_Permisos (null, $extra);
-		}
+		
+		$form = new Calif_Form_Usuario_Permisos (null, $extra);
+		$form2 =new Calif_Form_Usuario_Grupos (null, $extra);
 		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
 		                                         array('page_title' => 'Permisos',
 		                                         	'usuario' => $usr,
 		                                         	'tipo' => $tipo,
-                                                       'form' => $form),
+                                                       'form' => $form,
+													   'form2' => $form2
+													   ),
                                                  $request);
 	}		
+/*	public function grupos($request, $match)
+	{
+	$usuario = $match[1];
+	$extra = array();
+    if ($request->method == 'POST') {
+        $form = new Calif_Form_Usuario_Grupos ($request->POST, $extra);
+		
+        if ($form->isValid()) {
+            $url = Gatuf_HTTP_URL_urlForView ('', array ());
+				return new Gatuf_HTTP_Response_Redirect ($url);
+        }
+    } else {
+        $form = new Calif_Form_Usuario_Grupos (null, $extra);
+    }
+    return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
+		                                         array('page_title' => 'Permisos',
+		                                         	'usuario' => $usr,
+		                                         	'tipo' => $tipo,
+                                                       'form' => $form
+													   ),
+                                                 $request);
+	}*/
 }
