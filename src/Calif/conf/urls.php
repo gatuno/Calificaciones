@@ -275,7 +275,7 @@ $ctl[] = array (
 			'regex' => '#^([a-zA-Z]+\d+)/addcarrera/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Materia',
-			'method' => 'Carrera',
+			'method' => 'agregarACarrera',
 		)
 	)
 );
