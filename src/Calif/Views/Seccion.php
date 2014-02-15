@@ -13,7 +13,6 @@ class Calif_Views_Seccion {
 		/* Enlaces extras */
 		$pag = new Gatuf_Paginator ($seccion);
 		$pag->model_view = 'paginador';
-		
 		$pag->action = array ('Calif_Views_Seccion::index');
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
@@ -459,9 +458,12 @@ class Calif_Views_Seccion {
 	}
 	
 	public function errorHoras ($request, $match) {
+		$dep = $match[1];
 		Gatuf::loadFunction ('Calif_Utils_errorHoras');
+		$departamento = new Calif_Departamento($dep);
+		$filtro = 'materia_departamento='.$dep;
 		$errores = array();
-		foreach( Gatuf::factory ('Calif_Seccion')->getList() as $sec){
+		foreach(  Gatuf::factory ('Calif_Seccion')->getList( array('view' => 'paginador', 'filter' => $filtro ) )  as $sec ){
 			if( Calif_Utils_errorHoras($sec) ){
 				$errores[] = $sec->nrc; 
 				}
@@ -479,7 +481,9 @@ class Calif_Views_Seccion {
 		}
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/error-horas.html',
 		                                          array ('secciones' => $secciones,
+		                                          		'departamento' => $departamento->descripcion,
 		                                                 'page_title' => 'Secciones con Errores'),
 				                                          $request);
 		}
+		
 }

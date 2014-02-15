@@ -332,7 +332,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/error/$#',
+	'regex' => '#^/secciones/error/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'errorHoras',
@@ -535,6 +535,13 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Departamento',
 	'method' => 'index',
+);
+
+$ctl[] = array (
+	'regex' => '#^/departamentos/buscarerror/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Departamento',
+	'method' => 'buscarErrorHoras',
 );
 
 /* Número de Puestos */
