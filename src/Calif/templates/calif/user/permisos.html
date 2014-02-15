@@ -9,7 +9,7 @@
 {/if}
 </div>
 {/if}
-<form method="post" action=".">
+<form method="post" action="{url 'Calif_Views_Usuario::Save', array($user->id)}">
 <table>
 {$form.render_table}
 <tr>

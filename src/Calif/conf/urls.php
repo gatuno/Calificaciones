@@ -632,6 +632,12 @@ $ctl[] = array(
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'permisos',
 );
+$ctl[] = array(
+	'regex' => '#^/permisos/add/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'Save',
+);
 
 $ctl[] = array (
 	'regex' => '#^/test/$#',
