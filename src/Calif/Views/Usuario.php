@@ -44,7 +44,7 @@ class Calif_Views_Usuario {
 													   ),
                                                  $request);
 	}		
-	public function Save($request, $match) {
+	public function AlterarPermiso($request, $match) {
 	
 		$extra=array();
 		$extra= $match[1];
@@ -58,7 +58,7 @@ class Calif_Views_Usuario {
 	
 	}
 	
-	public function Save2($request, $match) {
+	public function AlterarGrupo($request, $match) {
 	
 		$extra=array();
 		$extra= $match[1];

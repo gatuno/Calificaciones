@@ -643,13 +643,13 @@ $ctl[] = array(
 	'regex' => '#^/permisos/add/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
-	'method' => 'Save',
+	'method' => 'AlterarPermiso',
 );
 $ctl[] = array(
 	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
-	'method' => 'Save2',
+	'method' => 'AlterarGrupo',
 );
 $ctl[] = array (
 	'regex' => '#^/test/$#',
