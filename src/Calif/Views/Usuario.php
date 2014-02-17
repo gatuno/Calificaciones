@@ -44,16 +44,28 @@ class Calif_Views_Usuario {
 													   ),
                                                  $request);
 	}		
-	//public $user;
 	public function Save($request, $match) {
 	
 		$extra=array();
 		$extra= $match[1];
 		$usuario=new Calif_User($extra);
-	  	//$form = new Calif_Form_Usuario_Permisos ($request->POST, $extra);
 		$permiso=$request->POST['permiso'];
 		$permisos=new Gatuf_Permission($permiso);
-		$usuario->delAssoc($permisos);
+		$usuario->SetAssoc($permisos);
+	  
+	 $url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::index', array ());
+					return new Gatuf_HTTP_Response_Redirect ($url);
+	
+	}
+	
+	public function Save2($request, $match) {
+	
+		$extra=array();
+		$extra= $match[1];
+		$usuario=new Calif_User($extra);
+		$grupo=$request->POST['grupo'];
+		$grupos=new Gatuf_Group($grupo);
+		$usuario->SetAssoc($grupos);
 	  
 	 $url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::index', array ());
 					return new Gatuf_HTTP_Response_Redirect ($url);
