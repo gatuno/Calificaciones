@@ -1,0 +1,10 @@
+{extends 'calif/base.html'}
+{block body}
+{if $departamentos}
+	{foreach $departamentos as $departamento}
+	<a href="{url 'Calif_Views_Seccion::errorHoras', array ($departamento.clave)}">{$departamento.descripcion}</a></br>
+	{/foreach}
+{else}
+	<p>Por una serie de eventos desafortunados, su sistema no contiene ningún departamento</p>
+{/if}
+{/block}

@@ -82,9 +82,7 @@ class Calif_Horario extends Gatuf_Model {
 		$b_inicio = strtotime ($b->inicio);
 		$b_fin = strtotime ($b->fin);
 		
-		if (($a_inicio >= $b_inicio && $a_fin < $b_fin) ||
-			($a_fin > $b_inicio && $a_fin <= $b_fin) ||
-			($a_inicio <= $b_inicio && $a_fin >= $b_fin)) {
+		if($b_inicio < $a_fin && $b_fin > $a_inicio) {
 			return true;
 		}
 		

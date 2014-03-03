@@ -1,0 +1,16 @@
+{extends 'calif/base.html'}
+{block body}
+	<h3>{$departamento} </h3>
+	<p>
+	<table border="1">
+	<thead><tr><th>NRC</th><th>Materia</th><th>Seccion</th><th>Maestro</th><th>Asignacion</th></tr></thead>
+	<tbody>
+	{foreach $secciones as $sec}
+	<tr><td><a href="{url 'Calif_Views_Seccion::verNrc', $sec}">{$sec['nrc']}</a>
+		<td>{$sec['materia']}</td><td>{$sec['seccion']}</td><td>{$sec['maestro']}</td><td>{$sec['asignacion']}</td>
+	</tr>
+	{/foreach}
+	</tbody>
+	</table>
+</p>
+{/block}

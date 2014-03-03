@@ -30,4 +30,13 @@ class Calif_Views_Departamento {
                                                        'secciones' => $total_secciones),
                                                  $request);
 	}
+	
+	public function buscarErrorHoras ($request, $match) {
+				$departamentos =  Gatuf::factory ('Calif_Departamento')->getList();
+				
+					return Gatuf_Shortcuts_RenderToResponse ('calif/departamento/buscar-errores-horas.html',
+		                                          array ('departamentos' => $departamentos,
+		                                                 'page_title' => 'Busar Errores de horas por Departamento'),
+				                                          $request);
+		}
 }

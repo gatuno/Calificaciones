@@ -32,17 +32,43 @@ class Calif_Views_Usuario {
 		foreach($permisos_usuario as $p){
 			$extra['perm'][] = strstr($p, 'c');
 		}
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Usuario_Permisos ($request->POST, $extra);
-		}
-		else {
-			$form = new Calif_Form_Usuario_Permisos (null, $extra);
-		}
+		
+		$form = new Calif_Form_Usuario_Permisos (null, $extra);
+		$form2 =new Calif_Form_Usuario_Grupos (null, $extra);
 		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
 		                                         array('page_title' => 'Permisos',
 		                                         	'usuario' => $usr,
 		                                         	'tipo' => $tipo,
-                                                       'form' => $form),
+                                                       'form' => $form,
+													   'form2' => $form2
+													   ),
                                                  $request);
 	}		
+	public function AlterarPermiso($request, $match) {
+	
+		$extra=array();
+		$extra= $match[1];
+		$usuario=new Calif_User($extra);
+		$permiso=$request->POST['permiso'];
+		$permisos=new Gatuf_Permission($permiso);
+		$usuario->SetAssoc($permisos);
+	  
+	 $url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::index', array ());
+					return new Gatuf_HTTP_Response_Redirect ($url);
+	
+	}
+	
+	public function AlterarGrupo($request, $match) {
+	
+		$extra=array();
+		$extra= $match[1];
+		$usuario=new Calif_User($extra);
+		$grupo=$request->POST['grupo'];
+		$grupos=new Gatuf_Group($grupo);
+		$usuario->SetAssoc($grupos);
+	  
+	 $url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::index', array ());
+					return new Gatuf_HTTP_Response_Redirect ($url);
+	
+	}
 }

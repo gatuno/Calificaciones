@@ -275,7 +275,7 @@ $ctl[] = array (
 			'regex' => '#^([a-zA-Z]+\d+)/addcarrera/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Materia',
-			'method' => 'Carrera',
+			'method' => 'agregarACarrera',
 		)
 	)
 );
@@ -329,6 +329,13 @@ $ctl[] = array (
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'porDepartamento',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/error/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'errorHoras',
 );
 
 $ctl[] = array (
@@ -530,6 +537,13 @@ $ctl[] = array (
 	'method' => 'index',
 );
 
+$ctl[] = array (
+	'regex' => '#^/departamentos/buscarerror/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Departamento',
+	'method' => 'buscarErrorHoras',
+);
+
 /* Número de Puestos */
 $ctl[] = array (
 	'regex' => '#^/puesto/(\d+)/$#',
@@ -625,7 +639,18 @@ $ctl[] = array(
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'permisos',
 );
-
+$ctl[] = array(
+	'regex' => '#^/permisos/add/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'AlterarPermiso',
+);
+$ctl[] = array(
+	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'AlterarGrupo',
+);
 $ctl[] = array (
 	'regex' => '#^/test/$#',
 	'base' => $base,
