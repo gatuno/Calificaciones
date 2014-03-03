@@ -255,7 +255,7 @@ class Gatuf_DB_Schema_MySQL {
 				$referto = new $val['model']();
 				$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_'.$col.'_fkey').'
 				    FOREIGN KEY ('.$this->con->qn($col).')
-				    REFERENCES '.$this->con->pfx.$referto->_a['table'].' ('.$referto->primary_key.')
+				    REFERENCES '.$referto->_con->dbname.'.'.$referto->_con->pfx.$referto->_a['table'].' ('.$referto->primary_key.')
 				    ON DELETE NO ACTION ON UPDATE NO ACTION';
 			}
 		}
@@ -269,11 +269,11 @@ class Gatuf_DB_Schema_MySQL {
 			$alter_tbl = 'ALTER TABLE '.$table;
 			$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey1').'
 			    FOREIGN KEY ('.strtolower($model->_a['model']).'_'.$model->primary_key.')
-			    REFERENCES '.$this->con->pfx.$model->_a['table'].' ('.$model->primary_key.')
+			    REFERENCES '.$model->_con->dbname.'.'.$model->_con->pfx.$model->_a['table'].' ('.$model->primary_key.')
 			    ON DELETE NO ACTION ON UPDATE NO ACTION';
 			$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey2').'
 			    FOREIGN KEY ('.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.')
-			    REFERENCES '.$this->con->pfx.$omodel->_a['table'].' ('.$omodel->primary_key.')
+			    REFERENCES '.$omodel->_con->dbname.'.'.$omodel->_con->pfx.$omodel->_a['table'].' ('.$omodel->primary_key.')
 			    ON DELETE NO ACTION ON UPDATE NO ACTION';
 		}
 		return $constraints;

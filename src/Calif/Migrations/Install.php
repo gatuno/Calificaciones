@@ -35,9 +35,9 @@ function Calif_Migrations_Install_setup ($params=null) {
 	Calif_Migrations_Install_1Vistas_setup ();
 	Calif_Migrations_Install_2GruposEval_setup ();
 	Calif_Migrations_Install_3Departamentos_setup ();
-	Calif_Migrations_Install_4Carreras_setup ();
+	Calif_Migrations_Install_4Divisiones_setup ();
 	Calif_Migrations_Install_5Edificios_setup ();
-	Calif_Migrations_Install_6Divisiones_setup ();
+	Calif_Migrations_Install_6Carreras_setup ();
 }
 
 function Calif_Migrations_Install_teardown ($params=null) {
@@ -283,33 +283,49 @@ function Calif_Migrations_Install_3Departamentos_setup ($params = null) {
 	}
 }
 
-function Calif_Migrations_Install_4Carreras_setup ($params = null) {
+function Calif_Migrations_Install_6Carreras_setup ($params = null) {
 	$carrera_model = new Calif_Carrera ();
 	
-	$carreras = array ('BIM' => 'Ingeniería en Biomédica',
-	                   'CEL' => 'Ingeniería en Electrónica y Comunicaciones',
-	                   'CIV' => 'Ingeniería Civil',
-	                   'COM' => 'Ingenieria en Computación',
-	                   'FIS' => 'Licenciatura en Física',
-	                   'INBI' => 'Ingeniería en Biomédica (Nueva)',
-	                   'INCE' => 'Ingeniería en Electrónica y Comunicaciones (Nueva)',
-	                   'INCO' => 'Ingeniería en Computación (Nueva)',
-	                   'IND' => 'Ingeniería Industrial',
-	                   'INF' => 'Licenciatura en Informática',
-	                   'INNI' => 'Ingeniería en Informática (Nueva)',
-	                   'IQU' => 'Ingeniería Química',
-	                   'LIFI' => 'Licenciatura en Física (Nueva)',
-	                   'LIMA' => 'Licenciatura en Matemáticas (Nueva)',
-	                   'MAT' => 'Licenciatura en Matemáticas',
-	                   'MEL' => 'Ingeniería Mecánica Eléctrica',
-	                   'QFB' => 'Licenciatura en Químico Farmacobiólogo',
-	                   'QUI' => 'Licenciatura en Química',
-	                   'TOP' => 'Ingeniería en Topografía');
+	$carreras = array ('BIM' => array ('Ingeniería en Biomédica', 'DIVEC'),
+	                   'CEL' => array ('Ingeniería en Electrónica y Comunicaciones', 'DIVEC'),
+	                   'CIV' => array ('Ingeniería Civil', 'DIVING'),
+	                   'COM' => array ('Ingenieria en Computación', 'DIVEC'),
+	                   'DCEC' => array ('Doctorado en Ciencias de la Electrónica y la Computación', 'DIVEC'),
+	                   'FIS' => array ('Licenciatura en Física', 'DIVBASICAS'),
+	                   'INBI' => array ('Ingeniería en Biomédica (Nueva)', 'DIVEC'),
+	                   'INCE' => array ('Ingeniería en Electrónica y Comunicaciones (Nueva)', 'DIVEC'),
+	                   'INCO' => array ('Ingeniería en Computación (Nueva)', 'DIVEC'),
+	                   'IND' => array ('Ingeniería Industrial', 'DIVING'),
+	                   'INDU' => array ('Ingeniería Industrial (Nueva)', 'DIVING'),
+	                   'INF' => array ('Licenciatura en Informática', 'DIVEC'),
+	                   'INME' => array ('Ingeniería Mecánica Eléctrica (Nueva)', 'DIVING'),
+	                   'INNI' => array ('Ingeniería en Informática (Nueva)', 'DIVEC'),
+	                   'INQU' => array ('Ingeniería Química (Nueva)', 'DIVING'),
+	                   'IQU' => array ('Ingeniería Química', 'DIVING'),
+	                   'LIFI' => array ('Licenciatura en Física (Nueva)', 'DIVBASICAS'),
+	                   'LIMA' => array ('Licenciatura en Matemáticas (Nueva)', 'DIVBASICAS'),
+	                   'LINA' => array ('Licenciatura en Ingeniería en Alimentos y Biotecnología', 'DIVING'),
+	                   'LQFB' => array ('Licenciatura en Quimico Farmaceutico Biologo (Nueva)', 'DIVBASICAS'),
+	                   'LQUI' => array ('Licenciatura en Química (Nueva)', 'DIVBASICAS'),
+	                   'MAT' => array ('Licenciatura en Matemáticas', 'DIVBASICAS'),
+	                   'MEL' => array ('Ingeniería Mecánica Eléctrica', 'DIVING'),
+	                   'MIEC' => array ('Maestría en Ciencias en Ingeniería Electrónica y Computación', 'DIVBASICAS'),
+	                   'QFB' => array ('Licenciatura en Químico Farmacobiólogo', 'DIVBASICAS'),
+	                   'QUI' => array ('Licenciatura en Química', 'DIVBASICAS'),
+	                   'TOP' => array ('Ingeniería en Topografía', 'DIVING')
+	                   );
 	
-	foreach ($carreras as $clave => $descripcion) {
+	$division = new Calif_Division ();
+	
+	foreach ($carreras as $clave => $data) {
 		$carrera_model->clave = $clave;
-		$carrera_model->descripcion = $descripcion;
+		$carrera_model->descripcion = $data[0];
 		$carrera_model->color = 0;
+		
+		$sql = new Gatuf_SQL ('abreviacion=%s', $data[1]);
+		$div = $division->getOne (array ('filter' => $sql->gen ()));
+		
+		$carrera_model->division = $div;
 		
 		$carrera_model->create (); /* NO raw para que los permisos se creen automáticamente */
 	}
@@ -347,7 +363,7 @@ function Calif_Migrations_Install_5Edificios_setup ($params = null) {
 	}
 }
 
-function Calif_Migrations_Install_6Divisiones_setup ($params = null) {
+function Calif_Migrations_Install_4Divisiones_setup ($params = null) {
 	$division_model = new Calif_Division ();
 	
 	$divisiones = array (

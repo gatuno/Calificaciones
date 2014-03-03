@@ -221,7 +221,7 @@ class Gatuf_Model {
 	}
 	
 	function getSqlTable () {
-		return $this->_con->pfx.$this->_a['table'];
+		return $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['table'];
 	}
 	
 	/**
@@ -344,7 +344,7 @@ class Gatuf_Model {
 		}
 		$query = array(
 					   'select' => $this->getSelect (),
-					   'from' => $this->_a['table'],
+					   'from' => $this->getSqlTable (),
 					   'join' => '',
 					   'where' => '',
 					   'group' => '',

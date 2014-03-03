@@ -32,7 +32,8 @@ class Gatuf_DB_MySQL {
 	public $lastquery = '';
 	public $engine = 'MySQL';
 	public $type_cast = array ();
-
+    public $dbname = '';
+    
 	function __construct($user, $pwd, $server, $dbname, $pfx='', $debug=false) {
 		Gatuf::loadFunction('Gatuf_DB_defaultTypecast');
 		$this->type_cast = Gatuf_DB_defaultTypecast();
@@ -48,7 +49,8 @@ class Gatuf_DB_MySQL {
 	}
 
 	function database($dbname) {
-		$db = mysql_select_db ($dbname);
+	    $this->dbname = $dbname;
+		$db = mysql_select_db ($dbname, $this->con_id);
 		$this->debug ('* USE DATABASE '.$dbname);
 		if (!$db) {
 			throw new Exception ($this->getError());

@@ -27,7 +27,6 @@
 class Gatuf_SQL {
 
     protected $db;
-    protected $where = '';
     public $ands = array();
 
     /**
