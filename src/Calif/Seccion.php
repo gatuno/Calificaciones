@@ -33,6 +33,14 @@ class Calif_Seccion extends Gatuf_Model {
 			       'blank' => false,
 			       'model' => 'Calif_Maestro',
 			),
+			'suplente' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Foreignkey',
+			       'blank' => false,
+			       'model' => 'Calif_Maestro',
+			       'is_null' => true,
+			       'default' => null,
+			),
 			'asignacion' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
@@ -131,6 +139,10 @@ class Calif_Seccion extends Gatuf_Model {
 	
 	public function displaylinkedmaestro ($extra=null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->maestro)).'">'.$this->maestro_apellido.' '.$this->maestro_nombre.' ('.$this->maestro.')</a>';
+	}
+
+	public function displaylinkedsuplente ($extra=null) {
+		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($this->suplente)).'">'.$this->suplente.'</a>';
 	}
 	
 	public function displaylinkedmaestro_apellido ($extra=null) {
