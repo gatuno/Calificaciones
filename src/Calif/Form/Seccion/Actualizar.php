@@ -52,6 +52,20 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 				),
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 		));
+
+		array_unshift($choices, array('No asignado' => null));
+		
+		$this->fields['suplente'] = new Gatuf_Form_Field_Varchar(
+			array(
+				'required' => false,
+				'label' => 'Suplente',
+				'initial' => $this->seccion->suplente,
+				'help_text' => 'El suplente para este grupo',
+				'widget_attrs' => array(
+					'choices' => $choices,
+				),
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+		));
 	}
 	
 	public function clean_nrc () {

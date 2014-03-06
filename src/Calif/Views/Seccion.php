@@ -101,6 +101,7 @@ class Calif_Views_Seccion {
 		
 		$materia = new Calif_Materia ($seccion->materia);
 		$maestro = new Calif_Maestro ($seccion->maestro);
+		$suplente = new Calif_Maestro ($seccion->suplente);
 		
 		$horarios = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
 		$puestos = $seccion->get_calif_numeropuesto_list ();
@@ -168,6 +169,7 @@ class Calif_Views_Seccion {
 		                                                 'seccion' => $seccion,
 		                                                 'materia' => $materia,
 		                                                 'maestro' => $maestro,
+		                                                 'suplente' => $suplente,
 		                                                 'horarios' => $horarios,
 		                                                 'alumnos' => $alumnos,
 		                                                 'evals' => $todas_evaluaciones,
