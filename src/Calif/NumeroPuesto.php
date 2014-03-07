@@ -71,12 +71,13 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 	}
 	
 	static public function maestro_cambiado ($signal, &$params) {
-		/* En caso de que se actualice, asegurarse que si profesor de asignatura, los puestos también */
+		/* En caso de que se actualice, si profesor de asignatura asegurarse de que los puestos también */
 		$nrc = $params['nrc'];
 		
 		$maestro = new Calif_Maestro ($nrc->maestro);
 		
-		$puestos = $nrc->get_calif_numeropuesto_list ();
+		$sql = new Gatuf_SQL ('(tipo=%s OR tipo=%s)', array ('t', 'p'));
+		$puestos = $nrc->get_calif_numeropuesto_list (array ('filter' => $sql->gen ()));
 		
 		foreach ($puestos as $puesto) {
 			/* Probar si cabe en su tiempo completo */
@@ -154,6 +155,32 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 	
 	}
 
+	static public function suplente_cambiado ($signal, &$params) {
+		/* En caso de que se actualice, si el suplente es profesor de asignatura
+		 * asegurarse de que los puestos también */
+		$nrc = $params['nrc'];
+		
+		$suplente = new Calif_Maestro ($nrc->suplente);
+		
+		$sql = new Gatuf_SQL ('(tipo=%s OR tipo=%s)', array ('u', 'q'));
+		$puestos = $nrc->get_calif_numeropuesto_list (array ('filter' => $sql->gen ()));
+		
+		foreach ($puestos as $puesto) {
+			/* Probar si cabe en su tiempo completo */
+			$tiempo_c = $suplente->maxTiempoCompleto () - $suplente->getCarga('t')->horas;
+			$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+			
+			if ($tiempo_c >= $puesto->horas) {
+				$puesto->carga = 't';
+			} else if ($tiempo_a >= $puesto->horas) {
+				$puesto->carga = 'a';
+			} else {
+				$puesto->carga = 'h';
+			}
+			$puesto->update ();
+		}
+	}
+	
 	static public function nrc_creado ($signal, &$params) {
 		/* Si el NRC se está creando, crear sus números de puesto */
 		$nrc = $params['nrc'];
@@ -184,6 +211,31 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 			}
 			
 			$puesto->create ();
+			if ($nrc->suplente != null) {
+				/* También crear número de puesto para el suplente */
+				$numero = $puesto_model->maxPuesto ();
+				
+				if ($numero < 99000) $numero = 99000;
+				$puesto_model->numero = $numero + 1;
+				$puesto_model->nrc = $nrc;
+				$puesto_model->tipo = 'u';
+				$puesto_model->horas = $materia->teoria;
+				
+				$suplente = $nrc->get_suplente ();
+				
+				$tiempo_c = $suplente->maxTiempoCompleto () - $suplete->getCarga('t')->horas;
+				$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+				
+				if ($tiempo_c >= $puesto_model->horas) {
+					$puesto->carga = 't';
+				} else if ($tiempo_a >= $puesto_model->horas) {
+					$puesto->carga = 'a';
+				} else {
+					$puesto->carga = 'h';
+				}
+				
+				$puesto_model->create ();
+			}
 		}
 		
 		if ($materia->practica > 0) {
@@ -209,6 +261,31 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 			}
 			
 			$puesto->create ();
+			if ($nrc->suplente != null) {
+				/* También crear número de puesto para el suplente */
+				$numero = $puesto_model->maxPuesto ();
+				
+				if ($numero < 99000) $numero = 99000;
+				$puesto_model->numero = $numero + 1;
+				$puesto_model->nrc = $nrc;
+				$puesto_model->tipo = 'q';
+				$puesto_model->horas = $materia->practica;
+				
+				$suplente = $nrc->get_suplente ();
+				
+				$tiempo_c = $suplente->maxTiempoCompleto () - $suplete->getCarga('t')->horas;
+				$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+				
+				if ($tiempo_c >= $puesto_model->horas) {
+					$puesto->carga = 't';
+				} else if ($tiempo_a >= $puesto_model->horas) {
+					$puesto->carga = 'a';
+				} else {
+					$puesto->carga = 'h';
+				}
+				
+				$puesto_model->create ();
+			}
 		}
 	}
 	
@@ -218,15 +295,16 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 		if ($params['tipo'] == 'teoria') {
 			$tipo = 'teoria';
 			$tipo_abr = 't'; 
+			$tipo_abr_2 = 'u'; /* Suplentes */
 		} else {
 			$tipo = 'practica';
 			$tipo_abr = 'p'; 
+			$tipo_abr_2 = 'q'; /* Suplentes */
 		}
 		
-		$nrcs = $materia->get_calif_seccion_list ();
-		
-		$sql = new Gatuf_SQL ('tipo=%s', $tipo_abr);
+		$sql = new Gatuf_SQL ('(tipo=%s OR tipo=%s)', array ($tipo_abr, $tipo_abr_2));
 		$where = $sql->gen ();
+		$nrcs = $materia->get_calif_seccion_list ();
 		
 		$puesto_model = new Calif_NumeroPuesto ();
 		
@@ -243,7 +321,7 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 				$puesto_model->tipo = $tipo_abr;
 				$puesto_model->horas = $materia->$tipo;
 				
-				$maestro = new Calif_Maestro ($nrc->maestro);
+				$maestro = $nrc->get_maestro ();
 				
 				$tiempo_c = $maestro->maxTiempoCompleto () - $maestro->getCarga('t')->horas;
 				$tiempo_a = $maestro->maxAsignatura () - $maestro->getCarga ('a')->horas;
@@ -257,14 +335,44 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 				}
 				
 				$puesto_model->create ();
+				
+				if ($nrc->suplente != null) {
+					/* También crear número de puesto para el suplente */
+					$numero = $puesto_model->maxPuesto ();
+					
+					if ($numero < 99000) $numero = 99000;
+					$puesto_model->numero = $numero + 1;
+					$puesto_model->nrc = $nrc;
+					$puesto_model->tipo = $tipo_abr_2;
+					$puesto_model->horas = $materia->$tipo;
+					
+					$suplente = $nrc->get_suplente ();
+					
+					$tiempo_c = $suplente->maxTiempoCompleto () - $suplente->getCarga('t')->horas;
+					$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+					
+					if ($tiempo_c >= $puesto_model->horas) {
+						$puesto->carga = 't';
+					} else if ($tiempo_a >= $puesto_model->horas) {
+						$puesto->carga = 'a';
+					} else {
+						$puesto->carga = 'h';
+					}
+					
+					$puesto_model->create ();
+				}
 			} else if ($puesto->count () != 0) {
 				if ($materia->$tipo == 0) {
 					/* Hay un número de puesto, y ya no tiene horas. Eliminarlo */
-					$puesto[0]->delete ();
+					foreach ($puesto as $p) {
+						$p->delete ();
+					}
 				} else {
 					/* Peor aún, son diferentes */
-					$puesto[0]->horas = $materia->$tipo;
-					$puesto[0]->update ();
+					foreach ($puesto as $p) {
+						$p->horas = $materia->$tipo;
+						$p->update ();
+					}
 				}
 			}
 		}

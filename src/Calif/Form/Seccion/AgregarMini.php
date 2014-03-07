@@ -108,7 +108,7 @@ class Calif_Form_Seccion_AgregarMini extends Gatuf_Form {
 		}
 		
 		$seccion->seccion = $num_sec;
-		
+		$seccion->suplente = null;
 		if ($commit) $seccion->create();
 		
 		return $seccion;

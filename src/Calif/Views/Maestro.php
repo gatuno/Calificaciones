@@ -111,7 +111,7 @@ class Calif_Views_Maestro {
 		foreach (Gatuf::factory ('Calif_Maestro')->getList (array ('view' => 'maestros_departamentos', 'filter' => $sql->gen ())) as $d) {
 			$depas[] = Gatuf::factory ('Calif_Departamento', $d->departamento);
 		}
-		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
+		$grupos = $maestro->get_primario_list (array ('view' => 'paginador'));
 		
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
@@ -185,7 +185,7 @@ class Calif_Views_Maestro {
 		
 		$totales = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
 		
-		$grupos = $maestro->get_calif_seccion_list (array ('view' => 'paginador'));
+		$grupos = $maestro->get_primario_list (array ('view' => 'paginador'));
 		
 		$puestos = array ();
 		

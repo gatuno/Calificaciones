@@ -32,6 +32,7 @@ class Calif_Seccion extends Gatuf_Model {
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
 			       'model' => 'Calif_Maestro',
+			       'relate_name' => 'primario',
 			),
 			'suplente' =>
 			array (
@@ -40,6 +41,7 @@ class Calif_Seccion extends Gatuf_Model {
 			       'model' => 'Calif_Maestro',
 			       'is_null' => true,
 			       'default' => null,
+			       'relate_name' => 'suplente',
 			),
 			'asignacion' =>
 			array (
