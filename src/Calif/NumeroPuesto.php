@@ -93,7 +93,67 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 			$puesto->update ();
 		}
 	}
+
+	static public function suplente_creado ($signal, &$params) {
+		$nrc = $params['nrc'];
+		
+		$materia = new Calif_Materia ($nrc->materia);
+		$suplente = new Calif_Maestro ($nrc->suplente);
+
+		if ($materia->teoria > 0) {
+			/* Crear un número de puesto para las horas de suplente teoria */
+			$puesto = new Calif_NumeroPuesto ();
+			$numero = $puesto->maxPuesto ();
+			
+			if ($numero < 99000) $numero = 99000;
+			$puesto->numero = $numero + 1;
+			$puesto->nrc = $nrc;
+			$puesto->tipo = 'u';
+			$puesto->horas = $materia->teoria;
+			
+			$tiempo_c = $suplente->maxTiempoCompleto () - $suplente->getCarga('t')->horas;
+			$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+			
+			if ($tiempo_c >= $puesto->horas) {
+				$puesto->carga = 't';
+			} else if ($tiempo_a >= $puesto->horas) {
+				$puesto->carga = 'a';
+			} else {
+				$puesto->carga = 'h';
+			}
+			
+			$puesto->create ();
+		}
+
+		if ($materia->practica > 0) {
+			/* Crear un número de puesto para las horas de suplente practica */
+			$puesto = new Calif_NumeroPuesto ();
+			$numero = $puesto->maxPuesto ();
+			
+			if ($numero < 99000) $numero = 99000;
+			$puesto->numero = $numero + 1;
+			$puesto->nrc = $nrc;
+			$puesto->tipo = 'q';
+			$puesto->horas = $materia->practica;
+			
+			$tiempo_c = $suplente->maxTiempoCompleto () - $suplente->getCarga('t')->horas;
+			$tiempo_a = $suplente->maxAsignatura () - $suplente->getCarga ('a')->horas;
+			
+			if ($tiempo_c >= $puesto->horas) {
+				$puesto->carga = 't';
+			} else if ($tiempo_a >= $puesto->horas) {
+				$puesto->carga = 'a';
+			} else {
+				$puesto->carga = 'h';
+			}
+			$puesto->create ();
+		}
+	}
 	
+	static public function suplente_eliminado ($signal, &$params) {
+	
+	}
+
 	static public function nrc_creado ($signal, &$params) {
 		/* Si el NRC se está creando, crear sus números de puesto */
 		$nrc = $params['nrc'];

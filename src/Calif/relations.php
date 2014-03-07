@@ -19,5 +19,8 @@ $m['Calif_Carrera'] = array ('relate_to' => array ('Calif_Division'));
 /* Conexión de señales aquí */
 Gatuf_Signal::connect('Calif_Seccion::created', array ('Calif_NumeroPuesto', 'nrc_creado'));
 Gatuf_Signal::connect('Calif_Seccion::maestroUpdated', array ('Calif_NumeroPuesto', 'maestro_cambiado'));
+Gatuf_Signal::connect('Calif_Seccion::suplenteCreated', array ('Calif_NumeroPuesto', 'suplente_creado'));
+Gatuf_Signal::connect('Calif_Seccion::suplenteUpdated', array ('Calif_NumeroPuesto', 'suplente_cambiado'));
+Gatuf_Signal::connect('Calif_Seccion::suplenteDelete', array ('Calif_NumeroPuesto', 'suplente_eliminado'));
 Gatuf_Signal::connect('Calif_Materia::horasUpdated', array ('Calif_NumeroPuesto', 'materia_horas_actualizado'));
 return $m;

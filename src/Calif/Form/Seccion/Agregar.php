@@ -74,7 +74,8 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 		));
 
-		array_unshift($choices, array('No asignado' => null));
+		$choices = array('No asignado' => 0) + $choices;
+		 
 		$this->fields['suplente'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => false,
@@ -161,8 +162,12 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		
 		$maestro = new Calif_Maestro ($this->cleaned_data['maestro']);
 		$seccion->maestro = $maestro;
-		$seccion->suplente = new Calif_Maestro ($this->cleaned_data['suplente']);
-		
+		if ($this->cleaned_data['suplente'] != 0){
+			$seccion->suplente = new Calif_Maestro ($this->cleaned_data['suplente']);
+		}
+		else{
+			$seccion->suplente = null;
+		}
 		if ($commit) $seccion->create();
 		
 		return $seccion;

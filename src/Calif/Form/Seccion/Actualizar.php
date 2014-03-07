@@ -41,7 +41,7 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 			$choices[$m->apellido . ' ' . $m->nombre] = $m->codigo;
 		}
 		
-		$this->fields['maestro'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['maestro'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => true,
 				'label' => 'Profesor',
@@ -53,9 +53,9 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 				'widget' => 'Gatuf_Form_Widget_SelectInput',
 		));
 
-		array_unshift($choices, array('No asignado' => null));
+		$choices = array('No asignado' => 0) + $choices;
 		
-		$this->fields['suplente'] = new Gatuf_Form_Field_Varchar(
+		$this->fields['suplente'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => false,
 				'label' => 'Suplente',
@@ -117,7 +117,27 @@ class Calif_Form_Seccion_Actualizar extends Gatuf_Form {
 			$params = array ('nrc' => $this->seccion);
 			Gatuf_Signal::send ('Calif_Seccion::maestroUpdated', 'Calif_Form_Seccion_Actualizar', $params);
 		}
-		
+
+		if ($this->seccion->suplente != null && $this->cleaned_data['suplente'] == 0) {
+			$this->seccion->suplente = null;
+			$params = array ('nrc' => $this->seccion);
+			/* Disparar suplente eliminado */
+			Gatuf_Signal::send ('Calif_Seccion::suplenteDelete', 'Calif_Form_Seccion_Actualizar', $params);
+		} else if ($this->seccion->suplente == null && $this->cleaned_data['suplente'] != 0) {
+			$suplente = new Calif_Maestro ($this->cleaned_data['suplente']);
+			$this->seccion->suplente = $suplente;
+			$params = array ('nrc' => $this->seccion);
+			/* Dispara suplente creado */
+			Gatuf_Signal::send ('Calif_Seccion::suplenteCreated', 'Calif_Form_Seccion_Actualizar', $params);
+		} else if ($this->seccion->suplente != $this->cleaned_data ['suplente']) {
+			/* Disparar suplente update */
+			$suplente = new Calif_Maestro ($this->cleaned_data['suplente']);
+			$this->seccion->suplente = $suplente;
+			$params = array ('nrc' => $this->seccion);
+			Gatuf_Signal::send ('Calif_Seccion::suplenteUpdated', 'Calif_Form_Seccion_Actualizar', $params);
+
+		}
+
 		$this->seccion->seccion = $this->cleaned_data['seccion'];
 		$this->seccion->update();
 		
