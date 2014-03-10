@@ -20,7 +20,6 @@ class Calif_Views_Seccion {
 			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
 			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
 			array ('maestro_apellido', 'Gatuf_Paginator_FKLink', 'Maestro'),
-			array ('suplente', 'Gatuf_Paginator_FKLink', 'Suplente'),
 		);
 		
 		$pag->items_per_page = 30;
