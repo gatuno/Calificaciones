@@ -104,7 +104,7 @@ class Calif_Views_Seccion {
 		$suplente = new Calif_Maestro ($seccion->suplente);
 		
 		$horarios = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
-		$puestos = $seccion->get_calif_numeropuesto_list ();
+		$puestos = $seccion->get_calif_numeropuesto_list ( array('order' => 'numero'));
 		
 		$alumnos = $seccion->get_grupos_list (array ('order' => 'apellido ASC, nombre ASC'));
 		if (count ($alumnos) == 0) $alumnos = array ();

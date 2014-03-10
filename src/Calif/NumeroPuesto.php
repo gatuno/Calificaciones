@@ -152,7 +152,15 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 	}
 	
 	static public function suplente_eliminado ($signal, &$params) {
-	
+		$nrc = $params['nrc'];
+		
+		$suplente = new Calif_Maestro ($nrc->suplente);
+		
+		$sql = new Gatuf_SQL ('(tipo=%s OR tipo=%s)', array ('u', 'q'));
+		$puestos = $nrc->get_calif_numeropuesto_list (array ('filter' => $sql->gen ()));
+		foreach($puestos as $puesto){
+			$puesto->delete();
+		}
 	}
 
 	static public function suplente_cambiado ($signal, &$params) {

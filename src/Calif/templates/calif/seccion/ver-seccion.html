@@ -1,9 +1,9 @@
 {extends 'calif/base.html'}
 {block body}
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
-<p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>.
+<p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a></br>
 {if $suplente.codigo}
-	Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a>.
+	Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a></br>
 {/if}
  <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor(es)</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
@@ -28,7 +28,7 @@
 	<tbody>
 	{foreach $puestos as $puesto}
 		<tr><td><a href="{url 'Calif_Views_Puestos::actualizarPuesto', $puesto.numero}">{$puesto.numero}</a></td>
-		<td>{if $puesto.tipo == 't'}Teoria{else}Practica{/if}</td>
+		<td>{if $puesto.tipo == 't'}Teoria{elseif $puesto.tipo == 'u'}Teoria Suplente{elseif $puesto.tipo == 'q'}Practica Suplente{else}Practica{/if}</td>
 		<td>{$puesto.horas}</td>
 		<td>{if $puesto.carga == 'a'}Asignatura (1001H ó 1002H){elseif $puesto.carga == 't'}Sobre su tiempo completo/medio tiempo (1003H){elseif $puesto.carga == 'h'}Honorífica (1004H){/if}</td>
 		</tr>
