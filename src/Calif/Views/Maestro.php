@@ -112,7 +112,11 @@ class Calif_Views_Maestro {
 			$depas[] = Gatuf::factory ('Calif_Departamento', $d->departamento);
 		}
 		$grupos = $maestro->get_primario_list (array ('view' => 'paginador'));
-		
+		if( $grupos_suplente = $maestro->get_suplente_list (array ('view' => 'paginador')) ){
+			foreach ($grupos_suplente as $suple) {
+			$grupos[] = $suple;
+			}
+		}
 		if (count ($grupos) == 0) {
 			$horario_maestro = null;
 			$grupos = array ();
@@ -123,21 +127,23 @@ class Calif_Views_Maestro {
 			$horario_maestro->opts['conflict-color'] = '#FFE428';
 			
 			foreach ($grupos as $grupo) {
-				$horas = $grupo->get_calif_horario_list (array ('view' => 'paginador'));
-				
-				foreach ($horas as $hora) {
-					$cadena_desc = $grupo->materia.' '.$grupo->seccion;
-					$dia_semana = strtotime ('next Monday');
+				if(!$grupo->suplente || $grupo->suplente == $maestro->codigo){
+					$horas = $grupo->get_calif_horario_list (array ('view' => 'paginador'));
 					
-					foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
-						if ($hora->$dia) {
-							$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->inicio),
-											             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->fin),
-											             'content' => $hora->salon_edificio.' '.$hora->salon_aula.'<br />'.$cadena_desc,
-											             'title' => '',
-											             'url' => '.', 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
+					foreach ($horas as $hora) {
+						$cadena_desc = $grupo->materia.' '.$grupo->seccion;
+						$dia_semana = strtotime ('next Monday');
+						
+						foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {
+							if ($hora->$dia) {
+								$horario_maestro->events[] = array ('start' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->inicio),
+												             'end' => date('Y-m-d ', $dia_semana).Calif_Utils_displayHora ($hora->fin),
+												             'content' => $hora->salon_edificio.' '.$hora->salon_aula.'<br />'.$cadena_desc,
+												             'title' => '',
+												             'url' => '.', 'color' => is_null ($hora->seccion_asignacion_color) ? '' : '#'.dechex ($hora->seccion_asignacion_color));
+							}
+							$dia_semana = $dia_semana + 86400;
 						}
-						$dia_semana = $dia_semana + 86400;
 					}
 				}
 			}
