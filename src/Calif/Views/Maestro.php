@@ -192,7 +192,11 @@ class Calif_Views_Maestro {
 		$totales = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
 		
 		$grupos = $maestro->get_primario_list (array ('view' => 'paginador'));
-		
+		if( $grupos_suplente = $maestro->get_suplente_list (array ('view' => 'paginador')) ){
+			foreach ($grupos_suplente as $suple) {
+				$grupos[] = $suple;
+			}
+		}
 		$puestos = array ();
 		
 		foreach ($grupos as $grupo) {
