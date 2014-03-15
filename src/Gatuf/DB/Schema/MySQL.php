@@ -88,7 +88,7 @@ class Gatuf_DB_Schema_MySQL {
 		$tables = array();
 		$cols = $model->_a['cols'];
 		$manytomany = array();
-		$sql = 'CREATE TABLE `'.$this->con->pfx.$model->_a['table'].'` (';
+		$sql = 'CREATE TABLE '.$this->con->dbname.'.`'.$this->con->pfx.$model->_a['table'].'` (';
 		foreach ($cols as $col => $val) {
 			$field = new $val['type']();
 			if ($field->type != 'manytomany') {
@@ -162,13 +162,13 @@ class Gatuf_DB_Schema_MySQL {
 			}
 			if ($val['type'] == 'unique') {
 			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
-				    sprintf('CREATE UNIQUE INDEX `%s` ON `%s` (%s);',
-						    $idx, $this->con->pfx.$model->_a['table'],
+				    sprintf('CREATE UNIQUE INDEX `%s` ON %s.`%s` (%s);',
+						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['table'],
 						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
 			} else {
 			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
-				    sprintf('CREATE INDEX `%s` ON `%s` (%s);',
-						    $idx, $this->con->pfx.$model->_a['table'],
+				    sprintf('CREATE INDEX `%s` ON %s.`%s` (%s);',
+						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['table'],
 						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
 			}
 		}
@@ -176,14 +176,14 @@ class Gatuf_DB_Schema_MySQL {
 			$field = new $val['type']();
 			if ($field->type == 'foreignkey') {
 				$index[$this->con->pfx.$model->_a['table'].'_'.$col.'_foreignkey'] =
-					sprintf('CREATE INDEX `%s` ON `%s` (`%s`);',
-					        $col.'_foreignkey_idx', $this->con->pfx.$model->_a['table'], $col);
+					sprintf('CREATE INDEX `%s` ON %s.`%s` (`%s`);',
+					        $col.'_foreignkey_idx', $this->con->dbname, $this->con->pfx.$model->_a['table'], $col);
 			}
 			if (isset($val['unique']) and $val['unique'] == true) {
 				$index[$this->con->pfx.$model->_a['table'].'_'.$col.'_unique'] =
-					sprintf('CREATE UNIQUE INDEX `%s` ON `%s` (%s);',
+					sprintf('CREATE UNIQUE INDEX `%s` ON %s.`%s` (%s);',
 					        $col.'_unique_idx',
-					        $this->con->pfx.$model->_a['table'],
+					        $this->con->dbname, $this->con->pfx.$model->_a['table'],
 					        Gatuf_DB_Schema::quoteColumn($col, $this->con)
 							);
 			}
@@ -240,7 +240,7 @@ class Gatuf_DB_Schema_MySQL {
 	function getSqlCreateConstraints($model) {
 		$table = $this->con->pfx.$model->_a['table'];
 		$constraints = array();
-		$alter_tbl = 'ALTER TABLE '.$table;
+		$alter_tbl = 'ALTER TABLE '.$this->con->dbname.'.'.$table;
 		$cols = $model->_a['cols'];
 		$manytomany = array();
 
@@ -288,7 +288,7 @@ class Gatuf_DB_Schema_MySQL {
 	function getSqlDelete($model) {
 		$cols = $model->_a['cols'];
 		$manytomany = array();
-		$sql = 'DROP TABLE IF EXISTS `'.$this->con->pfx.$model->_a['table'].'`';
+		$sql = 'DROP TABLE IF EXISTS `'.$this->con->dbname.'.'.$this->con->pfx.$model->_a['table'].'`';
 
 		foreach ($cols as $col => $val) {
 			$field = new $val['type']();
@@ -317,7 +317,7 @@ class Gatuf_DB_Schema_MySQL {
 	function getSqlDeleteConstraints($model) {
 		$table = $this->con->pfx.$model->_a['table'];
 		$constraints = array();
-		$alter_tbl = 'ALTER TABLE '.$table;
+		$alter_tbl = 'ALTER TABLE '.$this->con->dbname.'.'.$table;
 		$cols = $model->_a['cols'];
 		$manytomany = array();
 

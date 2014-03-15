@@ -7,10 +7,6 @@ class Gatuf_Form_Widget_DatetimeJSInput extends Gatuf_Form_Widget_Input {
 	public $time_format = 'hh:mm';
 	
 	public function render($name, $value, $extra_attrs=array ()) {
-		if (strlen ($value) > 0) {
-			$value = date ($this->format, strtotime ($value.' GMT'));
-		}
-		
 		if (isset ($this->attrs['js_attrs'])) {
 			$js_attrs = $this->attrs['js_attrs'];
 			unset ($this->attrs['js_attrs']);
