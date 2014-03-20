@@ -156,4 +156,25 @@ class Calif_Maestro extends Gatuf_Model {
 	function __toString () {
 		return $this->apellido.' '.$this->nombre.' ('.$this->codigo.')';
 	}
+	
+	function displaygrado ($extra = null) {
+		switch ($this->grado) {
+			case 'I':
+				return 'Ing.';
+				break;
+			case 'L':
+				return 'Lic.';
+				break;
+			case 'D':
+				if ($this->sexo == 'F') return 'Dra.';
+				else return 'Dr.';
+				break;
+			case 'M':
+				if ($this->sexo == 'F') return 'Mtra.';
+				else return 'Mtro.';
+				break;
+			default:
+				throw new Exception ('No implementado');
+		}
+	}
 }

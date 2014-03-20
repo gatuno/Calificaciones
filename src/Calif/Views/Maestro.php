@@ -13,10 +13,11 @@ class Calif_Views_Maestro {
 			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
 			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
+			array ('grado', 'Gatuf_Paginator_FKExtra', 'Grado'),
 		);
 		
 		$pag->items_per_page = 50;
-		$pag->no_results_text = 'No se encontraron maestros';
+		$pag->no_results_text = 'No se encontraron profesores';
 		$pag->max_number_pages = 5;
 		$pag->configure ($list_display,
 			array ('codigo', 'nombre', 'apellido'),
@@ -26,7 +27,7 @@ class Calif_Views_Maestro {
 		$pag->setFromRequest ($request);
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/index.html',
-		                                         array('page_title' => 'Maestros',
+		                                         array('page_title' => 'Profesores',
                                                        'paginador' => $pag),
                                                  $request);
 	}

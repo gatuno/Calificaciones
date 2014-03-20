@@ -738,23 +738,6 @@ class Gatuf_Paginator {
         return Gatuf_HTTP_URL_urlForView($view, $params, $get_params, $encoded);
     }
     
-    function setExtraParams () {
-        $params = array();
-        if (!empty($this->search_fields)) {
-            if (!empty ($this->search_string)) $params['s'] = $this->search_string;
-        }
-        $params['p'] = $this->current_page;
-        if (!empty($this->sort_order)) {
-            $params['sk'] = $this->sort_order[0];
-            $params['so'] = ($this->sort_order[1] == 'ASC') ? 'a' : 'd';
-        }
-        // Add the filtering
-        if (!empty($this->active_list_filter)) {
-            $params['fk'] = $this->active_list_filter[0];
-            $params['fv'] = $this->active_list_filter[1];
-        }
-        $this->extra = $params;
-    }
     /**
      * Overloading of the get method.
      *
