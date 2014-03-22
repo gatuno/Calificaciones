@@ -14,6 +14,10 @@ a img {
 	margin-left: 0.3em;
 }
 
+body {
+	margin: 0px;
+}
+
 img,
 input,
 select,
@@ -64,20 +68,57 @@ td .icon {
 	margin-top:0;
 }
 
-.menu {
-	list-style-type: none;
-	display: inline;
-	float:left;
+.topmenu {
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	padding: 0px 5px;
+	background: none repeat scroll 0px 0px rgb(213, 234, 255);
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
 }
 
-.menu li {
-	display: inline;
+.topmenu-table {
+	border-spacing: 0px;
+	width: 100%;
+}
+
+.topmenu-table td {
+	padding: 0px;
+}
+
+.nav {
+	list-style: none outside none;
+	margin: 0px 8px;
+	padding-left: 0px;
+}
+
+.nav li {
+	display: block;
+	float: left;
+}
+
+.nav a {
+	padding: 15px 5px;
+	display: block;
+	text-decoration: none;
 }
 
 .userinfo {
 	float: right;
+	padding-top: 8px;
+	margin-right: 8px;
+	margin-left: 8px;
+	padding-bottom: 8px;
 }
 
-.body {
-	clear: both;
+.userinfo .login, .userinfo .logout {
+	margin: 0px;
+}
+
+.login a, .logout a {
+	text-decoration: none;
+}
+
+.titulo {
+	padding-top: 10px;
 }
