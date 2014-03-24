@@ -245,6 +245,18 @@ class Calif_User extends Gatuf_Model {
 		if (count ($coords) > 0) return true;
 		return false;
 	}
+
+	function isJefe () {
+		if (!$this->active) return false;
+		if ($this->administrator) return true;
+		
+		$perms = $this->getAllPermissions ();
+		
+		$jefes = preg_grep ('/SIIAU.jefe.*/', $perms);
+		
+		if (count ($jefes) > 0) return true;
+		return false;
+	}
 	
 	function returnCoord () {
 		if (!$this->active) return false;
@@ -252,6 +264,16 @@ class Calif_User extends Gatuf_Model {
 		$perms = $this->getAllPermissions ();
 		
 		$coords = preg_grep ('/SIIAU.coordinador.*/', $perms);
+		
+		return $coords;
+	}
+
+	function returnJefe () {
+		if (!$this->active) return false;
+		
+		$perms = $this->getAllPermissions ();
+		
+		$coords = preg_grep ('/SIIAU.jefe.*/', $perms);
 		
 		return $coords;
 	}
