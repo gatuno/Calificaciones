@@ -278,7 +278,7 @@ class Calif_Views_Materia {
 		$title = 'Nueva materia';
 		
 		$extra = array ();
-		
+		$extra['user'] = $request->user;
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Materia_Agregar ($request->POST, $extra);
 			

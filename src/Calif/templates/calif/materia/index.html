@@ -1,6 +1,8 @@
 {extends 'calif/base.html'}
 {block body}
+{if $user.administrator && $user.isJefe()}
 <p><a href="{url 'Calif_Views_Materia::agregarMateria'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar materia" />Agregar una nueva materia</a></p>
+{/if}
 <ul style="list-style-type: none;">
  {foreach $filtro as $key => $val}
 <li><a href="{url 'Calif_Views_Materia::eliminarFiltro', array($key)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar filtro" /></a>{$val}</li>
