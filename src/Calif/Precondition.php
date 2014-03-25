@@ -11,4 +11,15 @@ class Calif_Precondition {
 		}
 		return new Gatuf_HTTP_Response_Forbidden($request);
 	}
+
+	static public function jefeRequired($request) {
+		$res = Gatuf_Precondition::loginRequired($request);
+		if (true !== $res) {
+			return $res;
+		}
+		if ($request->user->isJefe()) {
+			return true;
+		}
+		return new Gatuf_HTTP_Response_Forbidden($request);
+	}
 }

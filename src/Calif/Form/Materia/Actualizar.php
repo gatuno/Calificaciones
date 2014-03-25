@@ -5,12 +5,16 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 	
 	public function initFields($extra=array()) {
 		$this->materia = $extra['materia'];
-		
+		$user = $extra['user'];
+
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList ();
+		$perm = $user->returnJefe();
 		
 		$choices = array ();
 		foreach ($departamentos as $departamento) {
-			$choices[$departamento->descripcion] = $departamento->clave;
+			if($user->administrator || in_array("SIIAU.jefe.".$departamento->clave, $perm)){
+				$choices[$departamento->descripcion] = $departamento->clave;
+			}
 		}
 		
 		$this->fields['departamento'] = new Gatuf_Form_Field_Varchar (

@@ -275,7 +275,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 		
-	public $agregarMateria_precond = array ('Gatuf_Precondition::adminRequired');
+	public $agregarMateria_precond = array ('Calif_Precondition::jefeRequired');
 	public function agregarMateria ($request, $match) {
 		$title = 'Nueva materia';
 		
@@ -300,7 +300,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 	
-	public $actualizarMateria_precond = array ('Gatuf_Precondition::adminRequired');
+	public $actualizarMateria_precond = array ('Calif_Precondition::jefeRequired');
 	public function actualizarMateria ($request, $match) {
 		$title = 'Actualizar materia';
 		
@@ -316,6 +316,7 @@ class Calif_Views_Materia {
 		}
 		
 		$extra = array ('materia' => $materia);
+		$extra['user'] = $request->user;
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Materia_Actualizar ($request->POST, $extra);
 			

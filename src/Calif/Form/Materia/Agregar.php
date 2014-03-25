@@ -1,6 +1,7 @@
 <?php
 
 class Calif_Form_Materia_Agregar extends Gatuf_Form {
+	
 	public function initFields($extra=array()) {
 		$user = $extra['user'];
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList();
