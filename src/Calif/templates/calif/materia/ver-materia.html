@@ -1,9 +1,12 @@
 {extends 'calif/base.html'}
 {block body}
+{aperm 'puedeEditar', $user, $permiso}
 <ul style="list-style-type: none;">
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">Detalles</a></li>
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::verEval', array ($materia.clave)}">Evaluación</a></li>
+{if $puedeEditar}
 <li style="display: inline;"><a href="{url 'Calif_Views_Materia::actualizarMateria', array ($materia.clave)}">Editar</a></li>
+{/if}
 </ul>
 <h2>Detalles</h2>
 <p>Departamento: <a href="{url 'Calif_Views_Materia::porDepartamento', array ($departamento.clave)}">{$departamento.descripcion}</a>.</p>

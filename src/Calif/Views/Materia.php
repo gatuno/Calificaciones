@@ -188,13 +188,15 @@ class Calif_Views_Materia {
 		
 		$carreras = $materia->get_carreras_list ();
 		if ($carreras->count () == 0) $carreras = array ();
-		
+		$dep = $materia->get_departamento ();
+		$perm = "SIIAU.jefe.".$dep->clave;
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/ver-materia.html',
 		                                         array('page_title' => $title,
 		                                               'materia' => $materia,
-		                                               'departamento' => $materia->get_departamento (),
+		                                               'departamento' => $dep,
 		                                               'calendario' => $calendario_materia,
 		                                               'carreras' => $carreras,
+		                                               'permiso' => $perm,
 		                                               'paginador' => $pag),
 		                                         $request);
 	}
