@@ -4,15 +4,50 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
-	<title>Sistema de Calificaciones</title>
+	<style type="text/css">
+		{foreach $menus as $menu}
+		.nav .{$menu.class} a:hover {literal}{{/literal}
+			background-color: #{$menu.color};
+		{literal}}{/literal}
+		{/foreach}
+	</style>
+	<title>Pato</title>
 </head>
 <body>
 	<div class="topmenu">
 		<table class="topmenu-table"><tr>
 			<td>
 				<ul class="nav">
-					<li><a href="#">Opcion 1</a></li>
-					<li><a href="#">Opcion 2</a></li>
+					<li class="general"><a href="#">General</a>
+						<ul>
+							<li><a href="{url 'Calif_Views_Alumno::index'}">Alumnos</a></li>
+							<li><a href="{url 'Calif_Views_Maestro::index'}">Profesores</a></li>
+							<li><a href="{url 'Calif_Views_Carrera::index'}">Carreras</a></li>
+							<li><a href="{url 'Calif_Views_Edificio::index'}">Edificios</a></li>
+							<li><a href="{url 'Calif_Views_Salon::index'}">Salones</a></li>
+						</ul>
+					</li>
+					<li class="calificaciones"><a href="#">Calificaciones</a>
+						<ul>
+							<li><a href="#">Divisiones</a></li>
+							<li><a href="{url 'Calif_Views_Departamento::index'}">Departamentos</a></li>
+							<li><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
+							<li><a href="{url 'Calif_Views_Evaluacion::index'}">Evaluaciones</a></li>
+							<li><a href="{url 'Calif_Views_Reportes::index'}">Reportes</a></li>
+							{if $user.administrator}
+								<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>
+							{/if}
+							<li><a href="{media}/docs/manual.pdf" >Manual</a></li>
+						</ul>
+					</li>
+					{foreach $menus as $menu}
+					<li class="{$menu.class}"><a href="{$menu.href}">{$menu.nombre}</a>
+					{if $menu.sub}
+						<ul>{foreach $menu.sub as $submenu}
+							<li><a href="{$submenu.href}">{$submenu.nombre}</a></li>
+						{/foreach}</ul>
+					{/if}</li>
+					{/foreach}
 				</ul>
 			</td>
 			<td><!-- Esta es la información del usuario -->
@@ -27,26 +62,10 @@
 			</td>
 		</tr></table>
 	</div>
-	{if $user and $user.id}
-	{getmsgs $user}{/if}
-	<ul>
-		<li><a href="{url 'Calif_Views_Alumno::index'}">Alumnos</a></li>
-		<li><a href="{url 'Calif_Views_Carrera::index'}">Carreras</a></li>
-		<li><a href="{url 'Calif_Views_Maestro::index'}">Profesores</a></li>
-		<li><a href="{url 'Calif_Views_Materia::index'}">Materias</a></li>
-		<li><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
-		<li><a href="{url 'Calif_Views_Edificio::index'}">Edificios</a></li>
-		<li><a href="{url 'Calif_Views_Salon::index'}">Salones</a></li>
-		<li><a href="{url 'Calif_Views_Departamento::index'}">Departamentos</a></li>
-		<li><a href="{url 'Calif_Views_Evaluacion::index'}">Evaluaciones</a></li>
-		<li><a href="{url 'Calif_Views_Reportes::index'}">Reportes</a></li>
-		{if $user.administrator}
-			<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>
-		{/if}
-		<li><a href="{media}/docs/manual.pdf" >Manual</a></li>
-	</ul>
-	<div class="body">
-		<p>Bienvenido</p>
+	{if $user and $user.id}{getmsgs $user}{/if}
+	<h1 class="titulo">Bienvenido</h1>
+	<div>
+		<p>Poner algo interesante aquí.</p>
 	</div>
 </body>
 </html>
