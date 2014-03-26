@@ -18,7 +18,7 @@
 		<table class="topmenu-table"><tr>
 			<td>
 				<ul class="nav">
-					<li class="general"><a href="#">General</a>
+					<li class="general"><a href="{url 'Calif_Views::index'}">General</a>
 						<ul>
 							<li><a href="{url 'Calif_Views_Alumno::index'}">Alumnos</a></li>
 							<li><a href="{url 'Calif_Views_Maestro::index'}">Profesores</a></li>
@@ -27,9 +27,10 @@
 							<li><a href="{url 'Calif_Views_Salon::index'}">Salones</a></li>
 						</ul>
 					</li>
-					<li class="calificaciones"><a href="#">Calificaciones</a>
+					<li class="calificaciones"><a href="{url 'Calif_Views::calif'}">Calificaciones</a>
 						<ul>
 							<li><a href="#">Divisiones</a></li>
+							<li><a href="{url 'Calif_Views_Materia::index'}">Materias</a></li>
 							<li><a href="{url 'Calif_Views_Departamento::index'}">Departamentos</a></li>
 							<li><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
 							<li><a href="{url 'Calif_Views_Evaluacion::index'}">Evaluaciones</a></li>
@@ -65,7 +66,7 @@
 	{if $user and $user.id}{getmsgs $user}{/if}
 	<h1 class="titulo">Bienvenido</h1>
 	<div>
-		<p>Poner algo interesante aquí.</p>
+		<p>Poner algo interesante aquí. Parte calificaciones</p>
 	</div>
 </body>
 </html>

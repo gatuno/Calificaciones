@@ -20,6 +20,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/calif/$#',
+	'base' => $base,
+	'model' => 'Calif_Views',
+	'method' => 'calif',
+);
+
+$ctl[] = array (
 	'regex' => '#^/login/$#',
 	'base' => $base,
 	'model' => 'Calif_Views',
@@ -639,18 +646,27 @@ $ctl[] = array(
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'permisos',
 );
+
 $ctl[] = array(
 	'regex' => '#^/permisos/add/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'AlterarPermiso',
 );
+
 $ctl[] = array(
 	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'AlterarGrupo',
 );
+
+$ctl[] = array (
+	'regex' => '#^/titulacion#',
+	'base' => $base,
+	'sub' => require Gatuf::config ('titulacion_views'),
+);
+
 $ctl[] = array (
 	'regex' => '#^/test/$#',
 	'base' => $base,

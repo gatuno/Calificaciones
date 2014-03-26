@@ -4,11 +4,14 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
-	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/smoothness/jquery-ui-1.8.16.custom.css" />
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-	{block extrahead}{/block}
-	<title>Pato - {$page_title}</title>
+	<style type="text/css">
+		{foreach $menus as $menu}
+		.nav .{$menu.class} a:hover {literal}{{/literal}
+			background-color: #{$menu.color};
+		{literal}}{/literal}
+		{/foreach}
+	</style>
+	<title>Pato</title>
 </head>
 <body>
 	<div class="topmenu">
@@ -61,10 +64,9 @@
 		</tr></table>
 	</div>
 	{if $user and $user.id}{getmsgs $user}{/if}
-	<h1 class="titulo">{$page_title}</h1>
+	<h1 class="titulo">Bienvenido</h1>
 	<div>
-		{block body}{/block}
+		<p>Parte general</p>
 	</div>
-{block javascript}{/block}
 </body>
 </html>

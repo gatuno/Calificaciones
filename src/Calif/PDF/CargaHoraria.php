@@ -20,7 +20,13 @@ class Calif_PDF_CargaHoraria extends External_FPDF {
 		$this->SetY (40);
 		$this->SetX (36);
 		
-		$this->Cell (160, 0, 'CUCEI/DIVEC/DCC/'.$this->oficio.'/2014', 0, 0, 'R');
+		$texto = strftime ('%Y');
+ 		
+		if ($this->departamento->clave == 1500) {
+			$this->Cell (160, 0, 'CUCEI/DIVEC/DCC/'.$this->oficio.'/'.$texto, 0, 0, 'R');
+		} else if ($this->departamento->clave == 1510) {
+			$this->Cell (160, 0, 'CUCEI/DIVEC/DEPEL/'.$this->oficio.'/'.$texto, 0, 0, 'R');
+		}
 		
 		$this->SetY (50);
 		$this->SetX (36);
