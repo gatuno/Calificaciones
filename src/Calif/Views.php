@@ -5,6 +5,10 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views {
 	function index ($request, $match) {
+		return Gatuf_Shortcuts_RenderToResponse ('general/index.html', array (), $request);
+	}
+	
+	function calif ($request, $match) {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/index.html', array (), $request);
 	}
 	

@@ -25,7 +25,7 @@
 <form method="post" action=".">
 <p>{$form.f.numero.labelTag}: {$form.f.numero|unsafe} <input type="submit" value="Cambiar numero de oficio" /></p>
 </form>
-<p>Imprimir para:
+<p>Imprimir para:</p>
 <ul>{foreach $departamentos as $d}
 	<li><a href="{url 'Calif_Views_Maestro::constanciaCargaHoraria', array ($maestro.codigo, $d.clave)}">{$d.descripcion}</a></li>
 {/foreach}</ul>

@@ -4,14 +4,8 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
-	<style type="text/css">
-		{foreach $menus as $menu}
-		.nav .{$menu.class} a:hover {literal}{{/literal}
-			background-color: #{$menu.color};
-		{literal}}{/literal}
-		{/foreach}
-	</style>
-	<title>Pato</title>
+	{block extrahead}{/block}
+	<title>Pato - {$page_title}</title>
 </head>
 <body>
 	<div class="topmenu">
@@ -64,9 +58,10 @@
 		</tr></table>
 	</div>
 	{if $user and $user.id}{getmsgs $user}{/if}
-	<h1 class="titulo">Bienvenido</h1>
+	<h1 class="titulo">{$page_title}</h1>
 	<div>
-		<p>Poner algo interesante aquí. Parte calificaciones</p>
+		{block body}{/block}
 	</div>
+{block javascript}{/block}
 </body>
 </html>

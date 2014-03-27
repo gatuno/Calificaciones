@@ -28,6 +28,7 @@ $cfg['pear_path'] = '/usr/share/php';
 # Ruta de los templates
 $cfg['template_folders'] = array(
    dirname(__FILE__).'/../templates',
+   '/home/www/sistemas/titulacion/src/Titulacion/templates',
 );
 
 # ---------------------------------------------------------------------------- #
@@ -48,11 +49,13 @@ $cfg['template_folders'] = array(
 #   $cfg['url_base'] = 'http://www.mydomain.com';
 #
 $cfg['calif_base'] = '/calificaciones';
+$cfg['titulacion_base'] = '/titulacion';
 $cfg['url_base'] = 'http://alanturing.cucei.udg.mx';
 $cfg['url_media'] = 'http://alanturing.cucei.udg.mx/calificaciones/media';
 
 
 $cfg['calif_views'] = dirname(__FILE__).'/urls.php';
+$cfg['titulacion_views'] = '/home/www/sistemas/titulacion/src/Titulacion/conf/urls.php';
 
 # ---------------------------------------------------------------------------- #
 #                      Sección de internacionalización                         #
@@ -96,10 +99,10 @@ $cfg['mail_host'] = 'localhost';
 $cfg['mail_port'] = 25;
 
 # the sender of all the emails.
-$cfg['from_email'] = 'calificaciones@cucei.udg.mx';
+$cfg['from_email'] = 'pato@cucei.udg.mx';
 
 # Email address for the bounced messages.
-$cfg['bounce_email'] = 'calificaciones@cucei.udg.mx';
+$cfg['bounce_email'] = 'pato@cucei.udg.mx';
 
 # -----------------------
 # Configuraciones varias
@@ -114,6 +117,6 @@ $cfg['gatuf_custom_user'] = 'Calif_User';
 $cfg['template_tags'] = array ('coordperm' => 'Calif_Template_CoordPerm',
 	'jefeperm' => 'Calif_Template_JefePerm');
 
-$cfg['installed_apps'] = array('Gatuf', 'Calif');
+$cfg['installed_apps'] = array('Gatuf', 'Calif', 'Titulacion');
 
 return $cfg;
