@@ -1,9 +1,9 @@
 {extends 'calif/base.html'}
 {block body}
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
-<p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a></br>
+<p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>
 {if $suplente.codigo}
-	Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a></br>
+	<br />Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a>
 {/if}
  <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor(es)</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
@@ -108,3 +108,6 @@ $(document).ready(function() {
 });
 </script>
 {/literal}{/block}
+{block extrahead}<link rel="stylesheet" media="all" type="text/css" href="{media}/css/smoothness/jquery-ui-1.8.16.custom.css" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>{/block}

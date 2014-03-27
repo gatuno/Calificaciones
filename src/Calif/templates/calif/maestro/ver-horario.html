@@ -3,7 +3,7 @@
 <h2>Horario del profesor</h2>
 {if $calendario}
 	<p>Vista para <a href="{url 'Calif_Views_Maestro::verHorarioPDF', array ($maestro.codigo)}">impresión</a></p>
-	<p>Departamentos a los que pertenece:
+	<p>Departamentos a los que pertenece:</p>
 	<ul>{foreach $departamentos as $d}
 		<li>{$d.descripcion}. Vista para <a href="{url 'verHorarioPorDepartamentoPDF', array ($maestro.codigo, $d.clave)}">impresión</a></li>
 	{/foreach}</ul>
