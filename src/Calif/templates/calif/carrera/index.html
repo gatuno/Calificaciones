@@ -1,6 +1,8 @@
 {extends 'calif/base.html'}
 {block body}
+{if $user.administrator || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Carrera::agregarCarrera'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Crear carrera" />Agregar nueva carrera</a></p>
+{/if}
 {if count ($divisiones) != 0}
 	{foreach $divisiones as $division}
 		<h3>{$division}</h3>

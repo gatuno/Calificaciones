@@ -1,6 +1,9 @@
 {extends 'calif/base.html'}
 {block body}
-<p>Existen las siguientes formas de evaluación para las materias. <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">Agregar una forma de evaluación</a></p>
+<p>Existen las siguientes formas de evaluación para las materias. 
+{if $user.administrator || $user.isCoord()}
+<a href="{url 'Calif_Views_Evaluacion::agregarEval'}">Agregar una forma de evaluación</a></p>
+{/if}
 {if $grupos_evals}
 	{foreach $grupos_evals as $grupo}
 		<h2>{$grupo.descripcion}</h2>
@@ -10,12 +13,19 @@
 				<li>{$eval.descripcion}</li>
 			{/foreach}
 			</ul>
+			{if $user.administrator || $user.isCoord()}
 			<p>Puede <a href="{url 'Calif_Views_Evaluacion::agregarEval', array (), array ('grupo' => $grupo.id)}">agregar otra forma de evaluación</a> para {$grupo.descripcion}.</p>
+			{/if}
 		{else}
-			<p>Su sistema no contiene formas de evaluación para {$grupo.descripcion}, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval', array (), array ('grupo' => $grupo.id)}">agregar una forma de evaluación</a></p>
+			<p>Su sistema no contiene formas de evaluación para {$grupo.descripcion}{if $user.administrator || $user.isCoord()}
+			, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval', array (), array ('grupo' => $grupo.id)}">agregar una forma de evaluación</a></p>
+			{/if}
 		{/if}
 	{/foreach}
 {else}
-	<p>Su sistema no contiene ninguna forma de evaluación. Si quiere que las materias sean evaluables, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación.</a></p>
+	<p>Su sistema no contiene ninguna forma de evaluación.
+	{if $user.administrator || $user.isCoord()}
+	 Si quiere que las materias sean evaluables, debería <a href="{url 'Calif_Views_Evaluacion::agregarEval'}">agregar una forma de evaluación.</a></p>
+	 {/if}
 {/if}
 {/block}
