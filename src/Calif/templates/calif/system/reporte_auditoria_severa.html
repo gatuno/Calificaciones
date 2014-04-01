@@ -15,7 +15,7 @@
 	<li>NRC: {$error[0].nrc}, materia: {$error[0].get_materia}, sección: {$error[0].seccion}<br />
 		<ul>
 		{if $error[0].maestro != $error[1].maestro}
-			<li>Los maestros difieren, en el sistema dice: {$error[0].get_maestro}, en siiau está {$error[1].get_maestro}</li>
+			<li>Los profesores difieren, en el sistema dice: {$error[0].get_maestro}, en siiau está {$error[1].get_maestro}</li>
 		{/if}
 		{if $error[0].materia != $error[1].materia}
 			<li>Las materias difieren, en el sistema dice: {$error[0].get_materia}, en siiau está {$error[1].get_materia}</li>

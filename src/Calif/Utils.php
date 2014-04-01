@@ -93,7 +93,7 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
 	
 	
 	if (!isset ($nombre) || !isset ($apellido)) {
-		throw new Exception ('Nombre del maestro raro. El dato en cuestión es: '.$linea);
+		throw new Exception ('Nombre del profesor raro. El dato en cuestión es: '.$linea);
 	}
 	$nombre = ucwords (strtolower (Calif_Utils_arreglar_n ($nombre)));
 	$apellido = ucwords (strtolower (Calif_Utils_arreglar_n ($apellido)));

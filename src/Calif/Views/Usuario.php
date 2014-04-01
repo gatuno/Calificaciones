@@ -22,7 +22,7 @@ class Calif_Views_Usuario {
                 	$usr = new Calif_Alumno ();
                 }
                 else{
-                	$tipo = 'Maestro ';
+                	$tipo = 'Profesor ';
                  	$usr = new Calif_Maestro ();
                  }
 		$usr->get ($usuario) ;
@@ -34,7 +34,7 @@ class Calif_Views_Usuario {
 		}
 		
 		$form = new Calif_Form_Usuario_Permisos (null, $extra);
-		$form2 =new Calif_Form_Usuario_Grupos (null, $extra);
+		$form2 = new Calif_Form_Usuario_Grupos (null, $extra);
 		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
 		                                         array('page_title' => 'Permisos',
 		                                         	'usuario' => $usr,

@@ -448,30 +448,30 @@ $ctl[] = array (
 	'method' => 'buscarSalon',
 );
 
-/* Los maestros */
+/* Los profesores */
 $ctl[] = array (
-	'regex' => '#^/maestros/$#',
+	'regex' => '#^/profesores/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
 	'method' => 'index',
 );
 
 $ctl[] = array (
-	'regex' => '#^/maestros/add/$#',
+	'regex' => '#^/profesores/add/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
 	'method' => 'agregarMaestro',
 );
 
 $ctl[] = array (
-	'regex' => '#^/maestros/(\d+)/$#',
+	'regex' => '#^/profesores/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Maestro',
 	'method' => 'porDepartamento',
 );
 
 $ctl[] = array (
-	'regex' => '#^/maestro/#',
+	'regex' => '#^/profesor/#',
 	'base' => $base,
 	'sub' => array (
 		array (
@@ -625,13 +625,13 @@ $ctl[] = array (
 			'method' => 'descargaPorDepartamentoHorasODS',
 		),
 		array (
-			'regex' => '#^maestros/carga/$#',
+			'regex' => '#^profesores/carga/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Maestro',
 			'method' => 'cargaHoraria',
 		),
 		array (
-			'regex' => '#^maestros/carga/(\d+)/$#',
+			'regex' => '#^profesores/carga/(\d+)/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Maestro',
 			'method' => 'cargaHorariaPorDepartamento',
