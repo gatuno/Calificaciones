@@ -648,6 +648,13 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
+	'regex' => '#^/pass/([0-9]{6,10})/cambiar/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'CambiarPassword',
+);
+
+$ctl[] = array(
 	'regex' => '#^/permisos/add/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
@@ -661,13 +668,13 @@ $ctl[] = array(
 	'method' => 'AlterarGrupo',
 );
 
-$ctl[] = array (
+$ctl[] = array(
 	'regex' => '#^/titulacion#',
 	'base' => $base,
 	'sub' => require Gatuf::config ('titulacion_views'),
 );
 
-$ctl[] = array (
+$ctl[] = array(
 	'regex' => '#^/test/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Test',
