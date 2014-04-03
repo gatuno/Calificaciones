@@ -471,6 +471,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/maestros/nofiltro/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Maestro',
+	'method' => 'eliminarFiltro',
+);
+
+$ctl[] = array (
 	'regex' => '#^/profesor/#',
 	'base' => $base,
 	'sub' => array (

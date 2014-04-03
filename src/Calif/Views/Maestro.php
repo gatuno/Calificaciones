@@ -6,7 +6,20 @@ class Calif_Views_Maestro {
 	public function index ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		
+		$dep = $request->session->getData('filtro_profesor_departamento', null);
+		$filtro = null;
 		$pag = new Gatuf_Paginator ($maestro);
+		if (!is_null ($dep)){
+			$departamento = new Calif_Departamento ();
+		
+			if (false === ($departamento->get ($dep))) {
+				throw new Gatuf_HTTP_Error404 ();
+			}
+			$filtro = $departamento->descripcion;
+			$sql = new Gatuf_SQL ('departamento=%s', $dep);
+			$pag->model_view = 'maestros_departamentos';
+			$pag->forced_where = $sql;
+		}
 		$pag->action = array ('Calif_Views_Maestro::index');
 		$pag->summary = 'Lista de maestros';
 		$list_display = array (
@@ -15,7 +28,7 @@ class Calif_Views_Maestro {
 			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
 			array ('grado', 'Gatuf_Paginator_FKExtra', 'Grado'),
 		);
-		
+
 		$pag->items_per_page = 50;
 		$pag->no_results_text = 'No se encontraron profesores';
 		$pag->max_number_pages = 5;
@@ -28,7 +41,8 @@ class Calif_Views_Maestro {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/index.html',
 		                                         array('page_title' => 'Profesores',
-                                                       'paginador' => $pag),
+		                                         		'filtro' => $filtro,
+                                                       	'paginador' => $pag),
                                                  $request);
 	}
 	
@@ -39,37 +53,17 @@ class Calif_Views_Maestro {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$maestro_model = new Calif_Maestro ();
+		$request->session->setData('filtro_profesor_departamento',$departamento->clave);
 		
-		$sql = new Gatuf_SQL ('departamento=%s', $departamento->clave);
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Maestro::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+
+	public function eliminarFiltro($request, $match){
+		$request->session->setData('filtro_profesor_departamento',null);
 		
-		$pag = new Gatuf_Paginator ($maestro_model);
-		$pag->model_view = 'maestros_departamentos';
-		$pag->forced_where = $sql;
-		
-		$pag->action = array ('Calif_Views_Maestro::porDepartamento', $departamento->clave);
-		$pag->summary = 'Lista de maestros';
-		$list_display = array (
-			array ('codigo', 'Gatuf_Paginator_FKLink', 'Código'),
-			array ('apellido', 'Gatuf_Paginator_DisplayVal', 'Apellido'),
-			array ('nombre', 'Gatuf_Paginator_DisplayVal', 'Nombre'),
-			array ('departamento', 'Gatuf_Paginator_FKLink', 'Horario'),
-		);
-		
-		$pag->items_per_page = 50;
-		$pag->no_results_text = 'No hay maestros en este departamento';
-		$pag->max_number_pages = 5;
-		$pag->configure ($list_display,
-			array ('codigo', 'nombre', 'apellido'),
-			array ('codigo', 'nombre', 'apellido')
-		);
-		
-		$pag->setFromRequest ($request);
-		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/por-departamento.html',
-		                                         array('page_title' => 'Maestros',
-                                                       'paginador' => $pag,
-                                                       'departamento' => $departamento),
-                                                 $request);
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Maestro::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
 	public function verMaestro ($request, $match) {

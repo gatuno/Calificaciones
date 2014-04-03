@@ -3,5 +3,8 @@
 {if $user.administrator || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Maestro::agregarMaestro'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar profesor" />Agregar un nuevo profesor</a></p>
 {/if}
+{if $filtro}
+<p><a href="{url 'Calif_Views_Maestro::eliminarFiltro'}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar filtro" />Lista de Profesores del {$filtro}</a></p>
+{/if}
 {$paginador.render}
 {/block}
