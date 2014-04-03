@@ -29,6 +29,13 @@ class Calif_Views_Maestro {
 			array ('grado', 'Gatuf_Paginator_FKExtra', 'Grado'),
 		);
 
+		if (!is_null ($dep)){
+			$perm = $request->user->returnJefe();
+			if( in_array("SIIAU.jefe.".$dep, $perm) || $request->user->administrator  ) {
+				array_push($list_display, array('departamento', 'Gatuf_Paginator_FKLink', 'Horario'));
+			}
+		}
+
 		$pag->items_per_page = 50;
 		$pag->no_results_text = 'No se encontraron profesores';
 		$pag->max_number_pages = 5;
