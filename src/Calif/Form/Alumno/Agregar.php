@@ -41,25 +41,6 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 					'size' => 30,
 				),
 		));
-		/* Preparar las carreras */
-		$carreras = Gatuf::factory ('Calif_Carrera')->getList (array ('order' => array ('Clave ASC')));
-		
-		$choices = array();
-		foreach ($carreras as $car) {
-			$choices [$car->clave.' - '.$car->descripcion] = $car->clave;
-		}
-		
-		$this->fields['carrera'] = new Gatuf_Form_Field_Varchar (
-			array (
-				'required' => true,
-				'label' => 'Carrera',
-				'initial' => '',
-				'widget_attrs' => array (
-					'choices' => $choices,
-				),
-				'help_text' => 'La carrera del estudiante',
-				'widget' => 'Gatuf_Form_Widget_SelectInput',
-		));
 		
 		$this->fields['correo'] = new Gatuf_Form_Field_Email (
 			array (
@@ -95,11 +76,9 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		$alumno = new Calif_Alumno ();
 		$user = new Calif_User ();
 		
-		$carrera = new Calif_Carrera ($this->cleaned_data['carrera']);
 		$alumno->codigo = $this->cleaned_data['codigo'];
 		$alumno->nombre = $this->cleaned_data['nombre'];
 		$alumno->apellido = $this->cleaned_data['apellido'];
-		$alumno->carrera = $carrera;
 		
 		$user->login = $this->cleaned_data['codigo'];
 		$user->email = $this->cleaned_data['correo'];

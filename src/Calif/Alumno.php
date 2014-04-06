@@ -16,12 +16,6 @@ class Calif_Alumno extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 9,
 			),
-			'carrera' =>
-			array (
-			       'type' => 'Gatuf_DB_Field_Foreignkey',
-			       'model' => 'Calif_Carrera',
-			       'blank' => false,
-			),
 			'nombre' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Varchar',
@@ -51,27 +45,11 @@ class Calif_Alumno extends Gatuf_Model {
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';
-		
-		$this->_a['views'] = array (
-			'paginador' => array (
-				'select' => $this->_con->pfx.'alumnos_view.*',
-				'from' => $this->_con->dbname.'.'.$this->_con->pfx.'alumnos_view',
-				'props' => array ('carrera_desc'),
-			),
-		);
 	}
 	
 	function getUser () {
 		$sql = new Gatuf_SQL ('login=%s', $this->codigo);
 		$this->user = Gatuf::factory ('Calif_User')->getOne (array ('filter' => $sql->gen ()));
-	}
-	
-	public function displaycarrera ($extra=null) {
-		return '<abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr>';
-	}
-	
-	public function displaylinkedcarrera ($extra=null) {
-		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::porCarrera', array ($this->carrera)).'"><abbr title="'.$this->carrera_desc.'">'.$this->carrera.'</abbr></a>';
 	}
 	
 	public function displaylinkedcodigo ($extra=null) {

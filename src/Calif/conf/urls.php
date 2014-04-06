@@ -182,12 +182,12 @@ $ctl[] = array(
 	'method' => 'agregarAlumno',
 );
 
-$ctl[] = array(
+/*$ctl[] = array(
 	'regex' => '#^/alumnos/([A-Za-z]{3,5})/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Alumno',
 	'method' => 'porCarrera',
-);
+);*/
 
 $ctl[] = array(
 	'regex' => '#^/alumno/#',

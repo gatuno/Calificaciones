@@ -174,15 +174,6 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	/* Crear todas las vistas necesarias */
 	$db = Gatuf::db ();
 	
-	/* Vista de alumnos: */
-	$alumno_tabla = Gatuf::factory ('Calif_Alumno')->getSqlTable ();
-	$carrera_tabla = Gatuf::factory ('Calif_Carrera')->getSqlTable ();
-	$sql = 'CREATE VIEW '.$db->pfx.'alumnos_view AS '."\n"
-	    .'SELECT '.$alumno_tabla.'.*, '.$carrera_tabla.'.descripcion as carrera_desc'."\n"
-	    .'FROM '.$alumno_tabla."\n"
-	    .'LEFT JOIN '.$carrera_tabla.' ON '.$alumno_tabla.'.carrera = '.$carrera_tabla.'.clave';
-	$db->execute ($sql);
-	
 	$materia_tabla = Gatuf::factory ('Calif_Materia')->getSqlTable ();
 	$departamento_tabla = Gatuf::factory ('Calif_Departamento')->getSqlTable ();
 	
@@ -205,6 +196,7 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	/* Vista de horarios */
 	$horario_tabla = Gatuf::factory ('Calif_Horario')->getSqlTable ();
 	$salon_tabla = Gatuf::factory ('Calif_Salon')->getSqlTable ();
+	$carrera_tabla = Gatuf::factory ('Calif_Carrera')->getSqlTable ();
 	
 	$sql = 'CREATE VIEW '.$db->pfx.'horarios_view AS '."\n"
 	     .'SELECT '.$horario_tabla.'.*, '.$salon_tabla.'.aula AS salon_aula, '.$salon_tabla.'.edificio AS salon_edificio,'."\n"
@@ -229,8 +221,7 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 function Calif_Migrations_Install_1Vistas_teardown ($params = null) {
 	$db = Gatuf::db ();
 	
-	$views = array ('alumnos_view',
-	                'materias_view',
+	$views = array ('materias_view',
 	                'secciones_view',
 	                'horarios_view',
 	                'maestros_departamentos');
