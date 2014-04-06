@@ -58,7 +58,7 @@
 					{if $user.type == 'm'}<a href="{url 'Calif_Views_Maestro::verMaestro', array($user.login)}"><strong>{$user.extra.nombre} {$user.extra.apellido}</strong></a>{/if}
 					{if $user.type == 'a'}<a href="{url 'Calif_Views_Alumno::verAlumno', array($user.login)}"><strong>{$user.extra.nombre} {$user.extra.apellido}</strong></a>{/if}
 					<a href="{url 'Calif_Views::logout'}">&nbsp;<img class="icon" src="{media '/img/application-exit.png'}" alt="Salir" />Salir</a></p>
-				{else}<p class="login"><a href="{url 'Calif_Views::login'}">Iniciar sesión</a></p>{/if}
+				{else}<p class="login"><a href="{url 'Calif_Views::login', array (), array ('_redirect_after' => $uri)}">Iniciar sesión</a></p>{/if}
 				</div>
 			</td>
 		</tr></table>

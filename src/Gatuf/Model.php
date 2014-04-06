@@ -101,11 +101,11 @@ class Gatuf_Model {
 	public function getRelationKeysToModel($model, $type) {
 		$keys = array();
 		foreach ($this->_a['cols'] as $col => $val) {
-			if (isset($val['model']) && $model === $val['model']) {
-				$field = new $val['type']();
-				if ($type === $field->type) {
-					$keys[$col] = $val;
-				}
+			$field_type = '';
+			if ($val['type'] == 'Gatuf_DB_Field_Manytomany') $field_type = 'manytomany';
+			if ($val['type'] == 'Gatuf_DB_Field_Foreignkey') $field_type = 'foreignkey';
+			if (isset($val['model']) && $model === $val['model'] && $type === $field_type) {
+				$keys[$col] = $val;
 			}
 		}
 
@@ -165,7 +165,6 @@ class Gatuf_Model {
 	 * @param object Object to associate to the current object
 	 */
 	function delAssoc($model) {
-
 		//check if ok to make the association
 		//current model has a many to many key with $model
 		//$model has a many to many key with current model
@@ -284,7 +283,7 @@ class Gatuf_Model {
 		// Extra methods added by fields
 		if (isset($this->_m['extra'][$method])) {
 			$args = array_merge(array($this->_m['extra'][$method][0], $method, $this), $args);
-			Pluf::loadFunction($this->_m['extra'][$method][1]);
+			Gatuf::loadFunction($this->_m['extra'][$method][1]);
 			return call_user_func_array($this->_m['extra'][$method][1], $args);
 		}
 		throw new Exception(sprintf('Method "%s" not available.', $method));
@@ -502,10 +501,19 @@ class Gatuf_Model {
 		} else {
 			// Many to many: We generate a special view that is making
 			// the join
-			$hay = array(strtolower(Gatuf::factory($model)->_a['model']), 
+			$hay = array(strtolower($m->_a['model']), 
 						 strtolower($this->_a['model']));
+			// Calcular la base de datos que contiene la relación M-N
+			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+				// La relación la tiene el $hay[1]
+				$dbname = $this->_con->dbname;
+				$dbpfx = $this->_con->pfx;
+			} else {
+				$dbname = $m->_con->dbname;
+				$dbpfx = $m->_con->pfx;
+			}
 			sort($hay);
-			$table = $hay[0].'_'.$hay[1].'_assoc';
+			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 			if (isset($m->_a['views'][$p['view']])) {
 				$m->_a['views'][$p['view'].'__manytomany__'] = $m->_a['views'][$p['view']];
 				if (!isset($m->_a['views'][$p['view'].'__manytomany__']['join'])) {
@@ -520,8 +528,8 @@ class Gatuf_Model {
 				$p['view'] = '';
 			}
 			$m->_a['views'][$p['view'].'__manytomany__']['join'] .= 
-				' LEFT JOIN '.$this->_con->pfx.$table.' ON '
-				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.(isset ($m->_a['views'][$p['view'].'__manytomany__']['from']) ? $m->_a['views'][$p['view'].'__manytomany__']['from'] : $this->_con->pfx.$m->_a['table']).'.'.$m->primary_key;
+				' LEFT JOIN '.$dbname.'.'.$table.' ON '
+				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.(isset ($m->_a['views'][$p['view'].'__manytomany__']['from']) ? $m->_a['views'][$p['view'].'__manytomany__']['from'] : $m->_con->pfx.$m->_a['table']).'.'.$m->primary_key;
 
 			$m->_a['views'][$p['view'].'__manytomany__']['where'] = $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).'='.$this->_con->esc ($this->_data[$this->primary_key]);
 			$p['view'] = $p['view'].'__manytomany__';

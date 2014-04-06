@@ -58,7 +58,7 @@ class Calif_Seccion extends Gatuf_Model {
 		$this->_a['views'] = array (
 			'paginador' => array (
 				'select' => $this->_con->pfx.'secciones_view.*',
-				'from' => $this->_con->pfx.'secciones_view',
+				'from' => $this->_con->dbname.'.'.$this->_con->pfx.'secciones_view',
 				'props' => array ('materia_desc', 'materia_departamento', 'maestro_nombre', 'maestro_apellido'),
 			),
 		);

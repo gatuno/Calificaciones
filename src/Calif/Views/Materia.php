@@ -18,10 +18,19 @@ class Calif_Views_Materia {
 			$filtro['c'] = 'Carrera de '.$carrera->descripcion;
 			$hay = array(strtolower($carrera->_a['model']), 
 							 strtolower($materia->_a['model']));
+			// Calcular la base de datos que contiene la relación M-N
+			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+				// La relación la tiene el $hay[1]
+				$dbname = $materia->_con->dbname;
+				$dbpfx = $materia->_con->pfx;
+			} else {
+				$dbname = $carrera->_con->dbname;
+				$dbpfx = $carrera->_con->pfx;
+			}
 			sort($hay);
-			$table = $hay[0].'_'.$hay[1].'_assoc';
+			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 			
-			$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$carrera->_con->pfx.$table.' ON '
+			$materia->_a['views']['paginador']['join'] = ' LEFT JOIN '.$dbname.'.'.$table.' ON '
 					.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = '.$carrera->_con->pfx.$carrera->primary_key;
 			$key = $carrera->primary_key;
 			$materia->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
