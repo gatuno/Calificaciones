@@ -147,10 +147,19 @@ class Gatuf_Model {
 			return false;
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
+		// Calcular la base de datos que contiene la relación M-N
+		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+			// La relación la tiene el $hay[1]
+			$dbname = $this->_con->dbname;
+			$dbpfx = $this->_con->pfx;
+		} else {
+			$dbname = $model->_con->dbname;
+			$dbpfx = $model->_con->pfx;
+		}
 		sort($hay);
 		$pk = $model->primary_key;
-		$table = $hay[0].'_'.$hay[1].'_assoc';
-		$req = 'INSERT INTO '.$this->_con->pfx.$table."\n";
+		$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
+		$req = 'INSERT INTO '.$dbname.'.'.$table."\n";
 		$req .= '('.$this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).', '
 			.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).') VALUES '."\n";
 		$req .= '('.$this->_toDb($this->_data[$this->primary_key], $this->primary_key).', ';
@@ -175,9 +184,18 @@ class Gatuf_Model {
 			return false;
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
+		// Calcular la base de datos que contiene la relación M-N
+		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+			// La relación la tiene el $hay[1]
+			$dbname = $this->_con->dbname;
+			$dbpfx = $this->_con->pfx;
+		} else {
+			$dbname = $model->_con->dbname;
+			$dbpfx = $model->_con->pfx;
+		}
 		sort($hay);
-		$table = $hay[0].'_'.$hay[1].'_assoc';
-		$req = 'DELETE FROM '.$this->_con->pfx.$table.' WHERE'."\n";
+		$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
+		$req = 'DELETE FROM '.$dbname.'.'.$table.' WHERE'."\n";
 		$req .= $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).' = '.$this->_toDb($this->_data[$this->primary_key], $this->primary_key);
 		$req .= ' AND '.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).' = '.$this->_toDb($model->$pk, $model->primary_key);
 		$this->_con->execute($req);

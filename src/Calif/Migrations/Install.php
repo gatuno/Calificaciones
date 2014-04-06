@@ -82,14 +82,14 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	
 	$hay = array (strtolower ('Calif_Alumno'), strtolower('Calif_Seccion'));
 	sort ($hay);
-	$t_asso = $db->pfx.$hay[0].'_'.$hay[1].'_assoc';
+	$t_asso = $db->dbname.'.'.$db->pfx.$hay[0].'_'.$hay[1].'_assoc';
 	
 	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
 	$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
 	$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
 	$promedio_tabla = Gatuf::factory ('Calif_Promedio')->getSqlTable ();
 	
-	$sql = 'CREATE TRIGGER '.$db->pfx.'insert_alumno AFTER INSERT ON '.$t_asso."\n"
+	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'insert_alumno AFTER INSERT ON '.$t_asso."\n"
 	    .'FOR EACH ROW BEGIN'."\n"
 	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
 	    .'SELECT NEW.calif_seccion_nrc, NEW.calif_alumno_codigo, P.evaluacion, NULL FROM '.$seccion_tabla.' AS S'."\n"
@@ -107,7 +107,7 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .'END';
 	$db->execute ($sql);
 	
-	$sql = 'CREATE TRIGGER '.$db->pfx.'delete_alumno AFTER DELETE ON '.$t_asso."\n"
+	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'delete_alumno AFTER DELETE ON '.$t_asso."\n"
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'DELETE FROM '.$calificacion_tabla.' WHERE Alumno = OLD.calif_alumno_codigo AND Nrc = OLD.calif_seccion_nrc;'."\n"
 	    .'UPDATE '.$promedio_tabla.' AS PP'."\n"
@@ -123,7 +123,7 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .'END';
 	$db->execute ($sql);
 	
-	$sql = 'CREATE TRIGGER '.$db->pfx.'insert_evaluacion AFTER INSERT ON '.$porcentaje_tabla."\n"
+	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'insert_evaluacion AFTER INSERT ON '.$porcentaje_tabla."\n"
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
 	    .'SELECT G.calif_seccion_nrc, G.calif_alumno_codigo, NEW.evaluacion, NULL'."\n"
@@ -137,7 +137,7 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .'END';
 	$db->execute ($sql);
 	
-	$sql = 'CREATE TRIGGER '.$db->pfx.'delete_evaluacion AFTER DELETE ON '.$porcentaje_tabla."\n"
+	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'delete_evaluacion AFTER DELETE ON '.$porcentaje_tabla."\n"
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'DELETE C FROM '.$calificacion_tabla.' AS C, '.$seccion_tabla.' AS S WHERE C.nrc = S.nrc'."\n"
 	    .'AND S.materia = OLD.materia AND C.evaluacion = OLD.evaluacion;'."\n"
@@ -146,7 +146,7 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 	    .'END';
 	$db->execute ($sql);
 	
-	$sql = 'CREATE TRIGGER '.$db->pfx.'update_promedios AFTER UPDATE ON '.$calificacion_tabla."\n"
+	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'update_promedios AFTER UPDATE ON '.$calificacion_tabla."\n"
 	    .' FOR EACH ROW BEGIN'."\n"
 	    .'UPDATE '.$promedio_tabla.' as P'."\n"
 	    .'SET P.promedio = (SELECT AVG(GREATEST(COALESCE(C.valor,0),0)) FROM '.$calificacion_tabla.' as C WHERE C.evaluacion = NEW.evaluacion AND nrc = NEW.nrc)'."\n"
@@ -157,11 +157,11 @@ function Calif_Migrations_Install_Triggers_setup ($params = null) {
 
 function Calif_Migrations_Install_Triggers_teardown ($params = null) {
 	$db = Gatuf::db ();
-	$triggers = array ('insert_alumno',
-	                   'delete_alumno',
-	                   'insert_evaluacion',
-	                   'delete_evaluacion',
-	                   'update_promedios');
+	$triggers = array ($db->dbname.'.'.'insert_alumno',
+	                   $db->dbname.'.'.'delete_alumno',
+	                   $db->dbname.'.'.'insert_evaluacion',
+	                   $db->dbname.'.'.'delete_evaluacion',
+	                   $db->dbname.'.'.'update_promedios');
 	
 	foreach ($triggers as $trigger) {
 		$sql = 'DROP TRIGGER '.$db->pfx.$trigger;

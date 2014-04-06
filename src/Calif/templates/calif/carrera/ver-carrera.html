@@ -1,6 +1,6 @@
 {extends 'calif/base.html'}
 {block body}
-<p><a href="{url 'Calif_Views_Alumno::porCarrera', $carrera.clave}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Ver alumnos" />Ver alumnos</a></p>
+<!-- <p><a href="url 'Calif_Views_Alumno::porCarrera', $carrera.clave"><img class="icon" src="{media '/img/edit-find.png'}" alt="Ver alumnos" />Ver alumnos</a></p>-->
 <p><a href="{url 'Calif_Views_Materia::porCarrera', $carrera.clave}">Ver materias de esta carrera</a></p>
 {if $user.administrator || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Carrera::actualizarCarrera', $carrera.clave}">Actualizar carrera</a></p>
