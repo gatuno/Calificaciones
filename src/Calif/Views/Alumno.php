@@ -114,7 +114,7 @@ class Calif_Views_Alumno {
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-alumno.html',
-		                                         array('page_title' => 'Perfil público de Alumno',
+		                                         array('page_title' => 'Alumno '.$alumno->nombre.' '.$alumno->apellido,
 		                                               'alumno' => $alumno,
 		                                               'secciones' => $secciones,
 		                                               'promedios' => $promedios,

@@ -42,6 +42,17 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 				),
 		));
 		
+		$this->fields['sexo'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Sexo',
+				'initial' => '',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array(
+					'choices' => array ('Masculino' => 'M', 'Femenino' => 'F'),
+				),
+		));
+		
 		$this->fields['correo'] = new Gatuf_Form_Field_Email (
 			array (
 				'required' => true,
@@ -79,6 +90,7 @@ class Calif_Form_Alumno_Agregar extends Gatuf_Form {
 		$alumno->codigo = $this->cleaned_data['codigo'];
 		$alumno->nombre = $this->cleaned_data['nombre'];
 		$alumno->apellido = $this->cleaned_data['apellido'];
+		$alumno->sexo = $this->cleaned_data['sexo'];
 		
 		$user->login = $this->cleaned_data['codigo'];
 		$user->email = $this->cleaned_data['correo'];
