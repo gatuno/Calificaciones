@@ -4,6 +4,13 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
+	<style type="text/css">
+		{foreach $menus as $menu}
+		.nav .{$menu.klass} a:hover {literal}{{/literal}
+			background-color: #{$menu.color};
+		{literal}}{/literal}
+		{/foreach}
+	</style>
 	{block extrahead}{/block}
 	<title>Pato - {$page_title}</title>
 </head>
@@ -36,7 +43,7 @@
 						</ul>
 					</li>
 					{foreach $menus as $menu}
-					<li class="{$menu.class}"><a href="{$menu.href}">{$menu.nombre}</a>
+					<li class="{$menu.klass}"><a href="{$menu.href}">{$menu.nombre}</a>
 					{if $menu.sub}
 						<ul>{foreach $menu.sub as $submenu}
 							<li><a href="{$submenu.href}">{$submenu.nombre}</a></li>

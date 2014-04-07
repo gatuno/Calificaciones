@@ -22,5 +22,5 @@ Gatuf_Signal::connect('Calif_Seccion::suplenteCreated', array ('Calif_NumeroPues
 Gatuf_Signal::connect('Calif_Seccion::suplenteUpdated', array ('Calif_NumeroPuesto', 'suplente_cambiado'));
 Gatuf_Signal::connect('Calif_Seccion::suplenteDelete', array ('Calif_NumeroPuesto', 'suplente_eliminado'));
 Gatuf_Signal::connect('Calif_Materia::horasUpdated', array ('Calif_NumeroPuesto', 'materia_horas_actualizado'));
-Gatuf_Signal::connect('Gatuf_Template_Context_Request::construct', array('Calif_Template_ContextMenu', 'processContext'));
+Gatuf_Signal::connect('Gatuf_Template_Context_Request::construct', array('Calif_Middleware', 'processContext'));
 return $m;
