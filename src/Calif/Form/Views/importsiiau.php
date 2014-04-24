@@ -58,7 +58,7 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 				continue;
 			}
 			if (!isset ($secciones[$linea[$cabecera['nrc']]])) {
-				if ($seccion_model->getNrc ($linea[$cabecera['nrc']]) === false) continue;
+				if ($seccion_model->get ($linea[$cabecera['nrc']]) === false) continue;
 				/* TODO: Verificar que el nrc coincida con la materia y la sección */
 				$secciones[$linea[$cabecera['nrc']]] = clone ($seccion_model);
 			}
@@ -70,7 +70,7 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 		$carrera_model = new Calif_Carrera ();
 		
 		foreach ($carreras as $clave => $descripcion) {
-			if ($carrera_model->getCarrera($clave) === false) {
+			if ($carrera_model->get($clave) === false) {
 				$carrera_model->clave = $clave;
 				$carrera_model->descripcion = $descripcion;
 				
@@ -79,15 +79,21 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 		}
 		
 		$alumno_model = new Calif_Alumno ();
+		$user_model = new Calif_User ();
 		foreach ($alumnos as $codigo => $value) {
-			if ($alumno_model->getAlumno ($codigo) === false) {
+			if ($alumno_model->get ($codigo) === false) {
 				$alumno_model->codigo = $codigo;
-				$alumno_model->nombre = $value[0];
-				$alumno_model->apellido = $value[1];
-				$alumno_model->carrera = $value[2];
-				$alumno_model->correo = '';
+				$alumno_model->nombre = $value['nombre'];
+				$alumno_model->apellido = $value['apellido'];
+				
+				$user_model->login = $codigo;
+				$user_model->email = '';
+				$user_model->type = 'a';
+				$user_model->administrator = false;
+				$alumno_model->user = $user_model;
 				
 				$alumno_model->create ();
+				$user_model->create ();
 			}
 		}
 		
@@ -96,14 +102,24 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 		
 		rewind ($archivo);
 		
-		$req = sprintf ('TRUNCATE TABLE Calificaciones'); /* FIXME: prefijo de la tabla */
-		//$con->execute ($req);
+		/* Borrar los grupos y por ende las calificaciones */
+		$hay = array(strtolower('Calif_Alumno'), strtolower('Calif_Seccion'));
+		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+			// La relación la tiene el $hay[1]
+			$dbname = $this->_con->dbname;
+			$dbpfx = $this->_con->pfx;
+		} else {
+			$dbname = $seccion_model->_con->dbname;
+			$dbpfx = $seccion_model->_con->pfx;
+		}
+		sort($hay);
+		$grupos_tabla = $dbname.'.'.$dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 		
-		$req = sprintf ('TRUNCATE TABLE Grupos'); /* FIXME: prefijo de la tabla */
-		//$con->execute ($req);
+		$req = sprintf ('TRUNCATE TABLE %s', $grupos_tabla);
+		$con->execute ($req);
 		
-		$req = 'CREATE TABLE Grupos_RAM (`nrc` INT( 5 ) unsigned zerofill NOT NULL, `alumno` CHAR( 9 ) NOT NULL) ENGINE = MEMORY DEFAULT CHARSET=utf8';
-		
+		/* Cambiar el motor a MEMORY */
+		$req = sprintf ('ALTER TABLE %s ENGINE = MEMORY', $grupos_tabla);
 		$con->execute ($req);
 		
 		while (($linea = fgetcsv ($archivo, 400, ',', '"')) !== false) {
@@ -111,18 +127,12 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 			if ($no_campos < 20) continue;
 			
 			if (!isset ($secciones [$linea[$cabecera['nrc']]])) continue;
-			$secciones[$linea[$cabecera['nrc']]]->addAlumnoToRam ('Grupos_RAM', $linea[$cabecera['cod_al']]);
+			$alumno_model->get ($linea[$cabecera['cod_al']]);
+			$secciones[$linea[$cabecera['nrc']]]->setAssoc ($alumno_model);
 		}
-		$req = 'ALTER IGNORE TABLE Grupos_RAM ADD UNIQUE INDEX (nrc, alumno);';
-		$con->execute ($req);
 		
-		/* Copiar todos los datos de RAM a la tabla */
-		$req = sprintf ('INSERT INTO Grupos SELECT * FROM Grupos_RAM');
-		
-		$con->execute ($req);
-		
-		$req = 'DROP TABLE Grupos_RAM';
-		
+		/* Cambiar el motor a INNODB */
+		$req = sprintf ('ALTER TABLE %s ENGINE = INNODB', $grupos_tabla);
 		$con->execute ($req);
 		
 		fclose ($archivo);

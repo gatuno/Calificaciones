@@ -163,7 +163,7 @@ class Gatuf_Model {
 		$req .= '('.$this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).', '
 			.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).') VALUES '."\n";
 		$req .= '('.$this->_toDb($this->_data[$this->primary_key], $this->primary_key).', ';
-		$req .= $this->_toDb($model->$pk, $model->primary_key).')';
+		$req .= $model->_toDb($model->$pk, $model->primary_key).')';
 		$this->_con->execute($req);
 		return true;
 	}
@@ -197,7 +197,7 @@ class Gatuf_Model {
 		$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 		$req = 'DELETE FROM '.$dbname.'.'.$table.' WHERE'."\n";
 		$req .= $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).' = '.$this->_toDb($this->_data[$this->primary_key], $this->primary_key);
-		$req .= ' AND '.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).' = '.$this->_toDb($model->$pk, $model->primary_key);
+		$req .= ' AND '.$this->_con->qn(strtolower($model->_a['model']).'_'.$model->primary_key).' = '.$model->_toDb($model->$pk, $model->primary_key);
 		$this->_con->execute($req);
 		return true;
 	}
@@ -216,7 +216,8 @@ class Gatuf_Model {
 		}
 		foreach ($ids as $id) {
 			$m = new $model_name($id);
-			if ($m->$m->primary_key == $id) {
+			$key = $m->primary_key;
+			if ($m->$key == $id) {
 				$this->setAssoc($m);
 			}
 		}
