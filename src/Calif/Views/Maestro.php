@@ -13,12 +13,14 @@ class Calif_Views_Maestro {
 			$departamento = new Calif_Departamento ();
 		
 			if (false === ($departamento->get ($dep))) {
-				throw new Gatuf_HTTP_Error404 ();
+				$dep = null;
+				$request->session->setData('filtro_profesor_departamento', null);
+			} else {
+				$filtro = $departamento->descripcion;
+				$sql = new Gatuf_SQL ('departamento=%s', $dep);
+				$pag->model_view = 'maestros_departamentos';
+				$pag->forced_where = $sql;
 			}
-			$filtro = $departamento->descripcion;
-			$sql = new Gatuf_SQL ('departamento=%s', $dep);
-			$pag->model_view = 'maestros_departamentos';
-			$pag->forced_where = $sql;
 		}
 		$pag->action = array ('Calif_Views_Maestro::index');
 		$pag->summary = 'Lista de maestros';
@@ -29,11 +31,8 @@ class Calif_Views_Maestro {
 			array ('grado', 'Gatuf_Paginator_FKExtra', 'Grado'),
 		);
 
-		if (!is_null ($dep)){
-			$perm = $request->user->returnJefe();
-			if( in_array("SIIAU.jefe.".$dep, $perm) || $request->user->administrator  ) {
-				array_push($list_display, array('departamento', 'Gatuf_Paginator_FKLink', 'Horario'));
-			}
+		if (!is_null ($dep) && $request->user->hasPerm ('SIIAU.jefe.'.$dep)){
+			array_push($list_display, array('departamento', 'Gatuf_Paginator_FKLink', 'Horario'));
 		}
 
 		$pag->items_per_page = 50;
