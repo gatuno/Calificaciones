@@ -1,16 +1,14 @@
 <?php
 
 class Calif_Form_Materia_Agregar extends Gatuf_Form {
-	
 	public function initFields($extra=array()) {
 		$user = $extra['user'];
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList();
 
-		$perm = $user->returnJefe();
 		$choices = array ();
-
+		
 		foreach ($departamentos as $departamento) {
-			if($user->administrator || in_array("SIIAU.jefe.".$departamento->clave, $perm)){
+			if ($user->hasPerm ('SIIAU.jefe.'.$departamento->clave)){
 				$choices[$departamento->descripcion] = $departamento->clave;
 			}
 		}

@@ -1,18 +1,17 @@
 <?php
 
 class Calif_Form_Materia_Actualizar extends Gatuf_Form {
-	public $materia;
+	private $materia;
 	
 	public function initFields($extra=array()) {
 		$this->materia = $extra['materia'];
 		$user = $extra['user'];
 
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList ();
-		$perm = $user->returnJefe();
 		
 		$choices = array ();
 		foreach ($departamentos as $departamento) {
-			if($user->administrator || in_array("SIIAU.jefe.".$departamento->clave, $perm)){
+			if ($user->hasPerm ('SIIAU.jefe.'.$departamento->clave)){
 				$choices[$departamento->descripcion] = $departamento->clave;
 			}
 		}
@@ -108,7 +107,6 @@ class Calif_Form_Materia_Actualizar extends Gatuf_Form {
 		}
 		
 		foreach (array ('teoria', 'practica') as $hora) {
-			
 			if ($this->materia->$hora != $this->cleaned_data[$hora]) {
 				/* Disparar la señal */
 				$this->materia->$hora = $this->cleaned_data[$hora];

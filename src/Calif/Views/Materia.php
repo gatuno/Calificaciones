@@ -252,7 +252,7 @@ class Calif_Views_Materia {
 		                                         $request);
 	}
 		
-	public $agregarACarrera_precond = array ('Gatuf_Precondition::adminRequired');	
+	public $agregarACarrera_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarACarrera ($request, $match) {
 		$title = 'Agregar Materia a una Carrera';
 		
