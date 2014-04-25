@@ -71,35 +71,32 @@ class Calif_Views_Usuario {
 					return new Gatuf_HTTP_Response_Redirect ($url);
 	
 	}
-
-	public function CambiarPassword($request, $match) {
-		$extra=array();
+	
+	public $passwordChange_precond = array ('Gatuf_Precondition::loginRequired');
+	public function passwordChange ($request, $match) {
+		$extra = array();
 		$extra['usuario'] = $request->user;
 		
-		if($match[1] == $request->user->login){
-			if ($request->method == 'POST') {
-				$form = new Calif_Form_Usuario_Password ($request->POST, $extra);
-				
-				if ($form->isValid()) {
-					$usuario = $form->save ();
-					
-					if($usuario->type == 'a'){
-						$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::verAlumno', array ($usuario->login));
-					}
-					else {
-						$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($usuario->login));
-					}
-					return new Gatuf_HTTP_Response_Redirect ($url);
-				}
-			} else {
-				$form = new Calif_Form_Usuario_Password (null, $extra);
-			}
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Usuario_Password ($request->POST, $extra);
 			
-			return Gatuf_Shortcuts_RenderToResponse ('calif/user/cambiar-password.html',
-			                                         array ('page_title' => 'Cambiar Contraseña',
-			                                                'form' => $form),
-			                                         $request);
+			if ($form->isValid()) {
+				$usuario = $form->save ();
+				
+				if($usuario->type == 'a'){
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::verAlumno', array ($usuario->login));
+				} else {
+					$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::verMaestro', array ($usuario->login));
+				}
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Usuario_Password (null, $extra);
 		}
-		throw new Gatuf_HTTP_Error404 ();
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/user/cambiar-password.html',
+		                                         array ('page_title' => 'Cambiar Contraseña',
+		                                                'form' => $form),
+		                                         $request);
 	}
 }

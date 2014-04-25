@@ -138,6 +138,13 @@ $ctl[] = array (
 	'method' => 'passwordRecovery',
 );
 
+$ctl[] = array(
+	'regex' => '#^/password/change/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'passwordChange',
+);
+
 /* Las carreras */
 $ctl[] = array(
 	'regex' => '#^/carreras/$#',
@@ -652,13 +659,6 @@ $ctl[] = array(
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
 	'method' => 'permisos',
-);
-
-$ctl[] = array(
-	'regex' => '#^/pass/([0-9]{6,10})/cambiar/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Usuario',
-	'method' => 'CambiarPassword',
 );
 
 $ctl[] = array(

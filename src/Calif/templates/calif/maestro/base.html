@@ -13,7 +13,7 @@
 <li style="display: inline;"><a href="{url 'Calif_Views_Usuario::permisos', array ($maestro.codigo)}">Permisos</a></li>
 {/if}
 {if $user.login == $maestro.codigo}
-<li style="display: inline;"><a href="{url 'Calif_Views_Usuario::CambiarPassword', array ($maestro.codigo)}">Cambiar Contraseña</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Usuario::passwordChange'}">Cambiar Contraseña</a></li>
 {/if}
 </ul>
 {block body_maestro}{/block}

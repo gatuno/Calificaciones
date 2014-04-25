@@ -1,20 +1,18 @@
 <?php
 
 class Calif_Form_Usuario_Password extends Gatuf_Form {
-	public $usuario;
+	private $usuario;
 	
 	public function initFields ($extra = array ()) {
 		$this->user = $extra['usuario'];
-
+		
 		$this->fields['actual'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => 'Actual',
-				'help_text' => 'La contraseña actual',
-				'max_length' => 50,
+				'label' => 'Contraseña actual',
+				'help_text' => 'Su actual contraseña',
 				'widget' => 'Gatuf_Form_Widget_PasswordInput',
 				'widget_attrs' => array (
-					'maxlength' => 50,
 					'size' => 30,
 				),
 		));
@@ -22,12 +20,10 @@ class Calif_Form_Usuario_Password extends Gatuf_Form {
 		$this->fields['nueva'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => 'Nueva',
+				'label' => 'Nueva contraseña',
 				'help_text' => 'La nueva contraseña',
-				'max_length' => 50,
 				'widget' => 'Gatuf_Form_Widget_PasswordInput',
 				'widget_attrs' => array (
-					'maxlength' => 50,
 					'size' => 30,
 				),
 		));
@@ -35,12 +31,10 @@ class Calif_Form_Usuario_Password extends Gatuf_Form {
 		$this->fields['repite'] = new Gatuf_Form_Field_Varchar (
 			array (
 				'required' => true,
-				'label' => 'Repite Nueva',
-				'help_text' => 'La nueva contraseña de nuevo',
-				'max_length' => 50,
+				'label' => 'Confirmar contraseña',
+				'help_text' => 'Por favor escriba de nuevo la contraseña',
 				'widget' => 'Gatuf_Form_Widget_PasswordInput',
 				'widget_attrs' => array (
-					'maxlength' => 50,
 					'size' => 30,
 				),
 		));
@@ -52,11 +46,11 @@ class Calif_Form_Usuario_Password extends Gatuf_Form {
 		$repite = $this->cleaned_data['repite'];
 		
 		if (!$this->user->checkPassword($actual) ) {
-			throw new Gatuf_Form_Invalid ('La contraseña es incorrecta');
+			throw new Gatuf_Form_Invalid ('Su contraseña actual no coincide');
 		}
 		
-		if ( $nueva != $repite) {
-			throw new Gatuf_Form_Invalid ('Los campos de contraseña nueva no coinciden');
+		if ($nueva != $repite) {
+			throw new Gatuf_Form_Invalid ('La nueva contraseña no coincide en ambos campos');
 		}
 		
 		return $this->cleaned_data;
@@ -64,7 +58,7 @@ class Calif_Form_Usuario_Password extends Gatuf_Form {
 	
 	public function save ($commit = true) {
 		if (!$this->isValid ()) {
-			throw new Exception ('Verifique que se han escrito correctamente las contraseñas');
+			throw new Exception ('Cannot save a invalid form');
 		}
 		
 		$this->user->setPassword($this->cleaned_data['nueva']);

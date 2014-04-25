@@ -72,9 +72,10 @@ td .icon {
 	left: 0px;
 	top: 0px;
 	width: 100%;
-	padding: 0px 5px;
+	padding: 0px 0px;
 	background: none repeat scroll 0px 0px rgb(68, 68, 68);
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.75);
+	margin-bottom: 20px;
 }
 
 .topmenu-table {
