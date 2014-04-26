@@ -45,28 +45,26 @@
 		{if $puestos[$g.nrc]}
 			{foreach $puestos[$g.nrc] as $p}
 				{assign $h++}
-				{if ($g.suplente == $maestro.codigo && ($p.tipo == 'u' || $p.tipo == 'q')) || ($g.maestro == $maestro.codigo && ($p.tipo == 't' || $p.tipo == 'p')) }
-					<td>{$p.numero}</td>
-					{if $p.tipo == 't'}
-						<td>Teoría</td>
-					{elseif $p.tipo =='p'}
-						<td>Práctica</td>
-					{elseif $p.tipo =='u'}
-						<td>Teoria Suplente</td>
-					{else}
-						<td>Práctica Suplente</td>
-					{/if}
-					<td>{$p.horas}</td>
-					{if $p.carga == 'a'}
-						<td>Asignatura</td>
-					{elseif $p.carga == 't'}
-						<td>Tiempo completo/medio tiempo</td>
-					{elseif $p.carga == 'h'}
-						<td>Honorifica</td>
-					{/if}
-					</tr>	
+				<td>{$p.numero}</td>
+				{if $p.tipo == 't'}
+					<td>Teoría</td>
+				{elseif $p.tipo =='p'}
+					<td>Práctica</td>
+				{elseif $p.tipo =='u'}
+					<td>Teoria Suplente</td>
+				{else}
+					<td>Práctica Suplente</td>
 				{/if}
-					{if $h != count($puestos[$g.nrc])}<tr>{/if}
+				<td>{$p.horas}</td>
+				{if $p.carga == 'a'}
+					<td>Asignatura</td>
+				{elseif $p.carga == 't'}
+					<td>Tiempo completo/medio tiempo</td>
+				{elseif $p.carga == 'h'}
+					<td>Honorifica</td>
+				{/if}
+				</tr>
+				{if $h != count($puestos[$g.nrc])}<tr>{/if}
 			{/foreach}
 		{else}
 			<td colspan="4">No hay numeros de puesto</td></tr>

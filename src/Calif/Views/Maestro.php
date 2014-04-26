@@ -193,15 +193,21 @@ class Calif_Views_Maestro {
 		$totales = array ('t' => $maestro->getCarga ('t'), 'a' => $maestro->getCarga ('a'), 'h' => $maestro->getCarga ('h'));
 		
 		$grupos = $maestro->get_primario_list (array ('view' => 'paginador'));
-		if( $grupos_suplente = $maestro->get_suplente_list (array ('view' => 'paginador')) ){
-			foreach ($grupos_suplente as $suple) {
-				$grupos[] = $suple;
-			}
+		$grupos_suplente = $maestro->get_suplente_list (array ('view' => 'paginador'));
+		
+		foreach ($grupos_suplente as $suple) {
+			$grupos[] = $suple;
 		}
+		
 		$puestos = array ();
 		
 		foreach ($grupos as $grupo) {
-			$nps = $grupo->get_calif_numeropuesto_list ();
+			/* Sólo jalar los números de puestos relevantes para el profesor */
+			if ($grupo->maestro == $maestro->codigo) {
+				$nps = $grupo->get_calif_numeropuesto_list (array ('filter' => "(tipo = 't' OR tipo = 'p')"));
+			} else {
+				$nps = $grupo->get_calif_numeropuesto_list (array ('filter' => "(tipo = 'u' OR tipo = 'q')"));
+			}
 			
 			if ($nps->count () == 0) $puestos[$grupo->nrc] = array ();
 			else $puestos[$grupo->nrc] = $nps;
