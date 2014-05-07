@@ -346,6 +346,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/([A-Za-z]{3,5})/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'porCarrera',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/error/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',

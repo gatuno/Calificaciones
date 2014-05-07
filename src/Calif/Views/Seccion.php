@@ -15,6 +15,34 @@ class Calif_Views_Seccion {
 		$pag = new Gatuf_Paginator ($seccion);
 		$pag->model_view = 'paginador';
 		$pag->action = array ('Calif_Views_Seccion::index');
+
+		/* Verificar filtro por Carrera */
+		$car = $request->session->getData('filtro_seccion_carrera', null);
+		if (!is_null ($car)){
+			$materia = new Calif_Materia ();
+			$carrera = new Calif_Carrera ();
+			$carrera->get ($car);
+			$filtro['c'] = 'Carrera de '.$carrera->descripcion;
+			$hay = array(strtolower($carrera->_a['model']), 
+							 strtolower($materia->_a['model']));
+			
+			// Calcular la base de datos que contiene la relación M-N
+			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+				// La relación la tiene el $hay[1]
+				$dbname = $materia->_con->dbname;
+				$dbpfx = $materia->_con->pfx;
+			} else {
+				$dbname = $carrera->_con->dbname;
+				$dbpfx = $carrera->_con->pfx;
+			}
+			sort($hay);
+			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
+			
+			$seccion->_a['views']['paginador']['join'] = ' LEFT JOIN '.$dbname.'.'.$table.' ON '
+					.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = materia';
+			$key = $carrera->primary_key;
+			$seccion->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
+		}
 		
 		/* Verificr filtro de secciones por departamento */
 		$dep = $request->session->getData('filtro_seccion_departamento',null);
@@ -73,10 +101,25 @@ class Calif_Views_Seccion {
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
+
+	public function porCarrera ($request, $match) {
+		$carrera = new Calif_Carrera ();
+		
+		if (false === ($carrera->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$request->session->setData('filtro_seccion_carrera',$match[1]);
+		
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
 	
 	public function eliminarFiltro($request, $match){
-		
-		$request->session->setData('filtro_seccion_departamento',null);
+		if($match[1] == 'd')
+			$request->session->setData('filtro_seccion_departamento',null);
+		if($match[1] == 'c')
+			$request->session->setData('filtro_seccion_carrera',null);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		
