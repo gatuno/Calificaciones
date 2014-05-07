@@ -353,6 +353,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/nofiltro/([cd])/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'eliminarFiltro',
+);
+
+$ctl[] = array (
 	'regex' => '#^/seccion/#',
 	'base' => $base,
 	'sub' => array (

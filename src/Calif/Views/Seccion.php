@@ -9,11 +9,23 @@ class Calif_Views_Seccion {
 	public function index ($request, $match) {
 		/* Utilizar un paginador aquí, por favor */
 		$seccion = new Calif_Seccion ();
-		
+		$filtro = array();
+
 		/* Enlaces extras */
 		$pag = new Gatuf_Paginator ($seccion);
 		$pag->model_view = 'paginador';
 		$pag->action = array ('Calif_Views_Seccion::index');
+		
+		/* Verificr filtro de secciones por departamento */
+		$dep = $request->session->getData('filtro_seccion_departamento',null);
+		if(!is_null ($dep) ){
+			$departamento = new Calif_Departamento ();
+			$departamento->get ($dep);
+			$filtro['d'] = $departamento->descripcion;
+			$sql = new Gatuf_SQL ('materia_departamento=%s', $dep);
+			$pag->forced_where = $sql;
+		}
+
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
 			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
@@ -44,6 +56,7 @@ class Calif_Views_Seccion {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
 		                                          array ('paginador' => $pag,
 		                                                 'carreras_coordinadas' => $carreras,
+		                                                 'filtro'=>$filtro,
 		                                                 'page_title' => 'Secciones'),
 		                                          $request);
 	}
@@ -55,40 +68,21 @@ class Calif_Views_Seccion {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$seccion = new Calif_Seccion ();
+		$request->session->setData('filtro_seccion_departamento',$departamento->clave);
 		
-		$sql = new Gatuf_SQL ('materia_departamento=%s', $departamento->clave);
-		
-		$pag = new Gatuf_Paginator ($seccion);
-		$pag->forced_where = $sql;
-		$pag->model_view = 'paginador';
-		
-		$pag->action = array ('Calif_Views_Seccion::porDepartamento', $departamento->clave);
-		$pag->summary = 'Lista de secciones';
-		$list_display = array (
-			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
-			array ('materia', 'Gatuf_Paginator_FKLink', 'Materia'),
-			array ('seccion', 'Gatuf_Paginator_FKLink', 'Sección'),
-			array ('maestro_apellido', 'Gatuf_Paginator_FKLink', 'Maestro'),
-		);
-		
-		$pag->items_per_page = 30;
-		$pag->no_results_text = 'No se encontraron secciones';
-		$pag->max_number_pages = 5;
-		$pag->configure ($list_display,
-			array ('nrc', 'materia', 'seccion', 'materia_desc', 'maestro_nombre', 'maestro_apellido'),
-			array ('nrc', 'materia', 'seccion', 'maestro_apellido')
-		);
-		
-		$pag->setFromRequest ($request);
-		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/por-departamento.html',
-		                                          array ('paginador' => $pag,
-		                                                 'departamento' => $departamento,
-		                                                 'page_title' => 'Secciones'),
-		                                          $request);
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
+	public function eliminarFiltro($request, $match){
+		
+		$request->session->setData('filtro_seccion_departamento',null);
+		
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
+		
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+
 	public function verNrc ($request, $match) {
 		$seccion =  new Calif_Seccion ();
 		

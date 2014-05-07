@@ -3,6 +3,9 @@
 {if $user.administrator || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Seccion::agregarNrc'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar seccion" />Agregar una nueva sección</a></p>
 {/if}
+{if $filtro}<ul style="list-style-type: none;">{foreach $filtro as $key => $val}
+<li><a href="{url 'Calif_Views_Seccion::eliminarFiltro', array($key)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar filtro" /></a>{$val}</li>
+{/foreach}</ul>{/if}
 {if $user.isCoord()}
 	<h3>Oferta académica</h3>
 	<p>Ver oferta para:</p>
