@@ -6,6 +6,7 @@
 {if count ($divisiones) != 0}
 	{foreach $divisiones as $division}
 		<h3>{$division}</h3>
+		<p><a href="{url 'Calif_Views_Seccion::porDivision', $division.id}">Ver secciones de esta division</a></p>
 		{if count ($carreras[$division.id]) != 0}
 			<ol>
 			{foreach $carreras[$division.id] as $carrera}

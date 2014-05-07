@@ -339,6 +339,13 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/([0-9])/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'porDivision',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
@@ -360,7 +367,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/nofiltro/([cd])/$#',
+	'regex' => '#^/secciones/nofiltro/([cdi])/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'eliminarFiltro',
