@@ -552,6 +552,12 @@ $ctl[] = array (
 			'base' => $base,
 			'model' => 'Calif_Views_Maestro',
 			'method' => 'constanciaCargaHoraria',
+		),
+		array (
+			'regex' => '#^(\d+)/permisos/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Maestro',
+			'method' => 'permisos',
 		)
 	)
 );
@@ -676,24 +682,17 @@ $ctl[] = array (
 
 /* usuarios*/
 $ctl[] = array(
-	'regex' => '#^/permisos/([0-9]{6,10})/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Usuario',
-	'method' => 'permisos',
-);
-
-$ctl[] = array(
 	'regex' => '#^/permisos/add/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
-	'method' => 'AlterarPermiso',
+	'method' => 'agregarPermiso',
 );
 
 $ctl[] = array(
 	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
-	'method' => 'AlterarGrupo',
+	'method' => 'agregarGrupo',
 );
 
 $ctl[] = array(

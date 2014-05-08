@@ -111,6 +111,7 @@ class Gatuf_Template_Compiler {
                                  'email' => 'Gatuf_Template_safeEmail',
                                  'first' => 'Gatuf_Template_first',
                                  'last' => 'Gatuf_Template_last',
+                                 'float' => 'number_format',
                                  );
 
     /**

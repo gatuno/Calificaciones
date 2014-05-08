@@ -25,7 +25,7 @@ class Gatuf_HTTP_Response_Forbidden extends Gatuf_HTTP_Response {
     function __construct($request) {
         $content = '';
         try {
-            $context = new Gatuf_Template_Context(array('query' => $request->query));
+            $context = new Gatuf_Template_Context_Request($request, array('query' => $request->query, 'page_title' => '403 - Acceso denegado'));
             $tmpl = new Gatuf_Template('403.html');
             $content = $tmpl->render($context);
             $mimetype = null;

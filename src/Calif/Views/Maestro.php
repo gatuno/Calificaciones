@@ -47,9 +47,9 @@ class Calif_Views_Maestro {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/index.html',
 		                                         array('page_title' => 'Profesores',
-		                                         		'filtro' => $filtro,
-                                                       	'paginador' => $pag),
-                                                 $request);
+		                                               'filtro' => $filtro,
+		                                               'paginador' => $pag),
+		                                         $request);
 	}
 	
 	public function porDepartamento ($request, $match) {
@@ -93,7 +93,7 @@ class Calif_Views_Maestro {
 		                                               'maestro' => $maestro,
 		                                               'nombramiento' => $nombramiento,
 		                                               'asignatura' => $asignatura),
-                                                 $request);
+		                                         $request);
 	}
 	
 	public function verHorario ($request, $match) {
@@ -371,5 +371,36 @@ class Calif_Views_Maestro {
 		$pdf->Output ('/tmp/'.$nombre_pdf, 'F');
 		
 		return new Gatuf_HTTP_Response_File ('/tmp/'.$nombre_pdf, $nombre_pdf, 'application/pdf', true);
+	}
+	
+	public $permisos_precond = array ('Gatuf_Precondition::adminRequired');
+	public function permisos ($request, $match) {
+		$maestro = new Calif_Maestro ();
+		
+		if (false === $maestro->get ($match[1])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$maestro->getUser ();
+		$extra = array();
+		
+		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
+		
+		$permisos_usuario = $maestro->user->getAllPermissions();
+		if (count($permisos_usuario) == 0 )
+			$extra['perm'][]=null;
+		foreach($permisos_usuario as $p){
+			$extra['perm'][] = strstr($p, 'c');
+		}
+		
+		$form = new Calif_Form_Usuario_Permisos (null, $extra);
+		$form2 = new Calif_Form_Usuario_Grupos (null, $extra);
+		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
+		                                         array( 'page_title' => $title,
+		                                                'maestro' => $maestro,
+		                                                'usuario' => $user,
+		                                                'form' => $form,
+		                                                'form2' => $form2),
+		                                         $request);
 	}
 }
