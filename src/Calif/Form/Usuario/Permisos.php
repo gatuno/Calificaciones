@@ -4,9 +4,10 @@ class Calif_Form_Usuario_Permisos extends Gatuf_Form {
 	public function initFields ($extra = array ()) {
 		$this->user = $extra['user'];
 		
-		foreach (Gatuf::factory ('Gatuf_Permission')->getList() as $per) {
-			if ($this->user->hasPerm ($per->application.'-'.$per->code_name)) continue;
-			$choices[$per->name] = $per->id;
+		$choices = array ();
+		foreach (Gatuf::factory ('Gatuf_Permission')->getList(array ('order' => 'application ASC, name ASC')) as $per) {
+			if ($this->user->hasPerm ($per->application.'.'.$per->code_name)) continue;
+			$choices[$per->application.' - '.$per->name] = $per->id;
 		}
 		
 		$this->fields['permiso'] = new Gatuf_Form_Field_Varchar (
@@ -14,7 +15,7 @@ class Calif_Form_Usuario_Permisos extends Gatuf_Form {
 				'required' => true,
 				'label' => 'Permiso',
 				'initial' => '',
-				'help_text' => 'Permite alterar y crear secciones de la carrera',
+				'help_text' => 'El nuevo permiso para este usuario',
 				'widget_attrs' => array (
 					'choices' => $choices,
 				),

@@ -1,9 +1,6 @@
 {extends 'calif/base.html'}
 {block body}
 <ul style="list-style-type: none;">
-{if $user.administrator}
-<li style="display: inline;"><a href="{url 'Calif_Views_Usuario::permisos', array ($alumno.codigo)}">Permisos</a></li>
-{/if}
 {if $user.login == $alumno.codigo}
 <li style="display: inline;"><a href="{url 'Calif_Views_Usuario::CambiarPassword', array ($alumno.codigo)}">Cambiar Contraseña</a></li>
 {/if}

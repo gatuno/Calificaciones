@@ -10,7 +10,7 @@
 <li style="display: inline;"><a href="{url 'Calif_Views_Maestro::actualizarMaestro', array ($maestro.codigo)}">Actualizar</a></li>
 {/if}
 {if $user.administrator}
-<li style="display: inline;"><a href="{url 'Calif_Views_Usuario::permisos', array ($maestro.codigo)}">Permisos</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Maestro::permisos', array ($maestro.codigo)}">Permisos</a></li>
 {/if}
 {if $user.login == $maestro.codigo}
 <li style="display: inline;"><a href="{url 'Calif_Views_Usuario::passwordChange'}">Cambiar Contraseña</a></li>

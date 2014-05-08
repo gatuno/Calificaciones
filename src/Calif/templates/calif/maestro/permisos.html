@@ -3,7 +3,7 @@
 <h2>Permisos</h2>
 {if $form}
 	<h3>Agregar nuevo permiso</h3>
-	<form method="post" action="{url 'Calif_Views_Usuario::agregarPermiso', array($user->id)}">
+	<form method="post" action="{url 'Calif_Views_Usuario::agregarPermiso', array($maestro->user->id)}">
 		<table>
 			{$form.render_table}
 			<tr><td><input type="submit" value="Agregar permiso" /></td></tr>
@@ -14,7 +14,7 @@
 {/if}
 {if $form2}
 	<h3>Agregar nuevo grupo</h3>
-	<form method="post" action="{url 'Calif_Views_Usuario::agregarGrupo', array($user->id)}">
+	<form method="post" action="{url 'Calif_Views_Usuario::agregarGrupo', array($maestro->user->id)}">
 		<table>
 			{$form2.render_table}
 			<tr><td><input type="submit" value="Agregar a grupo" /></td></tr>
@@ -22,4 +22,5 @@
 	</form>
 {else}
 	<p>Este usuario ya pertenece a todos los grupos existentes</p>
+{/if}
 {/block}

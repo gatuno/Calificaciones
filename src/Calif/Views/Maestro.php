@@ -382,23 +382,22 @@ class Calif_Views_Maestro {
 		}
 		
 		$maestro->getUser ();
-		$extra = array();
+		$extra = array ('user' => $maestro->user);
 		
 		$title = (($maestro->sexo == 'M') ? 'Profesor ':'Profesora ').$maestro->nombre.' '.$maestro->apellido;
 		
 		$permisos_usuario = $maestro->user->getAllPermissions();
-		if (count($permisos_usuario) == 0 )
-			$extra['perm'][]=null;
-		foreach($permisos_usuario as $p){
-			$extra['perm'][] = strstr($p, 'c');
+		if ($maestro->user->administrator || count ($permisos_usuario) == Gatuf::factory ('Gatuf_Permission')->getCount ()) {
+			/* Tiene todos los permisos, no hay nada que agregar */
+			$form = null;
+		} else {
+			$form = new Calif_Form_Usuario_Permisos (null, $extra);
 		}
 		
-		$form = new Calif_Form_Usuario_Permisos (null, $extra);
 		$form2 = new Calif_Form_Usuario_Grupos (null, $extra);
-		return Gatuf_Shortcuts_RenderToResponse ('calif/user/permisos.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/permisos.html',
 		                                         array( 'page_title' => $title,
 		                                                'maestro' => $maestro,
-		                                                'usuario' => $user,
 		                                                'form' => $form,
 		                                                'form2' => $form2),
 		                                         $request);
