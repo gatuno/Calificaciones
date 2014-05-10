@@ -33,7 +33,7 @@ class Calif_Inscripcion extends Gatuf_Model {
 			       'model' => 'Calif_Calendario',
 			       'relate_name' => 'ingreso',
 			),
-			/*'egreso' =>
+			'egreso' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Foreignkey',
 			       'blank' => false,
@@ -41,7 +41,7 @@ class Calif_Inscripcion extends Gatuf_Model {
 			       'default' => null,
 			       'model' => 'Calif_Calendario',
 			       'relate_name' => 'egreso',
-			),*/
+			),
 			'estado' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Char',

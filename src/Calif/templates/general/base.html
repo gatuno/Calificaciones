@@ -5,11 +5,9 @@
 	<meta name="author" content="Félix Arreola Rodríguez" />
 	<link rel="stylesheet" media="all" type="text/css" href="{media}/css/theme.css" />
 	<style type="text/css">
-		{foreach $menus as $menu}
-		.nav .{$menu.klass} a:hover {literal}{{/literal}
+		{foreach $menus as $menu}.nav .{$menu.klass} a:hover {literal}{{/literal}
 			background-color: #{$menu.color};
-		{literal}}{/literal}
-		{/foreach}
+		{literal}}{/literal}{/foreach}
 	</style>
 	{block extrahead}{/block}
 	<title>Pato - {$page_title}</title>
@@ -36,20 +34,15 @@
 							<li><a href="{url 'Calif_Views_Seccion::index'}">Secciones</a></li>
 							<li><a href="{url 'Calif_Views_Evaluacion::index'}">Evaluaciones</a></li>
 							<li><a href="{url 'Calif_Views_Reportes::index'}">Reportes</a></li>
-							{if $user.administrator}
-								<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>
-							{/if}
+							{if $user.administrator}<li><a href="{url 'Calif_Views_System::index'}">Sistema</a></li>{/if}
 							<li><a href="{media}/docs/manual.pdf" >Manual</a></li>
 						</ul>
 					</li>
-					{foreach $menus as $menu}
-					<li class="{$menu.klass}"><a href="{$menu.href}">{$menu.nombre}</a>
-					{if $menu.sub}
-						<ul>{foreach $menu.sub as $submenu}
-							<li><a href="{$submenu.href}">{$submenu.nombre}</a></li>
-						{/foreach}</ul>
-					{/if}</li>
-					{/foreach}
+					{foreach $menus as $menu}<li class="{$menu.klass}"><a href="{$menu.href}">{$menu.nombre}</a>
+					{if $menu.sub}<ul>{foreach $menu.sub as $submenu}
+						<li><a href="{$submenu.href}">{$submenu.nombre}</a></li>
+					{/foreach}</ul>{/if}
+					</li>{/foreach}
 				</ul>
 			</td>
 			<td><!-- Esta es la información del usuario -->
@@ -64,6 +57,7 @@
 			</td>
 		</tr></table>
 	</div>
+	{block extratopbody}{/block}
 	{if $user and $user.id}{getmsgs $user}{/if}
 	<h1 class="titulo">{$page_title}</h1>
 	<div>

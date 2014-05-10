@@ -1,8 +1,8 @@
-{extends 'calif/base.html'}
+{extends 'general/base.html'}
 {block body}
 {if $form.errors}
 <div class="px-message-error">
-<p>Oups, please check the form for errors.</p>
+<p>Hay algunos errores en el formulario</p>
 {if $form.get_top_errors}
 {$form.render_top_errors|unsafe}
 {/if}

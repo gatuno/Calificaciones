@@ -21,6 +21,16 @@ class Calif_Calendario extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 20,
 			),
+			'oculto' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Boolean',
+			       'blank' => false,
+			       'default' => false,
+			),
 		);
 	}
+}
+
+function Calif_Calendario_getDefault () {
+	return $GLOBALS['CAL_ACTIVO'];
 }

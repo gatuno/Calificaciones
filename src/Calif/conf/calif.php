@@ -117,6 +117,8 @@ $cfg['gatuf_custom_user'] = 'Calif_User';
 $cfg['template_tags'] = array ('coordperm' => 'Calif_Template_CoordPerm',
 	'jefeperm' => 'Calif_Template_JefePerm');
 
+$cfg['template_context_processors'] = array('Calif_Middleware_Calendario_ContextPreProcessor');
+
 $cfg['installed_apps'] = array('Gatuf', 'Calif', 'Titulacion');
 
 return $cfg;

@@ -48,6 +48,14 @@ $ctl[] = array (
 	'method' => 'logout',
 );
 
+/* Calendarios */
+$ctl[] = array (
+	'regex' => '#^/calendario/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Calendario',
+	'method' => 'cambiarCalendario',
+);
+
 /* Reportes y acciones varias */
 $ctl[] = array (
 	'regex' => '#^/importsiiau/$#',
