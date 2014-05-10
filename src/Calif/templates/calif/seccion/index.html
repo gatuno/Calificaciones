@@ -6,14 +6,5 @@
 {if $filtro}<ul style="list-style-type: none;">{foreach $filtro as $key => $val}
 <li><a href="{url 'Calif_Views_Seccion::eliminarFiltro', array($key)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar filtro" /></a>{$val}</li>
 {/foreach}</ul>{/if}
-{if $user.isCoord()}
-	<h3>Oferta académica</h3>
-	<p>Ver oferta para:</p>
-	<table><tr>
-	{foreach $carreras_coordinadas as $carrera}
-		<td><a href="{url 'Calif_Views_Reportes_Oferta::porCarrera', $carrera}">{$carrera}</a></td>
-	{/foreach}
-	</tr></table>
-{/if}
 {$paginador.render}
 {/block}

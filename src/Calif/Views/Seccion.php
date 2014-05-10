@@ -1,13 +1,10 @@
 <?php
 
-/*Pluf::loadFunction('Pluf_HTTP_URL_urlForView');
-Pluf::loadFunction('Pluf_Shortcuts_GetObjectOr404');
-Pluf::loadFunction('Pluf_Shortcuts_GetFormForModel');*/
+Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
 Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 
 class Calif_Views_Seccion {
 	public function index ($request, $match) {
-		/* Utilizar un paginador aquí, por favor */
 		$seccion = new Calif_Seccion ();
 		$filtro = array();
 
@@ -15,72 +12,45 @@ class Calif_Views_Seccion {
 		$pag = new Gatuf_Paginator ($seccion);
 		$pag->model_view = 'paginador';
 		$pag->action = array ('Calif_Views_Seccion::index');
-
+		$sql = new Gatuf_SQL ();
+		
 		/* Verificar filtro por Carrera */
-		$car = $request->session->getData('filtro_seccion_carrera', null);
-		$div = $request->session->getData('filtro_seccion_division', null);
-		if (!is_null ($car)){
-			$materia = new Calif_Materia ();
-			$carrera = new Calif_Carrera ();
-			$carrera->get ($car);
-			$filtro['c'] = 'Carrera de '.$carrera->descripcion;
-			$hay = array(strtolower($carrera->_a['model']), 
-							 strtolower($materia->_a['model']));
+		$car = $request->session->getData('filtro_seccion_asignada_carrera', null);
+		$div = $request->session->getData('filtro_seccion_asignada_division', null);
+		$noasig = $request->session->getData('filtro_seccion_asignada_no', false);
+		if ($noasig === true) {
+			$filtro['n'] = 'Secciones no solicitadas';
 			
-			// Calcular la base de datos que contiene la relación M-N
-			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
-				// La relación la tiene el $hay[1]
-				$dbname = $materia->_con->dbname;
-				$dbpfx = $materia->_con->pfx;
-			} else {
-				$dbname = $carrera->_con->dbname;
-				$dbpfx = $carrera->_con->pfx;
+			$sql->Q ('asignacion IS NULL');
+		} else if (!is_null ($car)) {
+			$carrera = new Calif_Carrera ($car);
+			$filtro['c'] = 'Secciones asignadas a la carrera "'.$carrera->descripcion.'"';
+			
+			$sql->Q ('asignacion=%s', $car);
+		} else if (!is_null ($div)) {
+			$division = new Calif_Division ($div);
+			$filtro['i'] = 'Secciones asignadas a la división "'.$division->descripcion.'"';
+			$escape = array ();
+			$claves = array ();
+			$carreras = $division->get_calif_carrera_list ();
+			foreach ($carreras as $car) {
+				$escape[] = '%s';
+				$claves[] = $car->clave;
 			}
-			sort($hay);
-			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 			
-			$seccion->_a['views']['paginador']['join'] = ' LEFT JOIN '.$dbname.'.'.$table.' ON '
-					.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = materia';
-			$key = $carrera->primary_key;
-			$seccion->_a['views']['paginador']['where'] = $carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).'='.$carrera->_con->esc ($carrera->$key);
-		}
-		elseif (!is_null ($div)) {
-			$materia = new Calif_Materia ();
-			$carrera = new Calif_Carrera ();
-			$division = new Calif_Division ();
-			$division->get ($div);
-			$filtro['i'] = $division->descripcion;
-			$hay = array(strtolower($carrera->_a['model']), 
-							 strtolower($materia->_a['model']));
-			
-			// Calcular la base de datos que contiene la relación M-N
-			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
-				// La relación la tiene el $hay[1]
-				$dbname = $materia->_con->dbname;
-				$dbpfx = $materia->_con->pfx;
-			} else {
-				$dbname = $carrera->_con->dbname;
-				$dbpfx = $carrera->_con->pfx;
-			}
-			sort($hay);
-			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
-			
-			$seccion->_a['views']['paginador']['join'] = ' LEFT JOIN '.$dbname.'.'.$table.' ON '
-					.$carrera->_con->qn(strtolower($materia->_a['model']).'_'.$materia->primary_key).' = materia LEFT JOIN '.$carrera->_a['table'].' ON '.$carrera->_con->qn(strtolower($carrera->_a['model']).'_'.$carrera->primary_key).' = '.$carrera->primary_key;
-			$key = $carrera->primary_key;
-			$seccion->_a['views']['paginador']['where'] ='division = '.$div;
+			$sql->Q ('asignacion IN ('.implode (', ', $escape).')', $claves);
 		}
 		
-		/* Verificr filtro de secciones por departamento */
+		/* Verificar filtro de secciones por departamento */
 		$dep = $request->session->getData('filtro_seccion_departamento',null);
 		if(!is_null ($dep) ){
 			$departamento = new Calif_Departamento ();
 			$departamento->get ($dep);
 			$filtro['d'] = $departamento->descripcion;
-			$sql = new Gatuf_SQL ('materia_departamento=%s', $dep);
-			$pag->forced_where = $sql;
+			$sql->Q('materia_departamento=%s', $dep);
 		}
-
+		
+		$pag->forced_where = $sql;
 		$pag->summary = 'Lista de secciones';
 		$list_display = array (
 			array ('nrc', 'Gatuf_Paginator_FKLink', 'NRC'),
@@ -99,18 +69,8 @@ class Calif_Views_Seccion {
 		
 		$pag->setFromRequest ($request);
 		
-		$carreras = array ();
-		
-		if ($request->user->isCoord()) {
-			foreach ($request->user->returnCoord () as $perm) {
-				$carreras[] = substr ($perm, 18);
-			}
-			if ($request->user->administrator) $carreras[] = 'DIVEC';
-		}
-		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
 		                                          array ('paginador' => $pag,
-		                                                 'carreras_coordinadas' => $carreras,
 		                                                 'filtro'=>$filtro,
 		                                                 'page_title' => 'Secciones'),
 		                                          $request);
@@ -136,8 +96,9 @@ class Calif_Views_Seccion {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$request->session->setData('filtro_seccion_carrera',$match[1]);
-		$request->session->setData('filtro_seccion_division',null);
+		$request->session->setData('filtro_seccion_asignada_carrera',$match[1]);
+		$request->session->setData('filtro_seccion_asignada_division',null);
+		$request->session->setData('filtro_seccion_asignada_no', false);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
@@ -150,22 +111,32 @@ class Calif_Views_Seccion {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$request->session->setData('filtro_seccion_division',$match[1]);
-		$request->session->setData('filtro_seccion_carrera',null);
+		$request->session->setData('filtro_seccion_asignada_division',$match[1]);
+		$request->session->setData('filtro_seccion_asignada_carrera',null);
+		$request->session->setData('filtro_seccion_asignada_no', false);
+		
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function porNoAsignadas ($request, $match) {
+		$request->session->setData('filtro_seccion_asignada_division',null);
+		$request->session->setData('filtro_seccion_asignada_carrera',null);
+		$request->session->setData('filtro_seccion_asignada_no', true);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
 	public function eliminarFiltro($request, $match){
-		if($match[1] == 'd'){
+		if ($match[1] == 'd'){
 			$request->session->setData('filtro_seccion_departamento',null);
-		}
-		elseif($match[1] == 'c'){
-			$request->session->setData('filtro_seccion_carrera',null);
-		}
-		else{
-			$request->session->setData('filtro_seccion_division',null);
+		} else if($match[1] == 'c'){
+			$request->session->setData('filtro_seccion_asignada_carrera',null);
+		} else if ($match[1] == 'n') {
+			$request->session->setData('filtro_seccion_asignada_no', false);
+		} else{
+			$request->session->setData('filtro_seccion_asignada_division',null);
 		}
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');

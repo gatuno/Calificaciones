@@ -347,24 +347,31 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/([0-9])/$#',
+	'regex' => '#^/secciones/f/i/([0-9])/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'porDivision',
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/(\d+)/$#',
+	'regex' => '#^/secciones/f/d/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'porDepartamento',
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/([A-Za-z]{3,5})/$#',
+	'regex' => '#^/secciones/f/c/([A-Za-z]{3,5})/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'porCarrera',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/f/n/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'porNoAsignadas',
 );
 
 $ctl[] = array (
@@ -375,7 +382,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/nofiltro/([cdi])/$#',
+	'regex' => '#^/secciones/nofiltro/([cdin])/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'eliminarFiltro',
@@ -616,63 +623,9 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/reporte/oferta/#',
+	'regex' => '#^/reporte/#',
 	'base' => $base,
 	'sub' => array (
-		array (
-			'regex' => '#^carrera/([A-Za-z]{3,5})/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'porCarrera',
-		),
-		array (
-			'regex' => '#^carrera/([A-Za-z]{3,5})/ODS/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'descargaCarreraODS',
-		),
-		array (
-			'regex' => '#^departamento/no/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'seleccionarNoPorDepartamento',
-		),
-		array (
-			'regex' => '#^departamento/no/(\d+)/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'noPorDepartamento',
-		),
-		array (
-			'regex' => '#^departamento/no/(\d+)/ODS/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'descargaNoPorDepartamentoODS',
-		),
-		array (
-			'regex' => '#^departamento/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'seleccionarPorDepartamento',
-		),
-		array (
-			'regex' => '#^departamento/(\d+)/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'porDepartamento',
-		),
-		array (
-			'regex' => '#^departamento/(\d+)/ODS/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'descargaPorDepartamentoODS',
-		),
-		array (
-			'regex' => '#^departamento/(\d+)/horarios/ODS/$#',
-			'base' => $base,
-			'model' => 'Calif_Views_Reportes_Oferta',
-			'method' => 'descargaPorDepartamentoHorasODS',
-		),
 		array (
 			'regex' => '#^profesores/carga/$#',
 			'base' => $base,

@@ -1,6 +1,0 @@
-{extends 'calif/base.html'}
-{block body}
-<p><a href="{url 'Calif_Views_Reportes_Oferta::descargaNoPorDepartamentoODS', $departamento.clave}">Descargar reporte como ODS</a></p>
-<p>Lista de secciones no solicitadas por el departamento {$departamento.descripcion}</p>
-{$paginador.render}
-{/block}
