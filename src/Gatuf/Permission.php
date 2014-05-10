@@ -54,8 +54,8 @@ class Gatuf_Permission extends Gatuf_Model {
 		);
 		$hay = array (strtolower (Gatuf::config('gatuf_custom_group', 'Gatuf_Group')), strtolower($this->_a['model']));
 		sort ($hay);
-		$t_asso = $this->_con->pfx.$hay[0].'_'.$hay[1].'_assoc';
-		$t_perm = $this->_con->pfx.'permissions';
+		$t_asso = $this->_con->dbname.'.'.$this->_con->pfx.$hay[0].'_'.$hay[1].'_assoc';
+		$t_perm = $this->getSqlTable ();
 		$this->_a['views'] = array (
 			'join_group' =>
 			array (

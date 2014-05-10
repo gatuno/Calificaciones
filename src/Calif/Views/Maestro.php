@@ -394,10 +394,20 @@ class Calif_Views_Maestro {
 			$form = new Calif_Form_Usuario_Permisos (null, $extra);
 		}
 		
-		$form2 = new Calif_Form_Usuario_Grupos (null, $extra);
+		
+		$grupos = $maestro->user->get_groups_list ();
+		
+		if (count ($grupos) == Gatuf::factory ('Gatuf_Group')->getCount ()) {
+			$form2 = null;
+		} else {
+			$form2 = new Calif_Form_Usuario_Grupos (null, $extra);
+		}
+		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/maestro/permisos.html',
 		                                         array( 'page_title' => $title,
 		                                                'maestro' => $maestro,
+		                                                'permisos' => $permisos_usuario,
+		                                                'grupos' => $grupos,
 		                                                'form' => $form,
 		                                                'form2' => $form2),
 		                                         $request);

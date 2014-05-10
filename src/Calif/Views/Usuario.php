@@ -35,7 +35,31 @@ class Calif_Views_Usuario {
 	
 	public $agregarGrupo_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarGrupo($request, $match) {
+		$usuario = new Calif_User ();
 		
+		if (false === ($usuario->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($usuario->type == 'a') {
+			/* Por el momento los alumnos no tienen permisos */
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		$extra = array ('user' => $usuario);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Usuario_Grupos ($request->POST, $extra);
+			
+			if ($form->isValid ()) {
+				$form->save ();
+			}
+		}
+		
+		if ($usuario->type == 'm') {
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::permisos', $usuario->login);
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
 	}
 	
 	public $passwordChange_precond = array ('Gatuf_Precondition::loginRequired');
