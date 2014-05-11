@@ -3,7 +3,7 @@ Gatuf::loadFunction ('Gatuf_Shortcuts_RenderToResponse');
 Gatuf::loadFunction ('Gatuf_HTTP_URL_urlForView');
 
 class Calif_Views_Puestos {
-	public $actualizarPuesto_precond = array ('Gatuf_Precondition::adminRequired');
+	public $actualizarPuesto_precond = array ('Calif_Precondition::jefeRequired');
 	public function actualizarPuesto ($request, $match) {
 		$puesto = new Calif_NumeroPuesto ();
 		
@@ -14,6 +14,12 @@ class Calif_Views_Puestos {
 		$nrc = new Calif_Seccion ($puesto->nrc);
 		$maestro = new Calif_Maestro ($nrc->maestro);
 		$materia = new Calif_Materia ($nrc->materia);
+		
+		if (!$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) {
+			$request->user->setMessage (3, 'No puede modificar este número de puesto. Usted no es el jefe de departamento de esta materia');
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($puesto->nrc));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
 		
 		$extra = array ('puesto' => $puesto);
 		

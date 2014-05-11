@@ -2,10 +2,9 @@
 {block body}
 <p>De la materia <a href="{url 'Calif_Views_Materia::verMateria', array ($materia.clave)}">{$materia.clave} - {$materia.descripcion}</a> {$seccion.seccion}</p>
 <p>Grupo del profesor <a href="{url 'Calif_Views_Maestro::verMaestro', array ($maestro.codigo)}">{$maestro.apellido} {$maestro.nombre}</a>
-{if $suplente.codigo}
-	<br />Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a>
-{/if}
-{if $user.administrator || $user.isCoord()}
+{jefeperm 'puedeEditar', $user, $materia.departamento}
+{if $suplente.codigo}<p>Profesor Suplente <a href="{url 'Calif_Views_Maestro::verMaestro', array ($suplente.codigo)}">{$suplente.apellido} {$suplente.nombre}</a></p>{/if}
+{if $puedeEditar}
  <a href="{url 'Calif_Views_Seccion::actualizarNrc', array ($seccion.nrc)}">Cambiar de profesor(es)</a></p>
 <p><a href="{url 'Calif_Views_Seccion::eliminarNrc', array ($seccion.nrc)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar sección" />Eliminar esta sección</a></p>
 {/if}
@@ -23,7 +22,7 @@
 		{/foreach}
 	{/if}
 {/if}
-{if $user.administrator}
+{if $puedeEditar}
 	<h3>Números de puesto</h3>
 	<table border="1">
 	<thead><tr><th>Número de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
@@ -39,12 +38,13 @@
 	</table>
 {/if}
 <h2>Horarios de la sección</h2>
-{if $user.administrator || $user.isCoord()}
+{assign $coordEditar = false}{if $seccion.asignacion}{coordperm 'coordEditar', $user, $seccion.asignacion}{/if}
+{if $puedeEditar || $coordEditar}
 <p>Puede <a href="{url 'Calif_Views_Horario::agregarHora', array ($seccion.nrc)}">agregar una nueva hora</a> a esta sección</p>
 {/if}
-{if $horarios}
+{if count($horarios) != 0}
 	<table border="1">
-	<thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th>{if $user.administrator || $user.isCoord()}<th>Acciones</th>{/if}</tr></thead>
+	<thead><tr><th>Hora inicio</th><th>Hora fin</th><th>Días</th><th>Edificio</th><th>Aula</th>{if $puedeEditar || $coordEditar}<th>Acciones</th>{/if}</tr></thead>
 	<tbody>
 	{foreach $horarios as $hora}
 		<tr><td>{$hora.inicio}</td>
@@ -52,17 +52,19 @@
 		<td>{$hora.displayDias()}</td>
 		<td>{$hora.salon_edificio}</td>
 		<td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$hora.salon_aula}</a></td>
-		{if $user.administrator || $user.isCoord()}
+		{if $puedeEditar || $coordEditar}
 		<td>
 		<a href="{url 'Calif_Views_Horario::actualizarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/document-properties.png'}" alt="Editar" /></a>
 		<a href="{url 'Calif_Views_Horario::eliminarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/edit-delete.png'}" alt="Eliminar" /></a>
 		</td>{/if}</tr>
 	{/foreach}
 	</tbody></table>
+{else}
+<p>La sección no tiene horas asignadas</p>
 {/if}
 <h2>Calificaciones</h2>
 <p>Sección con {$alumnos|count} alumnos.</p>
-{if $user.administrator || $user.isCoord()}
+{if $user.isJefe () || $user.isCoord()}
 <a href="{url 'Calif_Views_Seccion::matricular', array ($seccion->nrc )}">Matricular Alumno</a>
 {/if}
 {if $alumnos && $grupo_evals}

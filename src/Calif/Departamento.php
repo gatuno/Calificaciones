@@ -25,11 +25,13 @@ class Calif_Departamento extends Gatuf_Model {
 	}
 
 	function postSave ($create = false) {
-		$perm = new Gatuf_Permission();
-		$perm->name = 'Jefe de '.$this.clave;
-		$perm->code_name = 'jefe.'.$this.clave;
-		$perm->descripcion = "Permite alterar y crear materias del ".$this->descripcion;
-		$perm->application = "SIIAU";
-		$perm->save();
+		if ($create) {
+			$perm = new Gatuf_Permission();
+			$perm->name = 'Jefe de '.$this->descripcion;
+			$perm->code_name = 'jefe.'.$this->clave;
+			$perm->descripcion = 'Permite alterar y crear materias del '.$this->descripcion;
+			$perm->application = 'SIIAU';
+			$perm->create();
+		}
 	}
 }

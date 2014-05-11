@@ -1,7 +1,9 @@
 <?php
 
 class Calif_Form_Seccion_Agregar extends Gatuf_Form {
+	private $user;
 	public function initFields($extra=array()) {
+		$this->user = $extra['user'];
 		$this->fields['nrc'] = new Gatuf_Form_Field_Integer(
 			array(
 				'required' => false,
@@ -27,8 +29,12 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		if (isset ($extra['materia'])) $materia = $extra['materia'];
 		
 		$choices = array ();
-		foreach (Gatuf::factory ('Calif_Materia')->getList () as $m) {
-			$choices [$m->clave . ' - ' . $m->descripcion] = $m->clave;
+		foreach (Gatuf::factory ('Calif_Departamento')->getList () as $dep) {
+			if (!$this->user->hasPerm ('SIIAU.jefe.'.$dep->clave)) continue;
+			$choices[$dep->descripcion] = array ();
+			foreach ($dep->get_calif_materia_list () as $m) {
+				$choices[$dep->descripcion][$m->clave . ' - ' . $m->descripcion] = $m->clave;
+			}
 		}
 		
 		$this->fields['materia'] = new Gatuf_Form_Field_Varchar(
@@ -104,7 +110,11 @@ class Calif_Form_Seccion_Agregar extends Gatuf_Form {
 		
 		if (!$auto) {
 			$nrc = $this->cleaned_data ['nrc'];
-		
+			
+			if ($nrc == '' || $nrc == 0) {
+				throw new Gatuf_Form_Invalid ('Es requisito escribir un NRC válido');
+			}
+			
 			/* Verificar que este nrc no esté duplicado */
 			$sql = new Gatuf_SQL('nrc=%s', $nrc);
 			$l = Gatuf::factory('Calif_Seccion')->getList(array('filter'=>$sql->gen(),'count' => true));

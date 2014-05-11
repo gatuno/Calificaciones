@@ -75,10 +75,11 @@ class Calif_Views_Materia {
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/index.html',
 		                                         array('page_title' => 'Materias',
-		                                         'filtro'=>$filtro,
-                                                       'paginador' => $pag),
-                                                 $request);
+		                                         'filtro' => $filtro,
+		                                         'paginador' => $pag),
+		                                         $request);
 	}
+	
 	public function eliminarFiltro($request, $match){
 		if($match[1] == 'd')
 			$request->session->setData('filtro_materia_departamento',null);
@@ -147,7 +148,7 @@ class Calif_Views_Materia {
 			array ('maestro', 'Gatuf_Paginator_FKLink', 'Maestro'),
 		);
 		
-		if ($request->user->isCoord ()) {
+		if ($request->user->isJefe() || $request->user->isCoord ()) {
 			$list_display[] = array ('asignacion', 'Gatuf_Paginator_FKExtra', 'Asignacion');
 		}
 		
@@ -209,7 +210,7 @@ class Calif_Views_Materia {
 	}
 	
 	public function verEval ($request, $match) {
-		$materia =  new Calif_Materia ();
+		$materia = new Calif_Materia ();
 		
 		if (false === ($materia->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
@@ -315,6 +316,13 @@ class Calif_Views_Materia {
 		if (false === ($materia->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}
+		
+		if (!$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) {
+			$request->user->setMessage (3, 'No puede actualizar esta materia, usted no es el Jefe de ese Departamento');
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Materia::verMateria', array ($materia->clave));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
 		/* Verificar que la materia esté en mayúsculas */
 		$nueva_clave = mb_strtoupper ($match[1]);
 		if ($match[1] != $nueva_clave) {

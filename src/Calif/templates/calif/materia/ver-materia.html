@@ -20,12 +20,13 @@
 {else}
 	<p>La materia no es tomada por alguna carrera</p>
 {/if}
-<p>Puede <a href="{url 'Calif_Views_Materia::agregarACarrera', array ($materia.clave)}">agregar una nueva carrera</a> a esta materia</p>
+{if $user.administrator}<p>Puede <a href="{url 'Calif_Views_Materia::agregarACarrera', array ($materia.clave)}">agregar una nueva carrera</a> a esta materia</p>{/if}
 {if $calendario.events}
 	<h2>Horas de la materia</h2>
 	{$calendario.render}
 {/if}
 <h2>Lista de secciones de {$materia.clave}</h2>
-<p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrc', array (), array ('materia' => $materia.clave)}">agregar una nueva sección</a> a esta materia</p>
+{if $puedeEditar || $user.isCoord ()}
+<p>Puede <a href="{url 'Calif_Views_Seccion::agregarNrc', array (), array ('materia' => $materia.clave)}">agregar una nueva sección</a> a esta materia</p>{/if}
 {$paginador.render}
 {/block}

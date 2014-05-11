@@ -4,7 +4,7 @@ Gatuf::loadFunction('Gatuf_Shortcuts_RenderToResponse');
 Gatuf::loadFunction('Gatuf_HTTP_URL_urlForView');
 
 class Calif_Views_Horario {
-	public $agregarHora_precond = array ('Calif_Precondition::coordinadorRequired');
+	public $agregarHora_precond = array ('Calif_Precondition::jefeORcoordRequired');
 	public function agregarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
@@ -12,13 +12,20 @@ class Calif_Views_Horario {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->administrator) { // || !el otro permiso
-			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
-				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			} else if ($seccion->nrc < 95000) {
-				$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+		$materia = $seccion->get_materia ();
+		
+		if (!$request->user->administrator) {
+			if (($request->user->isJefe () && !$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) || ($request->user->isCoord () && ($seccion->asignacion == null || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion) || $seccion->nrc < 95000))) {
+				if ($request->user->isCoord ()) {
+					if ($seccion->nrc < 95000) {
+						$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+					} else {
+						$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+					}
+				} else {
+					$request->user->setMessage (3, 'No puede modificar una sección que no es de su departamento');
+				}
+				
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
@@ -69,7 +76,7 @@ class Calif_Views_Horario {
 		
 	}
 	
-	public $eliminarHora_precond = array ('Calif_Precondition::coordinadorRequired');
+	public $eliminarHora_precond = array ('Calif_Precondition::jefeORcoordRequired');
 	public function eliminarHora ($request, $match) {
 		$title = 'Eliminar hora de una sección';
 		
@@ -79,13 +86,18 @@ class Calif_Views_Horario {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->administrator) { // || !el otro permiso
-			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
-				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			} else if ($seccion->nrc < 95000) {
-				$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+		if (!$request->user->administrator) {
+			if (($request->user->isJefe () && !$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) || ($request->user->isCoord () && ($seccion->asignacion == null || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion) || $seccion->nrc < 95000))) {
+				if ($request->user->isCoord ()) {
+					if ($seccion->nrc < 95000) {
+						$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+					} else {
+						$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+					}
+				} else {
+					$request->user->setMessage (3, 'No puede modificar una sección que no es de su departamento');
+				}
+				
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
@@ -120,7 +132,7 @@ class Calif_Views_Horario {
 		                                         $request);
 	}
 	
-	public $actualizarHora_precond = array ('Calif_Precondition::coordinadorRequired');
+	public $actualizarHora_precond = array ('Calif_Precondition::jefeORcoordRequired');
 	public function actualizarHora ($request, $match) {
 		$seccion = new Calif_Seccion ();
 		
@@ -128,13 +140,18 @@ class Calif_Views_Horario {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		if (!$request->user->administrator) { // || !el otro permiso
-			if (is_null ($seccion->asignacion) || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion)) {
-				$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			} else if ($seccion->nrc < 95000) {
-				$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+		if (!$request->user->administrator) {
+			if (($request->user->isJefe () && !$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) || ($request->user->isCoord () && ($seccion->asignacion == null || !$request->user->hasPerm ('SIIAU.coordinador.'.$seccion->asignacion) || $seccion->nrc < 95000))) {
+				if ($request->user->isCoord ()) {
+					if ($seccion->nrc < 95000) {
+						$request->user->setMessage (3, 'No puede modificar una sección ya existente, solo las nuevas secciones');
+					} else {
+						$request->user->setMessage (3, 'No puede modificar una sección que no ha reclamado');
+					}
+				} else {
+					$request->user->setMessage (3, 'No puede modificar una sección que no es de su departamento');
+				}
+				
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}

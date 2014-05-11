@@ -237,13 +237,13 @@ class Calif_Views_Seccion {
 		                                          $request);
 	}
 	
-	public $agregarNrc_precond = array ('Calif_Precondition::coordinadorRequired');
+	public $agregarNrc_precond = array ('Calif_Precondition::jefeORcoordRequired');
 	public function agregarNrc ($request, $match) {
 		$title = 'Crear NRC';
 		
-		$extra = array ();
+		$extra = array ('user' => $request->user);
 		
-		if ($request->user->administrator) {
+		if ($request->user->isJefe ()) {
 			/* Formulario completo para los administradores, o la otra condición */
 			if ($request->method == 'POST') {
 				$form = new Calif_Form_Seccion_Agregar ($request->POST, $extra);
@@ -272,7 +272,6 @@ class Calif_Views_Seccion {
 			                                         $request);
 		} else {
 			/* El caso de los coordinadores */
-			$extra['user'] = $request->user;
 			if ($request->method == 'POST') {
 				$form = new Calif_Form_Seccion_AgregarMini ($request->POST, $extra);
 				
@@ -301,7 +300,7 @@ class Calif_Views_Seccion {
 		}
 	}
 	
-	public $actualizarNrc_precond = array ('Gatuf_Precondition::adminRequired');
+	public $actualizarNrc_precond = array ('Calif_Precondition::jefeRequired');
 	public function actualizarNrc ($request, $match) {
 		$title = 'Actualizar NRC';
 		
@@ -309,6 +308,13 @@ class Calif_Views_Seccion {
 		
 		if (false === ($seccion->get($match[1]))) {
 			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$materia = $seccion->get_materia ();
+		if (!$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) {
+			$request->user->setMessage (2, 'Error al actualizar esta sección. Usted no es jefe de departamento de esta materia');
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
 		$extra = array ('seccion' => $seccion);
@@ -332,7 +338,7 @@ class Calif_Views_Seccion {
 		                                         $request);
 	}
 	
-	public $eliminarNrc_precond = array ('Gatuf_Precondition::adminRequired');
+	public $eliminarNrc_precond = array ('Calif_Precondition::jefeRequired');
 	public function eliminarNrc ($request, $match) {
 		$title = 'Eliminar NRC';
 		
@@ -342,7 +348,12 @@ class Calif_Views_Seccion {
 			throw new Gatuf_HTTP_Error404();
 		}
 		
-		$materia = new Calif_Materia ($seccion->materia);
+		$materia = $seccion->get_materia ();
+		if (!$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) {
+			$request->user->setMessage (2, 'Error al eliminar esta sección. Usted no es jefe de departamento de esta materia');
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', array ($seccion->nrc));
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
 		
 		if ($request->method == 'POST') {
 			

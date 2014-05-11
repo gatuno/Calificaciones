@@ -161,6 +161,7 @@ class Calif_Views_Maestro {
                                                  $request);
 	}
 	
+	public $verCarga_precond = array ('Calif_Precondition::jefeRequired');
 	public function verCarga ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		
