@@ -38,10 +38,12 @@ class Calif_Middleware_Calendario {
 		$GLOBALS['CAL_ACTIVO'] = $request->calendario->clave;
 		$request->session->setData ('CAL_ACTIVO', $request->calendario->clave);
 		
+		Gatuf_Signal::connect('Gatuf_Template_Context_Request::construct', array('Calif_Middleware_Calendario', 'processContext'));
 		return false;
+	}
+	
+	public static function processContext($signal, &$params) {
+        $params['context'] = array_merge($params['context'], array ('form_calendario' => new Calif_Form_Calendario_Seleccionar (null)));
 	}
 }
 
-function Calif_Middleware_Calendario_ContextPreProcessor ($request) {
-	return array ('form_calendario' => new Calif_Form_Calendario_Seleccionar (null));
-}
