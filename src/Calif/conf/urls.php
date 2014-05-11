@@ -72,20 +72,6 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/verificaroferta/$#',
-	'base' => $base,
-	'model' => 'Calif_Views',
-	'method' => 'verificar_oferta',
-);
-
-$ctl[] = array (
-	'regex' => '#^/sobreoferta/$#',
-	'base' => $base,
-	'model' => 'Calif_Views',
-	'method' => 'sobre_oferta',
-);
-
-$ctl[] = array (
 	'regex' => '#^/sistema/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_System',
