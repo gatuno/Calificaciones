@@ -28,13 +28,6 @@ class Calif_Alumno extends Gatuf_Model {
 			       'blank' => false,
 			       'size' => 100,
 			),
-			'grupos' =>
-			array (
-			       'type' => 'Gatuf_DB_Field_Manytomany',
-			       'blank' => false,
-			       'model' => 'Calif_Seccion',
-			       'relate_name' => 'grupos',
-			),
 			'sexo' =>
 			array (
 			       'type' => 'Gatuf_DB_Field_Char',

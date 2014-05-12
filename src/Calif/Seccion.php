@@ -51,6 +51,13 @@ class Calif_Seccion extends Gatuf_Model {
 			       'is_null' => true,
 			       'default' => null,
 			),
+			'grupos' =>
+			array (
+			       'type' => 'Gatuf_DB_Field_Manytomany',
+			       'blank' => false,
+			       'model' => 'Calif_Alumno',
+			       'relate_name' => 'grupos',
+			),
 		);
 		
 		$this->default_order = 'materia ASC, seccion ASC';
