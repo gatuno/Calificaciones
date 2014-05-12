@@ -45,10 +45,14 @@ class Calif_Horario extends Gatuf_Model {
 				'default' => false,
 			);
 		};
+		
+		Gatuf::loadFunction ('Calif_Calendario_getDefault');
+		$this->_a['calpfx'] = Calif_Calendario_getDefault ();
+		
 		$this->_a['views'] = array (
 			'paginador' => array (
-				'select' => $this->_con->pfx.'horarios_view.*',
-				'from' => $this->_con->dbname.'.'.$this->_con->pfx.'horarios_view',
+				'select' => $this->_con->pfx.$this->_a['calpfx'].'horarios_view.*',
+				'from' => $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['calpfx'].'horarios_view',
 				'props' => array ('salon_aula', 'salon_edificio', 'seccion_maestro', 'seccion_asignacion', 'seccion_asignacion_color'),
 			),
 		);

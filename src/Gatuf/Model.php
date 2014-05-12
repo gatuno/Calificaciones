@@ -38,6 +38,7 @@ class Gatuf_Model {
 					   'cols' => array(),
 					   'idx' => array(),
 					   'views' => array(),
+					   'calpfx' => '',
 	);
 	
 	function __construct ($pk = null, $values =array ()) {
@@ -148,13 +149,13 @@ class Gatuf_Model {
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
 		// Calcular la base de datos que contiene la relación M-N
-		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+		if (in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$model->_a['model']])) {
 			// La relación la tiene el $hay[1]
 			$dbname = $this->_con->dbname;
-			$dbpfx = $this->_con->pfx;
+			$dbpfx = $this->_con->pfx.$this->_['calpfx'];
 		} else {
 			$dbname = $model->_con->dbname;
-			$dbpfx = $model->_con->pfx;
+			$dbpfx = $model->_con->pfx.$model->_a['calpfx'];
 		}
 		sort($hay);
 		$pk = $model->primary_key;
@@ -185,13 +186,13 @@ class Gatuf_Model {
 		}
 		$hay = array(strtolower($model->_a['model']), strtolower($this->_a['model']));
 		// Calcular la base de datos que contiene la relación M-N
-		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+		if (in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$model->_a['model']])) {
 			// La relación la tiene el $hay[1]
 			$dbname = $this->_con->dbname;
-			$dbpfx = $this->_con->pfx;
+			$dbpfx = $this->_con->pfx.$this->_a['calpfx'];
 		} else {
 			$dbname = $model->_con->dbname;
-			$dbpfx = $model->_con->pfx;
+			$dbpfx = $model->_con->pfx.$model->_a['calpfx'];
 		}
 		sort($hay);
 		$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
@@ -239,7 +240,7 @@ class Gatuf_Model {
 	}
 	
 	function getSqlTable () {
-		return $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['table'];
+		return $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['calpfx'].$this->_a['table'];
 	}
 	
 	/**
@@ -428,7 +429,7 @@ class Gatuf_Model {
 		}
 		
 		/* Construir la query */
-		$req = 'SELECT '.$query['select'].' FROM '.$this->_con->pfx.$query['from'].' '.$query['join'];
+		$req = 'SELECT '.$query['select'].' FROM '.$query['from'].' '.$query['join'];
 		if (strlen($query['where'])) {
 			$req .= "\n".'WHERE '.$query['where'];
 		}
@@ -523,13 +524,13 @@ class Gatuf_Model {
 			$hay = array(strtolower($m->_a['model']), 
 						 strtolower($this->_a['model']));
 			// Calcular la base de datos que contiene la relación M-N
-			if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+			if (in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$m->_a['model']])) {
 				// La relación la tiene el $hay[1]
 				$dbname = $this->_con->dbname;
-				$dbpfx = $this->_con->pfx;
+				$dbpfx = $this->_con->pfx.$this->_a['calpfx'];
 			} else {
 				$dbname = $m->_con->dbname;
-				$dbpfx = $m->_con->pfx;
+				$dbpfx = $m->_con->pfx.$m->_a['calpfx'];
 			}
 			sort($hay);
 			$table = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
@@ -548,7 +549,7 @@ class Gatuf_Model {
 			}
 			$m->_a['views'][$p['view'].'__manytomany__']['join'] .= 
 				' LEFT JOIN '.$dbname.'.'.$table.' ON '
-				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.(isset ($m->_a['views'][$p['view'].'__manytomany__']['from']) ? $m->_a['views'][$p['view'].'__manytomany__']['from'] : $m->_con->pfx.$m->_a['table']).'.'.$m->primary_key;
+				.$this->_con->qn(strtolower($m->_a['model']).'_'.$m->primary_key).' = '.(isset ($m->_a['views'][$p['view'].'__manytomany__']['from']) ? $m->_a['views'][$p['view'].'__manytomany__']['from'] : $m->getSqlTable()).'.'.$m->primary_key;
 
 			$m->_a['views'][$p['view'].'__manytomany__']['where'] = $this->_con->qn(strtolower($this->_a['model']).'_'.$this->primary_key).'='.$this->_con->esc ($this->_data[$this->primary_key]);
 			$p['view'] = $p['view'].'__manytomany__';

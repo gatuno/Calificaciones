@@ -4,22 +4,16 @@ function Calif_Migrations_Install_setup ($params=null) {
 	$models = array ('Calif_Alumno',
 	                 'Calif_Calendario',
 	                 'Calif_Carrera',
-	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
 	                 'Calif_Division',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
-	                 'Calif_Horario',
 	                 'Calif_Inscripcion',
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Nombramiento',
-	                 'Calif_NumeroPuesto',
-	                 'Calif_Porcentaje',
-	                 'Calif_Promedio',
 	                 'Calif_Salon',
-	                 'Calif_Seccion',
 	                 );
 	$db = Gatuf::db ();
 	$schema = new Gatuf_DB_Schema ($db);
@@ -32,7 +26,6 @@ function Calif_Migrations_Install_setup ($params=null) {
 		$schema->model = new $model ();
 		$schema->createConstraints ();
 	}
-	Calif_Migrations_Install_Triggers_setup ();
 	
 	Calif_Migrations_Install_1Vistas_setup ();
 	Calif_Migrations_Install_2GruposEval_setup ();
@@ -46,26 +39,19 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	$models = array ('Calif_Alumno',
 	                 'Calif_Calendario',
 	                 'Calif_Carrera',
-	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
 	                 'Calif_Division',
 	                 'Calif_Edificio',
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
-	                 'Calif_Horario',
 	                 'Calif_Inscripcion',
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Nombramiento',
-	                 'Calif_NumeroPuesto',
-	                 'Calif_Porcentaje',
-	                 'Calif_Promedio',
 	                 'Calif_Salon',
-	                 'Calif_Seccion',
 	                 );
 	
 	Calif_Migrations_Install_1Vistas_teardown ();
-	Calif_Migrations_Install_Triggers_teardown ();
 	
 	$db = Gatuf::db ();
 	$schema = new Gatuf_DB_Schema ($db);
@@ -81,99 +67,6 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	}
 }
 
-function Calif_Migrations_Install_Triggers_setup ($params = null) {
-	$db = Gatuf::db ();
-	
-	$hay = array (strtolower ('Calif_Alumno'), strtolower('Calif_Seccion'));
-	sort ($hay);
-	$t_asso = $db->dbname.'.'.$db->pfx.$hay[0].'_'.$hay[1].'_assoc';
-	
-	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
-	$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
-	$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
-	$promedio_tabla = Gatuf::factory ('Calif_Promedio')->getSqlTable ();
-	
-	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'insert_alumno AFTER INSERT ON '.$t_asso."\n"
-	    .'FOR EACH ROW BEGIN'."\n"
-	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
-	    .'SELECT NEW.calif_seccion_nrc, NEW.calif_alumno_codigo, P.evaluacion, NULL FROM '.$seccion_tabla.' AS S'."\n"
-	    .'INNER JOIN '.$porcentaje_tabla.' AS P ON S.materia = P.materia WHERE S.nrc = NEW.calif_seccion_nrc;'."\n"
-	    .'UPDATE '.$promedio_tabla.' AS PP'."\n"
-	    .'INNER JOIN ('."\n"
-	    .'SELECT evaluacion,'."\n"
-	    .'AVG (GREATEST (COALESCE (valor, 0), 0)) AS promedio'."\n"
-	    .'FROM '.$calificacion_tabla."\n"
-	    .'GROUP BY evaluacion'."\n"
-	    .') AS sub'."\n"
-	    .'ON PP.evaluacion = sub.evaluacion'."\n"
-	    .'SET PP.promedio = sub.promedio'."\n"
-	    .'WHERE PP.nrc = NEW.calif_seccion_nrc;'."\n"
-	    .'END';
-	$db->execute ($sql);
-	
-	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'delete_alumno AFTER DELETE ON '.$t_asso."\n"
-	    .' FOR EACH ROW BEGIN'."\n"
-	    .'DELETE FROM '.$calificacion_tabla.' WHERE Alumno = OLD.calif_alumno_codigo AND Nrc = OLD.calif_seccion_nrc;'."\n"
-	    .'UPDATE '.$promedio_tabla.' AS PP'."\n"
-	    .'INNER JOIN ('."\n"
-	    .'SELECT evaluacion,'."\n"
-	    .'AVG (GREATEST (COALESCE (valor, 0), 0)) AS promedio'."\n"
-	    .'FROM '.$calificacion_tabla."\n"
-	    .'GROUP BY evaluacion'."\n"
-	    .') AS sub'."\n"
-	    .'ON PP.evaluacion = sub.evaluacion'."\n"
-	    .'SET PP.promedio = sub.promedio'."\n"
-	    .'WHERE PP.nrc = OLD.calif_seccion_nrc;'."\n"
-	    .'END';
-	$db->execute ($sql);
-	
-	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'insert_evaluacion AFTER INSERT ON '.$porcentaje_tabla."\n"
-	    .' FOR EACH ROW BEGIN'."\n"
-	    .'INSERT INTO '.$calificacion_tabla.' (nrc, alumno, evaluacion, valor)'."\n"
-	    .'SELECT G.calif_seccion_nrc, G.calif_alumno_codigo, NEW.evaluacion, NULL'."\n"
-	    .'FROM '.$t_asso.' AS G'."\n"
-	    .'INNER JOIN '.$seccion_tabla.' AS S ON G.calif_seccion_nrc = S.nrc'."\n"
-	    .'WHERE S.materia = NEW.materia;'."\n"
-	    .'INSERT INTO '.$promedio_tabla.' (nrc, evaluacion, promedio)'."\n"
-	    .'SELECT S.nrc, NEW.evaluacion, 0.0'."\n"
-	    .'FROM '.$seccion_tabla.' AS S'."\n"
-	    .'WHERE S.materia = NEW.materia;'."\n"
-	    .'END';
-	$db->execute ($sql);
-	
-	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'delete_evaluacion AFTER DELETE ON '.$porcentaje_tabla."\n"
-	    .' FOR EACH ROW BEGIN'."\n"
-	    .'DELETE C FROM '.$calificacion_tabla.' AS C, '.$seccion_tabla.' AS S WHERE C.nrc = S.nrc'."\n"
-	    .'AND S.materia = OLD.materia AND C.evaluacion = OLD.evaluacion;'."\n"
-	    .'DELETE P FROM '.$promedio_tabla.' AS P, '.$seccion_tabla.' AS S'."\n"
-	    .'WHERE P.nrc = S.nrc AND S.materia = OLD.materia AND P.evaluacion = OLD.evaluacion;'."\n"
-	    .'END';
-	$db->execute ($sql);
-	
-	$sql = 'CREATE TRIGGER '.$db->dbname.'.'.$db->pfx.'update_promedios AFTER UPDATE ON '.$calificacion_tabla."\n"
-	    .' FOR EACH ROW BEGIN'."\n"
-	    .'UPDATE '.$promedio_tabla.' as P'."\n"
-	    .'SET P.promedio = (SELECT AVG(GREATEST(COALESCE(C.valor,0),0)) FROM '.$calificacion_tabla.' as C WHERE C.evaluacion = NEW.evaluacion AND nrc = NEW.nrc)'."\n"
-	    .'WHERE P.nrc = NEW.nrc and P.evaluacion = NEW.evaluacion;'."\n"
-	    .'END';
-	$db->execute ($sql);
-}
-
-function Calif_Migrations_Install_Triggers_teardown ($params = null) {
-	$db = Gatuf::db ();
-	$triggers = array ($db->dbname.'.'.'insert_alumno',
-	                   $db->dbname.'.'.'delete_alumno',
-	                   $db->dbname.'.'.'insert_evaluacion',
-	                   $db->dbname.'.'.'delete_evaluacion',
-	                   $db->dbname.'.'.'update_promedios');
-	
-	foreach ($triggers as $trigger) {
-		$sql = 'DROP TRIGGER '.$db->pfx.$trigger;
-		
-		$db->execute ($sql);
-	}
-}
-
 function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	/* Crear todas las vistas necesarias */
 	$db = Gatuf::db ();
@@ -186,49 +79,13 @@ function Calif_Migrations_Install_1Vistas_setup ($params = null) {
 	    .'FROM '.$materia_tabla."\n"
 	    .'LEFT JOIN '.$departamento_tabla.' ON '.$materia_tabla.'.departamento = '.$departamento_tabla.'.clave';
 	$db->execute ($sql);
-	
-	$maestro_tabla = Gatuf::factory ('Calif_Maestro')->getSqlTable ();
-	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
-	
-	$sql = 'CREATE VIEW '.$db->pfx.'secciones_view AS '."\n"
-	    .'SELECT '.$seccion_tabla.'.*, '.$materia_tabla.'.descripcion as materia_desc, '.$materia_tabla.'.departamento as materia_departamento, '.$maestro_tabla.'.nombre as maestro_nombre, '.$maestro_tabla.'.apellido as maestro_apellido'."\n"
-	    .'FROM '.$seccion_tabla."\n"
-	    .'LEFT JOIN '.$materia_tabla.' ON '.$seccion_tabla.'.materia = '.$materia_tabla.'.clave'."\n"
-	    .'LEFT JOIN '.$maestro_tabla.' ON '.$seccion_tabla.'.maestro = '.$maestro_tabla.'.codigo';
-	$db->execute ($sql);
-	
-	/* Vista de horarios */
-	$horario_tabla = Gatuf::factory ('Calif_Horario')->getSqlTable ();
-	$salon_tabla = Gatuf::factory ('Calif_Salon')->getSqlTable ();
-	$carrera_tabla = Gatuf::factory ('Calif_Carrera')->getSqlTable ();
-	
-	$sql = 'CREATE VIEW '.$db->pfx.'horarios_view AS '."\n"
-	     .'SELECT '.$horario_tabla.'.*, '.$salon_tabla.'.aula AS salon_aula, '.$salon_tabla.'.edificio AS salon_edificio,'."\n"
-	     .$seccion_tabla.'.maestro AS seccion_maestro, '.$seccion_tabla.'.asignacion AS seccion_asignacion, '.$carrera_tabla.'.color as seccion_asignacion_color'."\n"
-	     .'FROM '.$horario_tabla."\n"
-	     .'LEFT JOIN '.$salon_tabla.' ON '.$horario_tabla.'.salon = '.$salon_tabla.'.id'."\n"
-	     .'LEFT JOIN '.$seccion_tabla.' ON '.$horario_tabla.'.nrc = '.$seccion_tabla.'.nrc'."\n"
-	     .'LEFT JOIN '.$carrera_tabla.' ON '.$seccion_tabla.'.asignacion = '.$carrera_tabla.'.clave';
-	$db->execute ($sql);
-	
-	/* Vista Maestros-Departamentos */
-	
-	$sql = 'CREATE VIEW '.$db->pfx.'maestros_departamentos AS '."\n"
-	     .'SELECT '.$maestro_tabla.'.*, '.$materia_tabla.'.departamento as departamento'."\n"
-	     .'FROM '.$maestro_tabla."\n"
-	     .'INNER JOIN '.$seccion_tabla.' ON '.$seccion_tabla.'.maestro = '.$maestro_tabla.'.codigo'."\n"
-	     .'LEFT JOIN '.$materia_tabla.' ON '.$seccion_tabla.'.materia = '.$materia_tabla.'.clave'."\n"
-	     .'GROUP BY '.$maestro_tabla.'.codigo,'.$materia_tabla.'.departamento'."\n";
-	$db->execute ($sql);
 }
 
 function Calif_Migrations_Install_1Vistas_teardown ($params = null) {
 	$db = Gatuf::db ();
 	
 	$views = array ('materias_view',
-	                'secciones_view',
-	                'horarios_view',
-	                'maestros_departamentos');
+	                );
 	
 	foreach ($views as $view) {
 		$sql = 'DROP VIEW '.$db->pfx.$view;

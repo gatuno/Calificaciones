@@ -88,7 +88,7 @@ class Gatuf_DB_Schema_MySQL {
 		$tables = array();
 		$cols = $model->_a['cols'];
 		$manytomany = array();
-		$sql = 'CREATE TABLE '.$this->con->dbname.'.`'.$this->con->pfx.$model->_a['table'].'` (';
+		$sql = 'CREATE TABLE '.$this->con->dbname.'.`'.$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'` (';
 		foreach ($cols as $col => $val) {
 			$field = new $val['type']();
 			if ($field->type != 'manytomany') {
@@ -121,7 +121,7 @@ class Gatuf_DB_Schema_MySQL {
 		}
 		$sql .= "\n".'PRIMARY KEY (`'.$model->primary_key.'`))';
 		$sql .= 'ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-		$tables[$this->con->pfx.$model->_a['table']] = $sql;
+		$tables[$this->con->pfx.$model->_a['calpfx'].$model->_a['table']] = $sql;
 
 		// Now for the many to many
 		foreach ($manytomany as $many) {
@@ -129,7 +129,7 @@ class Gatuf_DB_Schema_MySQL {
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
 			$table = $hay[0].'_'.$hay[1].'_assoc';
-			$sql = 'CREATE TABLE `'.$this->con->pfx.$table.'` (';
+			$sql = 'CREATE TABLE `'.$this->con->pfx.$model->_a['calpfx'].$table.'` (';
 			
 			$type_a = new $model->_a['cols'][$model->primary_key]['type']();
 			$mapping_a = ($type_a->type == 'sequence') ? $this->mappings['foreignkey'] : $this->process_mapping ($type_a->type, $model->_a['cols'][$model->primary_key]);
@@ -142,7 +142,7 @@ class Gatuf_DB_Schema_MySQL {
 			$sql .= "\n".'PRIMARY KEY ('.strtolower($model->_a['model']).'_'.$model->primary_key.', '.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.')';
 			$sql .= "\n".') ENGINE=InnoDB';
 			$sql .=' DEFAULT CHARSET=utf8;';
-			$tables[$this->con->pfx.$table] = $sql;
+			$tables[$this->con->pfx.$model->_a['calpfx'].$table] = $sql;
 		}
 		return $tables;
 	}
@@ -161,29 +161,29 @@ class Gatuf_DB_Schema_MySQL {
 				$val['col'] = $idx;
 			}
 			if ($val['type'] == 'unique') {
-			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
+			    $index[$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'_'.$idx] =
 				    sprintf('CREATE UNIQUE INDEX `%s` ON %s.`%s` (%s);',
-						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['table'],
+						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['calpfx'].$model->_a['table'],
 						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
 			} else {
-			    $index[$this->con->pfx.$model->_a['table'].'_'.$idx] =
+			    $index[$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'_'.$idx] =
 				    sprintf('CREATE INDEX `%s` ON %s.`%s` (%s);',
-						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['table'],
+						    $idx, $this->con->dbname, $this->con->pfx.$model->_a['calpfx'].$model->_a['table'],
 						    Gatuf_DB_Schema::quoteColumn($val['col'], $this->con));
 			}
 		}
 		foreach ($model->_a['cols'] as $col => $val) {
 			$field = new $val['type']();
 			if ($field->type == 'foreignkey') {
-				$index[$this->con->pfx.$model->_a['table'].'_'.$col.'_foreignkey'] =
+				$index[$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'_'.$col.'_foreignkey'] =
 					sprintf('CREATE INDEX `%s` ON %s.`%s` (`%s`);',
-					        $col.'_foreignkey_idx', $this->con->dbname, $this->con->pfx.$model->_a['table'], $col);
+					        $col.'_foreignkey_idx', $this->con->dbname, $this->con->pfx.$model->_a['calpfx'].$model->_a['table'], $col);
 			}
 			if (isset($val['unique']) and $val['unique'] == true) {
-				$index[$this->con->pfx.$model->_a['table'].'_'.$col.'_unique'] =
+				$index[$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'_'.$col.'_unique'] =
 					sprintf('CREATE UNIQUE INDEX `%s` ON %s.`%s` (%s);',
 					        $col.'_unique_idx',
-					        $this->con->dbname, $this->con->pfx.$model->_a['table'],
+					        $this->con->dbname, $this->con->pfx.$model->_a['calpfx'].$model->_a['table'],
 					        Gatuf_DB_Schema::quoteColumn($col, $this->con)
 							);
 			}
@@ -238,7 +238,7 @@ class Gatuf_DB_Schema_MySQL {
 	 * @return array Array of SQL strings ready to execute.
 	 */
 	function getSqlCreateConstraints($model) {
-		$table = $this->con->pfx.$model->_a['table'];
+		$table = $this->con->pfx.$model->_a['calpfx'].$model->_a['table'];
 		$constraints = array();
 		$alter_tbl = 'ALTER TABLE '.$this->con->dbname.'.'.$table;
 		$cols = $model->_a['cols'];
@@ -255,7 +255,7 @@ class Gatuf_DB_Schema_MySQL {
 				$referto = new $val['model']();
 				$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_'.$col.'_fkey').'
 				    FOREIGN KEY ('.$this->con->qn($col).')
-				    REFERENCES '.$referto->_con->dbname.'.'.$referto->_con->pfx.$referto->_a['table'].' ('.$referto->primary_key.')
+				    REFERENCES '.$referto->_con->dbname.'.'.$referto->_con->pfx.$referto->_a['calpfx'].$referto->_a['table'].' ('.$referto->primary_key.')
 				    ON DELETE NO ACTION ON UPDATE NO ACTION';
 			}
 		}
@@ -265,15 +265,15 @@ class Gatuf_DB_Schema_MySQL {
 			$omodel = new $cols[$many]['model']();
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
-			$table = $this->con->pfx.$hay[0].'_'.$hay[1].'_assoc';
+			$table = $this->con->pfx.$model->_a['calpfx'].$hay[0].'_'.$hay[1].'_assoc';
 			$alter_tbl = 'ALTER TABLE '.$table;
 			$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey1').'
 			    FOREIGN KEY ('.strtolower($model->_a['model']).'_'.$model->primary_key.')
-			    REFERENCES '.$model->_con->dbname.'.'.$model->_con->pfx.$model->_a['table'].' ('.$model->primary_key.')
+			    REFERENCES '.$model->_con->dbname.'.'.$model->_con->pfx.$model->_a['calpfx'].$model->_a['table'].' ('.$model->primary_key.')
 			    ON DELETE NO ACTION ON UPDATE NO ACTION';
 			$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey2').'
 			    FOREIGN KEY ('.strtolower($omodel->_a['model']).'_'.$omodel->primary_key.')
-			    REFERENCES '.$omodel->_con->dbname.'.'.$omodel->_con->pfx.$omodel->_a['table'].' ('.$omodel->primary_key.')
+			    REFERENCES '.$omodel->_con->dbname.'.'.$omodel->_con->pfx.$omodel->_a['calpfx'].$omodel->_a['table'].' ('.$omodel->primary_key.')
 			    ON DELETE NO ACTION ON UPDATE NO ACTION';
 		}
 		return $constraints;
@@ -288,7 +288,7 @@ class Gatuf_DB_Schema_MySQL {
 	function getSqlDelete($model) {
 		$cols = $model->_a['cols'];
 		$manytomany = array();
-		$sql = 'DROP TABLE IF EXISTS `'.$this->con->dbname.'.'.$this->con->pfx.$model->_a['table'].'`';
+		$sql = 'DROP TABLE IF EXISTS `'.$this->con->dbname.'.'.$this->con->pfx.$model->_a['calpfx'].$model->_a['table'].'`';
 
 		foreach ($cols as $col => $val) {
 			$field = new $val['type']();
@@ -303,7 +303,7 @@ class Gatuf_DB_Schema_MySQL {
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
 			$table = $hay[0].'_'.$hay[1].'_assoc';
-			$sql .= ', `'.$this->con->pfx.$table.'`';
+			$sql .= ', `'.$this->con->pfx.$model->_a['calpfx'].$table.'`';
 		}
 		return array($sql);
 	}
@@ -315,7 +315,7 @@ class Gatuf_DB_Schema_MySQL {
 	 * @return array Array of SQL strings ready to execute.
 	 */
 	function getSqlDeleteConstraints($model) {
-		$table = $this->con->pfx.$model->_a['table'];
+		$table = $this->con->pfx.$model->_a['calpfx'].$model->_a['table'];
 		$constraints = array();
 		$alter_tbl = 'ALTER TABLE '.$this->con->dbname.'.'.$table;
 		$cols = $model->_a['cols'];
@@ -339,7 +339,7 @@ class Gatuf_DB_Schema_MySQL {
 			$omodel = new $cols[$many]['model']();
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
-			$table = $this->con->pfx.$hay[0].'_'.$hay[1].'_assoc';
+			$table = $this->con->pfx.$model->_a['calpfx'].$hay[0].'_'.$hay[1].'_assoc';
 			$alter_tbl = 'ALTER TABLE '.$table;
 			$constraints[] = $alter_tbl.' DROP FOREIGN KEY '.$this->getShortenedFKeyName($table.'_fkey1');
 			$constraints[] = $alter_tbl.' DROP FOREIGN KEY '.$this->getShortenedFKeyName($table.'_fkey2');

@@ -48,6 +48,9 @@ class Calif_Calificacion extends Gatuf_Model {
 			       'type' => 'unique',
 			),
 		);
+		
+		Gatuf::loadFunction ('Calif_Calendario_getDefault');
+		$this->_a['calpfx'] = Calif_Calendario_getDefault ();
 	}
 		
 	public static function getPromedio ($alumno, $nrc, $grupo_eval) {

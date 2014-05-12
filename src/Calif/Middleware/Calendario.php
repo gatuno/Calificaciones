@@ -27,7 +27,7 @@ class Calif_Middleware_Calendario {
 			 * Seleccionar el primero que no esté oculto */
 			$ops = $request->calendario->getList (array ('filter' => 'oculto=0', 'order' => 'clave DESC'));
 			
-			if ($ops->count ()) {
+			if ($ops->count () == 0) {
 				/* No hay calendarios disponibles, redirigir hacia la vista de calendarios */
 				return new Gatuf_HTTP_Response_NotFound ($request);
 			}

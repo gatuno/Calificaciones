@@ -6,6 +6,14 @@ class Calif_Views_Maestro {
 	public function index ($request, $match) {
 		$maestro = new Calif_Maestro ();
 		
+		$maestro->_a['views'] = array (
+			'maestros_departamentos' => array (
+				'select' => $maestro->_con->pfx.$maestro->_a['calpfx'].'maestros_departamentos.*',
+				'from' => $maestro->_con->dbname.'.'.$maestro->_con->pfx.$maestro->_a['calpfx'].'maestros_departamentos',
+				'props' => array ('departamento'),
+			),
+		);
+		
 		$dep = $request->session->getData('filtro_profesor_departamento', null);
 		$filtro = null;
 		$pag = new Gatuf_Paginator ($maestro);

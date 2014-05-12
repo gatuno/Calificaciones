@@ -43,6 +43,9 @@ class Calif_Promedio extends Gatuf_Model {
 			       'type' => 'index',
 			),
 		);
+		
+		Gatuf::loadFunction ('Calif_Calendario_getDefault');
+		$this->_a['calpfx'] = Calif_Calendario_getDefault ();
 	}
 	
 	public function getPromedioEval ($nrc, $eval) {

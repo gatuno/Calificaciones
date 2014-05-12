@@ -60,6 +60,9 @@ class Calif_Porcentaje extends Gatuf_Model {
 			),
 		);
 		$this->default_order = 'evaluacion ASC';
+		
+		Gatuf::loadFunction ('Calif_Calendario_getDefault');
+		$this->_a['calpfx'] = Calif_Calendario_getDefault ();
 	}
 	
 	public function getGroupSum ($materia, $grupo) {
