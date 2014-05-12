@@ -2,6 +2,7 @@
 
 function Calif_Migrations_Install_setup ($params=null) {
 	$models = array ('Calif_Alumno',
+	                 'Calif_Calendario',
 	                 'Calif_Carrera',
 	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
@@ -10,6 +11,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
 	                 'Calif_Horario',
+	                 'Calif_Inscripcion',
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Nombramiento',
@@ -42,6 +44,7 @@ function Calif_Migrations_Install_setup ($params=null) {
 
 function Calif_Migrations_Install_teardown ($params=null) {
 	$models = array ('Calif_Alumno',
+	                 'Calif_Calendario',
 	                 'Calif_Carrera',
 	                 'Calif_Calificacion',
 	                 'Calif_Departamento',
@@ -50,6 +53,7 @@ function Calif_Migrations_Install_teardown ($params=null) {
 	                 'Calif_Evaluacion',
 	                 'Calif_GrupoEvaluacion',
 	                 'Calif_Horario',
+	                 'Calif_Inscripcion',
 	                 'Calif_Maestro',
 	                 'Calif_Materia',
 	                 'Calif_Nombramiento',
@@ -270,7 +274,7 @@ function Calif_Migrations_Install_3Departamentos_setup ($params = null) {
 		$departamento->clave = $clave;
 		$departamento->descripcion = $descripcion;
 		
-		$departamento->create (true);
+		$departamento->create (); /* NO raw para que los permisos se creen automáticamente */
 	}
 }
 

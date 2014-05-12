@@ -1,0 +1,12 @@
+{extends 'general/base.html'}
+{block body}
+<p>Todo: Crear un nuevo calendario</p>
+{if count ($calendarios) != 0}
+<p>Los siguientes calendarios están disponibles para el sistema de calificaciones:</p>
+<ul>{foreach $calendarios as $cal}
+	<li>{$cal.descripcion} ({$cal.clave}){if $cal.oculto} <b>Calendario oculto</b>{/if}</li>
+{/foreach}</ul>
+{else}
+<p>No hay calendarios disponibles en este sistema</p>
+{/if}
+{/block} 

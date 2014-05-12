@@ -56,6 +56,13 @@ $ctl[] = array (
 	'method' => 'cambiarCalendario',
 );
 
+$ctl[] = array (
+	'regex' => '#^/calendarios/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Calendario',
+	'method' => 'index',
+);
+
 /* Reportes y acciones varias */
 $ctl[] = array (
 	'regex' => '#^/importsiiau/$#',
