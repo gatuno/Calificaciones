@@ -1,8 +1,16 @@
 {extends 'calif/maestro/base.html'}
 {block body_maestro}
 <h2>Permisos</h2>
+{if $maestro.user.administrator}
+<p>Este usuario tiene permisos de <b>Adminitrador</b></p>
+{elseif count ($permisos) != 0}
+		<p>Tiene los siguientes permisos:
+		<ul>{foreach $permisos as $p}
+			<li>Permiso: {$p.application} - <abbr title="{$p.description}">{$p.name}</abbr>. TODO: Boton para eliminar permiso.</li>
+		{/foreach}</ul></p>
+{/if}
+<h3>Agregar nuevo permiso</h3>
 {if $form}
-	<h3>Agregar nuevo permiso</h3>
 	<form method="post" action="{url 'Calif_Views_Usuario::agregarPermiso', array($maestro->user->id)}">
 		<table>
 			{$form.render_table}
@@ -10,10 +18,16 @@
 		</table>
 	</form>
 {else}
-	<p>Este usuario ya tiene todos los permisos posibles</p>
+	<p>Ya no se pueden agregar más permisos, este usuario ya tiene todos los permisos posibles</p>
+{/if}
+<h3>Agregar nuevo grupo</h3>
+{if count ($grupos) != 0}
+	<p>Pertence a los siguiente grupos:
+	<ul>{foreach $grupos as $g}
+		<li>Grupo: <abbr title="{$g.description}">{$g.name}</abbr>. TODO: Boton para eliminar grupo.</li>
+	{/foreach}</ul></p>
 {/if}
 {if $form2}
-	<h3>Agregar nuevo grupo</h3>
 	<form method="post" action="{url 'Calif_Views_Usuario::agregarGrupo', array($maestro->user->id)}">
 		<table>
 			{$form2.render_table}

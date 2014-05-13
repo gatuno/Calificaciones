@@ -400,7 +400,7 @@ class Calif_Views_Maestro {
 			$form = new Calif_Form_Usuario_Permisos (null, $extra);
 		}
 		
-		
+		$permisos_usuario = $maestro->user->get_permissions_list ();
 		$grupos = $maestro->user->get_groups_list ();
 		
 		if (count ($grupos) == Gatuf::factory ('Gatuf_Group')->getCount ()) {

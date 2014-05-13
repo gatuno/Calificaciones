@@ -11,9 +11,11 @@ class Calif_Views_Puestos {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		$nrc = new Calif_Seccion ($puesto->nrc);
-		$maestro = new Calif_Maestro ($nrc->maestro);
-		$materia = new Calif_Materia ($nrc->materia);
+		$nrc = $puesto->get_nrc ();
+		$maestro = $nrc->get_maestro ();
+		$materia = $nrc->get_materia ();
+		$suplente = null;
+		if ($nrc->suplente != null) $suplente = $nrc->get_suplente ();
 		
 		if (!$request->user->hasPerm ('SIIAU.jefe.'.$materia->departamento)) {
 			$request->user->setMessage (3, 'No puede modificar este número de puesto. Usted no es el jefe de departamento de esta materia');
@@ -43,6 +45,7 @@ class Calif_Views_Puestos {
 		                                                'puesto' => $puesto,
 		                                                'materia' => $materia,
 		                                                'maestro' => $maestro,
+		                                                'suplente' => $suplente,
 		                                                'seccion' => $nrc,
 		                                                'form' => $form),
 		                                         $request);

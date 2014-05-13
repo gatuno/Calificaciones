@@ -19,12 +19,10 @@
 	<tr><th><strong>Seccion:</strong></th>
 		<td>{$seccion.seccion}</td>
 	</tr>
-	<tr><th><strong>Profesor:</strong></th>
-		<td>{$maestro.nombre} {$maestro.apellido}</td>
-	</tr>
-	<tr><th><strong>Horas:</strong></th>
-		<td>{$puesto.horas} hora(s) de {if $puesto.tipo == 't'}teoría{else}práctica{/if}</td>
-	</tr>
+{if $puesto.tipo == 't' || $puesto.tipo == 'p'}<tr><th><strong>Profesor:</strong></th><td>{$maestro.nombre} {$maestro.apellido}</td></tr>
+{elseif $puesto.tipo == 'u' || $puesto.tipo == 'q'}<tr><th><strong>Suplente:</strong></th><td>{$suplente.nombre} {$suplente.apellido}</td></tr>
+{/if}
+	<tr><th><strong>Horas:</strong></th><td>{$puesto.horas} hora(s) de {if $puesto.tipo == 't'}teoría{elseif $puesto.tipo == 'p'}práctica{elseif $puesto.tipo == 'u'}teoría suplente{else}práctica suplente{/if}</td></tr>
 	<tr><th><strong>{$form.f.carga.labelTag}:</strong></th>
 		<td>{if $form.f.carga.errors}{$form.f.carga.fieldErrors}{/if}
 		{$form.f.carga|safe}<br />
