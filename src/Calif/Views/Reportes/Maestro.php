@@ -30,16 +30,7 @@ class Calif_Views_Reportes_Maestro {
 		
 		$sql = new Gatuf_SQL ('departamento=%s', $departamento->clave);
 		
-		$maestro_model = new Calif_Maestro ();
-		$maestro_model->_a['views'] = array (
-			'maestros_departamentos' => array (
-				'select' => $maestro_model->_con->pfx.$maestro_model->_a['calpfx'].'maestros_departamentos.*',
-				'from' => $maestro_model->_con->dbname.'.'.$maestro_model->_con->pfx.$maestro_model->_a['calpfx'].'maestros_departamentos',
-				'props' => array ('departamento'),
-			),
-		);
-		
-		$maestros = $maestro_model->getList (array ('filter' => $sql->gen (), 'view' => 'maestros_departamentos'));
+		$maestros = Gatuf::factory ('Calif_Maestro')->getList (array ('filter' => $sql->gen (), 'view' => 'maestros_departamentos'));
 		
 		$nombramientos = array ();
 		foreach (Gatuf::factory ('Calif_Nombramiento')->getList () as $nomb) {

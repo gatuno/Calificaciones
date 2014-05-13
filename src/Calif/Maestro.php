@@ -67,6 +67,15 @@ class Calif_Maestro extends Gatuf_Model {
 		);
 		
 		$this->default_order = 'apellido ASC, nombre ASC';
+		
+		Gatuf::loadFunction ('Calif_Calendario_getDefault');
+		$this->_a['views'] = array (
+			'maestros_departamentos' => array (
+				'select' => $this->_con->pfx.Calif_Calendario_getDefault ().'maestros_departamentos.*',
+				'from' => $this->_con->dbname.'.'.$this->_con->pfx.Calif_Calendario_getDefault ().'maestros_departamentos',
+				'props' => array ('departamento'),
+			),
+		);
 	}
 	
 	function getUser () {

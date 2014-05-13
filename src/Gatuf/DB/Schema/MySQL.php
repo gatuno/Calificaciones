@@ -129,7 +129,7 @@ class Gatuf_DB_Schema_MySQL {
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
 			$table = $hay[0].'_'.$hay[1].'_assoc';
-			$sql = 'CREATE TABLE `'.$this->con->pfx.$model->_a['calpfx'].$table.'` (';
+			$sql = 'CREATE TABLE '.$this->con->dbname.'.`'.$this->con->pfx.$model->_a['calpfx'].$table.'` (';
 			
 			$type_a = new $model->_a['cols'][$model->primary_key]['type']();
 			$mapping_a = ($type_a->type == 'sequence') ? $this->mappings['foreignkey'] : $this->process_mapping ($type_a->type, $model->_a['cols'][$model->primary_key]);
@@ -266,7 +266,7 @@ class Gatuf_DB_Schema_MySQL {
 			$hay = array(strtolower($model->_a['model']), strtolower($omodel->_a['model']));
 			sort($hay);
 			$table = $this->con->pfx.$model->_a['calpfx'].$hay[0].'_'.$hay[1].'_assoc';
-			$alter_tbl = 'ALTER TABLE '.$table;
+			$alter_tbl = 'ALTER TABLE '.$this->con->dbname.'.'.$table;
 			$constraints[] = $alter_tbl.' ADD CONSTRAINT '.$this->getShortenedFKeyName($table.'_fkey1').'
 			    FOREIGN KEY ('.strtolower($model->_a['model']).'_'.$model->primary_key.')
 			    REFERENCES '.$model->_con->dbname.'.'.$model->_con->pfx.$model->_a['calpfx'].$model->_a['table'].' ('.$model->primary_key.')

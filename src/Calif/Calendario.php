@@ -68,21 +68,16 @@ function Calif_Calendario_getDefault () {
 function Calif_Calendario_installTriggersSetup ($params = null) {
 	$db = Gatuf::db ();
 	
-	$calpfx = Calif_Calendario_getDefault ();
-	$dbpfx = $db->pfx.$calpfx;
-	
-	$seccion_model = new Calif_Seccion ();
-	$porcentaje_model = new Calif_Porcentaje ();
-	$calificacion_model = new Calif_Calificacion ();
-	$promedio_model = new Calif_Porcentaje ();
-	$seccion_tabla = $dbpfx.$seccion_model->_a['table'];
-	$porcentaje_tabla = $dbpfx.$porcentaje_model->_a['table'];
-	$calificacion_tabla = $dbpfx.$calificacion_model->_a['table'];
-	$promedio_tabla = $dbpfx.$promedio_model->_a['table'];
+	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
+	$porcentaje_tabla = Gatuf::factory ('Calif_Porcentaje')->getSqlTable ();
+	$calificacion_tabla = Gatuf::factory ('Calif_Calificacion')->getSqlTable ();
+	$promedio_tabla = Gatuf::factory ('Calif_Promedio')->getSqlTable ();
 	
 	$hay = array (strtolower ('Calif_Alumno'), strtolower('Calif_Seccion'));
 	// Calcular la base de datos que contiene la relación M-N
 	$dbname = $db->dbname;
+	$calpfx = Calif_Calendario_getDefault ();
+	$dbpfx = $db->pfx.$calpfx;
 	sort ($hay);
 	$t_asso = $dbname.'.'.$dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 	
@@ -179,10 +174,8 @@ function Calif_Calendario_installVistasSetup ($params = null) {
 	
 	$dbname = $db->dbname;
 	
-	$seccion_model = new Calif_Seccion ();
-	$horario_model = new Calif_Horario ();
-	$seccion_tabla = $dbpfx.$seccion_model->_a['table'];
-	$horario_tabla = $dbpfx.$horario_model->_a['table'];
+	$seccion_tabla = Gatuf::factory ('Calif_Seccion')->getSqlTable ();
+	$horario_tabla = Gatuf::factory ('Calif_Horario')->getSqlTable ();
 	
 	$materia_tabla = Gatuf::factory ('Calif_Materia')->getSqlTable ();
 	$departamento_tabla = Gatuf::factory ('Calif_Departamento')->getSqlTable ();

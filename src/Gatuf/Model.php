@@ -152,7 +152,7 @@ class Gatuf_Model {
 		if (in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$model->_a['model']])) {
 			// La relación la tiene el $hay[1]
 			$dbname = $this->_con->dbname;
-			$dbpfx = $this->_con->pfx.$this->_['calpfx'];
+			$dbpfx = $this->_con->pfx.$this->_a['calpfx'];
 		} else {
 			$dbname = $model->_con->dbname;
 			$dbpfx = $model->_con->pfx.$model->_a['calpfx'];
@@ -524,7 +524,7 @@ class Gatuf_Model {
 			$hay = array(strtolower($m->_a['model']), 
 						 strtolower($this->_a['model']));
 			// Calcular la base de datos que contiene la relación M-N
-			if (in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$m->_a['model']])) {
+			if (isset ($GLOBALS['_GATUF_models_related']['manytomany'][$m->_a['model']]) && in_array ($this->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$m->_a['model']])) {
 				// La relación la tiene el $hay[1]
 				$dbname = $this->_con->dbname;
 				$dbpfx = $this->_con->pfx.$this->_a['calpfx'];

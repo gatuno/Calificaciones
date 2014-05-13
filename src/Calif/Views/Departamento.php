@@ -11,14 +11,6 @@ class Calif_Views_Departamento {
 		$materia_model = new Calif_Materia ();
 		$seccion_model = new Calif_Seccion ();
 		
-		$maestro_model->_a['views'] = array (
-			'maestros_departamentos' => array (
-				'select' => $maestro_model->_con->pfx.$maestro_model->_a['calpfx'].'maestros_departamentos.*',
-				'from' => $maestro_model->_con->dbname.'.'.$maestro_model->_con->pfx.$maestro_model->_a['calpfx'].'maestros_departamentos',
-				'props' => array ('departamento'),
-			),
-		);
-		
 		$total_maestros = array ();
 		$total_materias = array ();
 		$total_secciones = array ();
