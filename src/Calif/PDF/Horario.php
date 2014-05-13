@@ -81,6 +81,7 @@ class Calif_PDF_Horario extends External_FPDF {
 		$this->SetFont ('verdana', '', 8);
 		foreach ($this->secciones as $seccion) {
 			$first = true;
+			if ($seccion->suplente != null && $seccion->suplente != $this->maestro->codigo) continue;
 			foreach ($this->horarios[$seccion->nrc] as $hora) {
 				if ($first) {
 					$this->Cell ($w[0], 8, $seccion->nrc, 1, 0, 'C');

@@ -308,11 +308,16 @@ class Calif_Views_Maestro {
 			$where = null;
 		}
 		
-		$secciones = $maestro->get_calif_seccion_list (array ('filter' => $where, 'view' => 'paginador'));
+		$secciones = $maestro->get_primario_list (array ('view' => 'paginador'));
+		$grupos_suplente = $maestro->get_suplente_list (array ('view' => 'paginador'));
+		foreach ($grupos_suplente as $suple) {
+			$secciones[] = $suple;
+		}
 		
 		$horarios = array ();
 		$total_horarios = 0;
 		foreach ($secciones as $seccion) {
+			if ($seccion->suplente != null && $seccion->suplente != $maestro->codigo) continue;
 			$horarios[$seccion->nrc] = $seccion->get_calif_horario_list (array ('view' => 'paginador'));
 			$total_horarios += count ($horarios[$seccion->nrc]);
 		}
