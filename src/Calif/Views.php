@@ -69,48 +69,6 @@ class Calif_Views {
 		return new Gatuf_HTTP_Response_Redirect ($success_url);
 	}
 	
-	public $import_siiau_precond = array ('Gatuf_Precondition::adminRequired');
-	function import_siiau ($request, $match) {
-		$extra = array ();
-		
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Views_importsiiau (array_merge ($request->POST, $request->FILES), $extra);
-			if ($form->isValid ()) {
-				$form->save ();
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::index');
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-		} else {
-			$form = new Calif_Form_Views_importsiiau (null, $extra);
-		}
-		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/import_siiau.html',
-		                                         array ('page_title' => 'Importar desde Siiau',
-		                                         'form' => $form),
-		                                         $request);
-	}
-	
-	public $import_oferta_precond = array ('Gatuf_Precondition::adminRequired');
-	function import_oferta ($request, $match) {
-		$extra = array ();
-		
-		if ($request->method == 'POST') {
-			$form = new Calif_Form_Views_importoferta (array_merge ($request->POST, $request->FILES), $extra);
-			if ($form->isValid ()) {
-				$form->save ();
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::index');
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-		} else {
-			$form = new Calif_Form_Views_importoferta (null, $extra);
-		}
-		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/import_oferta.html',
-		                                         array ('page_title' => 'Importar Oferta (estilo Monica Durón)',
-		                                         'form' => $form),
-		                                         $request);
-	}
-	
 	function passwordRecoveryAsk ($request, $match) {
 		$title = 'Recuperar contraseña';
 		

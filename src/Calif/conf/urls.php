@@ -72,9 +72,9 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/importoferta/$#',
+	'regex' => '#^/calendarios/importoferta/$#',
 	'base' => $base,
-	'model' => 'Calif_Views',
+	'model' => 'Calif_Views_Calendario',
 	'method' => 'import_oferta',
 );
 

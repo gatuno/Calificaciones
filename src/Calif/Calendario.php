@@ -28,6 +28,8 @@ class Calif_Calendario extends Gatuf_Model {
 			       'default' => false,
 			),
 		);
+		
+		$this->default_order = 'clave DESC';
 	}
 	
 	public function postSave ($create = true) {

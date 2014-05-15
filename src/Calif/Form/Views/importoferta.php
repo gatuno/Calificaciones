@@ -4,9 +4,26 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 	public function initFields($extra=array()) {
 		Gatuf::loadFunction ('Calif_Utils_dontmove');
 		
+		$choices = array ();
+		
+		foreach (Gatuf::factory ('Calif_Calendario')->getList () as $cal) {
+			$choices[$cal->descripcion] = $cal->clave;
+		}
+		
+		$this->fields['calendario'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Calendario',
+				'initial' => Calif_Calendario_getDefault (),
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+		));
+		
 		$this->fields['oferta'] = new Gatuf_Form_Field_File (
 			array('label' => 'Seleccionar archivo',
-				'help_text' => 'Su archivo separado por comas. (Estilo Monica Durón, estilo SIIAU)',
+				'help_text' => 'Su archivo separado por comas. (Estilo SIIAU)',
 				'move_function_params' => array(),
 				'max_size' => 10485760,
 				'move_function' => 'Calif_Utils_dontmove'
@@ -72,6 +89,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 	function save ($commit=true) {
 		Gatuf::loadFunction ('Calif_Utils_detectarColumnas');
 		
+		$GLOBALS['CAL_ACTIVO'] = $this->cleaned_data['calendario'];
+		
 		$ruta = $this->data['oferta']['tmp_name'];
 		
 		if (($archivo = fopen ($ruta, "r")) === false) {
@@ -82,10 +101,20 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		
 		/* Borrar los grupos y por ende las calificaciones */
 		$hay = array(strtolower('Calif_Alumno'), strtolower('Calif_Seccion'));
+		$seccion_model = new Calif_Seccion ();
+		$alumno_model = new Calif_Alumno ();
+		if (isset ($GLOBALS['_GATUF_models_related']['manytomany'][$alumno_model->_a['model']]) && in_array ($seccion_model->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$alumno_model->_a['model']])) {
+			// La relación la tiene el $hay[1]
+			$dbname = $seccion_model->_con->dbname;
+			$dbpfx = $seccion_model->_con->pfx.$seccion_model->_a['calpfx'];
+		} else {
+			$dbname = $alumno_model->_con->dbname;
+			$dbpfx = $alumno_model->_con->pfx.$alumno_model->_a['calpfx'];
+		}
 		sort($hay);
-		$grupos_tabla = $con->pfx.$hay[0].'_'.$hay[1].'_assoc';
+		$grupos_tabla = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 		
-		$req = sprintf ('TRUNCATE TABLE %s', $grupos_tabla);
+		$req = sprintf ('TRUNCATE TABLE %s.%s', $dbname, $grupos_tabla);
 		$con->execute ($req);
 		
 		$maestro_model = new Calif_Maestro ();
@@ -211,8 +240,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		}
 		
 		$departamento = new Calif_Departamento ();
-		if (false === ($departamento->get (0))) {
-			$departamento->clave = 0;
+		if (false === ($departamento->get (1))) {
+			$departamento->clave = 1;
 			$departamento->descripcion = 'Sin departamento';
 		}
 		
@@ -222,7 +251,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$materia_ram = new Calif_Materia ();
 			
 			/* Crear un modelo conectado a una tabla ram, para agilizar las inserciones */
-			$materia_ram->_a['table'] = 'ram_'.$materia_model->_a['table'];
+			$materia_ram->_a['table'] = $materia_model->_a['table'];
+			$materia_ram->_a['calpfx'] = 'ram_';
 			$temp_tabla = $materia_ram->getSqlTable ();
 			
 			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$materia_model->getSqlTable();
@@ -254,7 +284,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$usuario_ram = new Calif_User ();
 			
 			/* Crear temporal de maestros */
-			$maestro_ram->_a['table'] = 'ram_'.$maestro_model->_a['table'];
+			$maestro_ram->_a['table'] = $maestro_model->_a['table'];
+			$maestro_ram->_a['calpfx'] = 'ram_';
 			$temp_tabla = $maestro_ram->getSqlTable ();
 			
 			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$maestro_model->getSqlTable ();
@@ -264,7 +295,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$con->execute ($sql);
 			
 			/* Crear temporal de usuarios */
-			$usuario_ram->_a['table'] = 'ram_'.$usuario_model->_a['table'];
+			$usuario_ram->_a['table'] = $usuario_model->_a['table'];
+			$usuario_ram->_a['calpfx'] = 'ram_';
 			$temp_tabla_u = $usuario_ram->getSqlTable ();
 			
 			$sql = 'CREATE TABLE '.$temp_tabla_u.' LIKE '.$usuario_model->getSqlTable ();
@@ -318,7 +350,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		if ($this->cleaned_data['nrcs'] || $this->cleaned_data['maestrosnrc'] || $this->cleaned_data['horarios']) {
 			$seccion_ram = new Calif_Seccion ();
 			
-			$seccion_ram->_a['table'] = 'ram_'.$seccion_model->_a['table'];
+			$seccion_ram->_a['table'] = $seccion_model->_a['table'];
+			$seccion_ram->_a['calpfx'] = 'ram_'.$seccion_ram->_a['calpfx'];
 			$temp_tabla = $seccion_ram->getSqlTable ();
 			
 			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$seccion_model->getSqlTable();
@@ -399,7 +432,8 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			$horario_ram = new Calif_Horario ();
 			$horario_model = new Calif_Horario ();
 			
-			$horario_ram->_a['table'] = 'ram_'.$horario_ram->_a['table'];
+			$horario_ram->_a['table'] = $horario_ram->_a['table'];
+			$horario_ram->_a['calpfx'] = 'ram_'.$horario_ram->_a['calpfx'];
 			$temp_tabla = $horario_ram->getSqlTable ();
 			
 			$sql = 'CREATE TABLE '.$temp_tabla.' LIKE '.$horario_model->getSqlTable();
@@ -415,6 +449,10 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 			/* Segunda pasada, crear los horarios */
 			while (($linea = fgetcsv ($archivo, 600, ',', '"')) !== FALSE) {
 				if (is_null ($linea[0])) continue;
+				
+				/* Las lineas vacias se ignoran */
+				if ($linea[$cabecera['edif']] == '' && $linea[$cabecera['aula']] == '' && $linea[$cabecera['ini']] == '' && $linea[$cabecera['fin']] == '') continue;
+				
 				if ($linea[$cabecera['edif']] == '') {
 					$linea[$cabecera['edif']] = 'DNONE';
 				}
