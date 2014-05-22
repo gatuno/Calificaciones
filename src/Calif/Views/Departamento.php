@@ -39,4 +39,29 @@ class Calif_Views_Departamento {
 		                                                 'page_title' => 'Busar Errores de horas por Departamento'),
 				                                          $request);
 		}
+
+	public $agregarMateria_precond = array ('Calif_Precondition::jefeRequired');
+	public function agregarDepartamento ($request, $match) {
+		$title = 'Nuevo departamento';
+		
+		$extra = array ();
+		$extra['user'] = $request->user;
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Departamento_Agregar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+			$departamento = $form->save();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Departamento::index');
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Departamento_Agregar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/departamento/agregar-departamento.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
 }

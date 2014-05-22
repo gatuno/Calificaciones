@@ -1,5 +1,8 @@
 {extends 'calif/base.html'}
 {block body}
+{if $user.isJefe()}
+<p><a href="{url 'Calif_Views_Departamento::agregarDepartamento'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar materia" />Agregar nuevo departamento</a></p>
+{/if}
 {if $departamentos}
 	<table><thead><tr><th>Departamento</th><th>Profesores</th><th>Materias</th><th>Secciones</th></tr></thead>
 	<tbody>

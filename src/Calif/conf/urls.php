@@ -600,6 +600,13 @@ $ctl[] = array (
 	'method' => 'buscarErrorHoras',
 );
 
+$ctl[] = array (
+	'regex' => '#^/departamentos/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Departamento',
+	'method' => 'agregarDepartamento',
+);
+
 /* Número de Puestos */
 $ctl[] = array (
 	'regex' => '#^/puesto/(\d+)/$#',
