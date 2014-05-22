@@ -40,7 +40,7 @@ class Calif_Views_Departamento {
 				                                          $request);
 		}
 
-	public $agregarMateria_precond = array ('Calif_Precondition::jefeRequired');
+	public $agregarDepartamento_precond = array ('Calif_Precondition::jefeRequired');
 	public function agregarDepartamento ($request, $match) {
 		$title = 'Nuevo departamento';
 		

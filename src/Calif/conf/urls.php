@@ -208,6 +208,12 @@ $ctl[] = array(
 			'method' => 'verAlumno',
 		),
 		array(
+			'regex' => '#^(\w\d{8})/grupos/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Alumno',
+			'method' => 'verGruposAlumno',
+		),
+		array(
 			'regex' => '#^(\w\d{8})/update/$#',
 			'base' => $base,
 			'model' => 'Calif_Views_Alumno',

@@ -1,0 +1,11 @@
+{extends 'calif/base.html'}
+{block body}
+<ul style="list-style-type: none;">
+<li style="display: inline;"><a href="{url 'Calif_Views_Alumno::verAlumno', array ($alumno.codigo)}">Perfil</a></li>
+<li style="display: inline;"><a href="{url 'Calif_Views_Alumno::verGruposAlumno', array ($alumno.codigo)}">Grupos y Calificaciones</a></li>
+{if $user.administrator}<!-- Actualizar con el permiso correspondiente -->
+<li style="display: inline;"><a href="{url 'Calif_Views_Alumno::actualizarAlumno', array ($alumno.codigo)}">Actualizar</a></li>
+{/if}
+</ul>
+{block body_alumno}{/block}
+{/block}

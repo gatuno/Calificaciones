@@ -66,6 +66,21 @@ class Calif_Views_Alumno {
 		}
 		
 		$alumno->getUser ();
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-alumno.html',
+		                                         array('page_title' => 'Alumno '.$alumno->nombre.' '.$alumno->apellido,
+		                                               'alumno' => $alumno),
+                                                 $request);
+	}
+
+	public function verGruposAlumno($request, $match) {
+		$alumno = new Calif_Alumno ();
+		
+		if (false === ($alumno->get ($match[1] ) ) ) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$alumno->getUser ();
 		$secciones = $alumno->get_grupos_list(array ('view' => 'paginador'));
 		if ($secciones->count () == 0) $secciones = array ();
 		
@@ -113,7 +128,7 @@ class Calif_Views_Alumno {
 			}
 		}
 		
-		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-alumno.html',
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/ver-grupos.html',
 		                                         array('page_title' => 'Alumno '.$alumno->nombre.' '.$alumno->apellido,
 		                                               'alumno' => $alumno,
 		                                               'secciones' => $secciones,
@@ -123,6 +138,37 @@ class Calif_Views_Alumno {
 		                                               'grupos' => $grupos,
 		                                               'evaluaciones' => $evaluaciones),
                                                  $request);
+	}
+
+	public $actualizarAlumno_precond = array ('Gatuf_Precondition::adminRequired');
+	public function actualizarAlumno ($request, $match) {
+		$alumno = new Calif_Alumno ();
+		
+		if (false === $alumno->get ($match[1])) {
+			throw new Gatuf_HTTP_Error404();
+		}
+		
+		$alumno->getUser ();
+		$extra = array ('alumno' => $alumno);
+		
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Alumno_Actualizar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$alumno = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Alumno::verAlumno', array ($alumno->codigo));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Alumno_Actualizar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/alumno/edit-alumno.html',
+		                                         array ('page_title' => 'Actualizar alumno',
+		                                                'alumno' => $alumno,
+		                                                'form' => $form),
+		                                         $request);
 	}
 	
 	public function evaluar ($request, $match){
