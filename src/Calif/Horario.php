@@ -58,6 +58,18 @@ class Calif_Horario extends Gatuf_Model {
 		);
 	}
 	
+	function setCalpfx ($calpfx) {
+		$this->_a['calpfx'] = $calpfx;
+		
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => $this->_con->pfx.$this->_a['calpfx'].'horarios_view.*',
+				'from' => $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['calpfx'].'horarios_view',
+				'props' => array ('salon_aula', 'salon_edificio', 'seccion_maestro', 'seccion_asignacion', 'seccion_asignacion_color'),
+			),
+		);
+	}
+	
 	function displayDias () {
 		$cadena = '';
 		foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {

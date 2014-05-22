@@ -381,6 +381,20 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/concambios/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Reportes_Oferta',
+	'method' => 'conCambios',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/concambios/(\w+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Reportes_Oferta',
+	'method' => 'conCambiosODS',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/nofiltro/([cdin])/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
