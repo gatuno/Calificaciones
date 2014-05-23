@@ -118,7 +118,7 @@ class Calif_Views_Reportes_Oferta {
 		$g = 2;
 		
 		$seccion_ayer = new Calif_Seccion ();
-		$seccion_ayer->_a['calpfx'] = $cal->clave;
+		$seccion_ayer->setCalpfx ($cal->clave);
 		
 		$horas_ayer_model = new Calif_Horario ();
 		$horas_ayer_model->setCalpfx ($cal->clave);
@@ -224,6 +224,92 @@ class Calif_Views_Reportes_Oferta {
 						$libro_ods->addStringCell ('Principal', $g, 22, '** Horario movido **');
 					} else if ($aula_movida) {
 						$libro_ods->addStringCell ('Principal', $g, 22, '** Aula movida **');
+					}
+					$g++;
+				}
+			}
+		}
+		
+		/* Recorrer las pasadas */
+		if (count ($sql->ands) == 0) {
+			$secciones_ayer = $seccion_ayer->getList (array ('view' => 'paginador'));
+		} else {
+			$secciones_ayer = $seccion_ayer->getList (array ('filter' => $sql->gen (), 'view' => 'paginador'));
+		}
+		
+		$seccion_hoy = new Calif_Seccion ();
+		
+		foreach ($secciones_ayer as $seccion_pasada) {
+			$eliminada = false;
+			$desasignada = false;
+			
+			$sql_horas->ands = array ();
+			$sql_horas->Q ('nrc=%s', $seccion_pasada->nrc);
+			$horas_ayer = $horas_ayer_model->getList (array ('view' => 'paginador', 'filter' => $sql_horas->gen (), 'order' => 'l ASC, m ASC, i ASC, j ASC, v ASC, s ASC'));
+			$departamento = new Calif_Departamento ($seccion_actual->materia_departamento);
+			
+			if (false === ($seccion_hoy->get ($seccion_pasada->nrc))) {
+				/* Agregarla, puesto que ya no existe hoy */
+				$eliminada = true;
+			} else {
+				if ($seccion_hoy->asignacion == null && $seccion_pasada->asignacion != null) {
+					$desasignada = true;
+				}
+			}
+			
+			if (!$eliminada && !$desasignada) continue;
+			
+			if (count ($horas_ayer) == 0) {
+				/* Imprimir, pero sin horas */
+				$libro_ods->addStringCell ('Principal', $g, 1, $seccion_pasada->nrc);
+				$libro_ods->addStringCell ('Principal', $g, 2, $seccion_pasada->materia);
+				$libro_ods->addStringCell ('Principal', $g, 3, $seccion_pasada->materia_desc);
+				$libro_ods->addStringCell ('Principal', $g, 4, $seccion_pasada->seccion);
+				$libro_ods->addStringCell ('Principal', $g, 5, $seccion_pasada->materia_departamento);
+				$libro_ods->addStringCell ('Principal', $g, 6, $departamento->descripcion);
+				$libro_ods->addStringCell ('Principal', $g, 7, $seccion_pasada->maestro_apellido);
+				$libro_ods->addStringCell ('Principal', $g, 8, $seccion_pasada->maestro_nombre);
+				$libro_ods->addStringCell ('Principal', $g, 9, $seccion_pasada->maestro);
+				
+				for ($h = 10; $h < 20; $h++) {
+					$libro_ods->addStringCell ('Principal', $g, $h, 'N/A');
+				}
+				
+				$libro_ods->addStringCell ('Principal', $g, 20, $seccion_pasada->asignacion);
+				if ($eliminada) {
+					$libro_ods->addStringCell ('Principal', $g, 23, '** ELIMINADA **');
+				} else if ($desasignada) {
+					$libro_ods->addStringCell ('Principal', $g, 23, '** DESASIGNADA **');
+				}
+				$g++;
+			} else {
+				foreach ($horas_ayer as $hora) {
+					/* Recuperar sus horas, e imprimirlas */
+					$libro_ods->addStringCell ('Principal', $g, 1, $seccion_pasada->nrc);
+					$libro_ods->addStringCell ('Principal', $g, 2, $seccion_pasada->materia);
+					$libro_ods->addStringCell ('Principal', $g, 3, $seccion_pasada->materia_desc);
+					$libro_ods->addStringCell ('Principal', $g, 4, $seccion_pasada->seccion);
+					$libro_ods->addStringCell ('Principal', $g, 5, $seccion_pasada->materia_departamento);
+					$libro_ods->addStringCell ('Principal', $g, 6, $departamento->descripcion);
+					$libro_ods->addStringCell ('Principal', $g, 7, $seccion_pasada->maestro_apellido);
+					$libro_ods->addStringCell ('Principal', $g, 8, $seccion_pasada->maestro_nombre);
+					$libro_ods->addStringCell ('Principal', $g, 9, $seccion_pasada->maestro);
+					$libro_ods->addStringCell ('Principal', $g, 10, $hora->inicio);
+					$libro_ods->addStringCell ('Principal', $g, 11, $hora->fin);
+					$libro_ods->addStringCell ('Principal', $g, 12, $hora->salon_edificio);
+					$libro_ods->addStringCell ('Principal', $g, 13, $hora->salon_aula);
+					
+					$h = 14;
+					foreach ($dias as $dia) {
+						$libro_ods->addStringCell ('Principal', $g, $h, $hora->$dia);
+						$h++;
+					}
+					$libro_ods->addStringCell ('Principal', $g, 20, $seccion_pasada->asignacion);
+					
+					if ($eliminada) {
+						$libro_ods->addStringCell ('Principal', $g, 23, '** ELIMINADA **');
+					} else if ($desasignada) {
+						$libro_ods->addStringCell ('Principal', $g, 23, '** DESASIGNADA **');
 					}
 					$g++;
 				}

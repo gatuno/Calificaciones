@@ -74,7 +74,19 @@ class Calif_Seccion extends Gatuf_Model {
 		);
 	}
 	
-	 function updateAsignacion () {
+	function setCalpfx ($calpfx) {
+		$this->_a['calpfx'] = $calpfx;
+		
+		$this->_a['views'] = array (
+			'paginador' => array (
+				'select' => $this->_con->pfx.$this->_a['calpfx'].'secciones_view.*',
+				'from' => $this->_con->dbname.'.'.$this->_con->pfx.$this->_a['calpfx'].'secciones_view',
+				'props' => array ('materia_desc', 'materia_departamento', 'maestro_nombre', 'maestro_apellido'),
+			),
+		);
+	}
+	
+	function updateAsignacion () {
 		$req = sprintf ('UPDATE %s SET asignacion = %s WHERE nrc=%s AND asignacion IS NULL', $this->getSqlTable (), Gatuf_DB_IdentityToDb ($this->asignacion, $this->_con), Gatuf_DB_IntegerToDb ($this->nrc, $this->_con));
 		
 		$this->_con->execute($req);
