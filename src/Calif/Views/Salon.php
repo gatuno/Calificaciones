@@ -78,8 +78,8 @@ class Calif_Views_Salon {
 	public $agregarSalon_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarSalon ($request, $match) {
 		$title = 'Nuevo salon';
-
 		$extra = array ();
+		$extra['edificio'] = $match[1];
 
 		if ($request->method == 'POST') {
 			$form = new Calif_Form_Salon_Agregar ($request->POST, $extra);

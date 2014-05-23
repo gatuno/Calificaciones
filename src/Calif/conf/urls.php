@@ -491,7 +491,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/salones/add/$#',
+	'regex' => '#^/salones/add/(.+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Salon',
 	'method' => 'agregarSalon',
