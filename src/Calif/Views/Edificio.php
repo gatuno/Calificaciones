@@ -92,4 +92,28 @@ class Calif_Views_Edificio {
                                                        'calendarios' => $super_calendarios),
                                                  $request);
 	}
+
+	public $agregarEdificio_precond = array ('Calif_Precondition::jefeRequired');
+	public function agregarEdificio ($request, $match) {
+		$title = 'Nuevo Edificio';
+		
+		$extra = array ();
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Edificio_Agregar ($request->POST, $extra);
+			
+			if ($form->isValid()) {
+				$edificio = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', array ($edificio->clave));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Edificio_Agregar (null, $extra);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/edificio/agregar-edificio.html',
+		                                         array ('page_title' => $title,
+		                                                'form' => $form),
+		                                         $request);
+	}
 }

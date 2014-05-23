@@ -605,6 +605,13 @@ $ctl[] = array (
 	'method' => 'verEdificio',
 );
 
+$ctl[] = array (
+	'regex' => '#^/edificios/add/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Edificio',
+	'method' => 'agregarEdificio',
+);
+
 /* Departamentos */
 $ctl[] = array (
 	'regex' => '#^/departamentos/$#',

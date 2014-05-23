@@ -1,4 +1,7 @@
 {extends 'calif/base.html'}
 {block body}
+{if $user.isJefe()}
+<p><a href="{url 'Calif_Views_Edificio::agregarEdificio'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar edificio" />Agregar nuevo edificio</a></p>
+{/if}
 {$paginador.render}
 {/block}
