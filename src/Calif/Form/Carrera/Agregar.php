@@ -2,6 +2,24 @@
 
 class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 	public function initFields($extra=array()) {
+		$choices = array ();
+		
+		$divisiones = Gatuf::factory ('Calif_Division')->getList ();
+		foreach ($divisiones as $division) {
+			$choices[$division->nombre] = $division->id;
+		}
+		
+		$this->fields['division'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'División',
+				'help_text' => 'La división a la que pertenece',
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+		));
+		
 		$this->fields['clave'] = new Gatuf_Form_Field_Varchar(
 			array(
 				'required' => true,
@@ -35,24 +53,6 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 				'help_text' => 'Un color para identificar a la carrera',
 				'widget' => 'Gatuf_Form_Widget_ColorPicker',
 				'initial' => '#FFFFFF',
-		));
-		
-		$choices = array ();
-		
-		$divisiones = Gatuf::factory ('Calif_Division')->getList ();
-		foreach ($divisiones as $division) {
-			$choices[$division->nombre] = $division->id;
-		}
-		
-		$this->fields['division'] = new Gatuf_Form_Field_Varchar (
-			array (
-				'required' => true,
-				'label' => 'División',
-				'help_text' => 'La división a la que pertenece',
-				'widget' => 'Gatuf_Form_Widget_SelectInput',
-				'widget_attrs' => array (
-					'choices' => $choices,
-				),
 		));
 	}
 	
@@ -88,10 +88,9 @@ class Calif_Form_Carrera_Agregar extends Gatuf_Form {
 		}
 		
 		$carrera = new Calif_Carrera ();
-		
 		$carrera->setFromFormData ($this->cleaned_data);
 		
-		$carrera->create();
+		if ($commit) $carrera->create();
 		
 		return $carrera;
 	}

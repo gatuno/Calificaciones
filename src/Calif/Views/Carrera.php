@@ -31,7 +31,7 @@ class Calif_Views_Carrera {
 		/* Verificar que la carrera esté en mayúsculas */
 		$nueva_clave = mb_strtoupper ($match[1]);
 		if ($match[1] != $nueva_clave) {
-			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Alumno::porCarrera', array ($nueva_clave));
+			$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Carrera::verCarrera', array ($nueva_clave));
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 		
