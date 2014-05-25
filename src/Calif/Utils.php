@@ -104,7 +104,7 @@ function Calif_Utils_agregar_maestro (&$maestros, $linea, $vacio=1111111) {
 	return $codigo;
 }
 
-function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $carrera) {
+function Calif_Utils_agregar_alumno (&$alumnos, $codigo, $linea) {
 	settype ($codigo, 'string');
 	if (isset ($alumnos [$codigo])) return;
 	
@@ -114,14 +114,8 @@ function Calif_Utils_agregar_alumno (&$alumnos, &$carreras, $codigo, $linea, $ca
 	}
 	$apellido = trim (ucwords (strtolower (Calif_Utils_arreglar_n ($explote[0]))));
 	$nombre = trim (ucwords (strtolower (Calif_Utils_arreglar_n ($explote[1]))));
-	$carrera = trim (strtoupper ($carrera));
 	
-	/* Si la carrera no existe, agregarla */
-	if (!isset ($carreras [$carrera])) {
-		$carreras [$carrera] = 'Una carrera con clave ' . $carrera;
-	}
-	
-	$alumnos [$codigo] = array ('codigo' => $codigo, 'nombre' => $nombre, 'apellido' => $apellido, 'carrera' => $carrera);
+	$alumnos [$codigo] = array ('codigo' => $codigo, 'nombre' => $nombre, 'apellido' => $apellido);
 }
 
 function Calif_Utils_agregar_seccion (&$secciones, $nrc, $materia, $seccion, $maestro) {

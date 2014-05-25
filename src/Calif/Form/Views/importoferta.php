@@ -114,7 +114,7 @@ class Calif_Form_Views_importoferta extends Gatuf_Form {
 		sort($hay);
 		$grupos_tabla = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 		
-		$req = sprintf ('TRUNCATE TABLE %s.%s', $dbname, $grupos_tabla);
+		$req = sprintf ('DELETE FROM %s.%s', $dbname, $grupos_tabla);
 		$con->execute ($req);
 		
 		$maestro_model = new Calif_Maestro ();

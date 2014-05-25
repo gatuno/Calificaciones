@@ -4,17 +4,36 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 	public function initFields($extra=array()) {
 		Gatuf::loadFunction ('Calif_Utils_dontmove');
 		
+		$choices = array ();
+		
+		foreach (Gatuf::factory ('Calif_Calendario')->getList () as $cal) {
+			$choices[$cal->descripcion] = $cal->clave;
+		}
+		
+		$this->fields['calendario'] = new Gatuf_Form_Field_Varchar (
+			array (
+				'required' => true,
+				'label' => 'Calendario',
+				'initial' => Calif_Calendario_getDefault (),
+				'widget' => 'Gatuf_Form_Widget_SelectInput',
+				'widget_attrs' => array (
+					'choices' => $choices,
+				),
+		));
+		
 		$this->fields['oferta'] = new Gatuf_Form_Field_File (
 			array('label' => 'Seleccionar archivo',
 				'help_text' => 'El archivo de la oferta de siiau',
 				'move_function_params' => array(),
-				'max_size' => 10485760,
+				'max_size' => 20485760,
 				'move_function' => 'Calif_Utils_dontmove'
 		));
 	}
 	
 	public function save ($commit = true) {
 		Gatuf::loadFunction ('Calif_Utils_detectarColumnas');
+		
+		$GLOBALS['CAL_ACTIVO'] = $this->cleaned_data['calendario'];
 		
 		$ruta = $this->data['oferta']['tmp_name'];
 		
@@ -39,14 +58,13 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 			throw new Gatuf_Form_Invalid ('El archivo importado no una columna de nrc');
 		}
 		
-		if (!isset ($cabecera['cod_al']) || !isset ($cabecera['alumno']) || !isset ($cabecera['car_al'])) {
+		if (!isset ($cabecera['cod_al']) || !isset ($cabecera['alumno'])) {
 			/* Se requiere columna de código, nombre y carrera del alumno */
-			throw new Gatuf_Form_Invalid ('El archivo importado no una columna de codigo, nombre o carrera del alumno (cod_al, alumno, car_al)');
+			throw new Gatuf_Form_Invalid ('El archivo importado no una columna de codigo, nombre o carrera del alumno (cod_al, alumno)');
 		}
 		
 		$alumnos = array ();
 		$secciones = array ();
-		$carreras = array ();
 	
 		$seccion_model = new Calif_Seccion ();
 	
@@ -63,19 +81,7 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 				$secciones[$linea[$cabecera['nrc']]] = clone ($seccion_model);
 			}
 			
-			Calif_Utils_agregar_alumno ($alumnos, $carreras, $linea[$cabecera['cod_al']], $linea[$cabecera['alumno']], $linea[$cabecera['car_al']]);
-		}
-		
-		/* Crear todo lo que sea necesario */
-		$carrera_model = new Calif_Carrera ();
-		
-		foreach ($carreras as $clave => $descripcion) {
-			if ($carrera_model->get($clave) === false) {
-				$carrera_model->clave = $clave;
-				$carrera_model->descripcion = $descripcion;
-				
-				$carrera_model->create ();
-			}
+			Calif_Utils_agregar_alumno ($alumnos, $linea[$cabecera['cod_al']], $linea[$cabecera['alumno']]);
 		}
 		
 		$alumno_model = new Calif_Alumno ();
@@ -97,29 +103,26 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 			}
 		}
 		
-		unset ($carreras);
 		unset ($alumnos);
 		
 		rewind ($archivo);
 		
 		/* Borrar los grupos y por ende las calificaciones */
 		$hay = array(strtolower('Calif_Alumno'), strtolower('Calif_Seccion'));
-		if (isset ($GLOBALS['_GATUF_models_related'][$hay[0]][$hay[1]])) {
+		$seccion_model = new Calif_Seccion ();
+		$alumno_model = new Calif_Alumno ();
+		if (isset ($GLOBALS['_GATUF_models_related']['manytomany'][$alumno_model->_a['model']]) && in_array ($seccion_model->_a['model'], $GLOBALS['_GATUF_models_related']['manytomany'][$alumno_model->_a['model']])) {
 			// La relación la tiene el $hay[1]
-			$dbname = $this->_con->dbname;
-			$dbpfx = $this->_con->pfx;
-		} else {
 			$dbname = $seccion_model->_con->dbname;
-			$dbpfx = $seccion_model->_con->pfx;
+			$dbpfx = $seccion_model->_con->pfx.$seccion_model->_a['calpfx'];
+		} else {
+			$dbname = $alumno_model->_con->dbname;
+			$dbpfx = $alumno_model->_con->pfx.$alumno_model->_a['calpfx'];
 		}
 		sort($hay);
-		$grupos_tabla = $dbname.'.'.$dbpfx.$hay[0].'_'.$hay[1].'_assoc';
+		$grupos_tabla = $dbpfx.$hay[0].'_'.$hay[1].'_assoc';
 		
-		$req = sprintf ('TRUNCATE TABLE %s', $grupos_tabla);
-		$con->execute ($req);
-		
-		/* Cambiar el motor a MEMORY */
-		$req = sprintf ('ALTER TABLE %s ENGINE = MEMORY', $grupos_tabla);
+		$req = sprintf ('DELETE FROM %s.%s', $dbname, $grupos_tabla);
 		$con->execute ($req);
 		
 		while (($linea = fgetcsv ($archivo, 400, ',', '"')) !== false) {
@@ -130,10 +133,6 @@ class Calif_Form_Views_importsiiau extends Gatuf_Form {
 			$alumno_model->get ($linea[$cabecera['cod_al']]);
 			$secciones[$linea[$cabecera['nrc']]]->setAssoc ($alumno_model);
 		}
-		
-		/* Cambiar el motor a INNODB */
-		$req = sprintf ('ALTER TABLE %s ENGINE = INNODB', $grupos_tabla);
-		$con->execute ($req);
 		
 		fclose ($archivo);
 	}

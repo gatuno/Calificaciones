@@ -67,7 +67,7 @@ $ctl[] = array (
 $ctl[] = array (
 	'regex' => '#^/importsiiau/$#',
 	'base' => $base,
-	'model' => 'Calif_Views',
+	'model' => 'Calif_Views_Calendario',
 	'method' => 'import_siiau',
 );
 
