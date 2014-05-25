@@ -320,4 +320,62 @@ class Calif_Views_Reportes_Oferta {
 		
 		return new Gatuf_HTTP_Response_File ($libro_ods->nombre, 'Oferta-filtrado.ods', 'application/vnd.oasis.opendocument.spreadsheet', true);
 	}
+	
+	public $cantidadSecciones_precond = array ('Calif_Precondition::jefeRequired');
+	public function cantidadSecciones ($request, $match) {
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento ($request->POST);
+			
+			if ($form->isValid ()) {
+				$departamento = $form->save ();
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Reportes_Oferta::cantidadSeccionesPorDepartamento', $departamento->clave);
+				
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Reportes_Oferta_SeleccionarDepartamento (null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/seleccionar-departamento.html',
+		                                          array ('page_title' => 'Conteo de secciones por departamento',
+		                                                 'form' => $form),
+		                                          $request);
+	}
+	
+	public $cantidadSeccionesPorDepartamento = array ('Calif_Precondition::jefeRequired');
+	public function cantidadSeccionesPorDepartamento ($request, $match) {
+		$departamento = new Calif_Departamento ();
+		
+		if (false === ($departamento->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		/* Recorrer todas las materias de ese departamento */
+		$materias = $departamento->get_calif_materia_list ();
+		
+		$totales = array ();
+		$cat_m = array ();
+		foreach ($materias as $m) {
+			$totales[$m->clave] = 0;
+			$cat_m[$m->clave] = $m;
+			
+			$secciones = $m->get_calif_seccion_list ();
+			
+			foreach ($secciones as $s) {
+				$count = $s->get_grupos_list (array ('count' => true));
+				
+				if ($count != 0) {
+					$totales[$m->clave]++;
+				}
+			}
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/reportes/oferta/reporte-conteo.html',
+                                          array ('page_title' => 'Conteo de secciones por departamento',
+                                                 'totales' => $totales,
+                                                 'materias' => $cat_m,
+                                                 'departamento' => $departamento),
+                                          $request);
+	}
 }

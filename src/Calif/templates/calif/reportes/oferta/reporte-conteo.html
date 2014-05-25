@@ -1,0 +1,10 @@
+{extends 'calif/base.html'}
+{block body}
+<p>Conteo de secciones activas del {$departamento.descripcion}</p>
+<table>
+	<thead><tr><th>Clave</th><th>Materia</th><th>Cantidad de secciones</th></tr></thead>
+	<tbody>{foreach $materias as $m}
+		<tr><td>{$m.clave}</td><td>{$m.descripcion}</td><td>{$totales[$m.clave]}</td></tr>
+	{/foreach}</tbody>
+</table>
+{/block}

@@ -671,6 +671,18 @@ $ctl[] = array (
 			'base' => $base,
 			'model' => 'Calif_Views_Reportes_Maestro',
 			'method' => 'cargaHorariaPorDepartamento',
+		),
+		array (
+			'regex' => '#^secciones/conteo/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'cantidadSecciones',
+		),
+		array (
+			'regex' => '#^secciones/conteo/(\d+)/$#',
+			'base' => $base,
+			'model' => 'Calif_Views_Reportes_Oferta',
+			'method' => 'cantidadSeccionesPorDepartamento',
 		)
 	)
 );
