@@ -454,4 +454,120 @@ class Calif_Views_System {
 		                                                 'form' => $form),
 		                                          $request);
 	}
+	
+	public $importarPlantilla_precond = array ('Gatuf_Precondition::adminRequired');
+	public function importarPlantilla ($request, $match) {
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_System_Plantilla (array_merge ($request->POST, $request->FILES));
+			
+			if ($form->isValid ()) {
+				$data = $form->save ();
+				
+				$cal = new Calif_Calendario ($data['cal']);
+				
+				/* Intentar abrir y procesar el archivo */
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_System::importarPlantilla');
+				
+				if (($archivo = fopen ($data['archivo'], "r")) === false) {
+					$request->user->setMessage (3, 'Hubo un error con la subida de archivos');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				/* Detectar cabeceras */
+				$linea = fgetcsv ($archivo, 600, ',', '"');
+				
+				if ($linea === false || is_null ($linea)) {
+					$request->user->setMessage (3, 'No hay cabecera, o es una linea vacia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$cabecera = Calif_Utils_detectarColumnas ($linea);
+				
+				if (!isset ($cabecera['grupo'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de sección');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['clave siiau'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de materia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['tipo contratacion'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de tipo de contratacion');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['tipo'])) {
+					/* Se requiere una columna de NRC */
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de tipo de horas');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['codigo empleado'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de profesor');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$seccion_model = new Calif_Seccion ();
+				$seccion_model->setCalpfx ($cal->clave);
+				
+				$np_model = new Calif_NumeroPuesto ();
+				$np_model->setCalpfx ($cal->clave);
+				
+				$sql_sec = new Gatuf_SQL ();
+				$sql_np = new Gatuf_SQL ();
+				
+				while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+					if (is_null ($linea[0])) continue;
+					
+					$num_sec = (int) $linea[$cabecera['grupo']];
+					$d_sec = sprintf ('D%02s', $num_sec);
+					$sql_sec->ands = array ();
+					$sql_sec->Q ('materia=%s AND seccion=%s', array ($linea[$cabecera['clave siiau']], $d_sec));
+					
+					$seccion = $seccion_model->getOne (array ('filter' => $sql_sec->gen ()));
+					
+					if ($seccion === null) continue;
+					
+					$codigo = $linea[$cabecera['codigo empleado']];
+					
+					if ($codigo == '') continue;
+					
+					$seccion->setFromFormData (array ('maestro' => $codigo));
+					$seccion->update ();
+					
+					$tipo = $linea[$cabecera['tipo']];
+					$carga = strtolower ($linea[$cabecera['tipo contratacion']]);
+					
+					if ($carga == 'asignatura' || $carga == 'horas definitivas') {
+						$carga = 'a';
+					} else if ($carga == 'cargo a plaza') {
+						$carga = 't';
+					} else if ($carga == 'honorifico') {
+						$carga = 'h';
+					} else {
+						throw new Exception ('Tipo de carga desconocido');
+					}
+					
+					$sql_np->ands = array ();
+					$sql_np->Q ('nrc=%s AND tipo=%s', array ($seccion->nrc, $tipo));
+					
+					$np_uno = $np_model->getOne (array ('filter' => $sql_np->gen ()));
+					
+					$np_uno->carga = $carga;
+					$np_uno->update ();
+				}
+				
+				fclose ($archivo);
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::index');
+				
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_System_Plantilla (null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/system/importar_plantilla.html',
+		                                          array ('page_title' => 'Importar Plantilla',
+		                                                 'form' => $form),
+		                                          $request);
+	}
 }

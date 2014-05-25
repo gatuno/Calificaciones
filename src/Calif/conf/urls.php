@@ -117,6 +117,13 @@ $ctl[] = array (
 	'method' => 'auditoriaHoraria',
 );
 
+$ctl[] = array (
+	'regex' => '#^/sistema/importar_plantilla/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'importarPlantilla',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',
