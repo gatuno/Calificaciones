@@ -25,13 +25,12 @@
 {if $puedeEditar}
 	<h3>Números de puesto</h3>
 	<table border="1">
-	<thead><tr><th>Número de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
+	<thead><tr><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
 	<tbody>
 	{foreach $puestos as $puesto}
-		<tr><td><a href="{url 'Calif_Views_Puestos::actualizarPuesto', $puesto.numero}">{$puesto.numero}</a></td>
 		<td>{if $puesto.tipo == 't'}Teoria{elseif $puesto.tipo == 'u'}Teoria Suplente{elseif $puesto.tipo == 'q'}Practica Suplente{else}Practica{/if}</td>
 		<td>{$puesto.horas}</td>
-		<td>{if $puesto.carga == 'a'}Asignatura (1001H ó 1002H){elseif $puesto.carga == 't'}Sobre su tiempo completo/medio tiempo (1003H){elseif $puesto.carga == 'h'}Honorífica (1004H){/if}</td>
+		<td><a href="{url 'Calif_Views_Puestos::actualizarPuesto', $puesto.numero}">{if $puesto.carga == 'a'}Asignatura (1001H ó 1002H){elseif $puesto.carga == 't'}Sobre su tiempo completo/medio tiempo (1003H){elseif $puesto.carga == 'h'}Honorífica (1004H){/if}</a></td>
 		</tr>
 	{/foreach}
 	</tbody>

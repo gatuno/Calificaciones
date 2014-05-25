@@ -7,7 +7,11 @@ class Calif_Form_Puesto_Actualizar extends Gatuf_Form {
 		$this->puesto = $extra['puesto'];
 		
 		$nrc = new Calif_Seccion ($this->puesto->nrc);
-		$maestro = new Calif_Maestro ($nrc->maestro);
+		if ($this->puesto->tipo == 'p' || $this->puesto->tipo == 't') {
+			$maestro = new Calif_Maestro ($nrc->maestro);
+		} else if ($this->puesto->tipo == 'q' || $this->puesto->tipo == 'u') {
+			$maestro = new Calif_Maestro ($nrc->suplente);
+		}
 		
 		if ($maestro->nombramiento == null) {
 			$choices = array ('Asignatura (1001H ó 1002H)' => 'a', 'Honorífica (1004H)' => 'h');

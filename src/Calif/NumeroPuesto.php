@@ -63,6 +63,10 @@ class Calif_NumeroPuesto extends Gatuf_Model {
 		$this->_a['calpfx'] = Calif_Calendario_getDefault ();
 	}
 	
+	function setCalpfx ($calpfx) {
+		$this->_a['calpfx'] = $calpfx;
+	}
+	
 	function maxPuesto () {
 		$req = sprintf ('SELECT MAX(numero) AS max_numero FROM %s', $this->getSqlTable ());
 		
