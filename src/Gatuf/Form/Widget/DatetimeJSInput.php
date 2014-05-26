@@ -15,6 +15,9 @@ class Gatuf_Form_Widget_DatetimeJSInput extends Gatuf_Form_Widget_Input {
 		}
 		
 		if ($value === null) $value = '';
+		if (strlen($value) > 0) {
+			$value = date($this->format, strtotime($value.' GMT'));
+		}
 		$final_attrs = $this->buildAttrs(array('name' => $name, 
 		                                       'type' => $this->input_type),
 		                                 $extra_attrs);
