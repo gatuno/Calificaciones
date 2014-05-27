@@ -710,6 +710,13 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
+	'regex' => '#^/permisos/del/(\d+)/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'eliminarPermiso',
+);
+
+$ctl[] = array(
 	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',

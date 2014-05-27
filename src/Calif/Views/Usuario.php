@@ -32,6 +32,29 @@ class Calif_Views_Usuario {
 			return new Gatuf_HTTP_Response_Redirect ($url);
 		}
 	}
+
+	public $eliminarPermiso_precond = array ('Gatuf_Precondition::adminRequired');
+	public function eliminarPermiso($request, $match) {
+		$usuario = new Calif_User ();
+		
+		if (false === ($usuario->get ($match[1]))) {
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($usuario->type == 'a') {
+			/* Por el momento los alumnos no tienen permisos */
+			throw new Gatuf_HTTP_Error404 ();
+		}
+		
+		if ($permiso = new Gatuf_Permission ($match[2])) {
+			$usuario->delAssoc($permiso);
+		}
+		
+		if ($usuario->type == 'm') {
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::permisos', $usuario->login);
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+	}
 	
 	public $agregarGrupo_precond = array ('Gatuf_Precondition::adminRequired');
 	public function agregarGrupo($request, $match) {
