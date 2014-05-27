@@ -2,7 +2,10 @@
 {block body}
 {if $user.isJefe() || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Seccion::agregarNrc'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar seccion" />Agregar una nueva sección</a></p>
+{if !isset($filtro['n'])}<p><a href="{url 'Calif_Views_Seccion::porNoAsignadas'}">Activar filtro de no asignadas</a></p>{/if}
+{if !isset($filtro['a'])}<p><a href="{url 'Calif_Views_Seccion::porAsignadas'}">Activar filtro de asignadas</a></p>{/if}
 <p><a href="{url 'Calif_Views_Reportes_Oferta::conCambios'}">Exportar con cambios respecto a otro calendario y con los filtros activos</a></p>
+<p><a href="{url 'Calif_Views_Reportes_Oferta::reporteODS'}">Exportar con los filtros activos</a></p>
 {/if}
 {if $filtro}<ul style="list-style-type: none;">{foreach $filtro as $key => $val}
 <li><a href="{url 'Calif_Views_Seccion::eliminarFiltro', array($key)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar filtro" /></a>{$val}</li>

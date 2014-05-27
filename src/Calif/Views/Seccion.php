@@ -18,7 +18,12 @@ class Calif_Views_Seccion {
 		$car = $request->session->getData('filtro_seccion_asignada_carrera', null);
 		$div = $request->session->getData('filtro_seccion_asignada_division', null);
 		$noasig = $request->session->getData('filtro_seccion_asignada_no', false);
-		if ($noasig === true) {
+		$asig = $request->session->getData('filtro_seccion_asignada', false);
+		if ($asig === true) {
+			$filtro['a'] = 'Secciones asignadas';
+			
+			$sql->Q ('asignacion IS NOT NULL');
+		} else if ($noasig === true) {
 			$filtro['n'] = 'Secciones no solicitadas';
 			
 			$sql->Q ('asignacion IS NULL');
@@ -99,6 +104,7 @@ class Calif_Views_Seccion {
 		$request->session->setData('filtro_seccion_asignada_carrera',$match[1]);
 		$request->session->setData('filtro_seccion_asignada_division',null);
 		$request->session->setData('filtro_seccion_asignada_no', false);
+		$request->session->setData('filtro_seccion_asignada', false);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
@@ -114,6 +120,7 @@ class Calif_Views_Seccion {
 		$request->session->setData('filtro_seccion_asignada_division',$match[1]);
 		$request->session->setData('filtro_seccion_asignada_carrera',null);
 		$request->session->setData('filtro_seccion_asignada_no', false);
+		$request->session->setData('filtro_seccion_asignada', false);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
@@ -123,13 +130,26 @@ class Calif_Views_Seccion {
 		$request->session->setData('filtro_seccion_asignada_division',null);
 		$request->session->setData('filtro_seccion_asignada_carrera',null);
 		$request->session->setData('filtro_seccion_asignada_no', true);
+		$request->session->setData('filtro_seccion_asignada', false);
+		
+		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
+	public function porAsignadas ($request, $match) {
+		$request->session->setData('filtro_seccion_asignada_division',null);
+		$request->session->setData('filtro_seccion_asignada_carrera',null);
+		$request->session->setData('filtro_seccion_asignada_no', false);
+		$request->session->setData('filtro_seccion_asignada', true);
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
 	public function eliminarFiltro($request, $match){
-		if ($match[1] == 'd'){
+		if ($match[1] == 'a') {
+			$request->session->setData('filtro_seccion_asignada', false);
+		} else if ($match[1] == 'd'){
 			$request->session->setData('filtro_seccion_departamento',null);
 		} else if($match[1] == 'c'){
 			$request->session->setData('filtro_seccion_asignada_carrera',null);

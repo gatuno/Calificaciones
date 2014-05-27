@@ -381,10 +381,24 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
+	'regex' => '#^/secciones/f/a/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Seccion',
+	'method' => 'porAsignadas',
+);
+
+$ctl[] = array (
 	'regex' => '#^/secciones/error/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'errorHoras',
+);
+
+$ctl[] = array (
+	'regex' => '#^/secciones/reporte/ODS/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Reportes_Oferta',
+	'method' => 'reporteODS',
 );
 
 $ctl[] = array (
@@ -402,7 +416,7 @@ $ctl[] = array (
 );
 
 $ctl[] = array (
-	'regex' => '#^/secciones/nofiltro/([cdin])/$#',
+	'regex' => '#^/secciones/nofiltro/([acdin])/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Seccion',
 	'method' => 'eliminarFiltro',
@@ -706,6 +720,12 @@ $ctl[] = array(
 	'regex' => '#^/titulacion#',
 	'base' => $base,
 	'sub' => require Gatuf::config ('titulacion_views'),
+);
+
+$ctl[] = array(
+	'regex' => '#^/encuesta#',
+	'base' => $base,
+	'sub' => require Gatuf::config ('encuesta_views'),
 );
 
 $ctl[] = array(
