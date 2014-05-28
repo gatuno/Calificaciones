@@ -32,20 +32,19 @@
 {/if}
 <h2>Desglose de horas</h2>
 <table border="1">
-<thead><tr><th>NRC</th><th>Materia</th><th>Sección</th><th>Numero de puesto</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
+<thead><tr><th>NRC</th><th>Materia</th><th>Sección</th><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
 <tbody>
 	{foreach $grupos as $g}
 		<tr>
 		{assign $span = 1}
 		{if count($puestos[$g.nrc]) > 1}{assign $span = $puestos[$g.nrc].count()}{/if}
-		<td rowspan="{$span}">{$g.nrc}</td>
+		<td rowspan="{$span}"><a href="{url 'Calif_Views_Seccion::verNrc', $g.nrc}">{$g.nrc}</a></td>
 		<td rowspan="{$span}">{$g.materia}</td>
 		<td rowspan="{$span}">{$g.seccion}</td>
 		{assign $h = 0}
 		{if $puestos[$g.nrc]}
 			{foreach $puestos[$g.nrc] as $p}
 				{assign $h++}
-				<td>{$p.numero}</td>
 				{if $p.tipo == 't'}
 					<td>Teoría</td>
 				{elseif $p.tipo =='p'}

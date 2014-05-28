@@ -133,7 +133,7 @@ class Calif_Maestro extends Gatuf_Model {
 		$numero_puesto = new Calif_NumeroPuesto ();
 		$numero_puesto->_a['views']['carga'] = $view;
 		
-		$sql = new Gatuf_SQL ('carga=%s AND (maestro=%s AND (tipo="t" OR tipo="p")) OR (suplente=%s AND (tipo="u" OR tipo="q"))', array ($tipo, $this->codigo, $this->codigo));
+		$sql = new Gatuf_SQL ('carga=%s AND ((maestro=%s AND (tipo="t" OR tipo="p")) OR (suplente=%s AND (tipo="u" OR tipo="q")))', array ($tipo, $this->codigo, $this->codigo));
 		
 		$num = $numero_puesto->getList (array ('filter' => $sql->gen (), 'view' => 'carga'));
 		

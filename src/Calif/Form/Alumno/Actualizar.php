@@ -6,20 +6,6 @@ class Calif_Form_Alumno_Actualizar extends Gatuf_Form {
 	public function initFields ($extra = array ()) {
 
 		$this->alumno = $extra['alumno'];
-
-		$this->fields['codigo'] = new Gatuf_Form_Field_Varchar (
-			array (
-				'required' => true,
-				'label' => 'Código',
-				'initial' => $this->alumno->codigo,
-				'help_text' => 'El código de alumno de 9 caracteres',
-				'max_length' => 9,
-				'min_length' => 9,
-				'widget_attrs' => array (
-					'maxlength' => 9,
-					'size' => 12,
-				),
-		));
 		
 		$this->fields['nombre'] = new Gatuf_Form_Field_Varchar (
 			array (
@@ -65,23 +51,6 @@ class Calif_Form_Alumno_Actualizar extends Gatuf_Form {
 				'initial' => $this->alumno->user->email,
 				'help_text' => 'Un correo',
 		));
-	}
-	
-	public function clean_codigo () {
-		$codigo = mb_strtoupper($this->cleaned_data['codigo']);
-		
-		if (!preg_match ('/^\w\d{8}$/', $codigo)) {
-			throw new Gatuf_Form_Invalid ('El código del alumno es incorrecto');
-		}
-		
-		$sql = new Gatuf_SQL ('codigo=%s', array ($codigo));
-		$l = Gatuf::factory('Calif_Alumno')->getList(array ('filter' => $sql->gen(), 'count' => true));
-		
-		if ($l == 0) {
-			throw new Gatuf_Form_Invalid (sprintf ('El código %s de alumno especificado no existe', $codigo));
-		}
-		
-		return $codigo;
 	}
 	
 	public function save ($commit = true) {

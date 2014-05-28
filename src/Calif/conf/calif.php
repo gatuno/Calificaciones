@@ -110,6 +110,7 @@ $cfg['bounce_email'] = 'pato@cucei.udg.mx';
 
 $cfg['middleware_classes'] = array(
 	'Gatuf_Middleware_Session',
+	'Calif_Middleware_Calendario'
 );
 
 $cfg['gatuf_custom_user'] = 'Calif_User';

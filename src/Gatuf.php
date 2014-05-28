@@ -6,6 +6,7 @@ class Gatuf {
 		$GLOBALS['_GATUF_starttime'] = microtime(true);
 		$GLOBALS['_GATUF_uniqid'] = uniqid($GLOBALS['_GATUF_starttime'], true);
 		Gatuf::loadConfig($config);
+		if (Gatuf::config ('debug', false)) $GLOBALS['_GATUF_debug_data'] = array ();
 		date_default_timezone_set(Gatuf::config('time_zone', 'America/Mexico_City'));
 		mb_internal_encoding('UTF-8');
 		mb_regex_encoding('UTF-8');
