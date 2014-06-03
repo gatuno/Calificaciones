@@ -21,10 +21,10 @@
 	<p>Ya no se pueden agregar más permisos, este usuario ya tiene todos los permisos posibles</p>
 {/if}
 <h3>Agregar nuevo grupo</h3>
-{if count ($grupos) != 0}
+{if count ($grupos) != 0} 	
 	<p>Pertence a los siguiente grupos:
 	<ul>{foreach $grupos as $g}
-		<li>Grupo: <abbr title="{$g.description}">{$g.name}</abbr>. TODO: Boton para eliminar grupo.</li>
+		<li><a href="{url 'Calif_Views_Usuario::eliminarGrupo', array($maestro.codigo,$g.id)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar grupo" /></a>Grupo: <abbr title="{$g.description}">{$g.name}</abbr>. TODO: Boton para eliminar grupo.</li>
 	{/foreach}</ul></p>
 {/if}
 {if $form2}

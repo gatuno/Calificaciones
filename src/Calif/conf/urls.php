@@ -717,6 +717,13 @@ $ctl[] = array(
 );
 
 $ctl[] = array(
+	'regex' => '#^/grupos/del/(\d+)/(\d+)/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Usuario',
+	'method' => 'eliminarGrupo',
+);
+
+$ctl[] = array(
 	'regex' => '#^/permisos/addGrupo/(\d+)/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Usuario',
