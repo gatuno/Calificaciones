@@ -10,6 +10,22 @@ class Calif_Views_Materia {
 		$filtro = array();
 		$materia = new Calif_Materia ();
 		
+		/* Aplicando filtrado por carrera y/o departamento */
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Materia_Filtrar ($request->POST);
+			$filtrado = $form->save ();	
+			if($filtrado[0] == 'c'){
+				$filtrado = substr($filtrado, 2);
+				$request->session->setData('filtro_materia_carrera',$filtrado);
+			}
+			if($filtrado[0] == 'd'){
+				$filtrado = substr($filtrado, 2);
+				$request->session->setData('filtro_materia_departamento',$filtrado);
+			}
+		} else {
+			$form = new Calif_Form_Materia_Filtrar(null);
+		}
+
 		/* Verificar filtro de materias por carrera */
 		$car = $request->session->getData('filtro_materia_carrera', null);
 		if (!is_null ($car)){
@@ -76,6 +92,7 @@ class Calif_Views_Materia {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/materia/index.html',
 		                                         array('page_title' => 'Materias',
 		                                         'filtro' => $filtro,
+		                                         'form' => $form,
 		                                         'paginador' => $pag),
 		                                         $request);
 	}
@@ -93,7 +110,6 @@ class Calif_Views_Materia {
 	
 	public function porDepartamento ($request, $match) {
 		$departamento = new Calif_Departamento ();
-		
 		if (false === ($departamento->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
 		}

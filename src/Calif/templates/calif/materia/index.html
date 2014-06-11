@@ -1,5 +1,11 @@
 {extends 'calif/base.html'}
 {block body}
+<form method="post" action=".">
+<table>
+{$form.render_table}
+<td><input type="submit" name="submit" value="Hecho" /></td>
+</table>
+</form>
 {if $user.isJefe()}
 <p><a href="{url 'Calif_Views_Materia::agregarMateria'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar materia" />Agregar una nueva materia</a></p>
 {/if}
