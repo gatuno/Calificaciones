@@ -570,4 +570,225 @@ class Calif_Views_System {
 		                                                 'form' => $form),
 		                                          $request);
 	}
+	
+	public $exportarPlantilla_precond = array ('Calif_Precondition::jefeRequired');
+	public function exportarPlantilla ($request, $match) {
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_System_ExportarPlantilla (array_merge ($request->POST, $request->FILES));
+			
+			if ($form->isValid ()) {
+				$data = $form->save ();
+				
+				$GLOBALS['CAL_ACTIVO'] = $data['cal'];
+				
+				$departamento = $data['dep'];
+				
+				if (($archivo = fopen ($data['archivo'], "r")) === false) {
+					$request->user->setMessage (3, 'Hubo un error con la subida de archivos');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				/* Detectar cabeceras */
+				$linea = fgetcsv ($archivo, 600, ',', '"');
+				
+				if ($linea === false || is_null ($linea)) {
+					$request->user->setMessage (3, 'No hay cabecera, o es una linea vacia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$cabecera = Calif_Utils_detectarColumnas ($linea);
+				
+				if (!isset ($cabecera['grupo/seccion'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de sección');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['clave siiau'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de materia');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['tipo contratacion'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de tipo de contratacion');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['tipo'])) {
+					/* Se requiere una columna de NRC */
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de tipo de horas');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				if (!isset ($cabecera['codigo empleado'])) {
+					$request->user->setMessage (3, 'El archivo importado no contiene una columna de profesor');
+					return new Gatuf_HTTP_Redirect ($url);
+				}
+				
+				$libro_ods = new Gatuf_ODS ();
+				
+				$libro_ods->addNewSheet ($departamento);
+				foreach ($cabecera as $key => $col) {
+					$libro_ods->addStringCell ($departamento, 1, $col + 1, mb_strtoupper ($key));
+				}
+				
+				$col_mov = count ($cabecera) + 1;
+				$libro_ods->addStringCell ($departamento, 1, $col_mov, 'Tipo de movimiento');
+				
+				$existentes = array ();
+				$seccion_model = new Calif_Seccion ();
+				$np_model = new Calif_NumeroPuesto ();
+				$sql = new Gatuf_SQL ();
+				$sql_np = new Gatuf_SQL ();
+				
+				$g = 2;
+				/* Recorrer todas las secciones del libro */
+				while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
+					if (is_null ($linea[0])) continue;
+					/* Separar el grupo/seccion */
+					$sep = explode ('-', $linea[$cabecera['grupo/seccion']]);
+					$grupo = 'D'.trim ($sep[0]);
+					$materia = $linea[$cabecera['clave siiau']];
+					$maestro = trim ($linea[$cabecera['codigo empleado']]);
+					
+					$sql->ands = array ();
+					$sql->Q ('materia=%s AND seccion=%s', array ($materia, $grupo));
+					
+					$seccion = $seccion_model->getOne (array ('view' => 'paginador', 'filter' => $sql->gen ()));
+					
+					if ($seccion === null && $maestro == '') continue;
+					if ($seccion !== null && $maestro == '' && $seccion->maestro == '3333333') continue;
+					if (($seccion !== null && $maestro != '' && $seccion->maestro == '3333333') || $seccion === null) {
+						/* La sección fué eliminada, pasarla directo al archivo final */
+						foreach ($linea as $h => $data) {
+							$libro_ods->addStringCell ($departamento, $g, $h + 1, $data);
+						}
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Baja de profesor *');
+						$g++;
+						continue;
+					}
+					
+					$tipo = mb_strtolower ($linea[$cabecera['tipo']]);
+					
+					$sql_np->ands = array ();
+					$sql_np->Q ('nrc=%s AND tipo=%s', array ($seccion->nrc, $tipo));
+					$np_uno = $np_model->getOne (array ('filter' => $sql_np->gen ()));
+					
+					$tipo_con = mb_strtolower ($linea[$cabecera['tipo contratacion']]);
+					
+					if ($tipo_con == 'asignatura') {
+						$tipo_con = 'a';
+					} else if ($tipo_con == 'cargo a plaza') {
+						$tipo_con = 't';
+					} else if ($tipo_con == 'honorifica') {
+						$tipo_con = 'h';
+					} else { /* Horas definitivas */
+						$tipo_con = 'a';
+					}
+					
+					foreach ($linea as $h => $data) {
+						if ($h == $cabecera['tipo contratacion']) {
+							/* Sustituir por nuestra carga */
+							if ($np_uno->carga == 'a') {
+								$libro_ods->addStringCell ($departamento, $g, $h + 1, 'Asignatura');
+							} else if ($np_uno->carga == 't') {
+								$libro_ods->addStringCell ($departamento, $g, $h + 1, 'Cargo a Plaza');
+							} else if ($np_uno->carga == 'h') {
+								$libro_ods->addStringCell ($departamento, $g, $h + 1, 'Honorifico');
+							}
+						} else if ($h == $cabecera['codigo empleado']) {
+							/* Sustituir por nuestro maestro */
+							$libro_ods->addStringCell ($departamento, $g, $h + 1, $seccion->maestro);
+						} else if ($h == $cabecera['nombre']) {
+							/* Sustituir por nuestro nombre */
+							$libro_ods->addStringCell ($departamento, $g, $h + 1, mb_strtoupper ($seccion->maestro_apellido.' '.$seccion->maestro_nombre));
+						} else {
+							$libro_ods->addStringCell ($departamento, $g, $h + 1, $data);
+						}
+					}
+					
+					/* Al final, indicar el tipo de movimiento */
+					if ($maestro == '' && $seccion->maestro != $maestro) {	
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Maestro Nuevo *');
+					} else if ($maestro != $seccion->maestro && $np_uno->carga == $tipo_con) {
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Maestro Cambiado *');
+					} else if ($maestro != $seccion->maestro) {
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Maestro Cambiado *');
+					} else if ($np_uno->carga != $tipo_con) {
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Carga Cambiada *');
+					} else {
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Sin Cambio *');
+					}
+					
+					$existentes[$seccion->materia.'-'.$seccion->seccion] = 1;
+					$g++;
+				}
+				
+				/* Al final, recorrer todas las secciones en el sistema y si no existe, agregarla al final */
+				$sql = new Gatuf_SQL ('materia_departamento=%s', $departamento);
+				$secciones_locales = Gatuf::factory ('Calif_Seccion')->getList (array ('view' => 'paginador', 'filter' => $sql->gen ()));
+				
+				foreach ($secciones_locales as $seccion) {
+					if (isset ($existentes[$seccion->materia.'-'.$seccion->seccion])) continue;
+					if ($seccion->maestro == '3333333') continue;
+					
+					$nps = $seccion->get_calif_numeropuesto_list (array ('filter' => "(tipo = 't' OR tipo = 'p')"));
+					
+					$dep_model = new Calif_Departamento ($seccion->materia_departamento);
+					
+					foreach ($nps as $np_uno) {
+						/* Agregarla */
+						/* Nombre de Materia y clave */
+						$libro_ods->addStringCell ($departamento, $g, 1, mb_strtoupper ($seccion->materia_desc));
+						$libro_ods->addStringCell ($departamento, $g, 2, $seccion->materia);
+						
+						$num = (int) substr ($seccion->seccion, 1);
+						if ($num <= 27) {
+							$letra = chr (64 + $num);
+						} else {
+							$letra = chr ((int) ($num / 27) + 64).chr ((int) ($num % 27) + 64);
+						}
+						
+						$libro_ods->addStringCell ($departamento, $g, 4, str_pad ($num, 2, '0', STR_PAD_LEFT).' - '.$letra);
+						
+						$libro_ods->addStringCell ($departamento, $g, 5, mb_strtoupper ($np_uno->tipo));
+						
+						if ($np_uno->carga == 'a') {
+							$libro_ods->addStringCell ($departamento, $g, 7, 'Asignatura');
+						} else if ($np_uno->carga == 't') {
+							$libro_ods->addStringCell ($departamento, $g, 7, 'Cargo a Plaza');
+						} else if ($np_uno->carga == 'h') {
+							$libro_ods->addStringCell ($departamento, $g, 7, 'Honorifico');
+						}
+						
+						if ($seccion->maestro == '1111111') {
+							$libro_ods->addStringCell ($departamento, $g, 8, 'SI');
+						} else {
+							$libro_ods->addStringCell ($departamento, $g, 8, 'NO');
+						}
+						
+						$libro_ods->addStringCell ($departamento, $g, 9, $seccion->maestro);
+						$libro_ods->addStringCell ($departamento, $g, 10, mb_strtoupper ($seccion->maestro_apellido.' '.$seccion->maestro_nombre));
+						$maestro = $seccion->get_maestro ();
+						if ($maestro->nombramiento === null) {
+							$nombramiento = $maestro->get_asignatura ();
+						} else {
+							$nombramiento = $maestro->get_nombramiento ();
+						}
+						
+						$libro_ods->addStringCell ($departamento, $g, 12, $nombramiento->descripcion);
+						$libro_ods->addStringCell ($departamento, $g, 13, $dep_model->descripcion);
+						
+						$libro_ods->addStringCell ($departamento, $g, $col_mov, '* Nueva *');
+						$g++;
+					}
+				}
+				$libro_ods->construir_paquete ();
+				
+				return new Gatuf_HTTP_Response_File ($libro_ods->nombre, 'Plantilla-'.$departamento.'.ods', 'application/vnd.oasis.opendocument.spreadsheet', true);
+				}
+		} else {
+			$form = new Calif_Form_System_ExportarPlantilla (null);
+		}
+		
+		return Gatuf_Shortcuts_RenderToResponse ('calif/system/exportar_plantilla.html',
+		                                          array ('page_title' => 'Exportar Plantilla',
+		                                                 'form' => $form),
+		                                          $request);
+	}
 }

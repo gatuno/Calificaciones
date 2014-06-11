@@ -124,6 +124,13 @@ $ctl[] = array (
 	'method' => 'importarPlantilla',
 );
 
+$ctl[] = array (
+	'regex' => '#^/sistema/exportar_plantilla/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_System',
+	'method' => 'exportarPlantilla',
+);
+
 /* Recuperación de contraseñas */
 $ctl[] = array (
 	'regex' => '#^/password/$#',
