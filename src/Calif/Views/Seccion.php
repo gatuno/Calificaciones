@@ -14,6 +14,30 @@ class Calif_Views_Seccion {
 		$pag->action = array ('Calif_Views_Seccion::index');
 		$sql = new Gatuf_SQL ();
 		
+		/* Aplicando filtrado por carrera y/o departamento */
+		if ($request->method == 'POST') {
+			$form = new Calif_Form_Seccion_Filtrar ($request->POST);
+			$filtrado = $form->save ();	
+			if($filtrado[0] == 'c'){
+				$filtrado = substr($filtrado, 2);
+				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porCarrera', array($filtrado));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+			if($filtrado[0] == 'i'){
+				$filtrado = substr($filtrado, 2);
+				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porDivision', array($filtrado));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+			if($filtrado[0] == 'd'){
+				$filtrado = substr($filtrado, 2);
+				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porDepartamento', array($filtrado));
+				return new Gatuf_HTTP_Response_Redirect ($url);
+			}
+		} else {
+			$form = new Calif_Form_Seccion_Filtrar(null);
+		}
+
+
 		/* Verificar filtro por Carrera */
 		$car = $request->session->getData('filtro_seccion_asignada_carrera', null);
 		$div = $request->session->getData('filtro_seccion_asignada_division', null);
@@ -77,6 +101,7 @@ class Calif_Views_Seccion {
 		return Gatuf_Shortcuts_RenderToResponse ('calif/seccion/index.html',
 		                                          array ('paginador' => $pag,
 		                                                 'filtro'=>$filtro,
+		                                                 'form' => $form,
 		                                                 'page_title' => 'Secciones'),
 		                                          $request);
 	}

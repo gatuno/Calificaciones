@@ -1,24 +1,30 @@
 <?php
 
-class Calif_Form_Materia_Filtrar extends Gatuf_Form {
+class Calif_Form_Seccion_Filtrar extends Gatuf_Form {
 
 	public function initFields($extra=array()) {
 
 		$choices = array ();
+
+		$divisiones = Gatuf::factory('Calif_Division')->getList();
+		foreach ($divisiones as $division) {
+				$choices['Divisiones'][$division->descripcion] = 'i_'.$division->id;
+		}
+		
+		$carreras = Gatuf::factory('Calif_Carrera')->getList();
+		foreach ($carreras as $carrera) {
+				$choices['Carreras'][$carrera->descripcion] = 'c_'.$carrera->clave;
+		}
 
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList();
 		foreach ($departamentos as $departamento) {
 				$choices['Departamentos'][$departamento->descripcion] = 'd_'.$departamento->clave;
 		}
 
-		$carreras = Gatuf::factory('Calif_Carrera')->getList();
-		foreach ($carreras as $carrera) {
-				$choices['Carreras'][$carrera->descripcion] = 'c_'.$carrera->clave;
-		}
-		
 		$this->fields['filtro'] = new Gatuf_Form_Field_Varchar (
 			array(
-				'label' => 'Filtrar materias de ',
+				'label' => 'Filtrar secciones de ',
+				'initial' =>'',
 				'widget_attrs' => array (
 					'choices' => $choices,
 				),

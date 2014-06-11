@@ -1,5 +1,11 @@
 {extends 'calif/base.html'}
 {block body}
+<form method="post" action=".">
+<table>
+{$form.render_table}
+<td><input type="submit" name="submit" value="Filtrar" /></td>
+</table>
+</form>
 {if $user.isJefe() || $user.isCoord()}
 <p><a href="{url 'Calif_Views_Seccion::agregarNrc'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar seccion" />Agregar una nueva sección</a></p>
 {if !isset($filtro['n'])}<p><a href="{url 'Calif_Views_Seccion::porNoAsignadas'}">Activar filtro de no asignadas</a></p>{/if}
