@@ -19,7 +19,8 @@ function Gatuf_DB_getConnection() {
 	                                      Gatuf::config('db_database'),
 	                                      Gatuf::config('db_login'),
 	                                      Gatuf::config('db_password'),
-	                                      Gatuf::config('db_table_prefix'));
+	                                      Gatuf::config('db_table_prefix'),
+	                                      Gatuf::config('debug'));
 	return $GLOBALS['_GATUF_db'];
 }
 

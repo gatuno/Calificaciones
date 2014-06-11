@@ -36,6 +36,7 @@ class Calif_Views_Usuario {
 	//public $eliminarPermiso_precond = array ('Gatuf_Precondition::adminRequired');
 	public function eliminarPermiso($request, $match) {
 		$usuario = new Calif_User ();
+		$permiso = new Gatuf_Permission ();
 		
 		if (false === ($usuario->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
@@ -46,9 +47,11 @@ class Calif_Views_Usuario {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		if ($permiso = new Gatuf_Permission (2)) {
-			$usuario->delAssoc($permiso);
+		if (false === $permiso->get ($match[2])) {
+			throw new Gatuf_HTTP_Error404 ();
 		}
+		
+		$usuario->delAssoc($permiso);
 		
 		if ($usuario->type == 'm') {
 			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::permisos', $usuario->login);
@@ -88,6 +91,7 @@ class Calif_Views_Usuario {
 	public $eliminarGrupo_precond = array ('Gatuf_Precondition::adminRequired');
 	public function eliminarGrupo($request, $match) {
 		$usuario = new Calif_User ();
+		$grupo = new Gatuf_Group ();
 		
 		if (false === ($usuario->get ($match[1]))) {
 			throw new Gatuf_HTTP_Error404 ();
@@ -98,9 +102,11 @@ class Calif_Views_Usuario {
 			throw new Gatuf_HTTP_Error404 ();
 		}
 		
-		if($grupo = new Gatuf_Group ($match[2])){
-			$usuario->delAssoc($grupo);
+		if (false === $grupo->get ($match[2])) {
+			throw new Gatuf_HTTP_Error404 ();
 		}
+		
+		$usuario->delAssoc($grupo);
 		
 		if ($usuario->type == 'm') {
 			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Maestro::permisos', $usuario->login);

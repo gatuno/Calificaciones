@@ -4,10 +4,10 @@
 {if $maestro.user.administrator}
 <p>Este usuario tiene permisos de <b>Adminitrador</b></p>
 {elseif count ($permisos) != 0}
-		<p>Tiene los siguientes permisos:
-		<ul style="list-style-type: none;">{foreach $permisos as $p}
-			<li><a href="{url 'Calif_Views_Usuario::eliminarPermiso', array($maestro.codigo,$p.id)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar permiso" /></a>Permiso: {$p.application} - <abbr title="{$p.description}">{$p.name}</abbr>. TODO: Boton para eliminar permiso.</li>
-		{/foreach}</ul></p>
+		<p>Tiene los siguientes permisos:</p>
+		<ul>{foreach $permisos as $p}
+			<li>Permiso: {$p.application} - <abbr title="{$p.description}">{$p.name}</abbr>. <a href="{url 'Calif_Views_Usuario::eliminarPermiso', array($maestro.user.id,$p.id)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar permiso" /></a></li>
+		{/foreach}</ul>
 {/if}
 <h3>Agregar nuevo permiso</h3>
 {if $form}
@@ -22,10 +22,10 @@
 {/if}
 <h3>Agregar nuevo grupo</h3>
 {if count ($grupos) != 0} 	
-	<p>Pertence a los siguiente grupos:
+	<p>Pertence a los siguiente grupos:</p>
 	<ul>{foreach $grupos as $g}
-		<li><a href="{url 'Calif_Views_Usuario::eliminarGrupo', array($maestro.codigo,$g.id)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar grupo" /></a>Grupo: <abbr title="{$g.description}">{$g.name}</abbr>. TODO: Boton para eliminar grupo.</li>
-	{/foreach}</ul></p>
+		<li>Grupo: <abbr title="{$g.description}">{$g.name}</abbr>. <a href="{url 'Calif_Views_Usuario::eliminarGrupo', array($maestro.user.id,$g.id)}"><img class="icon" src="{media '/img/list-remove.png'}" alt="Eliminar grupo" /></a></li>
+	{/foreach}</ul>
 {/if}
 {if $form2}
 	<form method="post" action="{url 'Calif_Views_Usuario::agregarGrupo', array($maestro->user->id)}">
