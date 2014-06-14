@@ -86,7 +86,7 @@ class Calif_Views_Edificio {
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/edificio/ver-edificio.html',
-		                                         array('page_title' => 'Ver edificio',
+		                                         array('page_title' => 'Edificio '.$edificio->clave,
 		                                               'edificio' => $edificio,
 		                                               'salones' => $salones,
                                                        'calendarios' => $super_calendarios),

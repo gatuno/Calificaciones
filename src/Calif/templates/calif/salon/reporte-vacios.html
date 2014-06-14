@@ -2,14 +2,15 @@
 {block body}
 <p>Se buscó un salón vacio de {$bus_inicio} a {$bus_fin}, los dias {$semana}</p>
 {if $salones}
-<p>Se encontraron los siguientes salones vacios:</p>
-<table border="1">
-<thead><tr><th>Edificio</th><th>Aula</th><th>Cupo</th></thead>
-<tbody>
-{foreach $salones as $salon}
-<tr><td>{$salon.edificio}</td><td><a href="{url 'Calif_Views_Salon::verSalon', array ($salon.id)}">{$salon.aula}</a></td><td>{$salon.cupo}</td></tr>
-{/foreach}
-</tbody></table>
+	<p>Se encontraron los siguientes salones vacios:</p>
+	<table border="1">
+		<thead><tr><th>Edificio</th><th>Aula</th><th>Cupo</th></thead>
+		<tbody>
+			{foreach $salones as $salon}
+				<tr><td>{$salon.edificio}</td><td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}{'#salon_'~$salon.id}">{$salon.aula}</a></td><td>{$salon.cupo}</td></tr>
+			{/foreach}
+		</tbody>
+	</table>
 {else}
 <p>No se encontraron salones</p>
 {/if}

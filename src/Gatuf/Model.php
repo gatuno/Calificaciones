@@ -585,7 +585,7 @@ class Gatuf_Model {
 	 * @return bool Success
 	 */
 	function update ($where='') {
-		$this->preSave();
+		$this->preSave(false);
 		$req = 'UPDATE '.$this->getSqlTable().' SET'."\n";
 		$fields = array();
 		$assoc = array();
@@ -614,7 +614,7 @@ class Gatuf_Model {
 		foreach ($assoc as $model=>$ids) {
 			$this->batchAssoc($model, $ids);
 		}
-		$this->postSave();
+		$this->postSave(false);
 		return true;
 	}
 	

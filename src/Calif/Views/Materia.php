@@ -196,7 +196,7 @@ class Calif_Views_Materia {
 			foreach ($horas as $hora) {
 				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::verNrc', $seccion->nrc);
 				$cadena_desc = sprintf ('%s <a href="%s">%s</a><br />', $seccion->materia, $url, $seccion->seccion);
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $hora->salon);
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', $hora->salon_edificio).'#salon_'.$hora->salon;
 				$dia_semana = strtotime ('next Monday');
 				
 				foreach (array ('l', 'm', 'i', 'j', 'v', 's') as $dia) {

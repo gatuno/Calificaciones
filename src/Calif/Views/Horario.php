@@ -57,7 +57,7 @@ class Calif_Views_Horario {
 				foreach ($horas_salon as $hora_en_salon) {
 					if ($hora_en_salon->id == $horario->id) continue;
 					if (Calif_Horario::chocan ($horario, $hora_en_salon)) {
-						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $horario->salon), $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
+						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s#salon_%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', $hora_en_salon->salon_edificio), $hora_en_salon->salon, $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
 						break;
 					}
 				}
@@ -192,7 +192,7 @@ class Calif_Views_Horario {
 					if ($hora_en_salon->id == $horario->id) continue;
 					if (Calif_Horario::chocan ($horario, $hora_en_salon)) {
 						/* Choque, este salon está ocupado en la hora recién agregada */
-						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::verSalon', $horario->salon), $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
+						$request->user->setMessage (2, sprintf ('La hora agregada al nrc %s colisiona en el salon <a href="%s#salon_%s">%s %s</a>', $seccion->nrc, Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', $hora_en_salon->salon_edificio), $hora_en_salon->salon, $hora_en_salon->salon_edificio, $hora_en_salon->salon_aula));
 						break;
 					}
 				}

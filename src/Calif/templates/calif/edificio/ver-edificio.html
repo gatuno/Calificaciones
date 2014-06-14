@@ -1,10 +1,10 @@
 {extends 'calif/base.html'}
 {block body}
-<p>Este es el salón {$edificio.descripcion} ({$edificio.clave})</p>
 <p>Se muestran los horarios de todos los salones</p>
 {if $user.isJefe()}
 <p><a href="{url 'Calif_Views_Salon::agregarSalon', array($edificio.clave)}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar salon" />Agregar nuevo salon</a></p>
 {/if}
+<p><a href="{url 'Calif_Views_Salon::buscarSalon', array($edificio.clave)}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon en este edificio</a></p>
 {if $salones}
 	<div id="salones_tabs"><ul>
 	{foreach $salones as $salon}
@@ -12,11 +12,12 @@
 	{/foreach}</ul>
 	{foreach $salones as $salon}
 		<div id="salon_{$salon.id}">
-		{if $calendarios[$salon.id]}
-			{$calendarios[$salon.id].render}
-		{else}
-			<p>Este salón no tiene registrada ninguna hora. En hora buena, está libre.</p>
-		{/if}
+			<p>Este es el salón {$salon.aula}, del edificio {$edificio.descripcion}. Tiene una capacidad de {$salon.cupo}. {if $user.isJefe ()}<a href="{url 'Calif_Views_Salon::actualizarSalon', array ($salon.id)}">Cambiar cupo</a>{/if}</p>
+			{if $calendarios[$salon.id]}
+				{$calendarios[$salon.id].render}
+			{else}
+				<p>Este salón no tiene registrada ninguna hora. En hora buena, está libre.</p>
+			{/if}
 		</div>
 	{/foreach}
 	</div>

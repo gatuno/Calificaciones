@@ -1,7 +1,9 @@
 {extends 'calif/base.html'}
 {block body}
 {if $user.isJefe()}
-<p><a href="{url 'Calif_Views_Edificio::agregarEdificio'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar edificio" />Agregar nuevo edificio</a></p>
+<p><a href="{url 'Calif_Views_Edificio::agregarEdificio'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar edificio" />Agregar nuevo edificio</a><br />
+<a href="{url 'Calif_Views_Salon::agregarSalon'}"><img class="icon" src="{media '/img/list-add.png'}" alt="Nuevo salon" />Agregar nuevo salon</a></p>
 {/if}
+<p><a href="{url 'Calif_Views_Salon::buscarSalon'}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon vacio</a></p>
 {$paginador.render}
 {/block}

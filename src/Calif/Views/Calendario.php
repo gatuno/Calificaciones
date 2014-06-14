@@ -66,7 +66,7 @@ class Calif_Views_Calendario {
 			$form = new Calif_Form_Views_importoferta (array_merge ($request->POST, $request->FILES), $extra);
 			if ($form->isValid ()) {
 				$form->save ();
-				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::index');
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views::index');
 				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {

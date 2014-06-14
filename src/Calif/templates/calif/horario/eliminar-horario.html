@@ -11,7 +11,7 @@
 <td>{$horario.fin}</td>
 <td>{$horario.displayDias()}</td>
 <td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}">{$salon.edificio}</a></td>
-<td><a href="{url 'Calif_Views_Salon::verSalon', array ($horario->salon)}">{$salon.aula}</a></td>
+<td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}{'#salon_'~$salon.id}">{$salon.aula}</a></td>
 </tr>
 </tbody>
 </table>

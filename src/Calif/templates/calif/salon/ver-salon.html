@@ -1,6 +1,0 @@
-{extends 'calif/base.html'}
-{block body}
-<p>Este es el salón {$salon.aula}, del edificio {$salon.edificio}. Tiene una capacidad de {$salon.cupo}. <a href="{url 'Calif_Views_Salon::actualizarSalon', array ($salon.id)}">Cambiar cupo</a>.</p>
-<p>A continuación se muestra su horario</p>
-{$calendar.render}
-{/block}

@@ -1,26 +1,20 @@
 {extends 'calif/base.html'}
 {block body}
 {if $form.errors}
-<div class="errors">
-<p>El formulario contiene algunos errores:</p>
-</div>
+	<div class="errors">
+		<p>El formulario contiene algunos errores:</p>
+	</div>
 {/if}
 <form method="post" action=".">
-<table>
-	<tr><th><strong>Edificio:</strong></th>
-	<td>{$edificio.descripcion} ({$edificio.clave})</td>
-	</tr>
-	<tr><th><strong>Aula:</strong></th>
-	<td>{$salon.aula}</td>
-	</tr>
-	<tr><th><strong>{$form.f.cupo.labelTag}:</strong></th>
-	<td>{if $form.f.cupo.errors}{$form.f.cupo.fieldErrors}{/if}
-		{$form.f.cupo|safe}<br />
-		<!-- TODO: Hacer algo con el help text: <span class="helptext">{$form.f.cupo.help_text}</span> -->
-	</td></tr>
-<tr>
-<td>&nbsp;</td>
-<td><input type="submit" name="submit" value="Actualizar salon" /></td>
-</tr>
-</table>
+	<table>
+		<tr><th><strong>Edificio:</strong></th><td>{$edificio.descripcion} ({$edificio.clave})</td></tr>
+		<tr><th><strong>Aula:</strong></th><td>{$salon.aula}</td></tr>
+		<tr><th><strong>{$form.f.cupo.labelTag}:</strong></th>
+		<td>{if $form.f.cupo.errors}{$form.f.cupo.fieldErrors}{/if}
+			{$form.f.cupo|safe}<br />
+			<!-- TODO: Hacer algo con el help text: <span class="helptext">{$form.f.cupo.help_text}</span> -->
+		</td></tr>
+		<tr><td>&nbsp;</td><td><input type="submit" value="Actualizar salon" /></td></tr>
+	</table>
+</form>
 {/block}

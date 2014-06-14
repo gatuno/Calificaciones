@@ -12,7 +12,7 @@
 	<h3>Oferta académica</h3>
 	{if $seccion.asignacion}
 		{coordperm 'puede_liberar', $user, $seccion.asignacion}
-			<p>La sección está pedida para {$seccion.asignacion}.{if $puede_liberar}<a href="{url 'Calif_Views_Seccion::liberarNrc', array ($seccion.nrc)}">Liberar esta sección</a>.{/if}</p>
+			<p>La sección está pedida para {$seccion.asignacion}. {if $puede_liberar}<a href="{url 'Calif_Views_Seccion::liberarNrc', array ($seccion.nrc)}">Liberar esta sección</a>{/if}</p>
 	{else}
 		{foreach $materia.get_carreras_list as $carrera}
 			{coordperm 'puede', $user, $carrera.clave}
@@ -28,7 +28,7 @@
 	<thead><tr><th>Tipo de horas</th><th>Horas</th><th>Carga</th></tr></thead>
 	<tbody>
 	{foreach $puestos as $puesto}
-		<td>{if $puesto.tipo == 't'}Teoria{elseif $puesto.tipo == 'u'}Teoria Suplente{elseif $puesto.tipo == 'q'}Practica Suplente{else}Practica{/if}</td>
+		<tr><td>{if $puesto.tipo == 't'}Teoria{elseif $puesto.tipo == 'u'}Teoria Suplente{elseif $puesto.tipo == 'q'}Practica Suplente{else}Practica{/if}</td>
 		<td>{$puesto.horas}</td>
 		<td><a href="{url 'Calif_Views_Puestos::actualizarPuesto', $puesto.numero}">{if $puesto.carga == 'a'}Asignatura (1001H ó 1002H){elseif $puesto.carga == 't'}Sobre su tiempo completo/medio tiempo (1003H){elseif $puesto.carga == 'h'}Honorífica (1004H){/if}</a></td>
 		</tr>
@@ -49,8 +49,8 @@
 		<tr><td>{$hora.inicio}</td>
 		<td>{$hora.fin}</td>
 		<td>{$hora.displayDias()}</td>
-		<td>{$hora.salon_edificio}</td>
-		<td><a href="{url 'Calif_Views_Salon::verSalon', array ($hora->salon)}">{$hora.salon_aula}</a></td>
+		<td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($hora.salon_edificio)}">{$hora.salon_edificio}</a></td>
+		<td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($hora.salon_edificio)}{'#salon_'~$hora.salon}">{$hora.salon_aula}</a></td>
 		{if $puedeEditar || $coordEditar}
 		<td>
 		<a href="{url 'Calif_Views_Horario::actualizarHora', array ($seccion->nrc, $hora->id)}"><img class="icon" src="{media '/img/document-properties.png'}" alt="Editar" /></a>

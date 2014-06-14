@@ -498,20 +498,6 @@ $ctl[] = array (
 
 /* Los salones */
 $ctl[] = array (
-	'regex' => '#^/salones/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Salon',
-	'method' => 'index',
-);
-
-$ctl[] = array (
-	'regex' => '#^/salon/(\d+)/$#',
-	'base' => $base,
-	'model' => 'Calif_Views_Salon',
-	'method' => 'verSalon',
-);
-
-$ctl[] = array (
 	'regex' => '#^/salon/(\d+)/update/$#',
 	'base' => $base,
 	'model' => 'Calif_Views_Salon',
