@@ -4,7 +4,7 @@
 {if $user.isJefe()}
 <p><a href="{url 'Calif_Views_Salon::agregarSalon', array($edificio.clave)}"><img class="icon" src="{media '/img/list-add.png'}" alt="Agregar salon" />Agregar nuevo salon</a></p>
 {/if}
-<p><a href="{url 'Calif_Views_Salon::buscarSalon', array($edificio.clave)}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon en este edificio</a></p>
+<p><a href="{url 'Calif_Views_Salon::buscarSalon', array (), array('edificio' => $edificio.clave)}"><img class="icon" src="{media '/img/edit-find.png'}" alt="Buscar salon" />Buscar un salon en este edificio</a></p>
 {if $salones}
 	<div id="salones_tabs"><ul>
 	{foreach $salones as $salon}

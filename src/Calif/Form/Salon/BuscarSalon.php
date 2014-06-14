@@ -4,7 +4,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 	public $semana;
 	public function initFields($extra=array()) {
 		$this->semana = array ();
-		$this->fields['horainicio'] = new Gatuf_Form_Field_Time(
+		$this->fields['hora_inicio'] = new Gatuf_Form_Field_Time(
 			array (
 				'required' => true,
 				'label' => 'Hora inicio',
@@ -12,7 +12,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 				'help_text' => 'La hora de inicio. Puede ser del tipo 17:00 o formato Siiau 1700',
 		));
 		
-		$this->fields['horafin'] = new Gatuf_Form_Field_Time(
+		$this->fields['hora_fin'] = new Gatuf_Form_Field_Time(
 			array (
 				'required' => true,
 				'label' => 'Hora fin',
@@ -31,8 +31,6 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 			));
 		}
 		
-		$pre_seleccionados = array ('DEDX', 'DEDU', 'DUCT1', 'DUCT2', 'DEDR', 'DEDT', 'DEDW');
-		
 		$edificios = Gatuf::factory ('Calif_Edificio')->getList ();
 		
 		$choices = array ();
@@ -44,7 +42,7 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 			array (
 				'required' => false,
 				'label' => 'Edificios',
-				'initial' => $pre_seleccionados,
+				'initial' => $extra['edificios'],
 				'help_text' => 'Puede limitar la busqueda a estos edificios',
 				'widget' => 'Gatuf_Form_Widget_SelectMultipleInput_Checkbox',
 				'widget_attrs' => array (
@@ -64,11 +62,11 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 		}
 		
 		if ($activo == false) {
-			throw new Gatuf_Form_Invalid ('La hora para la sección debe tener al menos un día activo');
+			throw new Gatuf_Form_Invalid ('Se debe buscar mínimo 1 día de la semana');
 		}
 		
 		/* Verificar que la hora de entrada sea siempre menor */
-		if ($this->cleaned_data['horainicio'] >= $this->cleaned_data['horafin']) {
+		if ($this->cleaned_data['hora_inicio'] >= $this->cleaned_data['hora_fin']) {
 			throw new Gatuf_Form_Invalid ('Las horas de inicio y fin son inválidas');
 		}
 		
@@ -76,10 +74,8 @@ class Calif_Form_Salon_Buscarsalon extends Gatuf_Form {
 	}
 	
 	function save ($commit=true) {
-		Gatuf::loadFunction ('Calif_Utils_buscarSalonVacio');
+		$data = array ('semana' => $this->semana, 'hora_inicio' => $this->cleaned_data['hora_inicio'], 'hora_fin' => $this->cleaned_data['hora_fin'], 'edificios' => $this->cleaned_data['edificios']);
 		
-		$libres = Calif_Utils_buscarSalonVacio ($this->semana, $this->cleaned_data['horainicio'], $this->cleaned_data['horafin'], $this->cleaned_data['edificios']);
-		
-		return $libres;
+		return $data;
 	}
 }

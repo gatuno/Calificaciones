@@ -56,11 +56,11 @@ class Calif_Salon extends Gatuf_Model {
 		return true;
 	}
 	
-	public function displaylinkedaula ($extra) {
+	public function displaylinkedaula ($extra = null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', array ($this->edificio)).'#salon_'.$this->id.'">'.$this->aula.'</a>';
 	}
 	
-	public function displaylinkededificio ($extra) {
+	public function displaylinkededificio ($extra = null) {
 		return '<a href="'.Gatuf_HTTP_URL_urlForView ('Calif_Views_Edificio::verEdificio', array ($this->edificio)).'">'.$this->edificio.'</a>';
 	}
 	

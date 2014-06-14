@@ -64,33 +64,68 @@ class Calif_Views_Salon {
 	}
 	
 	function buscarSalon ($request, $match) {
-		$title = 'Buscar salon vacio';
+		/* Tratar de "pre-seleccionar" los edificios */
+		$extra = array ('edificios' => null);
+		
+		if (isset ($request->GET['edificio']) && $request->GET['edificio'] != '') {
+			$edificio = new Calif_Edificio ();
+			if (false !== $edificio->get ($request->GET['edificio'])) {
+				$extra['edificios'] = array ($edificio->clave);
+			}
+		}
+		
+		$extra['edificios'] = $request->session->getData ('buscar-edificios', $extra['edificios']);
+		
+		if ($extra['edificios'] === null) {
+			$extra['edificios'] = Gatuf::config ('buscar-edificios', array ());
+		}
 		
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Salon_Buscarsalon ($request->POST, null);
+			$form = new Calif_Form_Salon_BuscarSalon ($request->POST, $extra);
 			
 			if ($form->isValid ()) {
-				$libres = $form->save ();
-				$semana = array ();
-				$dias = array ('l' => 'lunes', 'm' => 'martes', 'i' => 'miércoles', 'j' => 'jueves', 'v' => 'viernes', 's' => 'sábado');
-				foreach ($form->semana as $dia) {
-					$semana[] = $dias[$dia];
-				}
-				return Gatuf_Shortcuts_RenderToResponse ('calif/salon/reporte-vacios.html',
-		                                         array ('page_title' => $title,
-		                                         'bus_inicio' => $form->cleaned_data['horainicio'],
-		                                         'bus_fin' => $form->cleaned_data['horafin'],
-		                                         'semana' => implode (',', $semana),
-		                                         'salones' => $libres),
-		                                         $request);
+				/* Antes de redireccionar, guardar los edificios preseleccionados */
+				$data = $form->save ();
+				$request->session->setData ('buscar-edificios', $data['edificios']);
+				
+				$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::reporteBuscados', array (), $request->POST, false);
+				
+				return new Gatuf_HTTP_Response_Redirect ($url);
 			}
 		} else {
-			$form = new Calif_Form_Salon_Buscarsalon (null, null);
+			$form = new Calif_Form_Salon_BuscarSalon (null, $extra);
 		}
 		
 		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/buscar-salon.html',
-		                                         array ('page_title' => $title,
+		                                         array ('page_title' => 'Buscar salon vacio',
 		                                         'form' => $form),
+		                                         $request);
+	}
+	
+	function reporteBuscados ($request, $match) {
+		Gatuf::loadFunction ('Calif_Utils_buscarSalonVacio');
+		
+		$form = new Calif_Form_Salon_BuscarSalon ($request->GET, null);
+		
+		if (!$form->isValid ()) {
+			$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Salon::buscarSalon');
+			return new Gatuf_HTTP_Response_Redirect ($url);
+		}
+		
+		$data = $form->save ();
+		$libres = Calif_Utils_buscarSalonVacio ($data['semana'], $data['hora_inicio'], $data['hora_fin'], $data['edificios']);
+		
+		$semana = array ();
+		$dias = array ('l' => 'lunes', 'm' => 'martes', 'i' => 'miércoles', 'j' => 'jueves', 'v' => 'viernes', 's' => 'sábado');
+		foreach ($form->semana as $dia) {
+			$semana[] = $dias[$dia];
+		}
+		return Gatuf_Shortcuts_RenderToResponse ('calif/salon/reporte-vacios.html',
+		                                         array ('page_title' => 'Salones encontrados',
+		                                         'bus_inicio' => $data['hora_inicio'],
+		                                         'bus_fin' => $data['hora_fin'],
+		                                         'semana' => implode (',', $semana),
+		                                         'salones' => $libres),
 		                                         $request);
 	}
 }

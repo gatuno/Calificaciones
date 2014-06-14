@@ -518,6 +518,13 @@ $ctl[] = array (
 	'method' => 'buscarSalon',
 );
 
+$ctl[] = array (
+	'regex' => '#^/salones/buscar/reporte/$#',
+	'base' => $base,
+	'model' => 'Calif_Views_Salon',
+	'method' => 'reporteBuscados',
+);
+
 /* Los profesores */
 $ctl[] = array (
 	'regex' => '#^/profesores/$#',

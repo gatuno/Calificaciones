@@ -120,4 +120,10 @@ $cfg['template_tags'] = array ('coordperm' => 'Calif_Template_CoordPerm',
 
 $cfg['installed_apps'] = array('Gatuf', 'Calif', 'Titulacion');
 
+# -------------------------
+# Configuraciones de Calif
+# -------------------------
+
+$cfg['buscar-edificios'] = array ('DEDX', 'DEDU', 'DUCT1', 'DUCT2', 'DEDR', 'DEDT', 'DEDW');
+
 return $cfg;

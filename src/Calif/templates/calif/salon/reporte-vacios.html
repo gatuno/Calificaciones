@@ -1,13 +1,13 @@
 {extends 'calif/base.html'}
 {block body}
-<p>Se buscó un salón vacio de {$bus_inicio} a {$bus_fin}, los dias {$semana}</p>
+<p>Se buscó un salón desocupado de {$bus_inicio} a {$bus_fin}, los dias {$semana}</p>
 {if $salones}
-	<p>Se encontraron los siguientes salones vacios:</p>
+	<p>Se encontraron los siguientes resultados:</p>
 	<table border="1">
 		<thead><tr><th>Edificio</th><th>Aula</th><th>Cupo</th></thead>
 		<tbody>
 			{foreach $salones as $salon}
-				<tr><td>{$salon.edificio}</td><td><a href="{url 'Calif_Views_Edificio::verEdificio', array ($salon.edificio)}{'#salon_'~$salon.id}">{$salon.aula}</a></td><td>{$salon.cupo}</td></tr>
+				<tr><td>{$salon.displaylinkededificio()|safe}</td><td>{$salon.displaylinkedaula()|safe}</td><td>{$salon.cupo}</td></tr>
 			{/foreach}
 		</tbody>
 	</table>
