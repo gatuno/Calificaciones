@@ -13,10 +13,7 @@
 <p>Créditos: {$materia.creditos}</p>
 <p>Horas teoría: {$materia.teoria}, Horas práctica: {$materia.practica}</p>
 {if $carreras}
-	<p>La materia es tomada por:</p>
-	<ul>{foreach $carreras as $carrera}
-		<li><a href="{url 'Calif_Views_Materia::porCarrera', array ($carrera.clave)}">{$carrera.descripcion}</a></li>
-	{/foreach}</ul>
+	<p>La materia es tomada por: {foreach $carreras as $carrera}<a href="{url 'Calif_Views_Materia::porCarrera', array ($carrera.clave)}"><abbr title="{$carrera.descripcion}">{$carrera.clave}</abbr></a> {/foreach}</p>
 {else}
 	<p>La materia no es tomada por alguna carrera</p>
 {/if}

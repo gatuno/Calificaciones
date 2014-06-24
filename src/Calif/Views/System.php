@@ -483,7 +483,7 @@ class Calif_Views_System {
 				
 				$cabecera = Calif_Utils_detectarColumnas ($linea);
 				
-				if (!isset ($cabecera['grupo'])) {
+				if (!isset ($cabecera['grupo/seccion'])) {
 					$request->user->setMessage (3, 'El archivo importado no contiene una columna de sección');
 					return new Gatuf_HTTP_Redirect ($url);
 				}
@@ -517,8 +517,9 @@ class Calif_Views_System {
 				while (($linea = fgetcsv ($archivo, 600, ",", "\"")) !== FALSE) {
 					if (is_null ($linea[0])) continue;
 					
-					$num_sec = (int) $linea[$cabecera['grupo']];
-					$d_sec = sprintf ('D%02s', $num_sec);
+					/* Separar el grupo/seccion */
+					$sep = explode ('-', $linea[$cabecera['grupo/seccion']]);
+					$d_sec = 'D'.trim ($sep[0]);
 					$sql_sec->ands = array ();
 					$sql_sec->Q ('materia=%s AND seccion=%s', array ($linea[$cabecera['clave siiau']], $d_sec));
 					

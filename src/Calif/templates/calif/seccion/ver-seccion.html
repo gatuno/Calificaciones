@@ -14,12 +14,8 @@
 		{coordperm 'puede_liberar', $user, $seccion.asignacion}
 			<p>La sección está pedida para {$seccion.asignacion}. {if $puede_liberar}<a href="{url 'Calif_Views_Seccion::liberarNrc', array ($seccion.nrc)}">Liberar esta sección</a>{/if}</p>
 	{else}
-		{foreach $materia.get_carreras_list as $carrera}
-			{coordperm 'puede', $user, $carrera.clave}
-			{if $puede}
-				<p><a href="{url 'Calif_Views_Seccion::reclamarNrc', array ($seccion.nrc, $carrera.clave)}">Reclamar sección para {$carrera.clave}</a></p>
-			{/if}
-		{/foreach}
+		<p>Reclamar sección para: 
+		{foreach $materia.get_carreras_list as $carrera}{coordperm 'puede', $user, $carrera.clave}{if $puede}<a href="{url 'Calif_Views_Seccion::reclamarNrc', array ($seccion.nrc, $carrera.clave)}"><abbr title="{$carrera.descripcion}">{$carrera.clave}</abbr></a> {/if}{/foreach}</p>
 	{/if}
 {/if}
 {if $puedeEditar}
