@@ -50,6 +50,7 @@ class Calif_Views_Reportes_Oferta {
 		$div = $request->session->getData('filtro_seccion_asignada_division', null);
 		$noasig = $request->session->getData('filtro_seccion_asignada_no', false);
 		$asig = $request->session->getData('filtro_seccion_asignada', false);
+		$suplente = $request->session->getData('filtro_seccion_suplente', false);
 		if ($asig === true) {
 			$filtro['a'] = 'Secciones asignadas';
 			
@@ -75,6 +76,11 @@ class Calif_Views_Reportes_Oferta {
 			}
 			
 			$sql->Q ('asignacion IN ('.implode (', ', $escape).')', $claves);
+		}
+		
+		if ($suplente === true) {
+			$filtro['s'] = 'Con suplente asignado';
+			$sql->Q ('suplente IS NOT NULL');
 		}
 		
 		/* Verificar filtro de secciones por departamento */
@@ -394,6 +400,7 @@ class Calif_Views_Reportes_Oferta {
 		$div = $request->session->getData('filtro_seccion_asignada_division', null);
 		$noasig = $request->session->getData('filtro_seccion_asignada_no', false);
 		$asig = $request->session->getData('filtro_seccion_asignada', false);
+		$suplente = $request->session->getData('filtro_seccion_suplente', false);
 		if ($asig === true) {
 			$filtro['a'] = 'Secciones asignadas';
 			
@@ -419,6 +426,11 @@ class Calif_Views_Reportes_Oferta {
 			}
 			
 			$sql->Q ('asignacion IN ('.implode (', ', $escape).')', $claves);
+		}
+		
+		if ($suplente === true) {
+			$filtro['s'] = 'Con suplente asignado';
+			$sql->Q ('suplente IS NOT NULL');
 		}
 		
 		/* Verificar filtro de secciones por departamento */

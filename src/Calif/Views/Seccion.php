@@ -16,33 +16,34 @@ class Calif_Views_Seccion {
 		
 		/* Aplicando filtrado por carrera y/o departamento */
 		if ($request->method == 'POST') {
-			$form = new Calif_Form_Seccion_Filtrar ($request->POST);
-			$filtrado = $form->save ();	
-			if($filtrado[0] == 'c'){
-				$filtrado = substr($filtrado, 2);
-				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porCarrera', array($filtrado));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-			if($filtrado[0] == 'i'){
-				$filtrado = substr($filtrado, 2);
-				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porDivision', array($filtrado));
-				return new Gatuf_HTTP_Response_Redirect ($url);
-			}
-			if($filtrado[0] == 'd'){
-				$filtrado = substr($filtrado, 2);
-				$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::porDepartamento', array($filtrado));
-				return new Gatuf_HTTP_Response_Redirect ($url);
+			$form = new Calif_Form_Seccion_Filtrar ($request->POST, array ('logged' => !$request->user->isAnonymous ()));
+			if ($form->isValid ()) {
+				$filtrado = $form->save ();	
+				$data = substr($filtrado, 2);
+				if ($filtrado[0] == 'c') {
+					$this->porCarrera ($request, array (0 => '', 1 => $data));
+				} else if ($filtrado[0] == 'i') {
+					$this->porDivision ($request, array (0 => '', 1 => $data));
+				} else if ($filtrado[0] == 'd') {
+					$this->porDepartamento ($request, array (0 => '', 1 => $data));
+				} else if ($filtrado[0] == 'a') {
+					$this->porAsignadas ($request, array ());
+				} else if ($filtrado[0] == 'n') {
+					$this->porNoAsignadas ($request, array ());
+				} else if ($filtrado[0] == 's') {
+					$this->porSuplente ($request, array ());
+				}
 			}
 		} else {
-			$form = new Calif_Form_Seccion_Filtrar(null);
+			$form = new Calif_Form_Seccion_Filtrar (null, array ('logged' => !$request->user->isAnonymous ()));
 		}
-
-
+		
 		/* Verificar filtro por Carrera */
 		$car = $request->session->getData('filtro_seccion_asignada_carrera', null);
 		$div = $request->session->getData('filtro_seccion_asignada_division', null);
 		$noasig = $request->session->getData('filtro_seccion_asignada_no', false);
 		$asig = $request->session->getData('filtro_seccion_asignada', false);
+		$suplente = $request->session->getData('filtro_seccion_suplente', false);
 		if ($asig === true) {
 			$filtro['a'] = 'Secciones asignadas';
 			
@@ -68,6 +69,11 @@ class Calif_Views_Seccion {
 			}
 			
 			$sql->Q ('asignacion IN ('.implode (', ', $escape).')', $claves);
+		}
+		
+		if ($suplente === true) {
+			$filtro['s'] = 'Con suplente asignado';
+			$sql->Q ('suplente IS NOT NULL');
 		}
 		
 		/* Verificar filtro de secciones por departamento */
@@ -171,6 +177,13 @@ class Calif_Views_Seccion {
 		return new Gatuf_HTTP_Response_Redirect ($url);
 	}
 	
+	public function porSuplente ($request, $match) {
+		$request->session->setData ('filtro_seccion_suplente', true);
+		
+		$url = Gatuf_HTTP_URL_urlForView ('Calif_Views_Seccion::index');
+		return new Gatuf_HTTP_Response_Redirect ($url);
+	}
+	
 	public function eliminarFiltro($request, $match){
 		if ($match[1] == 'a') {
 			$request->session->setData('filtro_seccion_asignada', false);
@@ -180,8 +193,10 @@ class Calif_Views_Seccion {
 			$request->session->setData('filtro_seccion_asignada_carrera',null);
 		} else if ($match[1] == 'n') {
 			$request->session->setData('filtro_seccion_asignada_no', false);
-		} else{
+		} else if ($match[1] == 'i') {
 			$request->session->setData('filtro_seccion_asignada_division',null);
+		} else if ($match[1] == 's') {
+			$request->session->setData ('filtro_seccion_suplente', false);
 		}
 		
 		$url = Gatuf_HTTP_URL_urlForView('Calif_Views_Seccion::index');

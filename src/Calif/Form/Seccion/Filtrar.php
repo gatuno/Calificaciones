@@ -1,30 +1,38 @@
 <?php
 
 class Calif_Form_Seccion_Filtrar extends Gatuf_Form {
-
-	public function initFields($extra=array()) {
-
+	private $logged;
+	
+	public function initFields ($extra = array ()) {
+		$this->logged = $extra['logged'];
+		
 		$choices = array ();
-
-		$divisiones = Gatuf::factory('Calif_Division')->getList();
-		foreach ($divisiones as $division) {
-				$choices['Divisiones'][$division->descripcion] = 'i_'.$division->id;
+		if ($this->logged) {
+			$choices['Por asignación:']['Solicitadas por alguna carrera'] = 'a_X';
+			$choices['Por asignación:']['No asignadas a alguna carrera'] = 'n_X';
+			
+			$divisiones = Gatuf::factory('Calif_Division')->getList();
+			foreach ($divisiones as $division) {
+				$choices['Secciones asignadas por división:'][$division->descripcion] = 'i_'.$division->id;
+			}
+		
+			$carreras = Gatuf::factory('Calif_Carrera')->getList();
+			foreach ($carreras as $carrera) {
+				$choices['Secciones asignadas a una carrera:'][$carrera->descripcion] = 'c_'.$carrera->clave;
+			}
+			
+			$choices['Por profesor:']['Con suplente asignado'] = 's_X';
 		}
 		
-		$carreras = Gatuf::factory('Calif_Carrera')->getList();
-		foreach ($carreras as $carrera) {
-				$choices['Carreras'][$carrera->descripcion] = 'c_'.$carrera->clave;
-		}
-
 		$departamentos = Gatuf::factory('Calif_Departamento')->getList();
 		foreach ($departamentos as $departamento) {
-				$choices['Departamentos'][$departamento->descripcion] = 'd_'.$departamento->clave;
+			$choices['Por departamento:'][$departamento->descripcion] = 'd_'.$departamento->clave;
 		}
-
+		
 		$this->fields['filtro'] = new Gatuf_Form_Field_Varchar (
 			array(
-				'label' => 'Filtrar secciones de ',
-				'initial' =>'',
+				'label' => 'Aplicar filtro',
+				'initial' => '',
 				'widget_attrs' => array (
 					'choices' => $choices,
 				),
