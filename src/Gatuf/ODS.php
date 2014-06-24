@@ -11,53 +11,103 @@ class Gatuf_ODS {
 	
 	public function __construct () {
 		/* Inicializar algunos atributos meta */
-		$this->meta = array ('meta:generator' => 'Gatuf_ODF/0.1',
-		              'meta:initial-creator' => 'Sistema de calificaciones/Gatuf',
-		              'dc:creator' => 'Sistema de Calificaciones/Gatuf',
-		              'meta:creation-date' => strftime ('%Y-%m-%dT%H:%M:%S'),
-		              'dc:date' => strftime ('%Y-%m-%dT%H:%M:%S'),
-		              'meta:editing-cycles' => 1);
+		$this->meta = array (
+			array (
+				'xmltag' => 'meta:generator',
+				'data' => 'Gatuf_ODF/0.1',
+			),
+			array (
+				'xmltag' => 'meta:initial-creator',
+				'data' => 'Sistema de calificaciones/Gatuf',
+			),
+			array (
+				'xmltag' => 'dc:creator',
+				'data' => 'Sistema de Calificaciones/Gatuf',
+			),
+			array (
+				'xmltag' => 'meta:creation-date',
+				'data' => strftime ('%Y-%m-%dT%H:%M:%S'),
+			),
+			array (
+				'xmltag' => 'dc:date',
+				'data' => strftime ('%Y-%m-%dT%H:%M:%S'),
+			),
+			array (
+				'xmltag' => 'meta:editing-cycles',
+				'data' => 1,
+			),
+		);
 		$this->max_col = array ();
 		$this->max_row = array ();
 		$this->merged_cells = array ();
 		
 		$this->auto_styles = array (
-			'number:text-style' => array (
-				'style:name' => 'CELTEXT',
-				'number:text-content' => array ()
-			),
-			'style:style' => array (
-				'style:name' => 'cel',
-				'style:family' => 'table-cell',
-				'style:data-style-name' => 'CELTEXT'
-			),
-			/*'style:style' => array (
-				'style:name' => 'merged-centrado',
-				'style:family' => 'table-cell',
-				'style:table-cell-properties' => array (
-					'style:text-align-source' => 'fix',
-					'style:repeat-content' => 'false',
-					'style:vertical-align' => 'middle',
+			array (
+				'xmltag' => 'number:text-style',
+				'attrs' => array (
+					'style:name' => 'CELTEXT',
 				),
-				'style:paragraph-properties' => array (
-					'fo:text-align' => 'center',
+				'subtags' => array (
+					array (
+						'xmltag' => 'number:text-content',
+					),
 				),
-			),*/
+			),
+			array (
+				'xmltag' => 'style:style',
+				'attrs' => array (
+					'style:name' => 'cel',
+					'style:family' => 'table-cell',
+					'style:data-style-name' => 'CELTEXT',
+				),
+			),
+			array (
+				'xmltag' => 'style:style',
+				'attrs' => array (
+					'style:name' => 'merged-centrado',
+					'style:family' => 'table-cell',
+				),
+				'subtags' => array (
+					array (
+						'xmltag' => 'style:table-cell-properties',
+						'attrs' => array (
+							'style:text-align-source' => 'fix',
+							'style:repeat-content' => 'false',
+							'style:vertical-align' => 'middle',
+						)
+					),
+					array (
+						'xmltag' => 'style:paragraph-properties',
+						'attrs' => array (
+							'fo:text-align' => 'center',
+						),
+					),
+				),
+			),
 		);
 	}
 	
-	private function createTag ($dom, $tag, $attrs) {
-		$tag_vacia = $dom->createElement ($tag);
+	private function createTag ($dom, $tag) {
+		$tagname = $tag['xmltag'];
 		
-		foreach ($attrs as $key => $value) {
-			if (is_array ($value)) {
-				$subtag = $this->createTag ($dom, $key, $value);
-				$tag_vacia->appendChild ($subtag);
-			} else {
-				$tag_vacia->setAttribute ($key, $value);
+		$tag_nueva = $dom->createElement ($tagname);
+		
+		if (isset ($tag['attrs'])) {
+			foreach ($tag['attrs'] as $key => $value) {
+				$tag_nueva->setAttribute ($key, $value);
 			}
 		}
-		return $tag_vacia;
+		
+		if (isset ($tag['subtags'])) {
+			foreach ($tag['subtags'] as $value) {
+				$subtag = $this->createTag ($dom, $value);
+				$tag_nueva->appendChild ($subtag);
+			}
+		}
+		if (isset ($tag['data'])) {
+			$tag_nueva->nodeValue = $tag['data'];
+		}
+		return $tag_nueva;
 	}
 	
 	public function addNewSheet ($sheet_name) {
@@ -215,7 +265,7 @@ class Gatuf_ODS {
 		$raiz->appendChild ($etiqueta_fuentes);
 		
 		/* Estilos automáticos */
-		$etiqueta_estilos_automaticos = $this->createTag ($dom_contenido, 'office:automatic-styles', $this->auto_styles);
+		$etiqueta_estilos_automaticos = $this->createTag ($dom_contenido, array ('xmltag' => 'office:automatic-styles', 'subtags' => $this->auto_styles));
 		$raiz->appendChild ($etiqueta_estilos_automaticos);
 		
 		$tag_vacia = $dom_contenido->createElement ('office:body');
@@ -328,7 +378,7 @@ class Gatuf_ODS {
 		$raiz->setAttribute ('grddl:transformation', 'http://docs.oasis-open.org/office/1.2/xslt/odf2rdf.xsl');
 		$raiz->setAttribute ('office:version', '1.2');
 		
-		$meta = $this->createTag ($dom_meta, 'office:meta', $this->meta);
+		$meta = $this->createTag ($dom_meta, array ('xmltag' => 'office:meta', 'subtags' => $this->meta));
 		$raiz->appendChild ($meta);
 		
 		return $dom_meta;
